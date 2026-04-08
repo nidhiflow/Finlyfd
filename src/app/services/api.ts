@@ -1,6 +1,6 @@
-// API Configuration
-const API_BASE_URL = "https://api.nidhiflow.in";
-const USE_MOCK_API = true; // Set to false to use real API
+// API Configuration — reads from env for production (Render static site)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://api.nidhiflow.in";
+const USE_MOCK_API = false; // Use real backend API
 
 // Types
 export interface User {
