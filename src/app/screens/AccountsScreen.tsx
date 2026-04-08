@@ -1,5 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { toast } from "sonner";
+import { accountsAPI } from "../services/api";
 import {
   Plus, X, Check, Search, ChevronRight, Eye, EyeOff,
   Pencil, Trash2, Star, Crown, SlidersHorizontal, TrendingUp, TrendingDown,
@@ -783,7 +785,7 @@ function DeleteModal({ name, onClose, onConfirm }: { name: string; onClose: () =
 
 // ─── Main Screen ───────────────────────────────────────────────────────────────
 export function AccountsScreen() {
-  const [accounts, setAccounts]   = useState<Account[]>(DEFAULT_ACCOUNTS);
+  const [accounts, setAccounts]   = useState<Account[]>([]);
   const [modal, setModal]         = useState<"add" | "edit" | null>(null);
   const [editTarget, setEditTarget] = useState<Account | null>(null);
   const [delTarget, setDelTarget]   = useState<Account | null>(null);
@@ -792,37 +794,83 @@ export function AccountsScreen() {
   const [search, setSearch]         = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showBal, setShowBal]       = useState(true);
+  const [isLoading, setIsLoading]   = useState(true);
+
+  // ── LOAD API DATA ────────────────────────────────────────────────────────────
+  const fetchAccounts = async () => {
+    try {
+      setIsLoading(true);
+      const data = await accountsAPI.getAll();
+      const mapped: Account[] = data.map((a: any) => ({
+        id: a.id,
+        name: a.name,
+        type: a.type || "savings",
+        balance: parseFloat(a.balance || "0"),
+        color: a.color || "#4895EF",
+        trackBalance: true, // Not tracked in backend
+        isPrimary: false,   // Not tracked in backend
+        paymentModes: ["upi", "netbanking"],
+        isCustom: true
+      }));
+      setAccounts(mapped);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load accounts");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
 
   // ── CRUD ─────────────────────────────────────────────────────────────────────
-  const saveAccount = (form: FormState) => {
+  const saveAccount = async (form: FormState) => {
     const balance = form.trackBalance && form.openingBalance
       ? parseFloat(form.openingBalance) || 0 : 0;
 
-    if (modal === "edit" && editTarget) {
-      setAccounts(p => p.map(a => a.id === editTarget.id ? {
-        ...a, name:form.name, type:form.type, bankName:form.bankName||undefined,
-        balance, trackBalance:form.trackBalance, color:form.color,
-        isPrimary:form.isPrimary, paymentModes:form.paymentModes,
-        upiId:form.upiId||undefined,
-      } : (form.isPrimary ? { ...a, isPrimary: false } : a)));
-    } else {
-      const newAcc: Account = {
-        id:`a-${Date.now()}`, name:form.name, type:form.type,
-        bankName:form.bankName||undefined, balance, trackBalance:form.trackBalance,
-        color:form.color, isPrimary:form.isPrimary, paymentModes:form.paymentModes,
-        upiId:form.upiId||undefined, isCustom:true,
-      };
-      setAccounts(p => [
-        ...(form.isPrimary ? p.map(a => ({ ...a, isPrimary:false })) : p),
-        newAcc,
-      ]);
+    try {
+      if (modal === "edit" && editTarget) {
+        // Update via API
+        await accountsAPI.update(editTarget.id, {
+          name: form.name,
+          type: form.type,
+          balance: balance,
+          color: form.color,
+          icon: "🏦"
+        });
+        toast.success("Account updated");
+      } else {
+        // Create via API
+        await accountsAPI.create({
+          name: form.name,
+          type: form.type,
+          balance: balance,
+          color: form.color,
+          icon: "🏦",
+          parent_id: undefined
+        });
+        toast.success("Account created");
+      }
+      fetchAccounts();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save account");
     }
     setModal(null); setEditTarget(null);
   };
 
-  const deleteAccount = () => {
+  const deleteAccount = async () => {
     if (!delTarget) return;
-    setAccounts(p => p.filter(a => a.id !== delTarget.id));
+    try {
+      await accountsAPI.delete(delTarget.id, true); // force delete
+      toast.success("Account deleted");
+      fetchAccounts();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete account");
+    }
     setDelTarget(null);
   };
 

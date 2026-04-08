@@ -1,37 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, ChevronLeft, ChevronRight, AlertCircle, Bot, TrendingUp } from "lucide-react";
+import { budgetsAPI } from "../services/api";
+import { toast } from "sonner";
 
 export function BudgetScreen() {
-  const [currentMonth, setCurrentMonth] = useState("March 2026");
+  const [currentDate, setCurrentDate] = useState(new Date());
+  
+  const [budgets, setBudgets] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const budgets = [
-    { category: "Food & Dining", budgeted: 0, spent: 0, color: "#7C5CFF", emoji: "🍔" },
-    { category: "Transport", budgeted: 0, spent: 0, color: "#4CC9F0", emoji: "🚗" },
-    { category: "Bills", budgeted: 0, spent: 0, color: "#FFA500", emoji: "⚡" },
-    { category: "Shopping", budgeted: 0, spent: 0, color: "#FF6B6B", emoji: "🛍️" },
-  ];
+  const loadBudgets = async () => {
+    setIsLoading(true);
+    try {
+      const monthStr = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, "0")}`;
+      const data = await budgetsAPI.get(monthStr);
+      
+      // If none, we default to empty array
+      const mapped = (data.categories || []).map((b: any) => ({
+        category: b.category_name || "Uncategorized",
+        budgeted: parseFloat(b.amount || "0"),
+        spent: parseFloat(b.spent || "0"),
+        color: b.color || "#7C5CFF",
+        emoji: b.icon || "🍔",
+      }));
+      setBudgets(mapped);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load budgets");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadBudgets();
+  }, [currentDate]);
+
+  const monthLabel = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   const totalBudgeted = budgets.reduce((sum, b) => sum + b.budgeted, 0);
   const totalSpent = budgets.reduce((sum, b) => sum + b.spent, 0);
   const budgetLeft = totalBudgeted - totalSpent;
   const percentUsed = totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0;
 
-  // Find pressure category
-  const pressureCategory = budgets.reduce((prev, current) => {
+  // Find pressure category safely
+  const pressureCategory = budgets.length > 0 ? budgets.reduce((prev, current) => {
     const prevPercent = prev.budgeted > 0 ? (prev.spent / prev.budgeted) * 100 : 0;
     const currentPercent = current.budgeted > 0 ? (current.spent / current.budgeted) * 100 : 0;
     return currentPercent > prevPercent ? current : prev;
-  });
+  }) : null;
+
+  const navigateMonth = (dir: number) => {
+    const next = new Date(currentDate);
+    next.setMonth(next.getMonth() + dir);
+    setCurrentDate(next);
+  };
 
   return (
     <div className="px-5 py-6 space-y-6">
       {/* Month Selector */}
       <div className="flex items-center justify-between">
-        <button className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
+        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
           <ChevronLeft className="w-5 h-5 text-white" />
         </button>
-        <h2 className="text-xl font-semibold text-white">{currentMonth}</h2>
-        <button className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
+        <h2 className="text-xl font-semibold text-white">{monthLabel}</h2>
+        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
           <ChevronRight className="w-5 h-5 text-white" />
         </button>
       </div>

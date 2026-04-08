@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { savingsGoalsAPI } from "../services/api";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Plus, Target, Calendar, ArrowLeft, X, Check,
@@ -448,7 +449,7 @@ function GoalCard({ goal, onClick }: { goal: Goal; onClick: () => void }) {
 
 // ─── Main Screen ────────────────────────────────────────────────────────────────
 export function GoalsScreen() {
-  const [goals, setGoals] = useState<Goal[]>(INITIAL_GOALS);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [tab, setTab] = useState<"active" | "completed">("active");
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -456,75 +457,116 @@ export function GoalsScreen() {
   const [detailGoal, setDetailGoal] = useState<Goal | null>(null);
   const [savingsGoal, setSavingsGoal] = useState<Goal | null>(null);
   const [deleteGoal, setDeleteGoal] = useState<Goal | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadGoals = async () => {
+    setIsLoading(true);
+    try {
+      const data = await savingsGoalsAPI.getAll();
+      const mapped = data.map((g: any) => ({
+        id: g.id,
+        name: g.name,
+        emoji: g.emoji || "🎯",
+        target: parseFloat(g.target_amount || "0"),
+        saved: parseFloat(g.current_amount || "0"),
+        targetDate: g.target_date || "Dec 2026",
+        startDate: g.start_date || "Apr 2026",
+        color: g.color || "#7C5CFF",
+        trackingMode: g.tracking_mode || "Manual",
+        type: g.type || "one-time",
+        linkedAccount: g.linked_account || ACCOUNTS[0],
+        carryForward: g.carry_forward || false,
+        notes: g.notes || "",
+        status: g.status || "active",
+        contributions: g.contributions || [],
+      }));
+      setGoals(mapped);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load goals");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadGoals();
+  }, []);
 
   const activeGoals = goals.filter(g => g.status === "active" || g.status === "paused");
-  const completedGoals = goals.filter(g => g.status === "completed");
+  const completedGoals = goals.filter(g => g.status === "completed" || g.saved >= g.target);
 
   const displayedGoals = (tab === "active" ? activeGoals : completedGoals)
     .filter(g => !searchQuery || g.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  const handleSaveGoal = (data: Partial<Goal>) => {
-    if (editGoal) {
-      setGoals(prev => prev.map(g => g.id === editGoal.id ? { ...g, ...data } : g));
-      toast.success("Goal updated");
-    } else {
-      const newGoal: Goal = {
-        id: `g${Date.now()}`,
-        name: data.name!,
-        emoji: data.emoji || "🎯",
-        target: data.target || 0,
-        saved: data.saved || 0,
-        targetDate: data.targetDate || "Dec 2026",
-        startDate: data.startDate || "Apr 2026",
-        color: data.color || "#7C5CFF",
-        trackingMode: data.trackingMode || "Manual",
-        type: data.type || "one-time",
-        linkedAccount: data.linkedAccount || ACCOUNTS[0],
-        carryForward: data.carryForward ?? false,
-        notes: data.notes || "",
-        status: "active",
-        contributions: [],
-      };
-      setGoals(prev => [...prev, newGoal]);
-      toast.success("Goal created!");
+  const handleSaveGoal = async (data: Partial<Goal>) => {
+    try {
+      if (editGoal) {
+        await savingsGoalsAPI.update(editGoal.id, {
+          name: data.name,
+          emoji: data.emoji,
+          target_amount: data.target,
+          current_amount: data.saved,
+          target_date: data.targetDate,
+          start_date: data.startDate,
+          color: data.color,
+          tracking_mode: data.trackingMode,
+          type: data.type,
+          linked_account: data.linkedAccount,
+          carry_forward: data.carryForward,
+          notes: data.notes
+        });
+        toast.success("Goal updated");
+      } else {
+        await savingsGoalsAPI.create({
+          name: data.name,
+          emoji: data.emoji,
+          target_amount: data.target,
+          current_amount: data.saved,
+          target_date: data.targetDate,
+          start_date: data.startDate,
+          color: data.color,
+          tracking_mode: data.trackingMode,
+          type: data.type,
+          linked_account: data.linkedAccount,
+          carry_forward: data.carryForward,
+          notes: data.notes,
+          status: "active"
+        });
+        toast.success("Goal created!");
+      }
+      loadGoals();
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to save goal");
     }
     setShowForm(false);
     setEditGoal(null);
   };
 
-  const handleRecordSavings = (goalId: string, amount: number, note: string, account: string) => {
-    setGoals(prev => prev.map(g => {
-      if (g.id !== goalId) return g;
-      const newSaved = g.saved + amount;
-      const contribution: Contribution = {
-        id: `c${Date.now()}`,
-        amount,
-        date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
-        note,
-        fromAccount: account,
-      };
-      const isCompleted = newSaved >= g.target;
-      if (isCompleted) toast.success(`🎉 ${g.name} goal completed!`);
-      else toast.success(`${fmtINR(amount)} added to ${g.name}`);
-      return {
-        ...g,
-        saved: newSaved,
-        contributions: [...g.contributions, contribution],
-        status: isCompleted ? "completed" as const : g.status,
-      };
-    }));
+  const handleRecordSavings = async (goalId: string, amount: number, note: string, account: string) => {
+    try {
+      await savingsGoalsAPI.recordSavings(goalId, amount, note, account);
+      toast.success(`${fmtINR(amount)} added to goal!`);
+      loadGoals();
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to record savings");
+    }
     setSavingsGoal(null);
   };
 
-  const handleDeleteGoal = (goal: Goal) => {
-    const g = goal;
-    setGoals(prev => prev.filter(x => x.id !== g.id));
+  const handleDeleteGoal = async (goal: Goal) => {
+    try {
+      await savingsGoalsAPI.delete(goal.id);
+      toast.success("Goal deleted");
+      loadGoals();
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to delete goal");
+    }
     setDeleteGoal(null);
     setDetailGoal(null);
-    toast("Goal deleted", {
-      action: { label: "Undo", onClick: () => { if (g) setGoals(prev => [...prev, g]); } },
-      duration: 5000,
-    });
   };
 
   // ─── Summary Stats ──────────────────────────────────────────────

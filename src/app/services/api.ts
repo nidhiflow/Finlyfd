@@ -330,39 +330,96 @@ export const authAPI = {
   },
 };
 
-// Transactions API (placeholder - add your endpoints)
+// ─── TRANSACTIONS API ─────────────────────────────────────────────────────────
 export const transactionsAPI = {
-  getAll: async () => {
-    return apiCall<any[]>("/api/transactions", {
-      method: "GET",
-    });
+  getAll: async (params?: { month?: string; categoryId?: string; isRecurring?: string }) => {
+    let url = "/api/transactions";
+    const query = new URLSearchParams();
+    if (params?.month) query.append("month", params.month);
+    if (params?.categoryId) query.append("category_id", params.categoryId);
+    if (params?.isRecurring) query.append("is_recurring", params.isRecurring);
+    if (query.toString()) url += `?${query.toString()}`;
+    
+    return apiCall<any[]>(url, { method: "GET" });
   },
+  getById: async (id: string) => apiCall<any>(`/api/transactions/${id}`, { method: "GET" }),
+  create: async (data: any) => apiCall<any>("/api/transactions", { method: "POST", body: JSON.stringify(data) }),
+  update: async (id: string, data: any) => apiCall<any>(`/api/transactions/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  delete: async (id: string) => apiCall<{ message: string }>(`/api/transactions/${id}`, { method: "DELETE" }),
+  getRecurring: async () => apiCall<any[]>("/api/transactions/recurring", { method: "GET" }),
+};
 
-  getById: async (id: string) => {
-    return apiCall<any>(`/api/transactions/${id}`, {
-      method: "GET",
-    });
-  },
+// ─── ACCOUNTS API ─────────────────────────────────────────────────────────────
+export const accountsAPI = {
+  getAll: async () => apiCall<any[]>("/api/accounts", { method: "GET" }),
+  create: async (data: any) => apiCall<any>("/api/accounts", { method: "POST", body: JSON.stringify(data) }),
+  update: async (id: string, data: any) => apiCall<any>(`/api/accounts/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  delete: async (id: string, force?: boolean) => apiCall<{ message: string }>(`/api/accounts/${id}${force ? '?force=true' : ''}`, { method: "DELETE" }),
+};
 
-  create: async (data: any) => {
-    return apiCall<any>("/api/transactions", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+// ─── BUDGETS API ──────────────────────────────────────────────────────────────
+export const budgetsAPI = {
+  get: async (month?: string) => {
+    let url = "/api/budgets";
+    if (month) url += `?month=${month}`;
+    return apiCall<any>(url, { method: "GET" });
   },
+  save: async (data: any) => apiCall<any>("/api/budgets", { method: "POST", body: JSON.stringify(data) }),
+};
 
-  update: async (id: string, data: any) => {
-    return apiCall<any>(`/api/transactions/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
+// ─── CATEGORIES API ───────────────────────────────────────────────────────────
+export const categoriesAPI = {
+  getAll: async () => apiCall<any[]>("/api/categories", { method: "GET" }),
+  create: async (data: any) => apiCall<any>("/api/categories", { method: "POST", body: JSON.stringify(data) }),
+  update: async (id: string, data: any) => apiCall<any>(`/api/categories/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  delete: async (id: string) => apiCall<{ message: string }>(`/api/categories/${id}`, { method: "DELETE" }),
+};
 
-  delete: async (id: string) => {
-    return apiCall<{ message: string }>(`/api/transactions/${id}`, {
-      method: "DELETE",
-    });
+// ─── SAVINGS GOALS API ────────────────────────────────────────────────────────
+export const savingsGoalsAPI = {
+  getAll: async (month?: string) => {
+    let url = "/api/savings-goals";
+    if (month) url += `?month=${month}`;
+    return apiCall<any[]>(url, { method: "GET" });
   },
+  create: async (data: any) => apiCall<any>("/api/savings-goals", { method: "POST", body: JSON.stringify(data) }),
+  update: async (id: string, data: any) => apiCall<any>(`/api/savings-goals/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  recordSavings: async (id: string, amount: number) => apiCall<any>(`/api/savings-goals/${id}/record`, { method: "POST", body: JSON.stringify({ amount }) }),
+  delete: async (id: string) => apiCall<{ message: string }>(`/api/savings-goals/${id}`, { method: "DELETE" }),
+};
+
+// ─── STATS API ────────────────────────────────────────────────────────────────
+export const statsAPI = {
+  getSummary: async (month?: string) => {
+    let url = "/api/stats/summary";
+    if (month) url += `?month=${month}`;
+    return apiCall<any>(url, { method: "GET" });
+  },
+  getFinlyScore: async (month?: string) => {
+    let url = "/api/stats/finly-score";
+    if (month) url += `?month=${month}`;
+    return apiCall<any>(url, { method: "GET" });
+  },
+  getDailyExpenses: async (month: string) => apiCall<any[]>(`/api/stats/daily-expenses?month=${month}`, { method: "GET" }),
+  getCategoryBreakdown: async (month: string) => apiCall<any[]>(`/api/stats/category-breakdown?month=${month}`, { method: "GET" }),
+};
+
+// ─── SETTINGS API ─────────────────────────────────────────────────────────────
+export const settingsAPI = {
+  getAll: async () => apiCall<any>("/api/settings", { method: "GET" }),
+  update: async (data: any) => apiCall<any>("/api/settings", { method: "POST", body: JSON.stringify(data) }),
+};
+
+// ─── AI API ───────────────────────────────────────────────────────────────────
+export const aiAPI = {
+  chat: async (prompt: string) => apiCall<any>("/api/ai/chat", { method: "POST", body: JSON.stringify({ prompt }) }),
+};
+
+// ─── BOOKMARKS API ────────────────────────────────────────────────────────────
+export const bookmarksAPI = {
+  getAll: async () => apiCall<any[]>("/api/bookmarks", { method: "GET" }),
+  create: async (transactionId: string) => apiCall<any>("/api/bookmarks", { method: "POST", body: JSON.stringify({ transaction_id: transactionId }) }),
+  delete: async (transactionId: string) => apiCall<{ message: string }>(`/api/bookmarks/${transactionId}`, { method: "DELETE" }),
 };
 
 // Export the base URL for other uses

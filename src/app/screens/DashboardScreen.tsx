@@ -10,6 +10,8 @@ import { BalanceCard } from "../components/BalanceCard";
 import { SpendingOverview } from "../components/SpendingOverview";
 import { useCategoryContext } from "../context/CategoryContext";
 
+import { authAPI, statsAPI, transactionsAPI, accountsAPI } from "../services/api";
+
 // ─── Zero State Data ────────────────────────────────────────────────────────────
 const ACCOUNTS_ZERO = [
   { id:"a1", name:"HDFC Savings",      emoji:"🏦", color:"#4895EF", balance:0 },
@@ -119,30 +121,63 @@ function SectionHeader({ title, actionLabel, onAction }: {
 export function DashboardScreen() {
   const navigate = useNavigate();
   const [dateMode, setDateMode]     = useState<"month" | "custom">("month");
-  const [monthIdx, setMonthIdx]     = useState(3); // April 2026 (index 3)
-  const [year, setYear]             = useState(2026);
+  const [monthIdx, setMonthIdx]     = useState(new Date().getMonth());
+  const [year, setYear]             = useState(new Date().getFullYear());
   const [dismissedAlert, setAlert]  = useState(false);
+  
   const [recurringList, setRecurringList] = useState<any[]>([]);
+  const [stats, setStats] = useState({ income: 0, expense: 0, balance: 0, savings: 0 });
+  const [finlyScore, setFinlyScore] = useState(0);
+  const [accountsList, setAccountsList] = useState<any[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { getCatById } = useCategoryContext();
+  const user = authAPI.getCurrentUser();
 
   // Dynamic greeting based on time
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return "Good Morning";
-    if (hour >= 12 && hour < 17) return "Good Afternoon";
-    if (hour >= 17 && hour < 21) return "Good Evening";
-    return "Good Night";
+    const name = user?.name ? user.name.split(" ")[0] : "there";
+    if (hour >= 5 && hour < 12) return `Good Morning, ${name}`;
+    if (hour >= 12 && hour < 17) return `Good Afternoon, ${name}`;
+    if (hour >= 17 && hour < 21) return `Good Evening, ${name}`;
+    return `Good Night, ${name}`;
+  };
+
+  const loadDashboardData = async () => {
+    setIsLoading(true);
+    try {
+      const monthStr = `${year}-${String(monthIdx + 1).padStart(2, "0")}`;
+      
+      const [summaryData, scoreData, accountsData, txData, recurringData] = await Promise.all([
+        statsAPI.getSummary(monthStr),
+        statsAPI.getFinlyScore(monthStr),
+        accountsAPI.getAll(),
+        transactionsAPI.getAll({ month: monthStr }),
+        transactionsAPI.getRecurring()
+      ]);
+
+      setStats({
+        income: summaryData?.income || 0,
+        expense: summaryData?.expense || 0,
+        balance: summaryData?.balance || 0,
+        savings: summaryData?.savings || 0
+      });
+      setFinlyScore(scoreData?.score || 0);
+      setAccountsList(accountsData || []);
+      setRecentTransactions((txData || []).slice(0, 3));
+      setRecurringList(recurringData?.filter((r: any) => r.status === "active").slice(0, 3) || []);
+    } catch (error) {
+      console.error("Failed to load dashboard data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    try {
-      const data = JSON.parse(localStorage.getItem("recurringTransactions") || "[]");
-      setRecurringList(data.filter((r: any) => r.status === "active").slice(0, 3));
-    } catch (error) {
-      console.error("Failed to load recurring transactions:", error);
-    }
-  }, []);
+    loadDashboardData();
+  }, [monthIdx, year]);
 
   const prevMonth = () => {
     if (monthIdx === 0) { setMonthIdx(11); setYear(y => y - 1); }
@@ -206,7 +241,7 @@ export function DashboardScreen() {
               </span>
             </div>
             <p className="text-white font-bold mb-1" style={{ fontSize: 22, letterSpacing: "-0.3px" }}>
-              ₹ 0.00
+              ₹ {stats.balance.toLocaleString("en-IN")}
             </p>
             <p className="text-white/70 mb-4" style={{ fontSize: 13 }}>
               Total balance · Start adding transactions
@@ -288,10 +323,10 @@ export function DashboardScreen() {
 
         {/* ── Summary Cards 2×2 ── */}
         <div className="grid grid-cols-2 gap-3">
-          <StatCard label="Income"      value="₹0" accentColor="#22C55E" icon={TrendingUp} />
-          <StatCard label="Expense"     value="₹0" accentColor="#EF4444" icon={ArrowUpDown} />
-          <StatCard label="Net Balance" value="₹0" accentColor="#7C5CFF" icon={Wallet} />
-          <StatCard label="Savings"     value="₹0" accentColor="#F72585" icon={BarChart2} />
+          <StatCard label="Income"      value={`₹${stats.income.toLocaleString("en-IN")}`} accentColor="#22C55E" icon={TrendingUp} isEmpty={stats.income === 0} />
+          <StatCard label="Expense"     value={`₹${stats.expense.toLocaleString("en-IN")}`} accentColor="#EF4444" icon={ArrowUpDown} isEmpty={stats.expense === 0} />
+          <StatCard label="Net Balance" value={`₹${stats.balance.toLocaleString("en-IN")}`} accentColor="#7C5CFF" icon={Wallet} isEmpty={stats.balance === 0} />
+          <StatCard label="Savings"     value={`₹${stats.savings.toLocaleString("en-IN")}`} accentColor="#F72585" icon={BarChart2} isEmpty={stats.savings === 0} />
         </div>
 
         {/* ── Finly Score ── */}
@@ -310,32 +345,32 @@ export function DashboardScreen() {
                 <h3 className="text-white font-bold" style={{ fontSize: 16 }}>Finly Score</h3>
               </div>
               <p className="text-white/38" style={{ fontSize: 12 }}>
-                Start tracking to see your financial health
+                {finlyScore > 0 ? "You're on the right track!" : "Start tracking to see your financial health"}
               </p>
             </div>
             <div className="text-right">
-              <p className="font-bold" style={{ fontSize: 38, color: "rgba(255,255,255,0.22)", letterSpacing: "-1px" }}>0</p>
+              <p className="font-bold" style={{ fontSize: 38, color: finlyScore > 0 ? "white" : "rgba(255,255,255,0.22)", letterSpacing: "-1px" }}>{finlyScore}</p>
               <p className="text-white/28" style={{ fontSize: 12 }}>/100</p>
             </div>
           </div>
 
-          {/* Progress bar — empty */}
+          {/* Progress bar */}
           <div className="h-2 rounded-full overflow-hidden relative z-10"
             style={{ background: "rgba(255,255,255,0.08)" }}>
             <motion.div
               className="h-full rounded-full"
               style={{ background: "linear-gradient(90deg,#7C5CFF,#4CC9F0)" }}
               initial={{ width: "0%" }}
-              animate={{ width: "0%" }}
+              animate={{ width: `${finlyScore}%` }}
             />
           </div>
 
           <div className="flex items-center justify-between mt-3 relative z-10">
             <p className="text-white/25" style={{ fontSize: 10 }}>
-              Add income &amp; expenses to compute score
+              {finlyScore > 0 ? "Keep it up!" : "Add income & expenses to compute score"}
             </p>
-            <span className="px-2 py-0.5 rounded-full" style={{ fontSize: 10, fontWeight: 700, background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.28)" }}>
-              0%
+            <span className="px-2 py-0.5 rounded-full" style={{ fontSize: 10, fontWeight: 700, background: "rgba(255,255,255,0.07)", color: finlyScore > 0 ? "white" : "rgba(255,255,255,0.28)" }}>
+              {finlyScore}%
             </span>
           </div>
         </div>
@@ -343,7 +378,7 @@ export function DashboardScreen() {
         {/* ── Overview Card (BalanceCard) ── */}
         <div>
           <SectionHeader title="Overview" />
-          <BalanceCard />
+          <BalanceCard balance={stats.balance} income={stats.income} expense={stats.expense} />
         </div>
 
         {/* ── Spending Overview (pie chart) ── */}
@@ -371,22 +406,60 @@ export function DashboardScreen() {
         <div>
           <SectionHeader
             title="Recent Transactions"
-            actionLabel="View All"
-            onAction={() => navigate("/dashboard/transactions")}
+            actionLabel={recentTransactions.length > 0 ? "View All" : undefined}
+            onAction={recentTransactions.length > 0 ? () => navigate("/dashboard/transactions") : undefined}
           />
-          <div className="rounded-2xl overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg,rgba(255,255,255,0.045) 0%,rgba(255,255,255,0.018) 100%)",
-              border: "1px solid rgba(255,255,255,0.07)",
-            }}>
-            <EmptyState
-              emoji="🧾"
-              title="No transactions yet"
-              subtitle="Your recent income & expenses will appear here"
-              ctaLabel="Add your first transaction"
-              onCta={() => navigate("/dashboard/add-transaction")}
-            />
-          </div>
+          {recentTransactions.length === 0 ? (
+            <div className="rounded-2xl overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg,rgba(255,255,255,0.045) 0%,rgba(255,255,255,0.018) 100%)",
+                border: "1px solid rgba(255,255,255,0.07)",
+              }}>
+              <EmptyState
+                emoji="🧾"
+                title="No transactions yet"
+                subtitle="Your recent income & expenses will appear here"
+                ctaLabel="Add your first transaction"
+                onCta={() => navigate("/dashboard/add-transaction")}
+              />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {recentTransactions.map((tx: any) => {
+                const cat = tx.categoryId || tx.category_id ? getCatById(tx.categoryId || tx.category_id) : null;
+                const typeColor = tx.type === "income" ? "#22C55E" : tx.type === "transfer" ? "#4CC9F0" : "#EF4444";
+                const isExpense = tx.type === "expense";
+                return (
+                  <motion.div key={tx.id}
+                    whileTap={{scale:0.98}}
+                    onClick={() => navigate("/dashboard/transactions")}
+                    className="flex items-center gap-3 p-3 rounded-2xl cursor-pointer"
+                    style={{
+                      background: `linear-gradient(135deg,${typeColor}08 0%,rgba(255,255,255,0.02) 100%)`,
+                      border: `1px solid ${typeColor}20`,
+                    }}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+                      style={{background:`${cat?.color || typeColor}18`, border:`1px solid ${cat?.color || typeColor}30`}}>
+                      {cat?.emoji || (tx.type === "income" ? "💰" : tx.type === "transfer" ? "🔄" : "💸")}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-semibold truncate" style={{fontSize:13}}>
+                        {tx.note || cat?.name || "Transaction"}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span style={{fontSize:11, color:"rgba(255,255,255,0.55)"}}>
+                          {tx.date ? new Date(tx.date).toLocaleDateString("en-IN", {month:"short", day:"numeric"}) : "Unknown"}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="font-bold flex-shrink-0" style={{fontSize:14, color:typeColor}}>
+                      {isExpense ? "-" : "+"}₹{parseFloat(tx.amount).toLocaleString("en-IN")}
+                    </p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* ── Upcoming Recurring ── */}
@@ -471,27 +544,33 @@ export function DashboardScreen() {
               style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
               <div>
                 <p className="text-white/40" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.4px" }}>NET WORTH</p>
-                <p className="font-bold mt-0.5" style={{ fontSize: 26, color: "rgba(255,255,255,0.22)" }}>₹0</p>
+                <p className="font-bold mt-0.5" style={{ fontSize: 26, color: stats.balance > 0 ? "white" : "rgba(255,255,255,0.22)" }}>
+                  ₹{stats.balance.toLocaleString("en-IN")}
+                </p>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
                 style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}>
                 <Wallet className="w-3.5 h-3.5 text-white/30" />
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.30)", fontWeight: 600 }}>No balance</span>
+                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.30)", fontWeight: 600 }}>
+                  {accountsList.length > 0 ? `${accountsList.length} Accounts` : "No accounts"}
+                </span>
               </div>
             </div>
 
             {/* Individual accounts */}
             <div className="space-y-3">
-              {ACCOUNTS_ZERO.map(acc => (
+              {(accountsList.length > 0 ? accountsList.slice(0, 4) : ACCOUNTS_ZERO).map(acc => (
                 <div key={acc.id} className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
-                    style={{ background: `${acc.color}18`, border: `1px solid ${acc.color}28` }}>
-                    {acc.emoji}
+                    style={{ background: `${acc.color || '#4895EF'}18`, border: `1px solid ${acc.color || '#4895EF'}28` }}>
+                    {acc.emoji || "🏦"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white/60 font-semibold truncate" style={{ fontSize: 13 }}>{acc.name}</p>
                   </div>
-                  <p className="font-bold" style={{ fontSize: 13, color: "rgba(255,255,255,0.25)" }}>₹0</p>
+                  <p className="font-bold" style={{ fontSize: 13, color: acc.balance > 0 ? "white" : "rgba(255,255,255,0.25)" }}>
+                    ₹{parseFloat(acc.balance || 0).toLocaleString("en-IN")}
+                  </p>
                 </div>
               ))}
             </div>

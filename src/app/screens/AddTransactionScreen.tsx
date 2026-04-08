@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router";
+import { transactionsAPI } from "../services/api";
+import { toast } from "sonner";
 import {
   ArrowLeft, ScanLine, Camera, Image as ImageIcon,
   Repeat, ChevronDown, ChevronLeft, ChevronRight,
@@ -627,79 +629,41 @@ export function AddTransactionScreen() {
     return Object.keys(e).length === 0;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validate()) return;
 
     try {
       if (recurring) {
-        // Save as recurring template
-        const recurringTemplate = {
-          id: `rec-${Date.now()}`,
+        // Save as recurring template + transaction
+        await transactionsAPI.create({
           type: txType,
           amount: parseFloat(amount),
-          categoryId: catId,
+          category_id: catId,
           subcategoryId: subId,
-          accountId: accId,
-          toAccountId: txType === "transfer" ? toAccId : null,
+          account_id: accId,
+          to_account_id: txType === "transfer" ? toAccId : null,
           note,
-          frequency: recurFreq,
-          startDate: date.toISOString(),
-          endType: recurEndType,
-          endDate: recurEndType === "date" ? recurEndDate.toISOString() : null,
-          endCount: recurEndType === "count" ? recurEndCount : null,
-          occurrenceCount: 0,
-          status: "active",
-          createdAt: new Date().toISOString(),
-        };
-
-        const existingRecurring = JSON.parse(localStorage.getItem("recurringTransactions") || "[]");
-        existingRecurring.push(recurringTemplate);
-        localStorage.setItem("recurringTransactions", JSON.stringify(existingRecurring));
-
-        // Create first occurrence
-        const firstTransaction = {
-          id: `tx-${Date.now()}`,
-          type: txType,
-          amount: parseFloat(amount),
-          categoryId: catId,
-          subcategoryId: subId,
-          accountId: accId,
-          toAccountId: txType === "transfer" ? toAccId : null,
           date: date.toISOString(),
-          note,
-          isRecurring: true,
-          recurringId: recurringTemplate.id,
-          createdAt: new Date().toISOString(),
-        };
-
-        const existingTransactions = JSON.parse(localStorage.getItem("transactions") || "[]");
-        existingTransactions.push(firstTransaction);
-        localStorage.setItem("transactions", JSON.stringify(existingTransactions));
+          repeat_months: recurFreq === "daily" ? 1 : recurFreq === "weekly" ? 1 : recurFreq === "monthly" ? 1 : recurFreq === "quarterly" ? 3 : recurFreq === "half-yearly" ? 6 : 12,
+        });
       } else {
         // Save regular transaction
-        const transaction = {
-          id: `tx-${Date.now()}`,
+        await transactionsAPI.create({
           type: txType,
           amount: parseFloat(amount),
-          categoryId: catId,
+          category_id: catId,
           subcategoryId: subId,
-          accountId: accId,
-          toAccountId: txType === "transfer" ? toAccId : null,
+          account_id: accId,
+          to_account_id: txType === "transfer" ? toAccId : null,
           date: date.toISOString(),
           note,
-          isRecurring: false,
-          createdAt: new Date().toISOString(),
-        };
-
-        const existingTransactions = JSON.parse(localStorage.getItem("transactions") || "[]");
-        existingTransactions.push(transaction);
-        localStorage.setItem("transactions", JSON.stringify(existingTransactions));
+        });
       }
+      setSaved(true);
     } catch (error) {
       console.error("Failed to save transaction:", error);
+      toast.error("Failed to save transaction");
     }
-
-    setSaved(true);
   };
 
   const handleAIScan = () => {

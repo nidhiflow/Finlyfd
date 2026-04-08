@@ -6,6 +6,8 @@ import {
   ChevronDown, Calendar, TrendingUp, AlertCircle, CheckCircle2,
 } from "lucide-react";
 import { useCategoryContext } from "../context/CategoryContext";
+import { transactionsAPI } from "../services/api";
+import { toast } from "sonner";
 
 // Types
 interface RecurringTransaction {
@@ -48,13 +50,38 @@ export function RecurringTransactionsScreen() {
     loadRecurring();
   }, []);
 
-  const loadRecurring = () => {
+  const loadRecurring = async () => {
     try {
-      const data = JSON.parse(localStorage.getItem("recurringTransactions") || "[]");
-      setRecurring(data);
+      const data = await transactionsAPI.getRecurring();
+      setRecurring(data.map((t: any) => ({
+        id: t.id,
+        type: t.type,
+        amount: parseFloat(t.amount),
+        categoryId: t.category_id,
+        subcategoryId: null,
+        accountId: t.account_id,
+        toAccountId: null,
+        note: t.note || "Recurring Transaction",
+        frequency: rToFreq(t.repeat_months),
+        startDate: t.date,
+        endType: "never",
+        endDate: null,
+        endCount: null,
+        occurrenceCount: 0,
+        status: "active",
+        createdAt: t.date,
+      })));
     } catch (error) {
       console.error("Failed to load recurring transactions:", error);
     }
+  };
+
+  const rToFreq = (months: number) => {
+    if (months === 1) return "monthly";
+    if (months === 3) return "quarterly";
+    if (months === 6) return "half-yearly";
+    if (months === 12) return "yearly";
+    return "monthly";
   };
 
   const handleTogglePause = (id: string) => {
@@ -65,19 +92,20 @@ export function RecurringTransactionsScreen() {
           : r
       );
       setRecurring(updated);
-      localStorage.setItem("recurringTransactions", JSON.stringify(updated));
+      toast.success("Transaction status updated");
     } catch (error) {
       console.error("Failed to toggle pause:", error);
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     try {
-      const updated = recurring.filter(r => r.id !== id);
-      setRecurring(updated);
-      localStorage.setItem("recurringTransactions", JSON.stringify(updated));
+      await transactionsAPI.delete(id);
+      setRecurring(recurring.filter(r => r.id !== id));
+      toast.success("Recurring transaction deleted");
     } catch (error) {
       console.error("Failed to delete:", error);
+      toast.error("Failed to delete");
     }
   };
 

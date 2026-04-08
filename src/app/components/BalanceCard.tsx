@@ -1,6 +1,6 @@
 import { Wallet } from "lucide-react";
 
-export function BalanceCard() {
+export function BalanceCard({ balance = 0, income = 0, expense = 0 }) {
   return (
     <div className="relative overflow-hidden rounded-3xl p-6"
       style={{
@@ -22,14 +22,14 @@ export function BalanceCard() {
           </p>
         </div>
 
-        {/* Main zero value */}
+        {/* Main value */}
         <h2 className="text-white font-bold mb-1" style={{ fontSize: 38, letterSpacing: "-1px" }}>
-          ₹ 0.00
+          ₹ {balance.toLocaleString("en-IN")}
         </h2>
 
-        {/* Empty state sub-label */}
+        {/* Sub-label */}
         <p className="text-white/55 mb-5" style={{ fontSize: 13 }}>
-          No transactions recorded yet
+          {balance === 0 ? "No transactions recorded yet" : "Current balance for this period"}
         </p>
 
         {/* Income / Expense chips */}
@@ -39,7 +39,7 @@ export function BalanceCard() {
             <div className="w-2 h-2 rounded-full" style={{ background: "#22C55E" }} />
             <div>
               <p className="text-white/60" style={{ fontSize: 10 }}>Income</p>
-              <p className="text-white font-bold" style={{ fontSize: 13 }}>₹0</p>
+              <p className="text-white font-bold" style={{ fontSize: 13 }}>₹{income.toLocaleString("en-IN")}</p>
             </div>
           </div>
 
@@ -48,7 +48,7 @@ export function BalanceCard() {
             <div className="w-2 h-2 rounded-full" style={{ background: "#EF4444" }} />
             <div>
               <p className="text-white/60" style={{ fontSize: 10 }}>Expense</p>
-              <p className="text-white font-bold" style={{ fontSize: 13 }}>₹0</p>
+              <p className="text-white font-bold" style={{ fontSize: 13 }}>₹{expense.toLocaleString("en-IN")}</p>
             </div>
           </div>
         </div>

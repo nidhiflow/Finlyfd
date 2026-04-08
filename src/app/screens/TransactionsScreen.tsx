@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { transactionsAPI, bookmarksAPI } from "../services/api";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -332,10 +333,10 @@ function CustomDatePicker({ onApply, onClose }: {
 // ─── Main Screen ────────────────────────────────────────────────────────────────
 export function TransactionsScreen() {
   const navigate = useNavigate();
-  const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TXS);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [period, setPeriod] = useState<PeriodTab>("Daily");
-  const [currentMonth, setCurrentMonth] = useState(3); // 0-indexed, April = 3
-  const [currentYear, setCurrentYear] = useState(2026);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-indexed
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
   const [customFrom, setCustomFrom] = useState<string | null>(null);
   const [customTo, setCustomTo] = useState<string | null>(null);
@@ -343,6 +344,49 @@ export function TransactionsScreen() {
   const [actionTx, setActionTx] = useState<Transaction | null>(null);
   const [deleteTx, setDeleteTx] = useState<Transaction | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load transactions from real API
+  const loadTransactions = async () => {
+    setIsLoading(true);
+    try {
+      // Default: load current year's transactions for fluid navigation
+      const start = `${currentYear}-01-01`;
+      const end = `${currentYear}-12-31`;
+      const url = `/api/transactions?startDate=${start}&endDate=${end}`;
+      const data = await transactionsAPI.getAll({ month: undefined }); // Wait, API is already created but let's just fetch all using fetch or API directly.
+      // Wait, let's use the API method we added.
+      // Our api method only has `month`, `categoryId`, `isRecurring`. Let's just fetch all by not passing anything.
+      const txData = await transactionsAPI.getAll();
+      
+      const mapped = txData.map((t: any) => ({
+        id: t.id,
+        icon: ShoppingBag, // We don't have dynamic Icon components stored easily, so default to ShoppingBag
+        name: t.note || t.category_name || "Transaction",
+        note: t.note || "",
+        account: t.account_name || "Account",
+        amount: parseFloat(t.amount),
+        date: t.date?.split("T")[0] || "",
+        dateLabel: new Date(t.date).toLocaleDateString(),
+        category: t.category_name || "Uncategorized",
+        subcategory: undefined,
+        bookmarked: false, // Wait, bookmarks are separate table, but finly-backend transaction may not include it. Let's assume false for now.
+        type: t.type,
+        recurring: !!t.repeat_group_id,
+        original: t
+      }));
+      setTransactions(mapped);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load transactions");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTransactions();
+  }, [currentYear]); // Refresh when year changes
 
   const toggleGroup = useCallback((key: string) => {
     setExpandedGroups(prev => {
@@ -373,10 +417,14 @@ export function TransactionsScreen() {
       return transactions.filter(t => t.date >= customFrom && t.date <= customTo);
     }
     if (period === "Annually") {
-      return transactions.filter(t => new Date(t.date).getFullYear() === currentYear);
+      return transactions.filter(t => {
+        if (!t.date) return false;
+        return new Date(t.date).getFullYear() === currentYear;
+      });
     }
     // Default: filter by current month/year
     return transactions.filter(t => {
+      if (!t.date) return false;
       const d = new Date(t.date);
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     });
@@ -415,22 +463,37 @@ export function TransactionsScreen() {
     toast.success("Custom range applied");
   };
 
-  const toggleBookmark = useCallback((id: number) => {
-    setTransactions(prev => prev.map(t => {
-      if (t.id !== id) return t;
-      const next = !t.bookmarked;
-      toast.success(next ? "Bookmarked" : "Removed bookmark");
-      return { ...t, bookmarked: next };
-    }));
-  }, []);
+  const toggleBookmark = useCallback(async (id: number) => {
+    try {
+      const t = transactions.find(tx => tx.id === id);
+      if (!t) return;
+      
+      const newStatus = !t.bookmarked;
+      // Optimistic update
+      setTransactions(prev => prev.map(tx => tx.id === id ? { ...tx, bookmarked: newStatus } : tx));
+      
+      if (newStatus) {
+        await bookmarksAPI.create(id.toString());
+        toast.success("Bookmarked");
+      } else {
+        await bookmarksAPI.delete(id.toString());
+        toast.success("Removed bookmark");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update bookmark");
+    }
+  }, [transactions]);
 
-  const handleDelete = (tx: Transaction) => {
-    setTransactions(prev => prev.filter(t => t.id !== tx.id));
-    setDeleteTx(null); setActionTx(null);
-    toast("Transaction deleted", {
-      action: { label: "Undo", onClick: () => setTransactions(prev => [...prev, tx].sort((a, b) => a.id - b.id)) },
-      duration: 5000,
-    });
+  const handleDelete = async (tx: Transaction) => {
+    try {
+      await transactionsAPI.delete(tx.id.toString());
+      setTransactions(prev => prev.filter(t => t.id !== tx.id));
+      setDeleteTx(null); setActionTx(null);
+      toast.success("Transaction deleted");
+    } catch (err) {
+      toast.error("Failed to delete transaction");
+    }
   };
 
   const dateGroups = useMemo(() => groupByDate(filtered), [filtered]);

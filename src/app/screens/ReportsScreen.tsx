@@ -437,19 +437,8 @@ export function ReportsScreen() {
   const [compareMode, setCompareMode] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // ── Check for real transaction data ──
-  // In a real app, this would check localStorage or context for actual transactions
-  // For now, we check if there are saved transactions in localStorage
-  const hasTransactions = (() => {
-    try {
-      const savedTransactions = localStorage.getItem("transactions");
-      if (!savedTransactions) return false;
-      const transactions = JSON.parse(savedTransactions);
-      return Array.isArray(transactions) && transactions.length > 0;
-    } catch {
-      return false;
-    }
-  })();
+  // We will load real API data in the future. For now, there's no mock data.
+  const hasTransactions = false;
 
   // Current data based on type - only show if transactions exist
   const mainData   = hasTransactions ? (chartType === "expense" ? EXPENSE_APR : INCOME_APR) : [];
