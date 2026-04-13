@@ -2,15 +2,15 @@ name: Frontend CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [finly]
   pull_request:
-    branches: [main]
+    branches: [finly]
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
-    build:
+  build:
     name: Build
     runs-on: ubuntu-latest
     permissions:
@@ -28,36 +28,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 🔥 ADD THIS - UNIT TESTS (Jest)
+      # ✅ Unit Tests
       - name: Run Unit Tests
         run: npm run test:ci
 
-      # 🔥 ADD THIS - START APP FOR E2E
-      - name: Build app for E2E
-        run: npm run build
-
-      - name: Serve app
-        run: |
-          npm install -g serve
-          serve -s dist -l 3000 &
-      
-      # 🔥 ADD THIS - E2E TESTS (Cypress)
-      - name: Run E2E Tests
-        uses: cypress-io/github-action@v6
-        with:
-          wait-on: http://localhost:3000
-          wait-on-timeout: 60
-
-      # Existing step
-      - name: Lint
-        run: npm run lint
-
-      # Existing build (keep it)
-      - name: Build
+      # ✅ Build app (used for both E2E + Docker)
+      - name: Build app
         run: npm run build
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
+      # ✅ Serve app for Cypress
+      - name: Serve app
+        run: |
+          npm install -g serve
+          serve -s dist -l 3000 &
+
+      # ✅ E2E Tests
+      - name: Run E2E Tests
+        uses: cypress-io/github-action@v6
+        with:
+          wait-on: http://localhost:3000
+          wait-on-timeout: 120
+
+      # ✅ Lint
+      - name: Lint
+        run: npm run lint
+
+      # ✅ Docker login
       - name: Log in to GHCR
         if: github.ref == 'refs/heads/main'
         uses: docker/login-action@v3
@@ -66,6 +64,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # ✅ Build & Push Image
       - name: Build and push Docker image
         if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v6
@@ -79,29 +78,32 @@ jobs:
             VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
 
   test:
-    name: Test
+    name: Security & Quality
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       packages: read
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # ✅ Trivy Scan (FAIL on vulnerabilities 🔥)
       - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
           format: table
-          exit-code: 0
+          exit-code: 1
           severity: CRITICAL,HIGH
         env:
           TRIVY_USERNAME: ${{ github.actor }}
           TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
+      # ✅ SonarQube
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
@@ -112,20 +114,20 @@ jobs:
             -Dsonar.projectKey=finly-frontend
             -Dsonar.sources=src
             -Dsonar.exclusions=node_modules/**,dist/**
-        continue-on-error: true
 
+      # ✅ OWASP ZAP
       - name: OWASP ZAP DAST Scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
-          target: ${{ secrets.FRONTEND_URL || 'http://localhost' }}
+          target: ${{ secrets.FRONTEND_URL || 'http://localhost:3000' }}
           allow_issue_writing: false
-        continue-on-error: true
 
   deploy:
     name: Deploy
     needs: [build, test]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+
     steps:
       - name: Deploy to Render
         run: |
