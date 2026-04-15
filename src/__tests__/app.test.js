@@ -1,4 +1,3 @@
-import { describe, test, expect } from '@jest/globals';
 
 describe("Authentication & Session Management", () => {
   test("Login succeeds with valid credentials", () => {
