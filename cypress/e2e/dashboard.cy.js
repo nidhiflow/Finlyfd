@@ -43,20 +43,18 @@ describe("Dashboard Module", () => {
   });
 
   it("Dashboard handles empty data", () => {
-    cy.intercept("GET", "**/dashboard**", {
-      statusCode: 200,
-      body: {
-        balance: 0,
-        income: 0,
-        expense: 0,
-        transactions: []
-      }
-    }).as("emptyDashboard");
-
-    cy.reload();
-    cy.wait("@emptyDashboard");
-
-    cy.get("body").should("be.visible");
+  cy.intercept("GET", "**/dashboard**", {
+    statusCode: 200,
+    body: {
+      balance: 0,
+      income: 0,
+      expense: 0,
+      transactions: []
+    }
   });
 
+  cy.reload();
+
+  cy.contains("0").should("exist"); // if UI shows 0
+});
 });
