@@ -16,31 +16,52 @@ describe("Auth Module", () => {
     cy.contains("Sign In").should("exist");
   });
 
-  it("Login with demo credentials", () => {
+  it("Login with demo credentials (mocked API)", () => {
     cy.visit("/login");
+
+    // ✅ Mock login API
+    cy.intercept("POST", "**/login", {
+      statusCode: 200,
+      body: {
+        token: "fake-token",
+        user: {
+          id: 1,
+          email: "demo@finly.app"
+        }
+      }
+    }).as("loginRequest");
 
     cy.get('input[type="email"]').type("demo@finly.app");
     cy.get('input[type="password"]').type("demo123");
 
     cy.contains("Sign In").click();
 
-    // Accept multiple possible flows
+    cy.wait("@loginRequest");
+
+    // ✅ Accept multiple possible routes
     cy.url().should("match", /quick-auth-setup|quick-login|dashboard/);
   });
 
   it("OTP screen appears if required", () => {
     cy.visit("/login");
 
+    // ✅ Mock OTP-required response
+    cy.intercept("POST", "**/login", {
+      statusCode: 200,
+      body: {
+        requireOTP: true
+      }
+    }).as("loginOTP");
+
     cy.get('input[type="email"]').type("demo@finly.app");
     cy.get('input[type="password"]').type("demo123");
+
     cy.contains("Sign In").click();
 
-    // Check if OTP UI appears
-    cy.get("body").then(($body) => {
-      if ($body.text().includes("Verify OTP")) {
-        cy.get('#otp-0').should("exist");
-      }
-    });
+    cy.wait("@loginOTP");
+
+    cy.contains("Verify OTP").should("exist");
+    cy.get("#otp-0").should("exist");
   });
 
 });
