@@ -82,7 +82,7 @@ jobs:
     name: Security & Quality
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/finly'
     permissions:
       contents: read
       packages: read
@@ -127,7 +127,7 @@ jobs:
     name: Deploy
     needs: [build, test]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/finly'
 
     steps:
       - name: Deploy to Render
