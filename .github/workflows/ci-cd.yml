@@ -133,9 +133,10 @@ jobs:
             echo "RENDER_DEPLOY_HOOK not configured, skipping deploy"
           fi
 
+<<<<<<< HEAD
           # ✅ OWASP ZAP
-          - name: OWASP ZAP DAST Scan
-            uses: zaproxy/action-baseline@v0.14.0
-            with:
-              target: ${{ secrets.FRONTEND_URL || 'http://localhost:3000' }}
-              allow_issue_writing: false
+              - name: OWASP ZAP DAST Scan
+                uses: zaproxy/action-baseline@v0.14.0
+                with:
+                  target: ${{ secrets.FRONTEND_URL || 'http://localhost:3000' }}
+                  allow_issue_writing: false
