@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { authAPI } from "../services/api";
+import { authAPI } from "../../services/api";
 
 export function ForgotPasswordScreen() {
   const navigate = useNavigate();
