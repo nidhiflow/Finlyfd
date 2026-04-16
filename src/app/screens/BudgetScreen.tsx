@@ -88,7 +88,7 @@ export function BudgetScreen() {
       </div>
 
       {/* Pressure Category Alert */}
-      {pressureCategory.budgeted > 0 && (pressureCategory.spent / pressureCategory.budgeted) * 100 > 75 && (
+      {pressureCategory && pressureCategory.budgeted > 0 && (pressureCategory.spent / pressureCategory.budgeted) * 100 > 75 && (
         <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-2xl p-4">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-[#EF4444] flex-shrink-0 mt-0.5" />

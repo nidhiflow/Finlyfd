@@ -563,7 +563,7 @@ export function DashboardScreen() {
                 <div key={acc.id} className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
                     style={{ background: `${acc.color || '#4895EF'}18`, border: `1px solid ${acc.color || '#4895EF'}28` }}>
-                    {acc.emoji || "🏦"}
+                    {acc.icon || acc.emoji || "🏦"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white/60 font-semibold truncate" style={{ fontSize: 13 }}>{acc.name}</p>
