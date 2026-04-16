@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { authAPI } from "../services/api";
 
 export function ForgotPasswordScreen() {
   const navigate = useNavigate();
@@ -10,17 +11,64 @@ export function ForgotPasswordScreen() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSendOTP = () => {
-    setStep("otp");
+  const handleSendOTP = async () => {
+    if (!email.trim()) {
+      setError("Please enter your email");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await authAPI.forgotPassword({ email });
+      setStep("otp");
+    } catch (err: any) {
+      setError(err.message || "Failed to send reset code");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleVerifyOTP = () => {
-    setStep("password");
+  const handleVerifyOTP = async () => {
+    const code = otp.join("");
+    if (code.length !== 6) {
+      setError("Please enter the 6-digit code");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await authAPI.verifyResetOTP({ email, otp: code, type: "reset" });
+      setStep("password");
+    } catch (err: any) {
+      setError(err.message || "Invalid verification code");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleResetPassword = () => {
-    navigate("/login");
+  const handleResetPassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const code = otp.join("");
+      await authAPI.resetPassword({ email, code, newPassword });
+      navigate("/login");
+    } catch (err: any) {
+      setError(err.message || "Failed to reset password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleOTPChange = (index: number, value: string) => {
@@ -50,6 +98,12 @@ export function ForgotPasswordScreen() {
         </p>
       </div>
 
+      {error && (
+        <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
+          <p className="text-sm text-red-400">{error}</p>
+        </div>
+      )}
+
       <div className="flex-1">
         {step === "email" && (
           <>
@@ -71,9 +125,10 @@ export function ForgotPasswordScreen() {
 
             <button
               onClick={handleSendOTP}
-              className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 mb-4"
+              disabled={loading}
+              className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 mb-4 disabled:opacity-50"
             >
-              Send Reset Code
+              {loading ? "Sending..." : "Send Reset Code"}
             </button>
           </>
         )}
@@ -84,11 +139,8 @@ export function ForgotPasswordScreen() {
               <p className="text-sm text-white/50 mb-2">
                 Enter the 6-digit code sent to {email}
               </p>
-              <p className="text-xs text-blue-400/70 mb-6">
-                Demo: Use any 6-digit code (e.g., 123456)
-              </p>
 
-              <div className="flex gap-2 justify-center mb-6">
+              <div className="flex gap-2 justify-center mb-6 mt-4">
                 {otp.map((digit, index) => (
                   <input
                     key={index}
@@ -109,9 +161,10 @@ export function ForgotPasswordScreen() {
 
               <button
                 onClick={handleVerifyOTP}
-                className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30"
+                disabled={loading}
+                className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 disabled:opacity-50"
               >
-                Verify Code
+                {loading ? "Verifying..." : "Verify Code"}
               </button>
             </div>
           </>
@@ -162,9 +215,10 @@ export function ForgotPasswordScreen() {
 
             <button
               onClick={handleResetPassword}
-              className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30"
+              disabled={loading}
+              className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 disabled:opacity-50"
             >
-              Reset Password
+              {loading ? "Resetting..." : "Reset Password"}
             </button>
           </>
         )}

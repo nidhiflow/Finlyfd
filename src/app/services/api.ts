@@ -268,7 +268,7 @@ export const authAPI = {
   },
 
   // Reset password - Step 3
-  resetPassword: async (data: { email: string; newPassword: string; resetToken?: string }) => {
+  resetPassword: async (data: { email: string; code: string; newPassword: string }) => {
     return apiCall<{ message: string }>("/api/auth/reset-password", {
       method: "POST",
       body: JSON.stringify(data),
@@ -412,7 +412,7 @@ export const settingsAPI = {
 
 // ─── AI API ───────────────────────────────────────────────────────────────────
 export const aiAPI = {
-  chat: async (prompt: string) => apiCall<any>("/api/ai/chat", { method: "POST", body: JSON.stringify({ prompt }) }),
+  chat: async (prompt: string) => apiCall<any>("/api/ai/chat", { method: "POST", body: JSON.stringify({ message: prompt }) }),
 };
 
 // ─── BOOKMARKS API ────────────────────────────────────────────────────────────
