@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Send, Image, Mic, Trash2, Bot, User, TrendingUp, PiggyBank, AlertCircle } from "lucide-react";
+import { aiAPI } from "../services/api";
 
 export function AIAgentScreen() {
   const [message, setMessage] = useState("");
@@ -24,27 +25,43 @@ export function AIAgentScreen() {
     { icon: AlertCircle, text: "Budget optimization tips" },
   ];
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return;
 
-    // Add user message
     const userMsg = {
       id: messages.length + 1,
       type: "user" as const,
       content: message,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
-
-    // Mock AI response
-    const aiMsg = {
-      id: messages.length + 2,
-      type: "ai" as const,
-      content: "Based on your March spending of ₹18,700, you're doing 11% better than last month! Your top category is Food (₹8,200). Consider meal planning to reduce food costs by 15-20%.",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-
-    setMessages([...messages, userMsg, aiMsg]);
+    setMessages(prev => [...prev, userMsg]);
+    const prompt = message;
     setMessage("");
+
+    // Add typing indicator
+    const typingId = messages.length + 2;
+    const typingMsg = { id: typingId, type: "ai" as const, content: "Thinking...", timestamp: "" };
+    setMessages(prev => [...prev, typingMsg]);
+
+    try {
+      const response = await aiAPI.chat(prompt);
+      const aiContent = response?.reply || response?.message || response?.response || "I couldn't generate a response. Please try again.";
+      const aiMsg = {
+        id: typingId,
+        type: "ai" as const,
+        content: aiContent,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages(prev => prev.map(m => m.id === typingId ? aiMsg : m));
+    } catch (err: any) {
+      const errorMsg = {
+        id: typingId,
+        type: "ai" as const,
+        content: "Sorry, I encountered an error. Please try again later.",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages(prev => prev.map(m => m.id === typingId ? errorMsg : m));
+    }
   };
 
   return (

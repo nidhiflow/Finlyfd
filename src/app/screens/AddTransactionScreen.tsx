@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router";
-import { transactionsAPI } from "../services/api";
+import { transactionsAPI, accountsAPI } from "../services/api";
 import { toast } from "sonner";
 import {
   ArrowLeft, ScanLine, Camera, Image as ImageIcon,
@@ -17,16 +17,8 @@ import { useCategoryContext, Cat, Sub } from "../context/CategoryContext";
 
 // ─── Local types ───────────────────────────────────────────────────────────────
 // Cat and Sub are imported from context; Acc is local to this screen.
-interface Acc { id: string; name: string; emoji: string; type: string; color: string; balance: number; }
+interface Acc { id: string; name: string; emoji: string; icon?: string; type: string; color: string; balance: number; }
 type TxType = "expense" | "income" | "transfer";
-
-// ─── Accounts (local – could be moved to AccountContext later) ─────────────────
-const ACCOUNTS: Acc[] = [
-  { id:"a1", name:"HDFC Savings",      emoji:"🏦", type:"Savings",    color:"#4895EF", balance:45230  },
-  { id:"a2", name:"SBI Salary A/C",   emoji:"💰", type:"Salary",     color:"#22C55E", balance:125000 },
-  { id:"a3", name:"ICICI Credit Card",emoji:"💳", type:"Credit Card", color:"#F72585", balance:-18500 },
-  { id:"a4", name:"Cash Wallet",      emoji:"💵", type:"Cash",        color:"#FFB703", balance:3200   },
-];
 
 const RECENT_IDS = ["food", "vehicle", "bills"];
 const RECENT_INCOME_IDS = ["i-salary", "i-biz"];
@@ -549,9 +541,9 @@ export function AddTransactionScreen() {
   const [amount, setAmount]     = useState("");
   const [catId,  setCatId]      = useState<string|null>(null);
   const [subId,  setSubId]      = useState<string|null>(null);
-  const [accId,  setAccId]      = useState("a1");
-  const [toAccId,setToAccId]    = useState("a4");
-  const [date,   setDate]       = useState(new Date()); // Current date and time
+  const [accId,  setAccId]      = useState("");
+  const [toAccId,setToAccId]    = useState("");
+  const [date,   setDate]       = useState(new Date());
   const [note,   setNote]       = useState("");
   const [recurring,setRecurring]= useState(false);
   const [recurFreq,setRecurFreq]= useState<"daily"|"weekly"|"monthly"|"quarterly"|"half-yearly"|"yearly">("monthly");
@@ -561,6 +553,7 @@ export function AddTransactionScreen() {
   const [aiScanning, setAiScan] = useState(false);
   const [errors, setErrors]     = useState<Record<string,string>>({});
   const [saved,  setSaved]      = useState(false);
+  const [ACCOUNTS, setACCOUNTS] = useState<Acc[]>([]);
 
   // Modal states
   const [showCalc,    setShowCalc]    = useState(false);
@@ -570,13 +563,26 @@ export function AddTransactionScreen() {
   const [showDate,    setShowDate]    = useState(false);
   const [showRecurEndDate, setShowRecurEndDate] = useState(false);
 
+  // ─── Load accounts from API ─────────────────────────────────────────────────
+  useEffect(() => {
+    accountsAPI.getAll().then((data: any[]) => {
+      const mapped = (data || []).map((a: any) => ({
+        id: a.id, name: a.name, emoji: a.icon || "🏦",
+        type: a.type || "Savings", color: a.color || "#4895EF",
+        balance: parseFloat(a.balance || 0),
+      }));
+      setACCOUNTS(mapped);
+      if (mapped.length > 0 && !accId) setAccId(mapped[0].id);
+      if (mapped.length > 1 && !toAccId) setToAccId(mapped[mapped.length - 1].id);
+    }).catch(console.error);
+  }, []);
+
   // ─── Derive live category list from context ─────────────────────────────────
-  // getCatsByType always reflects the latest state from CategoriesScreen.
   const { getCatsByType } = useCategoryContext();
   const cats = getCatsByType(txType === "income" ? "income" : "expense");
   const selectedCat= cats.find(c => c.id === catId);
   const selectedSub= selectedCat?.subs.find(s => s.id === subId);
-  const selectedAcc= ACCOUNTS.find(a => a.id === accId)!;
+  const selectedAcc= ACCOUNTS.find(a => a.id === accId) || ACCOUNTS[0];
   const selectedTo = ACCOUNTS.find(a => a.id === toAccId);
   const recentIds  = txType === "income" ? RECENT_INCOME_IDS : RECENT_IDS;
   const recentCats = cats.filter(c => recentIds.includes(c.id));

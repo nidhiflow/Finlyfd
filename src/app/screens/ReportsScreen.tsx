@@ -4,6 +4,7 @@ import {
   ChevronLeft, ChevronRight, ChevronDown,
   Sparkles, TrendingUp, TrendingDown, ArrowLeft, BarChart2, X,
 } from "lucide-react";
+import { statsAPI } from "../services/api";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 type PeriodType = "daily" | "weekly" | "monthly" | "annual" | "custom";
@@ -430,25 +431,58 @@ function CategoryRow({
 export function ReportsScreen() {
   const [chartType, setChartType] = useState<ChartType>("expense");
   const [period, setPeriod]       = useState<PeriodType>("monthly");
-  const [month, setMonth]         = useState(3); // April (0-indexed)
-  const [year, setYear]           = useState(2026);
+  const [month, setMonth]         = useState(new Date().getMonth()); // current month
+  const [year, setYear]           = useState(new Date().getFullYear());
   const [selectedSeg, setSelectedSeg] = useState<string | null>(null);
   const [drillCat, setDrillCat]       = useState<CatData | null>(null);
   const [compareMode, setCompareMode] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [expenseData, setExpenseData] = useState<CatData[]>([]);
+  const [incomeData, setIncomeData] = useState<CatData[]>([]);
+  const [summaryData, setSummaryData] = useState({ income: 0, expense: 0 });
+  const [isLoading, setIsLoading] = useState(true);
 
-  // We will load real API data in the future. For now, there's no mock data.
-  const hasTransactions = false;
+  // Load data from API
+  useEffect(() => {
+    const monthStr = `${year}-${String(month + 1).padStart(2, "0")}`;
+    setIsLoading(true);
+    Promise.all([
+      statsAPI.getCategoryBreakdown(monthStr),
+      statsAPI.getSummary(monthStr),
+    ]).then(([breakdown, summary]) => {
+      // breakdown is array: [{category_id, category_name, icon, color, total, type}]
+      const allCats = breakdown || [];
+      const totalExpense = allCats.filter((c: any) => c.type === 'expense').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
+      const totalIncome = allCats.filter((c: any) => c.type === 'income').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
 
-  // Current data based on type - only show if transactions exist
-  const mainData   = hasTransactions ? (chartType === "expense" ? EXPENSE_APR : INCOME_APR) : [];
-  const compareData= hasTransactions ? (chartType === "expense" ? EXPENSE_MAR : INCOME_MAR) : [];
+      const mapCats = (cats: any[], total: number): CatData[] => cats.map((c: any) => ({
+        id: c.category_id || c.id,
+        name: c.category_name || c.name || 'Unknown',
+        emoji: c.icon || '📦',
+        color: c.color || '#7C5CFF',
+        amount: parseFloat(c.total || 0),
+        percentage: total > 0 ? (parseFloat(c.total || 0) / total) * 100 : 0,
+        trend: 0,
+        subs: [],
+      }));
 
-  // Drilldown: show sub or main
+      setExpenseData(mapCats(allCats.filter((c: any) => c.type === 'expense'), totalExpense));
+      setIncomeData(mapCats(allCats.filter((c: any) => c.type === 'income'), totalIncome));
+      setSummaryData({ income: summary?.income || 0, expense: summary?.expense || 0 });
+    }).catch(console.error).finally(() => setIsLoading(false));
+  }, [month, year]);
+
+  const hasTransactions = expenseData.length > 0 || incomeData.length > 0;
+
+  // Current data based on type
+  const mainData   = chartType === "expense" ? expenseData : incomeData;
+  const compareData: CatData[] = [];
+
+  // Drilldown
   const displayData: (CatData | SubData)[] = drillCat ? drillCat.subs : mainData;
 
-  const totalIncome  = hasTransactions ? INCOME_APR.reduce((s, c) => s + c.amount, 0) : 0;
-  const totalExpense = hasTransactions ? EXPENSE_APR.reduce((s, c) => s + c.amount, 0) : 0;
+  const totalIncome  = summaryData.income;
+  const totalExpense = summaryData.expense;
   const ratioPercent = totalIncome > 0 ? Math.round((totalExpense / totalIncome) * 100) : 0;
 
   const prevPeriod = () => {
