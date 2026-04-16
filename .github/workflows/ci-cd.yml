@@ -116,12 +116,7 @@ jobs:
       #       -Dsonar.sources=src
       #       -Dsonar.exclusions=node_modules/**,dist/**
 
-      # ✅ OWASP ZAP
-      - name: OWASP ZAP DAST Scan
-        uses: zaproxy/action-baseline@v0.14.0
-        with:
-          target: ${{ secrets.FRONTEND_URL || 'http://localhost:3000' }}
-          allow_issue_writing: false
+      
 
   deploy:
     name: Deploy
@@ -137,3 +132,10 @@ jobs:
           else
             echo "RENDER_DEPLOY_HOOK not configured, skipping deploy"
           fi
+
+          # ✅ OWASP ZAP
+          - name: OWASP ZAP DAST Scan
+            uses: zaproxy/action-baseline@v0.14.0
+            with:
+              target: ${{ secrets.FRONTEND_URL || 'http://localhost:3000' }}
+              allow_issue_writing: false
