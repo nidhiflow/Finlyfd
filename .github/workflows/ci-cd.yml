@@ -109,9 +109,9 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: https://sonarcloud.io
         with:
-          args: 
+          args: >
             -Dsonar.projectKey=finly-frontend
             -Dsonar.sources=src
             -Dsonar.exclusions=node_modules/**,dist/**
