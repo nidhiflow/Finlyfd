@@ -582,7 +582,7 @@ export function AddTransactionScreen() {
   const cats = getCatsByType(txType === "income" ? "income" : "expense");
   const selectedCat= cats.find(c => c.id === catId);
   const selectedSub= selectedCat?.subs.find(s => s.id === subId);
-  const selectedAcc= ACCOUNTS.find(a => a.id === accId) || ACCOUNTS[0];
+  const selectedAcc= ACCOUNTS.find(a => a.id === accId) || ACCOUNTS[0] || { id: '', name: 'Loading...', emoji: '🏦', type: '', color: '#4895EF', balance: 0 };
   const selectedTo = ACCOUNTS.find(a => a.id === toAccId);
   const recentIds  = txType === "income" ? RECENT_INCOME_IDS : RECENT_IDS;
   const recentCats = cats.filter(c => recentIds.includes(c.id));
