@@ -283,10 +283,10 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
 }
 
 // ─── Account Sheet ─────────────────────────────────────────────────────────────
-function AccountSheet({ selected, onSelect, onClose, excludeId }: {
-  selected: string; onSelect: (a:Acc)=>void; onClose: ()=>void; excludeId?: string;
+function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
+  selected: string; onSelect: (a:Acc)=>void; onClose: ()=>void; excludeId?: string; accounts: Acc[];
 }) {
-  const list = ACCOUNTS.filter(a => a.id !== excludeId);
+  const list = (accounts || []).filter(a => a.id !== excludeId);
   return (
     <motion.div
       initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
@@ -1241,13 +1241,13 @@ export function AddTransactionScreen() {
       <AnimatePresence>
         {showAccSheet && (
           <AccountSheet key="acc" selected={accId} excludeId={txType==="transfer"?toAccId:undefined}
-            onSelect={a=>setAccId(a.id)} onClose={()=>setShowAccSheet(false)} />
+            accounts={ACCOUNTS} onSelect={a=>setAccId(a.id)} onClose={()=>setShowAccSheet(false)} />
         )}
       </AnimatePresence>
       <AnimatePresence>
         {showToAcc && (
           <AccountSheet key="to-acc" selected={toAccId} excludeId={accId}
-            onSelect={a=>setToAccId(a.id)} onClose={()=>setShowToAcc(false)} />
+            accounts={ACCOUNTS} onSelect={a=>setToAccId(a.id)} onClose={()=>setShowToAcc(false)} />
         )}
       </AnimatePresence>
       <AnimatePresence>
