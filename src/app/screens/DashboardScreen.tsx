@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { BalanceCard } from "../components/BalanceCard";
 import { SpendingOverview } from "../components/SpendingOverview";
+import { DateRangePicker } from "../components/DateRangePicker";
 import { useCategoryContext } from "../context/CategoryContext";
 
 import { authAPI, statsAPI, transactionsAPI, accountsAPI } from "../services/api";
@@ -131,6 +132,9 @@ export function DashboardScreen() {
   const [accountsList, setAccountsList] = useState<any[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [customStart, setCustomStart] = useState<Date | null>(null);
+  const [customEnd, setCustomEnd] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const { getCatById } = useCategoryContext();
   const user = authAPI.getCurrentUser();
@@ -273,7 +277,10 @@ export function DashboardScreen() {
             style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}>
             {(["month", "custom"] as const).map(mode => (
               <button key={mode}
-                onClick={() => setDateMode(mode)}
+                onClick={() => {
+                  setDateMode(mode);
+                  if (mode === "custom") setShowDatePicker(true);
+                }}
                 className="px-4 py-1.5 rounded-lg capitalize font-semibold transition-colors"
                 style={{
                   fontSize: 12,
@@ -286,6 +293,7 @@ export function DashboardScreen() {
             ))}
           </div>
 
+          {dateMode === "month" ? (
           <div className="flex items-center gap-2">
             <button onClick={prevMonth}
               className="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -301,6 +309,15 @@ export function DashboardScreen() {
               <ChevronRight className="w-4 h-4 text-white/50" />
             </button>
           </div>
+          ) : (
+          <button onClick={() => setShowDatePicker(true)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
+            style={{ background: "rgba(124,92,255,0.12)", border: "1px solid rgba(124,92,255,0.25)", fontSize: 12, color: "#9D7EFF", fontWeight: 600 }}>
+            {customStart && customEnd
+              ? `${customStart.getDate()}/${customStart.getMonth()+1} — ${customEnd.getDate()}/${customEnd.getMonth()+1}`
+              : "Pick dates"}
+          </button>
+          )}
         </div>
 
         {/* Jump to Today */}
@@ -627,6 +644,23 @@ export function DashboardScreen() {
         </motion.div>
 
       </div>
+
+      {/* Custom Date Range Picker */}
+      <AnimatePresence>
+        {showDatePicker && (
+          <DateRangePicker
+            startDate={customStart}
+            endDate={customEnd}
+            onSelect={(s, e) => {
+              setCustomStart(s);
+              setCustomEnd(e);
+              // Reload data with custom date range
+              loadDashboardData();
+            }}
+            onClose={() => setShowDatePicker(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

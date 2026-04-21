@@ -5,6 +5,7 @@ import {
   Sparkles, TrendingUp, TrendingDown, ArrowLeft, BarChart2, X,
 } from "lucide-react";
 import { statsAPI } from "../services/api";
+import { DateRangePicker } from "../components/DateRangePicker";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 type PeriodType = "daily" | "weekly" | "monthly" | "annual" | "custom";
@@ -441,6 +442,9 @@ export function ReportsScreen() {
   const [incomeData, setIncomeData] = useState<CatData[]>([]);
   const [summaryData, setSummaryData] = useState({ income: 0, expense: 0 });
   const [isLoading, setIsLoading] = useState(true);
+  const [customStart, setCustomStart] = useState<Date | null>(null);
+  const [customEnd, setCustomEnd] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Load data from API
   useEffect(() => {
@@ -527,6 +531,7 @@ export function ReportsScreen() {
   const isEmpty = displayData.length === 0;
 
   return (
+    <>
     <div className="relative pb-32"
       style={{ background: "linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight: "calc(100vh - 56px)" }}>
 
@@ -557,7 +562,10 @@ export function ReportsScreen() {
             <ChevronRight className="w-4 h-4 text-white/55" />
           </motion.button>
         </div>
-        <PeriodDropdown period={period} onChange={p => { setPeriod(p); setSelectedSeg(null); setDrillCat(null); }} />
+        <PeriodDropdown period={period} onChange={p => {
+          setPeriod(p); setSelectedSeg(null); setDrillCat(null);
+          if (p === "custom") setShowDatePicker(true);
+        }} />
       </div>
 
       {/* ── Summary Metrics ── */}
@@ -903,5 +911,21 @@ export function ReportsScreen() {
         </div>
       )}
     </div>
+
+      {/* Custom Date Range Picker */}
+      <AnimatePresence>
+        {showDatePicker && (
+          <DateRangePicker
+            startDate={customStart}
+            endDate={customEnd}
+            onSelect={(s, e) => {
+              setCustomStart(s);
+              setCustomEnd(e);
+            }}
+            onClose={() => setShowDatePicker(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }
