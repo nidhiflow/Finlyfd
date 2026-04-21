@@ -1,39 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { transactionsAPI } from "../services/api";
 
 export function CalendarScreen() {
-  const [currentMonth, setCurrentMonth] = useState("March 2026");
-  const [selectedDate, setSelectedDate] = useState<number | null>(15);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<number | null>(new Date().getDate());
+  const [transactions, setTransactions] = useState<any[]>([]);
 
-  const daysInMonth = 31;
-  const firstDayOfWeek = 6; // Saturday (0-6, where 0 is Sunday)
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth(); // 0-indexed
 
-  const dayTransactions = {
-    15: [
-      { name: "Swiggy", amount: -450, type: "expense" },
-      { name: "Salary", amount: 50000, type: "income" },
-    ],
-    14: [
-      { name: "Uber", amount: -320, type: "expense" },
-    ],
+  const monthLabel = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+  // Days in current month
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // Day of week for first day (0=Sun, 6=Sat)
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
+
+  // Fetch transactions for current month
+  useEffect(() => {
+    const monthStr = `${year}-${String(month + 1).padStart(2, "0")}`;
+    transactionsAPI.getAll({ month: monthStr }).then((data: any[]) => {
+      setTransactions(data || []);
+    }).catch(console.error);
+  }, [year, month]);
+
+  const navigateMonth = (dir: number) => {
+    const next = new Date(currentDate);
+    next.setMonth(next.getMonth() + dir);
+    setCurrentDate(next);
+    setSelectedDate(null);
   };
 
+  // Group transactions by day
+  const getTransactionsForDay = (day: number) => {
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    return transactions.filter((tx: any) => {
+      // Handle both ISO dates and YYYY-MM-DD
+      const txDate = (tx.date || "").substring(0, 10);
+      return txDate === dateStr;
+    });
+  };
+
+  // Day stats for calendar dots
   const dayStats = Array.from({ length: daysInMonth }, (_, i) => {
     const day = i + 1;
-    const income = day === 1 ? 50000 : day % 7 === 0 ? 5000 : 0;
-    const expense = Math.floor(Math.random() * 2000) + 200;
-    return { day, income, expense };
+    const dayTxs = getTransactionsForDay(day);
+    const income = dayTxs.filter((t: any) => t.type === "income").reduce((s: number, t: any) => s + parseFloat(t.amount || 0), 0);
+    const expense = dayTxs.filter((t: any) => t.type === "expense").reduce((s: number, t: any) => s + parseFloat(t.amount || 0), 0);
+    return { day, income, expense, transactions: dayTxs };
   });
+
+  // Selected day data
+  const selectedDayData = selectedDate ? dayStats.find(d => d.day === selectedDate) : null;
 
   return (
     <div className="px-5 py-6 space-y-6">
       {/* Month Selector */}
       <div className="flex items-center justify-between">
-        <button className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
+        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
           <ChevronLeft className="w-5 h-5 text-white" />
         </button>
-        <h2 className="text-xl font-semibold text-white">{currentMonth}</h2>
-        <button className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
+        <h2 className="text-xl font-semibold text-white">{monthLabel}</h2>
+        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
           <ChevronRight className="w-5 h-5 text-white" />
         </button>
       </div>
@@ -88,44 +117,53 @@ export function CalendarScreen() {
       </div>
 
       {/* Selected Day Details */}
-      {selectedDate && dayTransactions[selectedDate as keyof typeof dayTransactions] && (
+      {selectedDate && selectedDayData && (
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">
-            March {selectedDate}, 2026
+            {currentDate.toLocaleDateString("en-US", { month: "long" })} {selectedDate}, {year}
           </h3>
 
-          <div className="space-y-3">
-            {dayTransactions[selectedDate as keyof typeof dayTransactions].map((tx, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between p-4 bg-[#1B2130] rounded-xl border border-white/5"
-              >
-                <div>
-                  <p className="text-sm font-medium text-white">{tx.name}</p>
-                  <p className="text-xs text-white/50 capitalize">{tx.type}</p>
-                </div>
-                <p
-                  className={`text-sm font-semibold ${
-                    tx.type === "income" ? "text-[#22C55E]" : "text-white"
-                  }`}
+          {selectedDayData.transactions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <p className="text-2xl mb-2">📭</p>
+              <p className="text-white/50 text-sm">No transactions on this day</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {selectedDayData.transactions.map((tx: any, i: number) => (
+                <div
+                  key={tx.id || i}
+                  className="flex items-center justify-between p-4 bg-[#1B2130] rounded-xl border border-white/5"
                 >
-                  {tx.type === "income" ? "+" : ""}₹{Math.abs(tx.amount).toLocaleString()}
-                </p>
-              </div>
-            ))}
-          </div>
+                  <div>
+                    <p className="text-sm font-medium text-white">{tx.note || tx.description || "Transaction"}</p>
+                    <p className="text-xs text-white/50 capitalize">{tx.type}</p>
+                  </div>
+                  <p
+                    className={`text-sm font-semibold ${
+                      tx.type === "income" ? "text-[#22C55E]" : "text-white"
+                    }`}
+                  >
+                    {tx.type === "income" ? "+" : "-"}₹{Math.abs(parseFloat(tx.amount || 0)).toLocaleString("en-IN")}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Day Summary */}
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="bg-[#22C55E]/10 border border-[#22C55E]/30 rounded-xl p-4">
-              <p className="text-xs text-white/50 mb-1">Income</p>
-              <p className="text-xl font-bold text-[#22C55E]">₹50,000</p>
+          {(selectedDayData.income > 0 || selectedDayData.expense > 0) && (
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="bg-[#22C55E]/10 border border-[#22C55E]/30 rounded-xl p-4">
+                <p className="text-xs text-white/50 mb-1">Income</p>
+                <p className="text-xl font-bold text-[#22C55E]">₹{selectedDayData.income.toLocaleString("en-IN")}</p>
+              </div>
+              <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xl p-4">
+                <p className="text-xs text-white/50 mb-1">Expense</p>
+                <p className="text-xl font-bold text-[#EF4444]">₹{selectedDayData.expense.toLocaleString("en-IN")}</p>
+              </div>
             </div>
-            <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xl p-4">
-              <p className="text-xs text-white/50 mb-1">Expense</p>
-              <p className="text-xl font-bold text-[#EF4444]">₹450</p>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>

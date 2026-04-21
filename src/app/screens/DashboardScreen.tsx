@@ -187,9 +187,9 @@ export function DashboardScreen() {
     if (monthIdx === 11) { setMonthIdx(0); setYear(y => y + 1); }
     else setMonthIdx(i => i + 1);
   };
-  const jumpToday = () => { setMonthIdx(3); setYear(2026); };
+  const jumpToday = () => { setMonthIdx(new Date().getMonth()); setYear(new Date().getFullYear()); };
 
-  const isCurrentMonth = monthIdx === 3 && year === 2026;
+  const isCurrentMonth = monthIdx === new Date().getMonth() && year === new Date().getFullYear();
 
   return (
     <div className="relative pb-36"
@@ -317,7 +317,7 @@ export function DashboardScreen() {
               fontSize: 13, color: "#9D7EFF",
             }}>
             <Calendar className="w-4 h-4" />
-            Jump to Today (April 2026)
+            Jump to Today ({MONTHS[new Date().getMonth()]} {new Date().getFullYear()})
           </motion.button>
         )}
 
@@ -382,7 +382,7 @@ export function DashboardScreen() {
         </div>
 
         {/* ── Spending Overview (pie chart) ── */}
-        <SpendingOverview />
+        <SpendingOverview month={`${year}-${String(monthIdx + 1).padStart(2, "0")}`} />
 
         {/* ── Insights ── */}
         <div>

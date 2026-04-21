@@ -193,3 +193,106 @@
     animation: slide-up 0.3s ease-out;
   }
 }
+
+/* ─── Light Mode Overrides ─────────────────────────────────────────────────── */
+.light-mode {
+  --background: #F5F6FA;
+  --foreground: #1A1A2E;
+}
+
+.light-mode body {
+  background-color: #F5F6FA !important;
+  color: #1A1A2E !important;
+}
+
+/* Main page backgrounds */
+.light-mode [style*="background: linear-gradient(180deg,#0B0F1A"],
+.light-mode [style*="background:linear-gradient(180deg,#0B0F1A"] {
+  background: linear-gradient(180deg, #F5F6FA 0%, #ECEDF3 100%) !important;
+}
+
+/* Card backgrounds */
+.light-mode .bg-\[\#1B2130\] {
+  background-color: #FFFFFF !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+.light-mode .bg-\[\#0D0F14\] {
+  background-color: #F0F1F5 !important;
+}
+
+/* Text overrides */
+.light-mode .text-white {
+  color: #1A1A2E !important;
+}
+
+.light-mode .text-white\/50,
+.light-mode .text-white\/38,
+.light-mode .text-white\/40,
+.light-mode .text-white\/30,
+.light-mode .text-white\/28,
+.light-mode .text-white\/22,
+.light-mode .text-white\/20 {
+  color: rgba(26, 26, 46, 0.55) !important;
+}
+
+.light-mode .text-white\/55,
+.light-mode .text-white\/60,
+.light-mode .text-white\/68,
+.light-mode .text-white\/70,
+.light-mode .text-white\/75,
+.light-mode .text-white\/80 {
+  color: rgba(26, 26, 46, 0.72) !important;
+}
+
+/* Preserve gradient text in hero cards — don't override */
+.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white,
+.light-mode .bg-gradient-to-r.from-\[\#7C5CFF\] .text-white,
+.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white,
+.light-mode [style*="background:linear-gradient(135deg,#7C5CFF"] .text-white {
+  color: white !important;
+}
+
+.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white\/80,
+.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white\/70,
+.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white\/80,
+.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white\/70 {
+  color: rgba(255,255,255,0.8) !important;
+}
+
+/* Border overrides */
+.light-mode .border-white\/5,
+.light-mode .border-white\/7,
+.light-mode .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Glass cards in light mode */
+.light-mode [style*="rgba(255,255,255,0.04)"],
+.light-mode [style*="rgba(255,255,255,0.045)"],
+.light-mode [style*="rgba(255,255,255,0.05)"],
+.light-mode [style*="rgba(255,255,255,0.055)"] {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Bottom nav */
+.light-mode nav[style*="#0B0F1A"],
+.light-mode [style*="background:#0D0F14"],
+.light-mode [style*="background: #0D0F14"] {
+  background: #FFFFFF !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* Input backgrounds in modal */
+.light-mode .placeholder\:text-white\/22::placeholder,
+.light-mode .placeholder\:text-white\/25::placeholder {
+  color: rgba(26, 26, 46, 0.35) !important;
+}
+
+/* Scrollbar */
+.light-mode ::-webkit-scrollbar-track {
+  background: #F5F6FA;
+}
+.light-mode ::-webkit-scrollbar-thumb {
+  background: #C5C7D0;
+}

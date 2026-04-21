@@ -365,6 +365,8 @@ export const budgetsAPI = {
     return apiCall<any>(url, { method: "GET" });
   },
   save: async (data: any) => apiCall<any>("/api/budgets", { method: "POST", body: JSON.stringify(data) }),
+  update: async (id: string, data: any) => apiCall<any>(`/api/budgets/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  delete: async (id: string) => apiCall<{ message: string }>(`/api/budgets/${id}`, { method: "DELETE" }),
 };
 
 // ─── CATEGORIES API ───────────────────────────────────────────────────────────
