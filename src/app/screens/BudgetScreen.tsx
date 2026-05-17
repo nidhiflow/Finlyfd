@@ -334,8 +334,8 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
         toast.success("Budget created");
       }
       onSaved();
-    } catch (e) {
-      toast.error("Failed to save budget");
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to save budget");
     }
     setSaving(false);
   };
