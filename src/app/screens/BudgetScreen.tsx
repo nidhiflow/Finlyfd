@@ -51,9 +51,9 @@ export function BudgetScreen() {
         };
       });
       setBudgets(mapped);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to load budgets");
+      toast.error(error?.message || "Failed to load budgets");
     } finally {
       setIsLoading(false);
     }
