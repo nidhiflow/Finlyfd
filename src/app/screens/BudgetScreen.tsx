@@ -50,7 +50,9 @@ export function BudgetScreen() {
   const loadCategories = async () => {
     try {
       const data = await categoriesAPI.getAll();
-      setCategories((data || []).filter((c: any) => c.type === "expense"));
+      // Show all categories — filter for expense if type exists, otherwise show all
+      const cats = (data || []).filter((c: any) => !c.type || c.type === "expense");
+      setCategories(cats.length > 0 ? cats : (data || []));
     } catch (e) { console.error(e); }
   };
 
