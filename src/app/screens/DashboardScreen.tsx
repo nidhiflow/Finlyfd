@@ -129,6 +129,7 @@ export function DashboardScreen() {
   const [recurringList, setRecurringList] = useState<any[]>([]);
   const [stats, setStats] = useState({ income: 0, expense: 0, balance: 0, savings: 0 });
   const [finlyScore, setFinlyScore] = useState(0);
+  const [finlyLabel, setFinlyLabel] = useState('');
   const [accountsList, setAccountsList] = useState<any[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -169,6 +170,7 @@ export function DashboardScreen() {
         savings: summaryData?.savings || 0
       });
       setFinlyScore(scoreData?.score || 0);
+      setFinlyLabel(scoreData?.label || '');
       setAccountsList(accountsData || []);
       setRecentTransactions((txData || []).slice(0, 3));
       setRecurringList(recurringData?.filter((r: any) => r.status === "active").slice(0, 3) || []);
@@ -362,7 +364,7 @@ export function DashboardScreen() {
                 <h3 className="text-white font-bold" style={{ fontSize: 16 }}>Finly Score</h3>
               </div>
               <p className="text-white/38" style={{ fontSize: 12 }}>
-                {finlyScore > 0 ? "You're on the right track!" : "Start tracking to see your financial health"}
+                {finlyScore > 0 ? finlyLabel || "You're on the right track!" : "Start tracking to see your financial health"}
               </p>
             </div>
             <div className="text-right">
@@ -402,6 +404,37 @@ export function DashboardScreen() {
         <SpendingOverview month={`${year}-${String(monthIdx + 1).padStart(2, "0")}`} />
 
         {/* ── Insights ── */}
+        {(stats.income > 0 || stats.expense > 0) ? (
+        <div>
+          <SectionHeader title="Insights" />
+          <div className="space-y-3">
+            {stats.expense > 0 && stats.income > 0 && (
+              <div className="rounded-2xl p-4" style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.045) 0%,rgba(255,255,255,0.018) 100%)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                <div className="flex items-center gap-3">
+                  <span style={{ fontSize: 22 }}>💡</span>
+                  <p className="text-white/70" style={{ fontSize: 13 }}>You spent <span className="text-[#F72585] font-semibold">{Math.round((stats.expense / stats.income) * 100)}%</span> of your income this month</p>
+                </div>
+              </div>
+            )}
+            {stats.savings > 0 && (
+              <div className="rounded-2xl p-4" style={{ background: "linear-gradient(135deg,rgba(34,197,94,0.08) 0%,rgba(34,197,94,0.03) 100%)", border: "1px solid rgba(34,197,94,0.18)" }}>
+                <div className="flex items-center gap-3">
+                  <span style={{ fontSize: 22 }}>🎯</span>
+                  <p className="text-white/70" style={{ fontSize: 13 }}>Great! You saved <span className="text-[#22C55E] font-semibold">₹{stats.savings.toLocaleString('en-IN')}</span> this month</p>
+                </div>
+              </div>
+            )}
+            {stats.expense > stats.income && stats.income > 0 && (
+              <div className="rounded-2xl p-4" style={{ background: "linear-gradient(135deg,rgba(239,68,68,0.08) 0%,rgba(239,68,68,0.03) 100%)", border: "1px solid rgba(239,68,68,0.18)" }}>
+                <div className="flex items-center gap-3">
+                  <span style={{ fontSize: 22 }}>⚠️</span>
+                  <p className="text-white/70" style={{ fontSize: 13 }}>You're spending more than you earn. Consider reviewing your expenses.</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        ) : (
         <div>
           <SectionHeader title="Insights" />
           <div className="rounded-2xl overflow-hidden"
@@ -418,6 +451,7 @@ export function DashboardScreen() {
             />
           </div>
         </div>
+        )}
 
         {/* ── Recent Transactions ── */}
         <div>
@@ -608,7 +642,8 @@ export function DashboardScreen() {
           </div>
         </div>
 
-        {/* ── Motivational Footer CTA ── */}
+        {/* ── Motivational Footer CTA — only for new users ── */}
+        {recentTransactions.length === 0 && stats.income === 0 && stats.expense === 0 && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -642,6 +677,7 @@ export function DashboardScreen() {
             </motion.button>
           </div>
         </motion.div>
+        )}
 
       </div>
 

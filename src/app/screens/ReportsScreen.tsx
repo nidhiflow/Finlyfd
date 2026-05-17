@@ -85,9 +85,9 @@ function useAnimKey(dep: unknown) {
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 const fmtINR = (n: number) =>
-  n >= 100000 ? `₹${(n/100000).toFixed(2)}L`
-  : n >= 1000  ? `₹${(n/1000).toFixed(1)}K`
-  : `₹${n}`;
+  n >= 100000 ? `₹${(n/100000).toFixed(1)}L`
+  : n >= 1000  ? `₹${(n/1000).toFixed(0)}K`
+  : `₹${Math.round(n)}`;
 
 const fmtFull = (n: number) => `₹${Math.abs(n).toLocaleString("en-IN")}`;
 
@@ -199,7 +199,7 @@ function PieChartSVG({
               {/* Label bubble */}
               <text x={labelX} y={labelPt.y - 5} textAnchor={anchor}
                 fill="rgba(255,255,255,0.85)" fontSize="11" fontFamily="Inter,sans-serif" fontWeight="600">
-                {cat.emoji} {cat.percentage.toFixed(1)}%
+                {cat.emoji} {cat.percentage.toFixed(0)}%
               </text>
               <text x={labelX} y={labelPt.y + 7} textAnchor={anchor}
                 fill={cat.color} fontSize="10" fontFamily="Inter,sans-serif" fontWeight="500">
@@ -229,7 +229,7 @@ function PieChartSVG({
             </text>
             <text x={CX} y={CY + 20} textAnchor="middle"
               fill={selected.color} fontSize="13" fontFamily="Inter,sans-serif" fontWeight="700">
-              {selected.percentage.toFixed(1)}%
+              {selected.percentage.toFixed(0)}%
             </text>
             <text x={CX} y={CY + 34} textAnchor="middle"
               fill="rgba(255,255,255,0.55)" fontSize="10" fontFamily="Inter,sans-serif">
@@ -312,8 +312,8 @@ function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartT
   const top = data[0];
   const biggest = data.reduce((a, b) => b.amount > a.amount ? b : a, data[0]);
   const text = chartType === "expense"
-    ? `You spent ${biggest.percentage}% on ${biggest.name} this month ${biggest.emoji}`
-    : `${biggest.name} is your top income source at ${biggest.percentage}% ${biggest.emoji}`;
+    ? `You spent ${Math.round(biggest.percentage)}% on ${biggest.name} this month ${biggest.emoji}`
+    : `${biggest.name} is your top income source at ${Math.round(biggest.percentage)}% ${biggest.emoji}`;
 
   return (
     <div className="mx-4 mb-3 rounded-2xl px-4 py-3.5 relative overflow-hidden"
@@ -409,7 +409,7 @@ function CategoryRow({
           {/* % pill */}
           <span className="px-2 py-0.5 rounded-full"
             style={{ fontSize: 10, fontWeight: 800, background: `${cat.color}22`, color: cat.color }}>
-            {cat.percentage.toFixed(1)}%
+            {cat.percentage.toFixed(0)}%
           </span>
           {/* Trend */}
           {trend !== 0 && (
@@ -583,7 +583,7 @@ export function ReportsScreen() {
               </p>
               <div className="flex items-center gap-1 mt-1">
                 <TrendingUp className="w-3 h-3 text-emerald-400" />
-                <span style={{ fontSize: 10, color: "#4ADE80" }}>+₹90K business</span>
+                <span style={{ fontSize: 10, color: "#4ADE80" }}>{incomeData.length > 0 ? `Top: ${incomeData[0]?.name}` : 'No income data'}</span>
               </div>
             </div>
             {/* Expense card */}
@@ -596,8 +596,8 @@ export function ReportsScreen() {
                 {fmtFull(totalExpense)}
               </p>
               <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="w-3 h-3 text-rose-400" />
-                <span style={{ fontSize: 10, color: "#F87171" }}>+15% investments</span>
+                <TrendingDown className="w-3 h-3 text-rose-400" />
+                <span style={{ fontSize: 10, color: "#F87171" }}>{expenseData.length > 0 ? `Top: ${expenseData[0]?.name}` : 'No expense data'}</span>
               </div>
             </div>
           </div>

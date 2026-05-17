@@ -304,6 +304,18 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
         </div>
         <p className="text-white font-bold mb-4" style={{fontSize:17}}>Select Account</p>
         <div className="space-y-2.5 pb-2">
+          {list.length === 0 && (
+            <div className="text-center py-6">
+              <p className="text-white/40 text-sm mb-3">No accounts added yet</p>
+              <motion.button whileTap={{scale:0.97}}
+                onClick={() => { onClose(); window.location.href = '/dashboard/accounts'; }}
+                className="mx-auto flex items-center gap-2 px-5 py-3 rounded-2xl text-white font-semibold text-sm"
+                style={{background:"linear-gradient(135deg,#7C5CFF,#4CC9F0)",boxShadow:"0 4px 16px rgba(124,92,255,0.4)"}}>
+                <Plus className="w-4 h-4" />
+                Add Bank / Account
+              </motion.button>
+            </div>
+          )}
           {list.map(acc => {
             const isSel = selected === acc.id;
             return (

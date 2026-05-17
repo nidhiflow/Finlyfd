@@ -161,14 +161,6 @@ function TransactionRow({ transaction, onLongPress, onBookmark }: {
   transaction: Transaction; onLongPress: (tx: Transaction) => void; onBookmark: (id: number) => void;
 }) {
   const Icon = transaction.icon;
-  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [pressing, setPressing] = useState(false);
-
-  const onPointerDown = () => {
-    setPressing(true);
-    longPressTimer.current = setTimeout(() => { onLongPress(transaction); setPressing(false); }, 500);
-  };
-  const onPointerUp = () => { setPressing(false); if (longPressTimer.current) clearTimeout(longPressTimer.current); };
 
   const isSavings = transaction.type === "savings";
   const isIncome = transaction.type === "income";
@@ -177,8 +169,8 @@ function TransactionRow({ transaction, onLongPress, onBookmark }: {
 
   return (
     <motion.div
-      onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerLeave={onPointerUp}
-      className={`flex items-center gap-3 py-3 px-2 rounded-xl transition-colors ${pressing ? "bg-white/[0.04]" : "hover:bg-white/[0.02]"}`}
+      onClick={() => onLongPress(transaction)}
+      className="flex items-center gap-3 py-3 px-2 rounded-xl transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] cursor-pointer"
       style={{ userSelect: "none" }}
     >
       {/* Category label area */}

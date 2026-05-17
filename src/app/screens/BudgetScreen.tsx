@@ -313,10 +313,8 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
 
   const isEdit = !!budget;
 
-  // Filter out categories that already have budgets (except current edit)
-  const availableCats = categories.filter(c =>
-    isEdit ? true : !existingCategoryIds.includes(c.id)
-  );
+  // Show all expense categories — allow creating/editing budgets for any category
+  const availableCats = categories;
 
   const handleSave = async () => {
     if (!selectedCat || !amount || parseFloat(amount) <= 0) {
