@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, ChevronLeft, ChevronRight, AlertCircle, Bot, X, Pencil, Trash2 } from "lucide-react";
-import { budgetsAPI, categoriesAPI } from "../services/api";
+import { budgetsAPI } from "../services/api";
+import { useCategoryContext } from "../context/CategoryContext";
 import { toast } from "sonner";
 
 interface BudgetItem {
@@ -21,7 +22,15 @@ export function BudgetScreen() {
   const [showModal, setShowModal] = useState(false);
   const [editBudget, setEditBudget] = useState<BudgetItem | null>(null);
   const [showDelete, setShowDelete] = useState<BudgetItem | null>(null);
-  const [categories, setCategories] = useState<any[]>([]);
+
+  const { getCatsByType } = useCategoryContext();
+  const expenseCategories = getCatsByType('expense').map(c => ({
+    id: c.id,
+    name: c.name,
+    icon: c.emoji,
+    color: c.color,
+    type: c.type,
+  }));
 
   const monthStr = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, "0")}`;
 
@@ -47,18 +56,10 @@ export function BudgetScreen() {
     }
   };
 
-  const loadCategories = async () => {
-    try {
-      const data = await categoriesAPI.getAll();
-      // Show all categories — filter for expense if type exists, otherwise show all
-      const cats = (data || []).filter((c: any) => !c.type || c.type === "expense");
-      setCategories(cats.length > 0 ? cats : (data || []));
-    } catch (e) { console.error(e); }
-  };
+
 
   useEffect(() => {
     loadBudgets();
-    loadCategories();
   }, [currentDate]);
 
   const monthLabel = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
@@ -248,7 +249,7 @@ export function BudgetScreen() {
           <BudgetModal
             budget={editBudget}
             month={monthStr}
-            categories={categories}
+            categories={expenseCategories}
             existingCategoryIds={budgets.map(b => b.category_id)}
             onClose={() => { setShowModal(false); setEditBudget(null); }}
             onSaved={() => { setShowModal(false); setEditBudget(null); loadBudgets(); }}
