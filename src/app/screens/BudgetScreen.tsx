@@ -38,15 +38,18 @@ export function BudgetScreen() {
     setIsLoading(true);
     try {
       const data = await budgetsAPI.get(monthStr);
-      const mapped = (data.categories || []).map((b: any) => ({
-        id: b.id,
-        category_id: b.category_id,
-        category: b.category_name || "Uncategorized",
-        budgeted: parseFloat(b.amount || "0"),
-        spent: parseFloat(b.spent || "0"),
-        color: b.color || "#7C5CFF",
-        emoji: b.icon || "🍔",
-      }));
+      const mapped = (data.categories || []).map((b: any) => {
+        const cat = expenseCategories.find(c => c.id === b.category_id);
+        return {
+          id: b.id,
+          category_id: b.category_id,
+          category: cat?.name || b.category_id || "Uncategorized",
+          budgeted: parseFloat(b.amount || "0"),
+          spent: parseFloat(b.spent || "0"),
+          color: cat?.color || "#7C5CFF",
+          emoji: cat?.icon || "📦",
+        };
+      });
       setBudgets(mapped);
     } catch (error) {
       console.error(error);
