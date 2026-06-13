@@ -141,10 +141,10 @@ export function CalendarScreen() {
                   </div>
                   <p
                     className={`text-sm font-semibold ${
-                      tx.type === "income" ? "text-[#22C55E]" : "text-white"
+                      tx.type === "income" ? "text-[#22C55E]" : tx.type === "savings" ? "text-[#F72585]" : "text-white"
                     }`}
                   >
-                    {tx.type === "income" ? "+" : "-"}₹{Math.abs(parseFloat(tx.amount || 0)).toLocaleString("en-IN")}
+                    {tx.type === "income" ? "+" : tx.type === "savings" ? "" : "-"}₹{Math.abs(parseFloat(tx.amount || 0)).toLocaleString("en-IN")}
                   </p>
                 </div>
               ))}

@@ -485,7 +485,7 @@ export function DashboardScreen() {
             <div className="space-y-2">
               {recentTransactions.map((tx: any) => {
                 const cat = tx.categoryId || tx.category_id ? getCatById(tx.categoryId || tx.category_id) : null;
-                const typeColor = tx.type === "income" ? "#22C55E" : tx.type === "transfer" ? "#4CC9F0" : "#EF4444";
+                const typeColor = tx.type === "income" ? "#22C55E" : tx.type === "transfer" ? "#4CC9F0" : tx.type === "savings" ? "#F72585" : "#EF4444";
                 const isExpense = tx.type === "expense";
                 return (
                   <motion.div key={tx.id}
@@ -511,7 +511,7 @@ export function DashboardScreen() {
                       </div>
                     </div>
                     <p className="font-bold flex-shrink-0" style={{fontSize:14, color:typeColor}}>
-                      {isExpense ? "-" : "+"}₹{parseFloat(tx.amount).toLocaleString("en-IN")}
+                      {isExpense ? "-" : tx.type === "income" ? "+" : ""}₹{parseFloat(tx.amount).toLocaleString("en-IN")}
                     </p>
                   </motion.div>
                 );
