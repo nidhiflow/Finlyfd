@@ -132,7 +132,7 @@ function groupByMonth(txs: Transaction[]): MonthGroup[] {
 // ─── Color constants ────────────────────────────────────────────────────────────
 const C_INCOME = "#22C55E";
 const C_EXPENSE = "#EF4444";
-const C_SAVINGS = "#F72585";
+const C_SAVINGS = "#FFB703";
 const C_BALANCE = "#FFA500";
 
 // ─── Summary Card (reused for all period headers) ───────────────────────────────

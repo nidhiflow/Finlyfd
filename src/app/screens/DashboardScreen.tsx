@@ -344,7 +344,7 @@ export function DashboardScreen() {
           <StatCard label="Income"      value={`₹${stats.income.toLocaleString("en-IN")}`} accentColor="#22C55E" icon={TrendingUp} isEmpty={stats.income === 0} />
           <StatCard label="Expense"     value={`₹${stats.expense.toLocaleString("en-IN")}`} accentColor="#EF4444" icon={ArrowUpDown} isEmpty={stats.expense === 0} />
           <StatCard label="Net Balance" value={`₹${stats.balance.toLocaleString("en-IN")}`} accentColor="#7C5CFF" icon={Wallet} isEmpty={stats.balance === 0} />
-          <StatCard label="Savings"     value={`₹${stats.savings.toLocaleString("en-IN")}`} accentColor="#F72585" icon={BarChart2} isEmpty={stats.savings === 0} />
+          <StatCard label="Savings"     value={`₹${stats.savings.toLocaleString("en-IN")}`} accentColor="#FFB703" icon={BarChart2} isEmpty={stats.savings === 0} />
         </div>
 
         {/* ── Finly Score ── */}
@@ -485,7 +485,7 @@ export function DashboardScreen() {
             <div className="space-y-2">
               {recentTransactions.map((tx: any) => {
                 const cat = tx.categoryId || tx.category_id ? getCatById(tx.categoryId || tx.category_id) : null;
-                const typeColor = tx.type === "income" ? "#22C55E" : tx.type === "transfer" ? "#4CC9F0" : tx.type === "savings" ? "#F72585" : "#EF4444";
+                const typeColor = tx.type === "income" ? "#22C55E" : tx.type === "transfer" ? "#4CC9F0" : tx.type === "savings" ? "#FFB703" : "#EF4444";
                 const isExpense = tx.type === "expense";
                 return (
                   <motion.div key={tx.id}
