@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import {
   ChevronLeft, ChevronRight, Calendar, Award,
   ArrowUpDown, Repeat, Sparkles, Plus, TrendingUp,
-  Wallet, PieChart as PieIcon, Zap, BarChart2,
+  Wallet, PieChart as PieIcon, Zap, BarChart2, HelpCircle
 } from "lucide-react";
 import { BalanceCard } from "../components/BalanceCard";
 import { SpendingOverview } from "../components/SpendingOverview";
@@ -14,12 +14,7 @@ import { useCategoryContext } from "../context/CategoryContext";
 import { authAPI, statsAPI, transactionsAPI, accountsAPI } from "../services/api";
 
 // ─── Zero State Data ────────────────────────────────────────────────────────────
-const ACCOUNTS_ZERO = [
-  { id:"a1", name:"HDFC Savings",      emoji:"🏦", color:"#4895EF", balance:0 },
-  { id:"a2", name:"SBI Salary A/C",   emoji:"💰", color:"#22C55E", balance:0 },
-  { id:"a3", name:"ICICI Credit Card",emoji:"💳", color:"#F72585", balance:0 },
-  { id:"a4", name:"Cash Wallet",      emoji:"💵", color:"#FFB703", balance:0 },
-];
+// Accounts are now strictly fetched from the user's connected DB accounts.
 
 const MONTHS = [
   "January","February","March","April","May","June",
@@ -136,6 +131,7 @@ export function DashboardScreen() {
   const [customStart, setCustomStart] = useState<Date | null>(null);
   const [customEnd, setCustomEnd] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showScoreInfo, setShowScoreInfo] = useState(false);
 
   const { getCatById } = useCategoryContext();
   const user = authAPI.getCurrentUser();
@@ -217,10 +213,13 @@ export function DashboardScreen() {
               Welcome to Finly — let's get started
             </p>
           </div>
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => navigate("/dashboard/ai-agent")}
+            className="w-10 h-10 rounded-2xl flex items-center justify-center cursor-pointer"
             style={{ background: "linear-gradient(135deg,rgba(124,92,255,0.22),rgba(76,201,240,0.14))", border: "1px solid rgba(124,92,255,0.3)" }}>
             <Sparkles className="w-5 h-5 text-[#7C5CFF]" />
-          </div>
+          </motion.button>
         </div>
 
         {/* ── Start Here Hero Card ── */}
@@ -388,9 +387,17 @@ export function DashboardScreen() {
             <p className="text-white/25" style={{ fontSize: 10 }}>
               {finlyScore > 0 ? "Keep it up!" : "Add income & expenses to compute score"}
             </p>
-            <span className="px-2 py-0.5 rounded-full" style={{ fontSize: 10, fontWeight: 700, background: "rgba(255,255,255,0.07)", color: finlyScore > 0 ? "white" : "rgba(255,255,255,0.28)" }}>
-              {finlyScore}%
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="px-2 py-0.5 rounded-full" style={{ fontSize: 10, fontWeight: 700, background: "rgba(255,255,255,0.07)", color: finlyScore > 0 ? "white" : "rgba(255,255,255,0.28)" }}>
+                {finlyScore}%
+              </span>
+              <button 
+                onClick={() => setShowScoreInfo(true)}
+                className="w-5 h-5 rounded-md flex items-center justify-center hover:bg-white/10 active:scale-90 transition-all text-white/40 hover:text-white"
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -610,20 +617,31 @@ export function DashboardScreen() {
 
             {/* Individual accounts */}
             <div className="space-y-3">
-              {(accountsList.length > 0 ? accountsList.slice(0, 4) : ACCOUNTS_ZERO).map(acc => (
-                <div key={acc.id} className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
-                    style={{ background: `${acc.color || '#4895EF'}18`, border: `1px solid ${acc.color || '#4895EF'}28` }}>
-                    {acc.icon || acc.emoji || "🏦"}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white/60 font-semibold truncate" style={{ fontSize: 13 }}>{acc.name}</p>
-                  </div>
-                  <p className="font-bold" style={{ fontSize: 13, color: acc.balance > 0 ? "white" : "rgba(255,255,255,0.25)" }}>
-                    ₹{parseFloat(acc.balance || 0).toLocaleString("en-IN")}
-                  </p>
+              {accountsList.length === 0 ? (
+                <div className="py-6">
+                  <EmptyState
+                    emoji="🏦"
+                    title="No accounts yet"
+                    subtitle="Connect your accounts to start tracking balances"
+                    compact
+                  />
                 </div>
-              ))}
+              ) : (
+                accountsList.slice(0, 4).map(acc => (
+                  <div key={acc.id} className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
+                      style={{ background: `${acc.color || '#4895EF'}18`, border: `1px solid ${acc.color || '#4895EF'}28` }}>
+                      {acc.icon || acc.emoji || "🏦"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white/60 font-semibold truncate" style={{ fontSize: 13 }}>{acc.name}</p>
+                    </div>
+                    <p className="font-bold" style={{ fontSize: 13, color: acc.balance > 0 ? "white" : "rgba(255,255,255,0.25)" }}>
+                      ₹{parseFloat(acc.balance || 0).toLocaleString("en-IN")}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Add account CTA */}
@@ -695,6 +713,82 @@ export function DashboardScreen() {
             }}
             onClose={() => setShowDatePicker(false)}
           />
+        )}
+      </AnimatePresence>
+
+      {/* About Finly Score Info Modal */}
+      <AnimatePresence>
+        {showScoreInfo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center px-6"
+            style={{ background: "rgba(0,0,0,0.8)", backdropFilter: "blur(14px)" }}
+            onClick={() => setShowScoreInfo(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-sm rounded-3xl p-6 relative overflow-hidden text-left"
+              style={{
+                background: "linear-gradient(135deg, #1C2440, #131926)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
+              }}
+            >
+              {/* Top glow */}
+              <div className="absolute -top-12 -left-12 w-32 h-32 rounded-full pointer-events-none"
+                style={{ background: "radial-gradient(circle, rgba(124,92,255,0.15) 0%, transparent 70%)" }} />
+
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#7C5CFF]/15 border border-[#7C5CFF]/25">
+                  <Award className="w-5 h-5 text-[#9D7EFF]" />
+                </div>
+                <h3 className="text-white font-bold text-lg">About Finly Score</h3>
+              </div>
+
+              <p className="text-white/70 text-sm leading-relaxed mb-5">
+                The Finly Score measures your monthly financial health and budget discipline. It is computed dynamically using three key factors:
+              </p>
+
+              <div className="space-y-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xs text-emerald-400 font-bold flex-shrink-0 mt-0.5">50</div>
+                  <div>
+                    <h4 className="text-white font-semibold text-xs">Savings Rate (Up to 50 pts)</h4>
+                    <p className="text-white/40 text-[11px] mt-0.5">Calculated as the percentage of your monthly income you save (Income - Expenses).</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-xs text-blue-400 font-bold flex-shrink-0 mt-0.5">30</div>
+                  <div>
+                    <h4 className="text-white font-semibold text-xs">Expense Control (Up to 30 pts)</h4>
+                    <p className="text-white/40 text-[11px] mt-0.5">Points awarded for keeping total spending under 50%, 70%, or 85% of your earnings.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-xs text-purple-400 font-bold flex-shrink-0 mt-0.5">20</div>
+                  <div>
+                    <h4 className="text-white font-semibold text-xs">Tracking Activity (Up to 20 pts)</h4>
+                    <p className="text-white/40 text-[11px] mt-0.5">Earned by consistently logging transactions in the ledger.</p>
+                  </div>
+                </div>
+              </div>
+
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowScoreInfo(false)}
+                className="w-full py-3 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold text-sm shadow-md shadow-[#7C5CFF]/25"
+              >
+                Got it
+              </motion.button>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

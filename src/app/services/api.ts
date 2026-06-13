@@ -402,6 +402,9 @@ export const statsAPI = {
     if (month) url += `?month=${month}`;
     return apiCall<any>(url, { method: "GET" });
   },
+  getNotifications: async () => {
+    return apiCall<any[]>("/api/stats/notifications", { method: "GET" });
+  },
   getDailyExpenses: async (month: string) => apiCall<any[]>(`/api/stats/daily-expenses?month=${month}`, { method: "GET" }),
   getCategoryBreakdown: async (month: string) => apiCall<any[]>(`/api/stats/category-breakdown?month=${month}`, { method: "GET" }),
 };

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { MoreSheet } from "../components/MoreSheet";
 import { CategoryProvider } from "../context/CategoryContext";
+import { statsAPI } from "../services/api";
 
 export function MainLayout() {
   const location = useLocation();
@@ -11,7 +12,8 @@ export function MainLayout() {
   const [showMore, setShowMore] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showBookmarks, setShowBookmarks] = useState(false);
-  const [notifRead, setNotifRead] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifRead, setNotifRead] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Scroll to top on route change
@@ -21,6 +23,16 @@ export function MainLayout() {
       contentRef.current.scrollTop = 0;
     }
   }, [location.pathname]);
+
+  // Fetch notifications
+  useEffect(() => {
+    statsAPI.getNotifications()
+      .then(data => {
+        setNotifications(data || []);
+        if (data && data.length > 0) setNotifRead(false);
+      })
+      .catch(console.error);
+  }, []);
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -130,11 +142,11 @@ export function MainLayout() {
                   </button>
                 </div>
                 <div className="px-5 pb-8 space-y-3">
-                  {[
-                    { title: "Budget Alert", desc: "You've used 80% of your Food budget", time: "2h ago", color: "#FFB703" },
-                    { title: "Bill Reminder", desc: "Electricity bill due in 3 days", time: "5h ago", color: "#4CC9F0" },
-                    { title: "Goal Milestone", desc: "You're 50% to your vacation goal!", time: "1d ago", color: "#22C55E" },
-                  ].map((n, i) => (
+                  {notifications.length === 0 ? (
+                    <div className="flex flex-col items-center py-6">
+                      <p className="text-white/40" style={{ fontSize: 13 }}>No new notifications</p>
+                    </div>
+                  ) : notifications.map((n, i) => (
                     <motion.div key={i} whileTap={{ scale: 0.98 }}
                       className="flex items-start gap-3 p-4 rounded-2xl"
                       style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>

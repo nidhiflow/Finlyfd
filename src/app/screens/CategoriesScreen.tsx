@@ -888,14 +888,20 @@ export function CategoriesScreen() {
   };
 
   // ── Filtered ──────────────────────────────────────────────────────────────────
+  const isIncome = activeType === "income";
   const q = search.toLowerCase().trim();
   const visible = cats.filter(c =>
     c.type === activeType &&
     (!q || c.name.toLowerCase().includes(q) || c.subs.some(s => s.name.toLowerCase().includes(q)))
-  );
+  ).sort((a, b) => {
+    const aTop = isIncome ? primaryIncome.has(a.id) : pinned.has(a.id);
+    const bTop = isIncome ? primaryIncome.has(b.id) : pinned.has(b.id);
+    if (aTop && !bTop) return -1;
+    if (!aTop && bTop) return 1;
+    return 0;
+  });
   const expCount = cats.filter(c => c.type === "expense").length;
   const incCount = cats.filter(c => c.type === "income").length;
-  const isIncome = activeType === "income";
 
   // FAB gradient: purple for expense, green for income
   const fabGrad = isIncome
