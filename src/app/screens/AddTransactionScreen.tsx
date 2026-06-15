@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router";
-import { transactionsAPI, accountsAPI } from "../services/api";
+import { transactionsAPI, accountsAPI, aiAPI } from "../services/api";
 import { toast } from "sonner";
 import {
   ArrowLeft, ScanLine, Camera, Image as ImageIcon,
@@ -685,11 +685,46 @@ export function AddTransactionScreen() {
   };
 
   const handleAIScan = () => {
-    setAiScan(true);
-    setTimeout(() => {
-      setAmount("2450"); setCatId("food"); setSubId("fd6");
-      setNote("Dinner at restaurant"); setAiScan(false);
-    }, 2200);
+    document.getElementById("receipt-file-input")?.click();
+  };
+
+  const handleFileSelection = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result as string;
+      setAiScan(true);
+      try {
+        const result = await aiAPI.scanReceipt(base64Data);
+        if (result.amount) setAmount(String(result.amount));
+        if (result.note) setNote(result.note);
+        if (result.date) setDate(new Date(result.date));
+        if (result.category_suggestion) {
+          const matchedCat = cats.find(c => 
+            c.name.toLowerCase().includes(result.category_suggestion.toLowerCase()) ||
+            result.category_suggestion.toLowerCase().includes(c.name.toLowerCase())
+          );
+          if (matchedCat) {
+            setCatId(matchedCat.id);
+            setErrors(errs => ({ ...errs, cat: undefined! }));
+            if (matchedCat.subs && matchedCat.subs.length > 0) {
+              setSubId(matchedCat.subs[0].id);
+              setErrors(errs => ({ ...errs, sub: undefined! }));
+            }
+          }
+        }
+        toast.success("Receipt scanned and details extracted!");
+      } catch (err: any) {
+        console.error("Scan error:", err);
+        toast.error(err.message || "Failed to scan receipt");
+      } finally {
+        setAiScan(false);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   return (
@@ -1275,6 +1310,13 @@ export function AddTransactionScreen() {
       <AnimatePresence>
         {saved && <SuccessOverlay key="success" txType={txType} onDone={()=>navigate("/dashboard/transactions")} />}
       </AnimatePresence>
+      <input
+        type="file"
+        id="receipt-file-input"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileSelection}
+      />
 
       <style>{`
         @keyframes aiGlow {

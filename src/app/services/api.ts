@@ -418,6 +418,10 @@ export const settingsAPI = {
 // ─── AI API ───────────────────────────────────────────────────────────────────
 export const aiAPI = {
   chat: async (prompt: string) => apiCall<any>("/api/ai/chat", { method: "POST", body: JSON.stringify({ message: prompt }) }),
+  scanReceipt: async (imageBase64: string) => apiCall<any>("/api/ai/scan-receipt", {
+    method: "POST",
+    body: JSON.stringify({ image: imageBase64 })
+  }),
 };
 
 // ─── BOOKMARKS API ────────────────────────────────────────────────────────────
