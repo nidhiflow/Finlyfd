@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { transactionsAPI, accountsAPI, aiAPI } from "../services/api";
 import { toast } from "sonner";
 import {
@@ -551,6 +551,7 @@ function SuccessOverlay({ txType, onDone }: { txType: TxType; onDone: () => void
 // ─── Main Screen ───────────────────────────────────────────────────────────────
 export function AddTransactionScreen() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [txType, setTxType] = useState<TxType>("expense");
   const [amount, setAmount] = useState("");
   const [catId, setCatId] = useState<string | null>(null);
@@ -590,6 +591,27 @@ export function AddTransactionScreen() {
       if (mapped.length > 1 && !toAccId) setToAccId(mapped[mapped.length - 1].id);
     }).catch(console.error);
   }, []);
+
+  // ─── Load transaction in edit mode ──────────────────────────────────────────
+  useEffect(() => {
+    if (!id) return;
+    transactionsAPI.getById(id)
+      .then((tx) => {
+        if (tx.type) setTxType(tx.type as TxType);
+        if (tx.amount) setAmount(String(tx.amount));
+        if (tx.category_id) setCatId(tx.category_id);
+        if (tx.subcategory_id || tx.subcategoryId) setSubId(tx.subcategory_id || tx.subcategoryId);
+        if (tx.account_id) setAccId(tx.account_id);
+        if (tx.to_account_id) setToAccId(tx.to_account_id);
+        if (tx.date) setDate(new Date(tx.date));
+        if (tx.note) setNote(tx.note);
+        if (tx.repeat_group_id || tx.is_recurring) setRecurring(true);
+      })
+      .catch((err) => {
+        console.error("Failed to load transaction:", err);
+        toast.error("Failed to load transaction details");
+      });
+  }, [id]);
 
   // ─── Derive live category list from context ─────────────────────────────────
   const { getCatsByType } = useCategoryContext();
@@ -646,38 +668,39 @@ export function AddTransactionScreen() {
       if (accId === toAccId) e.toAcc = "From and To accounts must be different";
     }
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return e;
   };
 
   const handleSave = async () => {
-    if (!validate()) return;
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      toast.error(Object.values(validationErrors)[0]);
+      return;
+    }
 
     try {
-      if (recurring) {
-        // Save as recurring template + transaction
-        await transactionsAPI.create({
-          type: txType,
-          amount: parseFloat(amount),
-          category_id: catId,
-          subcategoryId: subId,
-          account_id: accId,
-          to_account_id: txType === "transfer" ? toAccId : null,
-          note,
-          date: date.toISOString(),
-          repeat_months: recurFreq === "daily" ? 1 : recurFreq === "weekly" ? 1 : recurFreq === "monthly" ? 1 : recurFreq === "quarterly" ? 3 : recurFreq === "half-yearly" ? 6 : 12,
-        });
+      const payload = {
+        type: txType,
+        amount: parseFloat(amount),
+        category_id: catId,
+        subcategoryId: subId,
+        account_id: accId,
+        to_account_id: txType === "transfer" ? toAccId : null,
+        date: date.toISOString(),
+        note,
+      };
+
+      if (id) {
+        await transactionsAPI.update(id, payload);
       } else {
-        // Save regular transaction
-        await transactionsAPI.create({
-          type: txType,
-          amount: parseFloat(amount),
-          category_id: catId,
-          subcategoryId: subId,
-          account_id: accId,
-          to_account_id: txType === "transfer" ? toAccId : null,
-          date: date.toISOString(),
-          note,
-        });
+        if (recurring) {
+          await transactionsAPI.create({
+            ...payload,
+            repeat_months: recurFreq === "daily" ? 1 : recurFreq === "weekly" ? 1 : recurFreq === "monthly" ? 1 : recurFreq === "quarterly" ? 3 : recurFreq === "half-yearly" ? 6 : 12,
+          });
+        } else {
+          await transactionsAPI.create(payload);
+        }
       }
       setSaved(true);
     } catch (error) {
@@ -710,18 +733,18 @@ export function AddTransactionScreen() {
         }
 
         const categorySuggestion = result.category_suggestion || (result.entries && result.entries[0]?.category_suggestion);
-        if (categorySuggestion) {
+        {
           const targetCats = getCatsByType(targetType === "income" ? "income" : "expense");
-          
+
           // Try to match parent category first
-          let matchedCat = targetCats.find(c =>
+          let matchedCat = categorySuggestion ? targetCats.find(c =>
             c.name.toLowerCase().includes(categorySuggestion.toLowerCase()) ||
             categorySuggestion.toLowerCase().includes(c.name.toLowerCase())
-          );
-          
+          ) : undefined;
+
           let matchedSub = null;
-          
-          if (!matchedCat) {
+
+          if (!matchedCat && categorySuggestion) {
             // Try to match subcategories
             for (const c of targetCats) {
               const sub = c.subs?.find(s =>
@@ -736,10 +759,19 @@ export function AddTransactionScreen() {
             }
           }
 
+          // The AI can suggest a category (e.g. "Other") that has no equivalent in
+          // this app's category list, leaving catId unset and silently blocking Save.
+          // Fall back to the first available category so the scan always produces a
+          // saveable transaction; the user can still change it before saving.
+          if (!matchedCat && targetCats.length > 0) {
+            matchedCat = targetCats[0];
+            toast.info("Couldn't match an exact category — please double-check before saving.");
+          }
+
           if (matchedCat) {
             setCatId(matchedCat.id);
             setErrors(errs => ({ ...errs, cat: undefined! }));
-            
+
             if (matchedSub) {
               setSubId(matchedSub.id);
               setErrors(errs => ({ ...errs, sub: undefined! }));
@@ -778,7 +810,7 @@ export function AddTransactionScreen() {
             style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
             <ArrowLeft className="w-5 h-5 text-white/70" />
           </motion.button>
-          <p className="text-white font-bold" style={{ fontSize: 17 }}>Add Transaction</p>
+          <p className="text-white font-bold" style={{ fontSize: 17 }}>{id ? "Edit Transaction" : "Add Transaction"}</p>
           <div className="flex gap-2">
             <motion.button whileTap={{ scale: 0.88 }}
               className="w-9 h-9 rounded-2xl flex items-center justify-center"
@@ -1304,7 +1336,7 @@ export function AddTransactionScreen() {
             fontSize: 15,
           }}>
           <Check className="w-5 h-5" strokeWidth={2.5} />
-          Save Transaction
+          {id ? "Update Transaction" : "Save Transaction"}
         </motion.button>
       </div>
 

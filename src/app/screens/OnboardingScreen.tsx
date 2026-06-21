@@ -616,20 +616,20 @@ const slideVariants = {
     x: 0,
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.42, ease: [0.4, 0, 0.2, 1] },
+    transition: { duration: 0.42, ease: [0.4, 0, 0.2, 1] as const },
   },
   exit: (dir: number) => ({
     x: dir > 0 ? "-70%" : "70%",
     opacity: 0,
     scale: 0.93,
-    transition: { duration: 0.38, ease: [0.4, 0, 0.2, 1] },
+    transition: { duration: 0.38, ease: [0.4, 0, 0.2, 1] as const },
   }),
 };
 
 const textVariants = {
   enter: { y: 20, opacity: 0 },
-  center: { y: 0, opacity: 1, transition: { duration: 0.38, ease: "easeOut" } },
-  exit: { y: -20, opacity: 0, transition: { duration: 0.28, ease: "easeIn" } },
+  center: { y: 0, opacity: 1, transition: { duration: 0.38, ease: "easeOut" as const } },
+  exit: { y: -20, opacity: 0, transition: { duration: 0.28, ease: "easeIn" as const } },
 };
 
 export function OnboardingScreen() {

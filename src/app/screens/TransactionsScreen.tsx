@@ -294,7 +294,9 @@ export function TransactionsScreen() {
         icon: ShoppingBag,
         name: t.note || t.category_name || "Transaction",
         note: t.note || "",
-        account: t.account_name || "Account",
+        account: t.type === "transfer"
+          ? `${t.account_name || "Account"} ➔ ${t.to_account_name || "Account"}`
+          : (t.account_name || "Account"),
         amount: parseFloat(t.amount),
         date: t.date?.split("T")[0] || "",
         dateLabel: new Date(t.date).toLocaleDateString(),

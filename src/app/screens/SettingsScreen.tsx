@@ -78,7 +78,16 @@ export function SettingsScreen() {
     }
   };
 
-  const settingsSections = [
+  const settingsSections: {
+    title: string;
+    items: {
+      icon: any;
+      label: string;
+      value: any;
+      isToggle?: boolean;
+      action: () => void;
+    }[];
+  }[] = [
     {
       title: "Profile",
       items: [

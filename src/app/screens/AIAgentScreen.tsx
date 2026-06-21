@@ -3,20 +3,27 @@ import { Send, Image, Mic, Trash2, Bot, User, TrendingUp, PiggyBank, AlertCircle
 import { aiAPI } from "../services/api";
 import { toast } from "sonner";
 
+interface Message {
+  id: number;
+  type: "ai" | "user";
+  content: string;
+  timestamp: string;
+}
+
 export function AIAgentScreen() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      type: "ai" as const,
+      type: "ai",
       content: "👋 Hi! I'm your Finly AI assistant. I can help you with:",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },
     {
       id: 2,
-      type: "ai" as const,
+      type: "ai",
       content: "• Analyzing your spending patterns\n• Setting budgets and goals\n• Scanning receipts and bills\n• Forecasting expenses\n• Financial advice and tips",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },

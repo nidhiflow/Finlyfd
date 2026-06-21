@@ -546,7 +546,7 @@ export function GoalsScreen() {
 
   const handleRecordSavings = async (goalId: string, amount: number, note: string, account: string) => {
     try {
-      await savingsGoalsAPI.recordSavings(goalId, amount, note, account);
+      await savingsGoalsAPI.recordSavings(goalId, amount);
       toast.success(`${fmtINR(amount)} added to goal!`);
       loadGoals();
     } catch (e) {
