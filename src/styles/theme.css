@@ -126,8 +126,28 @@
 
   body {
     @apply bg-background text-foreground;
-    background-color: #0D0F14;
+    background-color: var(--bg-deep, #10171A);
+    font-family: 'Inter', sans-serif;
   }
+
+  :root {
+    --bg-deep: #10171A;
+    --surface: #192225;
+    --surface-raised: #212C30;
+    --ink: #EDEEE9;
+    --ink-muted: #8B9A98;
+    --ink-faint: #5E6B69;
+    --gold: #D4A24C;
+    --gold-dim: #7A5E2E;
+    --mint: #22C55E;
+    --coral: #EF4444;
+    --orange: #F97316;
+    --divider: rgba(255,255,255,0.07);
+  }
+
+  .font-fraunces { font-family: 'Fraunces', serif; }
+  .font-inter { font-family: 'Inter', sans-serif; }
+
 
   /**
   * Default typography styles for HTML elements (h1-h4, p, label, button, input).

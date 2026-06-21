@@ -154,7 +154,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
                 onClick={() => handleDayTap(day)}
                 className="aspect-square rounded-full flex items-center justify-center relative"
                 style={{
-                  background: sel ? "linear-gradient(135deg,#7C5CFF,#4CC9F0)"
+                  background: sel ? "linear-gradient(135deg,#D4A24C,#D4A24C)"
                     : inRange ? "rgba(124,92,255,0.18)"
                     : isToday ? "rgba(124,92,255,0.10)"
                     : "transparent",
@@ -163,7 +163,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
                 <span style={{
                   fontSize: 13,
                   fontWeight: sel || isToday ? 700 : 400,
-                  color: sel ? "white" : inRange ? "#9D7EFF" : isToday ? "#9D7EFF" : "rgba(255,255,255,0.65)",
+                  color: sel ? "white" : inRange ? "#D4A24C" : isToday ? "#D4A24C" : "rgba(255,255,255,0.65)",
                 }}>
                   {day}
                 </span>
@@ -184,7 +184,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
             className="flex-1 py-3.5 rounded-2xl text-white font-bold"
             style={{
               fontSize: 14,
-              background: start && end ? "linear-gradient(135deg,#7C5CFF 0%,#4CC9F0 100%)" : "rgba(255,255,255,0.1)",
+              background: start && end ? "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)" : "rgba(255,255,255,0.1)",
               boxShadow: start && end ? "0 6px 22px rgba(124,92,255,0.48)" : "none",
               opacity: start && end ? 1 : 0.5,
             }}>
@@ -195,3 +195,4 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
     </motion.div>
   );
 }
+

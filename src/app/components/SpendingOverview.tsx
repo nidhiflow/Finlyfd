@@ -65,7 +65,7 @@ export function SpendingOverview({ month }: SpendingProps) {
         id: c.category_id || c.category_name || 'Unknown',
         name: c.category_name || c.name || 'Unknown',
         value: parseFloat(c.total || 0),
-        color: c.color || '#7C5CFF',
+        color: c.color || '#D4A24C',
         emoji: c.icon || '📦',
         percentage: total > 0 ? ((parseFloat(c.total || 0) / total) * 100) : 0,
       })));
@@ -98,12 +98,12 @@ export function SpendingOverview({ month }: SpendingProps) {
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-xl flex items-center justify-center"
             style={{ background: "rgba(124,92,255,0.18)" }}>
-            <PieIcon className="w-3.5 h-3.5 text-[#9D7EFF]" />
+            <PieIcon className="w-3.5 h-3.5 text-[#D4A24C]" />
           </div>
           <h3 className="text-white font-bold" style={{ fontSize: 15 }}>Spending Overview</h3>
         </div>
         <span className="px-2.5 py-1 rounded-xl font-semibold"
-          style={{ fontSize: 11, background: hasData ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.06)", color: hasData ? "#9D7EFF" : "rgba(255,255,255,0.30)" }}>
+          style={{ fontSize: 11, background: hasData ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.06)", color: hasData ? "#D4A24C" : "rgba(255,255,255,0.30)" }}>
           {hasData ? `₹${totalExpense.toLocaleString("en-IN")}` : "No data"}
         </span>
       </div>
@@ -267,3 +267,4 @@ export function SpendingOverview({ month }: SpendingProps) {
     </div>
   );
 }
+

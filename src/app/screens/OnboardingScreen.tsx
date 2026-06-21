@@ -60,7 +60,7 @@ function CashFlowAnim() {
           strokeDasharray="5,4" fill="none" />
         {/* Balance → Travel (right) */}
         <path d="M 177,166 C 205,188 232,205 250,218"
-          stroke="#4CC9F0" strokeWidth="1.5" strokeOpacity="0.28"
+          stroke="#D4A24C" strokeWidth="1.5" strokeOpacity="0.28"
           strokeDasharray="5,4" fill="none" />
 
         {/* ── Income Particles (3 staggered) ── */}
@@ -83,7 +83,7 @@ function CashFlowAnim() {
             path="M 160,170 L 160,215" />
           <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" begin="0.9s" repeatCount="indefinite" />
         </circle>
-        <circle r="4.5" fill="#4CC9F0" filter="url(#cf-glow)">
+        <circle r="4.5" fill="#D4A24C" filter="url(#cf-glow)">
           <animateMotion dur="1.5s" begin="1.5s" repeatCount="indefinite"
             path="M 177,166 C 205,188 232,205 250,218" />
           <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" begin="1.5s" repeatCount="indefinite" />
@@ -96,19 +96,19 @@ function CashFlowAnim() {
 
         {/* ── Balance Node (center, pulsing ring) ── */}
         {/* Outer pulse ring */}
-        <circle cx="160" cy="144" r="46" fill="none" stroke="#7C5CFF" strokeWidth="1">
+        <circle cx="160" cy="144" r="46" fill="none" stroke="#D4A24C" strokeWidth="1">
           <animate attributeName="r" values="46;58;46" dur="2.8s" repeatCount="indefinite" />
           <animate attributeName="stroke-opacity" values="0.35;0;0.35" dur="2.8s" repeatCount="indefinite" />
         </circle>
         {/* Second pulse ring (offset) */}
-        <circle cx="160" cy="144" r="46" fill="none" stroke="#7C5CFF" strokeWidth="0.8">
+        <circle cx="160" cy="144" r="46" fill="none" stroke="#D4A24C" strokeWidth="0.8">
           <animate attributeName="r" values="46;62;46" dur="2.8s" begin="0.7s" repeatCount="indefinite" />
           <animate attributeName="stroke-opacity" values="0.2;0;0.2" dur="2.8s" begin="0.7s" repeatCount="indefinite" />
         </circle>
         {/* Main node */}
-        <circle cx="160" cy="144" r="44" fill="url(#balanceNodeGrad)" stroke="#7C5CFF" strokeWidth="2" filter="url(#cf-glow-lg)" />
+        <circle cx="160" cy="144" r="44" fill="url(#balanceNodeGrad)" stroke="#D4A24C" strokeWidth="2" filter="url(#cf-glow-lg)" />
         <text x="160" y="138" textAnchor="middle" fill="white" fontSize="15" fontWeight="800" fontFamily="system-ui,sans-serif">₹12,450</text>
-        <text x="160" y="155" textAnchor="middle" fill="#9D7EFF" fontSize="8.5" fontFamily="system-ui,sans-serif">Balance</text>
+        <text x="160" y="155" textAnchor="middle" fill="#D4A24C" fontSize="8.5" fontFamily="system-ui,sans-serif">Balance</text>
 
         {/* ── Expense Nodes ── */}
         {/* Food */}
@@ -122,9 +122,9 @@ function CashFlowAnim() {
         <text x="160" y="247" textAnchor="middle" fill="#FF8C00" fontSize="8" fontFamily="system-ui,sans-serif">₹1,200</text>
 
         {/* Travel */}
-        <circle cx="262" cy="234" r="24" fill="#081420" stroke="#4CC9F0" strokeWidth="1.5" />
+        <circle cx="262" cy="234" r="24" fill="#081420" stroke="#D4A24C" strokeWidth="1.5" />
         <text x="262" y="230" textAnchor="middle" fontSize="15" fontFamily="sans-serif">✈️</text>
-        <text x="262" y="244" textAnchor="middle" fill="#4CC9F0" fontSize="8" fontFamily="system-ui,sans-serif">₹450</text>
+        <text x="262" y="244" textAnchor="middle" fill="#D4A24C" fontSize="8" fontFamily="system-ui,sans-serif">₹450</text>
 
         {/* ── Floating ₹ particles (ambient) ── */}
         {[
@@ -132,7 +132,7 @@ function CashFlowAnim() {
           { x: 220, begin: "1s", dur: "3.5s", dx: 18 },
           { x: 155, begin: "2s", dur: "3.2s", dx: 0 },
         ].map((p, i) => (
-          <text key={i} fontSize="10" fill="#7C5CFF" fontFamily="system-ui,sans-serif"
+          <text key={i} fontSize="10" fill="#D4A24C" fontFamily="system-ui,sans-serif"
             opacity="0" fontWeight="700" textAnchor="middle">
             <animateMotion dur={p.dur} begin={p.begin} repeatCount="indefinite"
               path={`M ${p.x},180 C ${p.x + p.dx},160 ${p.x + p.dx * 2},140 ${p.x + p.dx * 1.5},100`} />
@@ -151,8 +151,8 @@ function CashFlowAnim() {
 // ═══════════════════════════════════════════════════════════════════
 const EXPENSE_CATEGORIES = [
   { emoji: "🍕", name: "Food & Dining", amount: "₹850", pct: 34, color: "#F72585", gradFrom: "#F72585" },
-  { emoji: "✈️", name: "Travel", amount: "₹450", pct: 18, color: "#4CC9F0", gradFrom: "#4CC9F0" },
-  { emoji: "🏠", name: "Housing", amount: "₹700", pct: 28, color: "#7C5CFF", gradFrom: "#7C5CFF" },
+  { emoji: "✈️", name: "Travel", amount: "₹450", pct: 18, color: "#D4A24C", gradFrom: "#D4A24C" },
+  { emoji: "🏠", name: "Housing", amount: "₹700", pct: 28, color: "#D4A24C", gradFrom: "#D4A24C" },
   { emoji: "🎬", name: "Entertainment", amount: "₹320", pct: 13, color: "#FF8C00", gradFrom: "#FF8C00" },
 ];
 
@@ -258,7 +258,7 @@ const RING_RADIUS = 70;
 const RING_CIRCUM = 2 * Math.PI * RING_RADIUS;
 
 const GOALS = [
-  { name: "Vacation 🏖️", pct: 55, current: "₹2,750", target: "₹5,000", color: "#4CC9F0" },
+  { name: "Vacation 🏖️", pct: 55, current: "₹2,750", target: "₹5,000", color: "#D4A24C" },
   { name: "New Laptop 💻", pct: 38, current: "₹760", target: "₹2,000", color: "#F72585" },
 ];
 
@@ -300,9 +300,9 @@ function SavingsGoalsAnim() {
         <svg width="170" height="170" viewBox="0 0 170 170">
           <defs>
             <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#7C5CFF" />
-              <stop offset="60%" stopColor="#9D7EFF" />
-              <stop offset="100%" stopColor="#4CC9F0" />
+              <stop offset="0%" stopColor="#D4A24C" />
+              <stop offset="60%" stopColor="#D4A24C" />
+              <stop offset="100%" stopColor="#D4A24C" />
             </linearGradient>
             <filter id="ring-glow">
               <feGaussianBlur stdDeviation="4" result="blur" />
@@ -311,10 +311,10 @@ function SavingsGoalsAnim() {
           </defs>
 
           {/* Track */}
-          <circle cx="85" cy="85" r={RING_RADIUS} fill="none" stroke="#1B2130" strokeWidth="14" />
+          <circle cx="85" cy="85" r={RING_RADIUS} fill="none" stroke="var(--surface)" strokeWidth="14" />
           {/* Glow layer */}
           <circle cx="85" cy="85" r={RING_RADIUS}
-            fill="none" stroke="#7C5CFF" strokeWidth="8"
+            fill="none" stroke="#D4A24C" strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray={RING_CIRCUM}
             strokeDashoffset={dashoffset}
@@ -344,18 +344,18 @@ function SavingsGoalsAnim() {
             const ty = 85 + RING_RADIUS * Math.sin(angle);
             return (
               <g>
-                <circle cx={tx} cy={ty} r={8} fill="#9D7EFF" opacity={0.3} filter="url(#ring-glow)">
+                <circle cx={tx} cy={ty} r={8} fill="#D4A24C" opacity={0.3} filter="url(#ring-glow)">
                   <animate attributeName="r" values="8;13;8" dur="2s" repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
                 </circle>
-                <circle cx={tx} cy={ty} r={5} fill="#9D7EFF" filter="url(#ring-glow)" />
+                <circle cx={tx} cy={ty} r={5} fill="#D4A24C" filter="url(#ring-glow)" />
               </g>
             );
           })()}
 
           {/* Coin particles animating into ring */}
           {[0, 0.8, 1.6].map((begin, i) => (
-            <circle key={i} r={4 - i * 0.8} fill="#4CC9F0" opacity={0.7 - i * 0.15}>
+            <circle key={i} r={4 - i * 0.8} fill="#D4A24C" opacity={0.7 - i * 0.15}>
               <animateMotion dur="2.2s" begin={`${begin}s`} repeatCount="indefinite"
                 path="M 50,20 C 65,50 75,65 85,72" />
               <animate attributeName="opacity" values="0;0.7;0.5;0" dur="2.2s" begin={`${begin}s`} repeatCount="indefinite" />
@@ -367,7 +367,7 @@ function SavingsGoalsAnim() {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <p className="text-white font-black" style={{ fontSize: 30, lineHeight: 1 }}>{countUp}%</p>
           <p className="text-white/45" style={{ fontSize: 10, lineHeight: 1.4, marginTop: 2 }}>Emergency Fund</p>
-          <p style={{ color: "#9D7EFF", fontSize: 11, fontWeight: 700, marginTop: 2 }}>₹14,400 / ₹20K</p>
+          <p style={{ color: "#D4A24C", fontSize: 11, fontWeight: 700, marginTop: 2 }}>₹14,400 / ₹20K</p>
         </div>
       </div>
 
@@ -416,8 +416,8 @@ const PATH_LEN = 360;
 
 const AI_INSIGHTS = [
   { icon: "📉", text: "Spending down 12% vs last month", color: "#10B981", label: "Positive" },
-  { icon: "💡", text: "Save ₹245 more by reducing dining", color: "#7C5CFF", label: "Tip" },
-  { icon: "🎯", text: "Vacation goal on track for July", color: "#4CC9F0", label: "On track" },
+  { icon: "💡", text: "Save ₹245 more by reducing dining", color: "#D4A24C", label: "Tip" },
+  { icon: "🎯", text: "Vacation goal on track for July", color: "#D4A24C", label: "On track" },
 ];
 
 const WEEK_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -448,13 +448,13 @@ function AIInsightsAnim() {
         <svg width="100%" viewBox="0 0 314 98" preserveAspectRatio="none" style={{ display: "block", height: 90 }}>
           <defs>
             <linearGradient id="ai-line-grad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#7C5CFF" />
-              <stop offset="50%" stopColor="#4CC9F0" />
+              <stop offset="0%" stopColor="#D4A24C" />
+              <stop offset="50%" stopColor="#D4A24C" />
               <stop offset="100%" stopColor="#10B981" />
             </linearGradient>
             <linearGradient id="ai-fill-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#7C5CFF" stopOpacity="0.28" />
-              <stop offset="100%" stopColor="#7C5CFF" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#D4A24C" stopOpacity="0.28" />
+              <stop offset="100%" stopColor="#D4A24C" stopOpacity="0.0" />
             </linearGradient>
             <filter id="ai-glow-line">
               <feGaussianBlur stdDeviation="2.5" result="blur" />
@@ -464,7 +464,7 @@ function AIInsightsAnim() {
           {/* Area fill */}
           <path d={FILL_PATH} fill="url(#ai-fill-grad)" />
           {/* Glow line */}
-          <path d={LINE_PATH} stroke="#7C5CFF" strokeWidth="5" fill="none"
+          <path d={LINE_PATH} stroke="#D4A24C" strokeWidth="5" fill="none"
             strokeOpacity="0.45" filter="url(#ai-glow-line)"
             strokeDasharray={PATH_LEN}
             strokeDashoffset={drawn ? 0 : PATH_LEN}
@@ -500,7 +500,7 @@ function AIInsightsAnim() {
         <div className="absolute top-2.5 left-3 flex items-center gap-1.5">
           <div className="flex gap-0.5">
             {[0, 0.3, 0.6].map((d, i) => (
-              <div key={i} className="w-1 h-1 rounded-full bg-[#7C5CFF]"
+              <div key={i} className="w-1 h-1 rounded-full bg-[#D4A24C]"
                 style={{ animation: `pulse 1.5s ${d}s infinite` }} />
             ))}
           </div>
@@ -508,8 +508,8 @@ function AIInsightsAnim() {
         </div>
 
         {/* Current value badge */}
-        <div className="absolute top-2 right-3 bg-[#7C5CFF]/15 border border-[#7C5CFF]/25 rounded-lg px-2 py-1">
-          <span style={{ color: "#9D7EFF", fontSize: 11, fontWeight: 700 }}>₹1,234 this week</span>
+        <div className="absolute top-2 right-3 bg-[#D4A24C]/15 border border-[#D4A24C]/25 rounded-lg px-2 py-1">
+          <span style={{ color: "#D4A24C", fontSize: 11, fontWeight: 700 }}>₹1,234 this week</span>
         </div>
       </div>
 
@@ -545,7 +545,7 @@ function AIInsightsAnim() {
           ].map((dot, i) => (
             <div
               key={i}
-              className="absolute rounded-full bg-[#7C5CFF]"
+              className="absolute rounded-full bg-[#D4A24C]"
               style={{
                 left: dot.cx, top: dot.cy,
                 width: dot.r * 2 * 4, height: dot.r * 2 * 4,
@@ -580,9 +580,9 @@ const SLIDES = [
     title: "Track Every\nExpense",
     description:
       "AI automatically categorizes your spending in real-time, giving you instant clarity with zero manual effort.",
-    accent: "#4CC9F0",
-    gradFrom: "#4CC9F0",
-    gradTo: "#7C5CFF",
+    accent: "#D4A24C",
+    gradFrom: "#D4A24C",
+    gradTo: "#D4A24C",
   },
   {
     id: 2,
@@ -590,9 +590,9 @@ const SLIDES = [
     title: "Grow Your\nSavings",
     description:
       "Set meaningful goals and watch your progress build up day by day. Every deposit takes you closer to financial freedom.",
-    accent: "#9D7EFF",
-    gradFrom: "#7C5CFF",
-    gradTo: "#9D7EFF",
+    accent: "#D4A24C",
+    gradFrom: "#D4A24C",
+    gradTo: "#D4A24C",
   },
   {
     id: 3,
@@ -602,7 +602,7 @@ const SLIDES = [
       "Finly learns your habits and delivers smart, personalized recommendations to optimize spending and hit your goals faster.",
     accent: "#F72585",
     gradFrom: "#F72585",
-    gradTo: "#7C5CFF",
+    gradTo: "#D4A24C",
   },
 ];
 
@@ -670,7 +670,7 @@ export function OnboardingScreen() {
 
   return (
     <div
-      className="min-h-screen bg-[#0D0F14] flex flex-col overflow-hidden"
+      className="min-h-screen bg-[var(--bg-deep)] flex flex-col overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -687,7 +687,7 @@ export function OnboardingScreen() {
         {/* ── Top bar ── */}
         <div className="flex items-center justify-between px-6 pt-12 pb-3 flex-shrink-0 relative z-10">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center shadow-lg shadow-[#7C5CFF]/35">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-lg shadow-[#D4A24C]/35">
               <span className="text-white font-black" style={{ fontSize: 15 }}>F</span>
             </div>
             <span className="text-white font-bold" style={{ fontSize: 17 }}>Finly</span>
@@ -804,7 +804,7 @@ export function OnboardingScreen() {
                   onClick={() => { finishOnboarding(); navigate("/signup"); }}
                   className="w-full py-4 rounded-2xl text-white font-bold active:scale-[0.97] transition-transform flex items-center justify-center gap-2"
                   style={{
-                    background: "linear-gradient(135deg, #7C5CFF 0%, #9D7EFF 100%)",
+                    background: "linear-gradient(135deg, #D4A24C 0%, #D4A24C 100%)",
                     boxShadow: "0 10px 28px rgba(124,92,255,0.42)",
                     fontSize: 16,
                   }}
@@ -835,3 +835,4 @@ export function OnboardingScreen() {
     </div>
   );
 }
+

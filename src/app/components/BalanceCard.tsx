@@ -4,7 +4,7 @@ export function BalanceCard({ balance = 0, income = 0, expense = 0 }) {
   return (
     <div className="relative overflow-hidden rounded-3xl p-6"
       style={{
-        background: "linear-gradient(135deg,#7C5CFF 0%,#4CC9F0 100%)",
+        background: "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)",
         boxShadow: "0 12px 36px rgba(124,92,255,0.32)",
       }}>
       {/* Decorative blobs */}
@@ -56,3 +56,4 @@ export function BalanceCard({ balance = 0, income = 0, expense = 0 }) {
     </div>
   );
 }
+

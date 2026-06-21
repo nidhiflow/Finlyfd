@@ -40,7 +40,7 @@ const INITIAL_GOALS: Goal[] = [];
 
 const GOAL_EMOJIS = ["🏥","✈️","💻","🚗","🏠","💍","📱","🎓","👶","💰","🏖️","🎯"];
 const ACCOUNTS = ["HDFC Savings","SBI Salary A/C","ICICI Credit Card","Cash Wallet"];
-const GOAL_COLORS = ["#7C5CFF","#4CC9F0","#22C55E","#FFA500","#F72585","#FFB703","#4895EF","#EF4444"];
+const GOAL_COLORS = ["#D4A24C","#D4A24C","#22C55E","#FFA500","#F72585","#FFB703","#4895EF","#EF4444"];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 const fmtINR = (n: number) => `₹${n.toLocaleString("en-IN")}`;
@@ -72,7 +72,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
     });
   };
 
-  const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#7C5CFF] transition-colors";
+  const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#D4A24C] transition-colors";
   const labelCls = "text-white/60 text-xs mb-1.5 block";
 
   return (
@@ -90,7 +90,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
           <div className="flex gap-3">
             <div className="relative">
               <button onClick={() => setShowEmojis(!showEmojis)}
-                className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl hover:border-[#7C5CFF] transition-colors">
+                className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl hover:border-[#D4A24C] transition-colors">
                 {emoji}
               </button>
               <AnimatePresence>
@@ -149,7 +149,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
                   className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all capitalize"
                   style={{
                     background: type === t ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
-                    color: type === t ? "#9D7EFF" : "rgba(255,255,255,0.4)",
+                    color: type === t ? "#D4A24C" : "rgba(255,255,255,0.4)",
                     border: type === t ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
                   }}>
                   {t.replace("-", " ")}
@@ -167,7 +167,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
                   className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all"
                   style={{
                     background: trackingMode === m ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
-                    color: trackingMode === m ? "#9D7EFF" : "rgba(255,255,255,0.4)",
+                    color: trackingMode === m ? "#D4A24C" : "rgba(255,255,255,0.4)",
                     border: trackingMode === m ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
                   }}>
                   {m}
@@ -199,7 +199,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
             </div>
             <button onClick={() => setCarryForward(!carryForward)}
               className="w-12 h-7 rounded-full flex items-center transition-colors px-0.5"
-              style={{ background: carryForward ? "#7C5CFF" : "rgba(255,255,255,0.1)" }}>
+              style={{ background: carryForward ? "#D4A24C" : "rgba(255,255,255,0.1)" }}>
               <motion.div animate={{ x: carryForward ? 20 : 0 }}
                 className="w-6 h-6 rounded-full bg-white shadow-md" />
             </button>
@@ -216,8 +216,8 @@ function GoalFormModal({ goal, onSave, onClose }: {
           <motion.button whileTap={{scale:0.95}} onClick={onClose}
             className="flex-1 py-3.5 rounded-xl bg-white/5 text-white/50 text-sm font-medium">Cancel</motion.button>
           <motion.button whileTap={{scale:0.95}} onClick={handleSave}
-            className="flex-1 py-3.5 rounded-xl text-white text-sm font-semibold shadow-lg shadow-[#7C5CFF]/30"
-            style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)" }}>
+            className="flex-1 py-3.5 rounded-xl text-white text-sm font-semibold shadow-lg shadow-[#D4A24C]/30"
+            style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
             {goal ? "Update Goal" : "Create Goal"}
           </motion.button>
         </div>
@@ -234,7 +234,7 @@ function RecordSavingsModal({ goal, onSave, onClose }: {
   const [note, setNote] = useState("");
   const [account, setAccount] = useState(goal.linkedAccount);
 
-  const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#7C5CFF] transition-colors";
+  const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#D4A24C] transition-colors";
 
   return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
@@ -279,8 +279,8 @@ function RecordSavingsModal({ goal, onSave, onClose }: {
               if (!amount || parseFloat(amount) <= 0) { toast.error("Enter a valid amount"); return; }
               onSave(parseFloat(amount), note, account);
             }}
-            className="flex-1 py-3 rounded-xl text-white text-sm font-semibold shadow-lg shadow-[#7C5CFF]/30"
-            style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)" }}>
+            className="flex-1 py-3 rounded-xl text-white text-sm font-semibold shadow-lg shadow-[#D4A24C]/30"
+            style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
             Record Savings
           </motion.button>
         </div>
@@ -354,7 +354,7 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
       <div className="flex gap-2 mb-4">
         <motion.button whileTap={{scale:0.95}} onClick={onRecordSavings}
           className="flex-1 py-3 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2"
-          style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)", boxShadow: "0 4px 16px rgba(124,92,255,0.3)" }}>
+          style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(124,92,255,0.3)" }}>
           <Plus className="w-4 h-4" /> Record Savings
         </motion.button>
         <motion.button whileTap={{scale:0.95}} onClick={onDelete}
@@ -471,7 +471,7 @@ export function GoalsScreen() {
         saved: parseFloat(g.current_amount || "0"),
         targetDate: g.target_date || "Dec 2026",
         startDate: g.start_date || "Apr 2026",
-        color: g.color || "#7C5CFF",
+        color: g.color || "#D4A24C",
         trackingMode: g.tracking_mode || "Manual",
         type: g.type || "one-time",
         linkedAccount: g.linked_account || ACCOUNTS[0],
@@ -625,13 +625,13 @@ export function GoalsScreen() {
           </div>
           <div className="h-2 rounded-full overflow-hidden bg-white/10 mt-4">
             <motion.div className="h-full rounded-full"
-              style={{ background: "linear-gradient(90deg,#7C5CFF,#4CC9F0)" }}
+              style={{ background: "linear-gradient(90deg,#D4A24C,#D4A24C)" }}
               initial={{ width: "0%" }}
               animate={{ width: `${overallProgress}%` }}
               transition={{ duration: 0.8 }}
             />
           </div>
-          <p className="text-right text-[10px] text-[#9D7EFF] font-semibold mt-1">{overallProgress}% overall</p>
+          <p className="text-right text-[10px] text-[#D4A24C] font-semibold mt-1">{overallProgress}% overall</p>
         </div>
       )}
 
@@ -639,7 +639,7 @@ export function GoalsScreen() {
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
         <input
-          className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#7C5CFF] transition-colors"
+          className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#D4A24C] transition-colors"
           placeholder="Search goals..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
@@ -653,7 +653,7 @@ export function GoalsScreen() {
             className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all capitalize"
             style={{
               background: tab === t ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
-              color: tab === t ? "#9D7EFF" : "rgba(255,255,255,0.35)",
+              color: tab === t ? "#D4A24C" : "rgba(255,255,255,0.35)",
               border: tab === t ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.06)",
             }}>
             {t} ({t === "active" ? activeGoals.length : completedGoals.length})
@@ -688,7 +688,7 @@ export function GoalsScreen() {
         onClick={() => { setEditGoal(null); setShowForm(true); }}
         className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40"
         style={{
-          background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)",
+          background: "linear-gradient(135deg,#D4A24C,#D4A24C)",
           boxShadow: "0 6px 24px rgba(124,92,255,0.45), 0 0 40px rgba(124,92,255,0.15)",
         }}>
         <Plus className="w-6 h-6 text-white" />
@@ -714,3 +714,4 @@ export function GoalsScreen() {
     </div>
   );
 }
+

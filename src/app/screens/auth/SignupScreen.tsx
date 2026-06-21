@@ -122,7 +122,7 @@ export function SignupScreen() {
   return (
     <div className="flex flex-col min-h-screen px-6">
       <div className="pt-16 pb-8">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center mb-6 shadow-lg shadow-[#7C5CFF]/50">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center mb-6 shadow-lg shadow-[#D4A24C]/50">
           <span className="text-2xl font-bold text-white">F</span>
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">Create account</h1>
@@ -155,7 +155,7 @@ export function SignupScreen() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                  className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#D4A24C] focus:outline-none"
                 />
               </div>
             </div>
@@ -172,7 +172,7 @@ export function SignupScreen() {
                   className={`w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border rounded-xl text-white placeholder:text-white/30 focus:outline-none transition-colors ${
                     email && !isOfficialEmail(email)
                       ? "border-red-500/50 focus:border-red-500"
-                      : "border-white/10 focus:border-[#7C5CFF]"
+                      : "border-white/10 focus:border-[#D4A24C]"
                   }`}
                 />
               </div>
@@ -192,7 +192,7 @@ export function SignupScreen() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="123-456-7890"
-                  className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                  className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#D4A24C] focus:outline-none"
                 />
               </div>
             </div>
@@ -206,7 +206,7 @@ export function SignupScreen() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a password"
-                  className="w-full pl-12 pr-12 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                  className="w-full pl-12 pr-12 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#D4A24C] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -225,7 +225,7 @@ export function SignupScreen() {
             <button
               onClick={handleSignup}
               disabled={loading}
-              className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 hover:shadow-[#7C5CFF]/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-white font-semibold shadow-lg shadow-[#D4A24C]/30 hover:shadow-[#D4A24C]/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Creating Account..." : "Create Account"}
             </button>
@@ -239,7 +239,7 @@ export function SignupScreen() {
             <span className="text-white/50">Already have an account? </span>
             <button
               onClick={() => navigate("/login")}
-              className="text-[#7C5CFF] font-semibold hover:text-[#9D7EFF]"
+              className="text-[#D4A24C] font-semibold hover:text-[#D4A24C]"
             >
               Sign In
             </button>
@@ -273,7 +273,7 @@ export function SignupScreen() {
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOTPChange(index, e.target.value)}
-                    className="w-12 h-14 bg-[#0D0F14] border border-white/10 rounded-xl text-white text-center text-xl font-semibold focus:border-[#7C5CFF] focus:outline-none"
+                    className="w-12 h-14 bg-[#0D0F14] border border-white/10 rounded-xl text-white text-center text-xl font-semibold focus:border-[#D4A24C] focus:outline-none"
                   />
                 ))}
               </div>
@@ -281,7 +281,7 @@ export function SignupScreen() {
               <button
                 onClick={handleResendOTP}
                 disabled={loading}
-                className="w-full text-sm text-[#7C5CFF] hover:text-[#9D7EFF] mb-4 disabled:opacity-50"
+                className="w-full text-sm text-[#D4A24C] hover:text-[#D4A24C] mb-4 disabled:opacity-50"
               >
                 {loading ? "Sending..." : "Resend Code"}
               </button>
@@ -289,7 +289,7 @@ export function SignupScreen() {
               <button
                 onClick={handleOTPVerify}
                 disabled={loading}
-                className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-white font-semibold shadow-lg shadow-[#D4A24C]/30 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Verifying..." : "Verify & Get Started"}
               </button>

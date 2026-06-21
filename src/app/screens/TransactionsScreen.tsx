@@ -120,14 +120,14 @@ const C_INCOME = "#22C55E"; // Green
 const C_EXPENSE = "#EF4444"; // Red
 const C_SAVINGS = "#FFB703"; // Amber
 const C_BALANCE = "#FFFFFF"; // White
-const C_ACCENT = "#7C5CFF"; // Brand Accent Color (Purple)
+const C_ACCENT = "#D4A24C"; // Brand Accent Color (Purple)
 
 // ─── Summary Card (reused for all period headers) ───────────────────────────────
 function SummaryCard({ income, expense, savings, balance }: { income: number; expense: number; savings: number; balance: number }) {
   const totalExpense = expense + savings;
   const netTotal = income - totalExpense;
   return (
-    <div className="bg-[#1B2130]/60 rounded-lg p-2.5 border border-white/[0.05]">
+    <div className="bg-[var(--surface)]/60 rounded-lg p-2.5 border border-white/[0.05]">
       <div className="grid grid-cols-3 gap-2">
         {[
           { l: "Income", v: income, c: C_INCOME, p: "+" },
@@ -211,8 +211,8 @@ function ActionSheet({ transaction, onDelete, onEdit, onClose }: {
         style={{ background: "linear-gradient(180deg,#1A2238 0%,#131825 100%)" }}>
         <div className="flex justify-center mb-4"><div className="w-8 h-1 rounded-full bg-white/15" /></div>
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-[#7C5CFF]/15 flex items-center justify-center">
-            <transaction.icon className="w-5 h-5 text-[#7C5CFF]" />
+          <div className="w-10 h-10 rounded-xl bg-[#D4A24C]/15 flex items-center justify-center">
+            <transaction.icon className="w-5 h-5 text-[#D4A24C]" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white font-medium text-sm">{transaction.name}</p>
@@ -479,7 +479,7 @@ export function TransactionsScreen() {
                 }}>
                 {tab}
                 {isSel && (
-                  <motion.div layoutId="tabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#7C5CFF]" />
+                  <motion.div layoutId="tabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#D4A24C]" />
                 )}
               </motion.button>
             );
@@ -582,7 +582,7 @@ export function TransactionsScreen() {
           /* ── Calendar View ───────────────────────────────── */
           <div className="space-y-4 pt-4">
             {/* Calendar Grid Container */}
-            <div className="bg-[#1B2130]/30 rounded-2xl p-4 border border-white/[0.05]">
+            <div className="bg-[var(--surface)]/30 rounded-2xl p-4 border border-white/[0.05]">
               {/* Weekday Headers */}
               <div className="grid grid-cols-7 gap-2 mb-3">
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
@@ -611,7 +611,7 @@ export function TransactionsScreen() {
                       onClick={() => setSelectedDay(stat.day)}
                       className={`relative aspect-square rounded-xl flex flex-col items-center justify-center transition-colors ${
                         isSelected
-                          ? "bg-[#7C5CFF] text-white"
+                          ? "bg-[#D4A24C] text-white"
                           : "bg-white/[0.03] text-white/70 hover:bg-white/[0.07]"
                       }`}
                     >
@@ -638,7 +638,7 @@ export function TransactionsScreen() {
                 </h3>
 
                 {!selectedDayData || selectedDayData.transactions.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 text-center bg-[#1B2130]/10 rounded-2xl border border-white/[0.03]">
+                  <div className="flex flex-col items-center justify-center py-10 text-center bg-[var(--surface)]/10 rounded-2xl border border-white/[0.03]">
                     <p className="text-2xl mb-1">📭</p>
                     <p className="text-white/40 text-xs">No transactions on this day</p>
                   </div>
@@ -711,7 +711,7 @@ export function TransactionsScreen() {
         onClick={() => navigate("/dashboard/add-transaction")}
         className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40"
         style={{
-          background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)",
+          background: "linear-gradient(135deg,#D4A24C,#D4A24C)",
           boxShadow: "0 6px 24px rgba(124,92,255,0.45), 0 0 40px rgba(124,92,255,0.15)",
         }}>
         <Plus className="w-6 h-6 text-white" />

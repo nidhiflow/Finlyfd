@@ -127,7 +127,7 @@ export function SettingsScreen() {
   return (
     <div className="px-5 py-6 space-y-6">
       {/* Profile Card */}
-      <div className="bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] rounded-2xl p-6">
+      <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
             <User className="w-8 h-8 text-white" />
@@ -145,7 +145,7 @@ export function SettingsScreen() {
           <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider px-1">
             {section.title}
           </h3>
-          <div className="bg-[#1B2130] rounded-2xl border border-white/5 overflow-hidden">
+          <div className="bg-[var(--surface)] rounded-2xl border border-[var(--divider)] overflow-hidden">
             {section.items.map((item, index) => {
               const Icon = item.icon;
               return (
@@ -153,7 +153,7 @@ export function SettingsScreen() {
                   key={item.label}
                   onClick={item.action}
                   className={`w-full flex items-center justify-between px-4 py-4 hover:bg-white/5 transition-colors ${
-                    index !== section.items.length - 1 ? "border-b border-white/5" : ""
+                    index !== section.items.length - 1 ? "border-b border-[var(--divider)]" : ""
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -167,7 +167,7 @@ export function SettingsScreen() {
                       className="w-12 h-7 rounded-full p-1 transition-all duration-300"
                       style={{
                         background: item.value
-                          ? "linear-gradient(135deg,#7C5CFF,#4CC9F0)"
+                          ? "linear-gradient(135deg,#D4A24C,#D4A24C)"
                           : "rgba(255,255,255,0.15)",
                         boxShadow: item.value ? "0 2px 10px rgba(124,92,255,0.4)" : "none",
                       }}
@@ -179,7 +179,7 @@ export function SettingsScreen() {
                         style={{ background: "white", boxShadow: "0 2px 4px rgba(0,0,0,0.2)" }}
                       >
                         {item.value
-                          ? <Moon className="w-3 h-3 text-[#7C5CFF]" />
+                          ? <Moon className="w-3 h-3 text-[#D4A24C]" />
                           : <Sun className="w-3 h-3 text-gray-400" />
                         }
                       </motion.div>
@@ -200,9 +200,9 @@ export function SettingsScreen() {
       ))}
 
       {/* Privacy Notice */}
-      <div className="bg-[#1B2130] rounded-2xl p-5 border border-white/5">
+      <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[var(--divider)]">
         <div className="flex items-start gap-3 mb-3">
-          <Shield className="w-5 h-5 text-[#7C5CFF] flex-shrink-0 mt-0.5" />
+          <Shield className="w-5 h-5 text-[#D4A24C] flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="text-white font-semibold mb-2">Privacy & AI</h3>
             <p className="text-sm text-white/60 leading-relaxed">
@@ -213,28 +213,28 @@ export function SettingsScreen() {
       </div>
 
       {/* Export Options */}
-      <div className="bg-[#1B2130] rounded-2xl p-5 border border-white/5">
+      <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[var(--divider)]">
         <h3 className="text-white font-semibold mb-3">Export Data</h3>
         <div className="space-y-2">
-          <button onClick={handleExportCSV} className="w-full py-3 bg-[#0D0F14] border border-white/10 rounded-xl text-white text-sm font-medium hover:border-[#7C5CFF]/30">
+          <button onClick={handleExportCSV} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white text-sm font-medium hover:border-[#D4A24C]/30">
             Export All Data (CSV)
           </button>
-          <button onClick={handleExportCSV} className="w-full py-3 bg-[#0D0F14] border border-white/10 rounded-xl text-white text-sm font-medium hover:border-[#7C5CFF]/30">
+          <button onClick={handleExportCSV} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white text-sm font-medium hover:border-[#D4A24C]/30">
             Export Last 30 Days
           </button>
-          <button onClick={() => toast.info("Custom range export coming soon")} className="w-full py-3 bg-[#0D0F14] border border-white/10 rounded-xl text-white text-sm font-medium hover:border-[#7C5CFF]/30">
+          <button onClick={() => toast.info("Custom range export coming soon")} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white text-sm font-medium hover:border-[#D4A24C]/30">
             Export Custom Range
           </button>
         </div>
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-[#1B2130] rounded-2xl p-5 border border-[#EF4444]/20">
+      <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[#EF4444]/20">
         <h3 className="text-[#EF4444] font-semibold mb-3">Danger Zone</h3>
         <div className="space-y-2">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-[#0D0F14] border border-white/10 rounded-xl text-white font-medium hover:border-[#EF4444]/30"
+            className="w-full flex items-center justify-center gap-2 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white font-medium hover:border-[#EF4444]/30"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
@@ -259,7 +259,7 @@ export function SettingsScreen() {
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)} />
-          <div className="relative max-w-sm w-full bg-[#1B2130] rounded-2xl p-6 border border-[#EF4444]/30">
+          <div className="relative max-w-sm w-full bg-[var(--surface)] rounded-2xl p-6 border border-[#EF4444]/30">
             <div className="w-12 h-12 rounded-full bg-[#EF4444]/20 flex items-center justify-center mx-auto mb-4">
               <Trash2 className="w-6 h-6 text-[#EF4444]" />
             </div>
@@ -270,7 +270,7 @@ export function SettingsScreen() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 py-3 bg-[#0D0F14] border border-white/10 rounded-xl text-white font-medium"
+                className="flex-1 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white font-medium"
               >
                 Cancel
               </button>
@@ -294,7 +294,7 @@ export function SettingsScreen() {
       {showCurrencyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCurrencyModal(false)} />
-          <div className="relative max-w-sm w-full bg-[#1B2130] rounded-2xl p-6 border border-white/10">
+          <div className="relative max-w-sm w-full bg-[var(--surface)] rounded-2xl p-6 border border-[var(--divider)]">
             <h2 className="text-lg font-bold text-white mb-4">Select Currency</h2>
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {["INR (₹)", "USD ($)", "EUR (€)", "GBP (£)", "JPY (¥)"].map(c => {
@@ -325,7 +325,7 @@ export function SettingsScreen() {
       {showWeekModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowWeekModal(false)} />
-          <div className="relative max-w-sm w-full bg-[#1B2130] rounded-2xl p-6 border border-white/10">
+          <div className="relative max-w-sm w-full bg-[var(--surface)] rounded-2xl p-6 border border-[var(--divider)]">
             <h2 className="text-lg font-bold text-white mb-4">Week Starts On</h2>
             <div className="space-y-2">
               {["Sunday", "Monday", "Saturday"].map(day => (

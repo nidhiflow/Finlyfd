@@ -46,7 +46,7 @@ export function BudgetScreen() {
           category: cat?.name || b.category_id || "Uncategorized",
           budgeted: parseFloat(b.amount || "0"),
           spent: parseFloat(b.spent || "0"),
-          color: cat?.color || "#7C5CFF",
+          color: cat?.color || "#D4A24C",
           emoji: cat?.icon || "📦",
         };
       });
@@ -99,17 +99,17 @@ export function BudgetScreen() {
     <div className="px-5 py-6 space-y-6">
       {/* Month Selector */}
       <div className="flex items-center justify-between">
-        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
+        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
           <ChevronLeft className="w-5 h-5 text-white" />
         </button>
         <h2 className="text-xl font-semibold text-white">{monthLabel}</h2>
-        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
+        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
           <ChevronRight className="w-5 h-5 text-white" />
         </button>
       </div>
 
       {/* Budget Summary */}
-      <div className="bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] rounded-2xl p-6">
+      <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
         <h3 className="text-white/80 text-sm mb-2">Budget Remaining</h3>
         <p className="text-4xl font-bold text-white mb-4">₹{budgetLeft.toLocaleString()}</p>
         <div className="bg-white/10 backdrop-blur-sm rounded-full h-3 overflow-hidden mb-3">
@@ -139,24 +139,24 @@ export function BudgetScreen() {
       )}
 
       {/* AI Budget Suggestions */}
-      <div className="bg-gradient-to-br from-[#7C5CFF]/20 to-[#4CC9F0]/20 border border-[#7C5CFF]/30 rounded-2xl p-5">
+      <div className="bg-gradient-to-br from-[#D4A24C]/20 to-[#D4A24C]/20 border border-[#D4A24C]/30 rounded-2xl p-5">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#7C5CFF]/30 flex items-center justify-center">
-            <Bot className="w-5 h-5 text-[#7C5CFF]" />
+          <div className="w-10 h-10 rounded-xl bg-[#D4A24C]/30 flex items-center justify-center">
+            <Bot className="w-5 h-5 text-[#D4A24C]" />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white mb-2">AI Suggestions</h3>
             <ul className="space-y-2 text-sm text-white/60">
               <li className="flex items-start gap-2">
-                <span className="text-[#7C5CFF]">•</span>
+                <span className="text-[#D4A24C]">•</span>
                 <span>Based on last month, increase Transport budget by ₹1,000</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#7C5CFF]">•</span>
+                <span className="text-[#D4A24C]">•</span>
                 <span>You're doing great with Bills! Consider allocating ₹900 to savings</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#7C5CFF]">•</span>
+                <span className="text-[#D4A24C]">•</span>
                 <span>Shopping trend shows you can reduce budget to ₹4,500</span>
               </li>
             </ul>
@@ -167,7 +167,7 @@ export function BudgetScreen() {
       {/* Add Budget Button */}
       <button
         onClick={() => { setEditBudget(null); setShowModal(true); }}
-        className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30"
+        className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-white font-semibold shadow-lg shadow-[#D4A24C]/30"
       >
         <Plus className="w-5 h-5" />
         <span>Add Budget</span>
@@ -193,8 +193,8 @@ export function BudgetScreen() {
             return (
               <div
                 key={budget.id}
-                className={`bg-[#1B2130] rounded-2xl p-5 border ${
-                  isOverBudget ? "border-[#EF4444]/50" : isPressure ? "border-[#FFA500]/50" : "border-white/5"
+                className={`bg-[var(--surface)] rounded-2xl p-5 border ${
+                  isOverBudget ? "border-[#EF4444]/50" : isPressure ? "border-[#FFA500]/50" : "border-[var(--divider)]"
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -388,12 +388,12 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
                 <button key={cat.id} onClick={() => setSelectedCat(cat.id)}
                   className="flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all"
                   style={{
-                    background: selectedCat === cat.id ? `${cat.color || '#7C5CFF'}28` : "rgba(255,255,255,0.04)",
-                    border: selectedCat === cat.id ? `1.5px solid ${cat.color || '#7C5CFF'}55` : "1px solid rgba(255,255,255,0.07)",
+                    background: selectedCat === cat.id ? `${cat.color || '#D4A24C'}28` : "rgba(255,255,255,0.04)",
+                    border: selectedCat === cat.id ? `1.5px solid ${cat.color || '#D4A24C'}55` : "1px solid rgba(255,255,255,0.07)",
                   }}>
                   <span style={{ fontSize: 20 }}>{cat.icon || "📦"}</span>
                   <span className="text-xs font-semibold truncate w-full text-center px-1"
-                    style={{ color: selectedCat === cat.id ? (cat.color || '#7C5CFF') : "rgba(255,255,255,0.45)" }}>
+                    style={{ color: selectedCat === cat.id ? (cat.color || '#D4A24C') : "rgba(255,255,255,0.45)" }}>
                     {cat.name}
                   </span>
                 </button>
@@ -437,7 +437,7 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
               className="flex-1 py-4 rounded-2xl text-white font-bold"
               style={{
                 fontSize: 14,
-                background: "linear-gradient(135deg,#7C5CFF 0%,#4CC9F0 100%)",
+                background: "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)",
                 boxShadow: "0 6px 22px rgba(124,92,255,0.48)",
                 opacity: saving ? 0.6 : 1,
               }}>

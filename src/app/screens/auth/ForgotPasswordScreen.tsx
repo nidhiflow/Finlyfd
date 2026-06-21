@@ -87,7 +87,7 @@ export function ForgotPasswordScreen() {
   return (
     <div className="flex flex-col min-h-screen px-6">
       <div className="pt-16 pb-8">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center mb-6 shadow-lg shadow-[#7C5CFF]/50">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center mb-6 shadow-lg shadow-[#D4A24C]/50">
           <span className="text-2xl font-bold text-white">F</span>
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">Reset password</h1>
@@ -117,7 +117,7 @@ export function ForgotPasswordScreen() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                    className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#D4A24C] focus:outline-none"
                   />
                 </div>
               </div>
@@ -126,7 +126,7 @@ export function ForgotPasswordScreen() {
             <button
               onClick={handleSendOTP}
               disabled={loading}
-              className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 mb-4 disabled:opacity-50"
+              className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-white font-semibold shadow-lg shadow-[#D4A24C]/30 mb-4 disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send Reset Code"}
             </button>
@@ -150,19 +150,19 @@ export function ForgotPasswordScreen() {
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOTPChange(index, e.target.value)}
-                    className="w-12 h-14 bg-[#0D0F14] border border-white/10 rounded-xl text-white text-center text-xl font-semibold focus:border-[#7C5CFF] focus:outline-none"
+                    className="w-12 h-14 bg-[#0D0F14] border border-white/10 rounded-xl text-white text-center text-xl font-semibold focus:border-[#D4A24C] focus:outline-none"
                   />
                 ))}
               </div>
 
-              <button className="w-full text-sm text-[#7C5CFF] hover:text-[#9D7EFF] mb-4">
+              <button className="w-full text-sm text-[#D4A24C] hover:text-[#D4A24C] mb-4">
                 Resend Code
               </button>
 
               <button
                 onClick={handleVerifyOTP}
                 disabled={loading}
-                className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 disabled:opacity-50"
+                className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-white font-semibold shadow-lg shadow-[#D4A24C]/30 disabled:opacity-50"
               >
                 {loading ? "Verifying..." : "Verify Code"}
               </button>
@@ -182,7 +182,7 @@ export function ForgotPasswordScreen() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password"
-                    className="w-full pl-12 pr-12 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                    className="w-full pl-12 pr-12 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#D4A24C] focus:outline-none"
                   />
                   <button
                     type="button"
@@ -207,7 +207,7 @@ export function ForgotPasswordScreen() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
-                    className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                    className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#D4A24C] focus:outline-none"
                   />
                 </div>
               </div>
@@ -216,7 +216,7 @@ export function ForgotPasswordScreen() {
             <button
               onClick={handleResetPassword}
               disabled={loading}
-              className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 disabled:opacity-50"
+              className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-white font-semibold shadow-lg shadow-[#D4A24C]/30 disabled:opacity-50"
             >
               {loading ? "Resetting..." : "Reset Password"}
             </button>

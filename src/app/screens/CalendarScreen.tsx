@@ -58,17 +58,17 @@ export function CalendarScreen() {
     <div className="px-5 py-6 space-y-6">
       {/* Month Selector */}
       <div className="flex items-center justify-between">
-        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
+        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
           <ChevronLeft className="w-5 h-5 text-white" />
         </button>
         <h2 className="text-xl font-semibold text-white">{monthLabel}</h2>
-        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
+        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
           <ChevronRight className="w-5 h-5 text-white" />
         </button>
       </div>
 
       {/* Calendar Grid */}
-      <div className="bg-[#1B2130] rounded-2xl p-4 border border-white/5">
+      <div className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--divider)]">
         {/* Weekday Headers */}
         <div className="grid grid-cols-7 gap-2 mb-3">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
@@ -97,8 +97,8 @@ export function CalendarScreen() {
                 onClick={() => setSelectedDate(stat.day)}
                 className={`relative aspect-square rounded-xl flex flex-col items-center justify-center transition-colors ${
                   isSelected
-                    ? "bg-[#7C5CFF] text-white"
-                    : "bg-[#0D0F14] text-white/70 hover:bg-[#0D0F14]/70"
+                    ? "bg-[#D4A24C] text-white"
+                    : "bg-[var(--bg-deep)] text-white/70 hover:bg-[var(--bg-deep)]/70"
                 }`}
               >
                 <span className="text-sm font-medium">{stat.day}</span>
@@ -133,7 +133,7 @@ export function CalendarScreen() {
               {selectedDayData.transactions.map((tx: any, i: number) => (
                 <div
                   key={tx.id || i}
-                  className="flex items-center justify-between p-4 bg-[#1B2130] rounded-xl border border-white/5"
+                  className="flex items-center justify-between p-4 bg-[var(--surface)] rounded-xl border border-[var(--divider)]"
                 >
                   <div>
                     <p className="text-sm font-medium text-white">{tx.note || tx.description || "Transaction"}</p>
@@ -169,3 +169,4 @@ export function CalendarScreen() {
     </div>
   );
 }
+

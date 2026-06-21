@@ -85,10 +85,10 @@ export function AIAgentScreen() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-140px)]">
-      <div className="px-5 py-4 bg-gradient-to-r from-[#7C5CFF]/20 to-[#4CC9F0]/20 border-b border-[#7C5CFF]/30">
+      <div className="px-5 py-4 bg-gradient-to-r from-[#D4A24C]/20 to-[#D4A24C]/20 border-b border-[#D4A24C]/30">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#7C5CFF]/30 flex items-center justify-center">
-            <Bot className="w-5 h-5 text-[#7C5CFF]" />
+          <div className="w-10 h-10 rounded-xl bg-[#D4A24C]/30 flex items-center justify-center">
+            <Bot className="w-5 h-5 text-[#D4A24C]" />
           </div>
           <div className="flex-1">
             <h3 className="text-white font-semibold text-sm">AI Financial Coach</h3>
@@ -101,17 +101,17 @@ export function AIAgentScreen() {
         {messages.map((msg) => (
           <div key={msg.id} className={`flex gap-3 ${msg.type === "user" ? "flex-row-reverse" : ""}`}>
             {msg.type === "ai" ? (
-              <div className="w-8 h-8 rounded-full bg-[#7C5CFF]/20 flex items-center justify-center flex-shrink-0">
-                <Bot className="w-4 h-4 text-[#7C5CFF]" />
+              <div className="w-8 h-8 rounded-full bg-[#D4A24C]/20 flex items-center justify-center flex-shrink-0">
+                <Bot className="w-4 h-4 text-[#D4A24C]" />
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-full bg-[#4CC9F0]/20 flex items-center justify-center flex-shrink-0">
-                <User className="w-4 h-4 text-[#4CC9F0]" />
+              <div className="w-8 h-8 rounded-full bg-[#D4A24C]/20 flex items-center justify-center flex-shrink-0">
+                <User className="w-4 h-4 text-[#D4A24C]" />
               </div>
             )}
             <div className={`flex-1 ${msg.type === "user" ? "flex flex-col items-end" : ""}`}>
               <div className={`px-4 py-3 rounded-2xl max-w-[85%] ${
-                msg.type === "ai" ? "bg-[#1B2130] border border-white/5" : "bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF]"
+                msg.type === "ai" ? "bg-[var(--surface)] border border-[var(--divider)]" : "bg-gradient-to-r from-[#D4A24C] to-[#D4A24C]"
               }`}>
                 <p className="text-sm text-white whitespace-pre-line">
                   {msg.content === "Thinking..." ? <span className="animate-pulse">Thinking...</span> : msg.content}
@@ -129,9 +129,9 @@ export function AIAgentScreen() {
               const Icon = s.icon;
               return (
                 <button key={i} onClick={() => setMessage(s.text)}
-                  className="w-full flex items-center gap-3 p-3 bg-[#1B2130] border border-white/5 rounded-xl hover:border-[#7C5CFF]/30 transition-colors">
-                  <div className="w-8 h-8 rounded-lg bg-[#7C5CFF]/20 flex items-center justify-center">
-                    <Icon className="w-4 h-4 text-[#7C5CFF]" />
+                  className="w-full flex items-center gap-3 p-3 bg-[var(--surface)] border border-[var(--divider)] rounded-xl hover:border-[#D4A24C]/30 transition-colors">
+                  <div className="w-8 h-8 rounded-lg bg-[#D4A24C]/20 flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-[#D4A24C]" />
                   </div>
                   <span className="text-sm text-white">{s.text}</span>
                 </button>
@@ -142,15 +142,15 @@ export function AIAgentScreen() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="px-5 py-4 border-t border-white/5 bg-[#0D0F14]">
+      <div className="px-5 py-4 border-t border-[var(--divider)] bg-[var(--bg-deep)]">
         <div className="flex items-center gap-2 mb-3">
-          <button onClick={() => toast.info("Receipt scanning coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[#1B2130] border border-white/10 rounded-lg text-sm text-white hover:border-[#7C5CFF]/30 active:scale-95 transition-all">
+          <button onClick={() => toast.info("Receipt scanning coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-white/10 rounded-lg text-sm text-white hover:border-[#D4A24C]/30 active:scale-95 transition-all">
             <Image className="w-4 h-4" /><span>Scan Receipt</span>
           </button>
-          <button onClick={() => toast.info("Voice input coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[#1B2130] border border-white/10 rounded-lg text-sm text-white hover:border-[#7C5CFF]/30 active:scale-95 transition-all">
+          <button onClick={() => toast.info("Voice input coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-white/10 rounded-lg text-sm text-white hover:border-[#D4A24C]/30 active:scale-95 transition-all">
             <Mic className="w-4 h-4" /><span>Voice</span>
           </button>
-          <button onClick={handleClear} className="flex items-center gap-2 px-3 py-2 bg-[#1B2130] border border-white/10 rounded-lg text-sm text-white hover:border-[#EF4444]/30 active:scale-95 transition-all">
+          <button onClick={handleClear} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-white/10 rounded-lg text-sm text-white hover:border-[#EF4444]/30 active:scale-95 transition-all">
             <Trash2 className="w-4 h-4" /><span>Clear</span>
           </button>
         </div>
@@ -158,10 +158,10 @@ export function AIAgentScreen() {
           <input type="text" value={message} onChange={e => setMessage(e.target.value)}
             onKeyDown={e => e.key === "Enter" && handleSend()}
             placeholder="Ask me anything about your finances..."
-            className="flex-1 px-4 py-3 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+            className="flex-1 px-4 py-3 bg-[var(--surface)] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#D4A24C] focus:outline-none"
             disabled={isLoading} />
           <button onClick={handleSend} disabled={isLoading || !message.trim()}
-            className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] flex items-center justify-center shadow-lg shadow-[#7C5CFF]/30 active:scale-95 transition-transform disabled:opacity-50">
+            className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-lg shadow-[#D4A24C]/30 active:scale-95 transition-transform disabled:opacity-50">
             <Send className="w-5 h-5 text-white" />
           </button>
         </div>
@@ -169,3 +169,4 @@ export function AIAgentScreen() {
     </div>
   );
 }
+

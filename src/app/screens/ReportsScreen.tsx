@@ -334,10 +334,10 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
                 className="w-full flex items-center gap-2.5 px-4 py-2.5 transition-colors hover:bg-white/5"
                 style={{ fontSize: 13 }}>
                 <span>{opt.emoji}</span>
-                <span style={{ color: period === opt.id ? "#9D7EFF" : "rgba(255,255,255,0.72)", fontWeight: period === opt.id ? 700 : 400 }}>
+                <span style={{ color: period === opt.id ? "#D4A24C" : "rgba(255,255,255,0.72)", fontWeight: period === opt.id ? 700 : 400 }}>
                   {opt.label}
                 </span>
-                {period === opt.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#7C5CFF]" />}
+                {period === opt.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />}
               </button>
             ))}
           </motion.div>
@@ -365,7 +365,7 @@ function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartT
         style={{ background: "radial-gradient(circle,rgba(124,92,255,0.22) 0%,transparent 70%)" }} />
       <div className="flex items-start gap-3 relative z-10">
         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)" }}>
+          style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -475,7 +475,7 @@ export function ReportsScreen() {
         id: c.category_id || c.id,
         name: c.category_name || c.name || 'Unknown',
         emoji: c.icon || '📦',
-        color: c.color || '#7C5CFF',
+        color: c.color || '#D4A24C',
         amount: parseFloat(c.total || 0),
         percentage: total > 0 ? (parseFloat(c.total || 0) / total) * 100 : 0,
         trend: 0,
@@ -684,13 +684,13 @@ export function ReportsScreen() {
           <div className="flex items-center justify-between py-3 px-4 rounded-2xl"
             style={{ background: compareMode ? "linear-gradient(135deg,rgba(124,92,255,0.12),rgba(76,201,240,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(124,92,255,0.25)" : "1px solid rgba(255,255,255,0.07)", transition: "all 0.3s" }}>
             <div className="flex items-center gap-2.5">
-              <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#7C5CFF" : "rgba(255,255,255,0.45)" }} />
+              <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#D4A24C" : "rgba(255,255,255,0.45)" }} />
               <p className="font-medium" style={{ fontSize: 13, color: compareMode ? "white" : "rgba(255,255,255,0.65)" }}>Compare with last month</p>
             </div>
             <motion.button whileTap={{ scale: 0.9 }}
               onClick={() => setCompareMode(v => !v)}
               className="w-11 h-6 rounded-full relative"
-              style={{ background: compareMode ? "linear-gradient(135deg,#7C5CFF,#4CC9F0)" : "rgba(255,255,255,0.12)" }}>
+              style={{ background: compareMode ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "rgba(255,255,255,0.12)" }}>
               <motion.div
                 animate={{ x: compareMode ? 23 : 2 }}
                 transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
@@ -714,7 +714,7 @@ export function ReportsScreen() {
             <div className="grid grid-cols-2 gap-2.5 mb-3">
               <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.2)" }}>
                 <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "0.5px" }}>THIS MONTH</p>
-                <p className="font-bold mt-1" style={{ fontSize: 17, color: "#9D7EFF" }}>
+                <p className="font-bold mt-1" style={{ fontSize: 17, color: "#D4A24C" }}>
                   {fmtFull(mainData.reduce((s, c) => s + c.amount, 0))}
                 </p>
               </div>

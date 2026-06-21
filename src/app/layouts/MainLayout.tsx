@@ -59,52 +59,52 @@ export function MainLayout() {
       <CategoryProvider>
       <div className="max-w-md mx-auto">
         {/* Top Bar */}
-        <div className="sticky top-0 z-40 bg-[#0D0F14]/95 backdrop-blur-xl border-b border-white/5">
+        <div className="sticky top-0 z-40 bg-[var(--bg-deep)]/95 backdrop-blur-xl border-b border-[var(--divider)]">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
               {showBackButton && (
                 <button
                   onClick={() => navigate(-1)}
-                  className="w-9 h-9 rounded-xl bg-[#1B2130] flex items-center justify-center border border-white/5 active:scale-95 transition-transform"
+                  className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)] active:scale-95 transition-transform"
                 >
-                  <ArrowLeft className="w-5 h-5 text-white" />
+                  <ArrowLeft className="w-5 h-5 text-[var(--ink)]" />
                 </button>
               )}
-              <h1 className="text-lg font-semibold text-white">{getPageTitle()}</h1>
+              <h1 className="text-lg font-semibold text-[var(--ink)] font-inter">{getPageTitle()}</h1>
             </div>
 
             <div className="flex items-center gap-2">
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => navigate("/dashboard/transactions")}
-                className="w-9 h-9 rounded-xl bg-[#1B2130] flex items-center justify-center border border-white/5"
+                className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)]"
               >
-                <Search className="w-4 h-4 text-white/70" />
+                <Search className="w-4 h-4 text-[var(--ink-muted)]" />
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => { setShowNotifications(true); setNotifRead(true); }}
-                className="relative w-9 h-9 rounded-xl bg-[#1B2130] flex items-center justify-center border border-white/5"
+                className="relative w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)]"
               >
-                <Bell className="w-4 h-4 text-white/70" />
+                <Bell className="w-4 h-4 text-[var(--ink-muted)]" />
                 {!notifRead && (
-                  <div className="absolute top-1 right-1 w-2 h-2 bg-[#EF4444] rounded-full"></div>
+                  <div className="absolute top-1 right-1 w-2 h-2 bg-[var(--coral)] rounded-full"></div>
                 )}
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setShowBookmarks(true)}
-                className="w-9 h-9 rounded-xl bg-[#1B2130] flex items-center justify-center border border-white/5"
+                className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)]"
               >
-                <Bookmark className="w-4 h-4 text-white/70" />
+                <Bookmark className="w-4 h-4 text-[var(--ink-muted)]" />
               </motion.button>
               {showAddButton && (
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   onClick={() => navigate("/dashboard/add-transaction")}
-                  className="w-9 h-9 rounded-xl bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] flex items-center justify-center shadow-lg shadow-[#7C5CFF]/25"
+                  className="w-9 h-9 rounded-xl bg-[var(--gold)] flex items-center justify-center shadow-lg shadow-[var(--gold)]/20"
                 >
-                  <Plus className="w-4 h-4 text-white" />
+                  <Plus className="w-4 h-4 text-[#241B0A]" />
                 </motion.button>
               )}
             </div>
@@ -211,57 +211,57 @@ export function MainLayout() {
         </AnimatePresence>
 
         {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-[#1B2130] border-t border-white/10 backdrop-blur-xl z-40">
+        <div className="fixed bottom-0 left-0 right-0 bg-[var(--surface)] border-t border-[var(--divider)] backdrop-blur-xl z-40">
           <div className="max-w-md mx-auto">
             <div className="flex items-center justify-around px-2 py-2 relative">
               {/* Home */}
               <button
                 onClick={() => navigate("/dashboard")}
                 className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all ${
-                  location.pathname === "/dashboard" ? "text-[#7C5CFF]" : "text-white/40"
+                  location.pathname === "/dashboard" ? "text-[var(--gold)]" : "text-[var(--ink-muted)]"
                 }`}
               >
                 <Home className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Home</span>
+                <span className="text-[10px] font-medium font-inter">Home</span>
               </button>
 
               {/* Ledger */}
               <button
                 onClick={() => navigate("/dashboard/transactions")}
                 className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all ${
-                  location.pathname === "/dashboard/transactions" ? "text-[#7C5CFF]" : "text-white/40"
+                  location.pathname === "/dashboard/transactions" ? "text-[var(--gold)]" : "text-[var(--ink-muted)]"
                 }`}
               >
                 <FileText className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Ledger</span>
+                <span className="text-[10px] font-medium font-inter">Ledger</span>
               </button>
 
               {/* Center FAB */}
               <button
                 onClick={() => navigate("/dashboard/add-transaction")}
-                className="w-14 h-14 -mt-6 rounded-2xl bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center shadow-lg shadow-[#7C5CFF]/50"
+                className="w-14 h-14 -mt-6 rounded-2xl bg-[var(--gold)] flex items-center justify-center shadow-lg shadow-[var(--gold)]/30"
               >
-                <Plus className="w-6 h-6 text-white" />
+                <Plus className="w-6 h-6 text-[#241B0A]" />
               </button>
 
               {/* Reports */}
               <button
                 onClick={() => navigate("/dashboard/reports")}
                 className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all ${
-                  location.pathname === "/dashboard/reports" ? "text-[#7C5CFF]" : "text-white/40"
+                  location.pathname === "/dashboard/reports" ? "text-[var(--gold)]" : "text-[var(--ink-muted)]"
                 }`}
               >
                 <BarChart3 className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Reports</span>
+                <span className="text-[10px] font-medium font-inter">Reports</span>
               </button>
 
               {/* More */}
               <button
                 onClick={() => setShowMore(true)}
-                className="flex flex-col items-center gap-1 py-2 px-4 rounded-xl text-white/40"
+                className="flex flex-col items-center gap-1 py-2 px-4 rounded-xl text-[var(--ink-muted)]"
               >
                 <MenuIcon className="w-5 h-5" />
-                <span className="text-[10px] font-medium">More</span>
+                <span className="text-[10px] font-medium font-inter">More</span>
               </button>
             </div>
           </div>

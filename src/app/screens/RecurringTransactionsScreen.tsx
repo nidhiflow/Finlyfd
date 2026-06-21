@@ -204,8 +204,8 @@ export function RecurringTransactionsScreen() {
     switch (type) {
       case "income": return "#22C55E";
       case "expense": return "#F72585";
-      case "transfer": return "#4CC9F0";
-      default: return "#7C5CFF";
+      case "transfer": return "#D4A24C";
+      default: return "#D4A24C";
     }
   };
 
@@ -230,7 +230,7 @@ export function RecurringTransactionsScreen() {
               background: showFilters ? "rgba(124,92,255,0.22)" : "rgba(255,255,255,0.07)",
               border: `1px solid ${showFilters ? "rgba(124,92,255,0.4)" : "rgba(255,255,255,0.1)"}`,
             }}>
-            <Filter className="w-4.5 h-4.5" style={{color: showFilters ? "#9D7EFF" : "rgba(255,255,255,0.55)"}} />
+            <Filter className="w-4.5 h-4.5" style={{color: showFilters ? "#D4A24C" : "rgba(255,255,255,0.55)"}} />
           </motion.button>
         </div>
 
@@ -254,7 +254,7 @@ export function RecurringTransactionsScreen() {
             <div className="rounded-2xl px-3 py-3 relative overflow-hidden"
               style={{background:"linear-gradient(135deg,rgba(124,92,255,0.14),rgba(124,92,255,0.06))", border:"1px solid rgba(124,92,255,0.25)"}}>
               <p style={{fontSize:10, fontWeight:700, color:"rgba(255,255,255,0.38)", letterSpacing:"0.6px"}}>TOTAL</p>
-              <p className="font-bold mt-0.5" style={{fontSize:18, color:"#9D7EFF"}}>
+              <p className="font-bold mt-0.5" style={{fontSize:18, color:"#D4A24C"}}>
                 {recurring.length}
               </p>
             </div>
@@ -279,7 +279,7 @@ export function RecurringTransactionsScreen() {
                         background: filterType === type ? "rgba(124,92,255,0.25)" : "rgba(255,255,255,0.06)",
                         border: filterType === type ? "1px solid rgba(124,92,255,0.5)" : "1px solid transparent",
                         fontSize:11, fontWeight:700,
-                        color: filterType === type ? "#9D7EFF" : "rgba(255,255,255,0.45)",
+                        color: filterType === type ? "#D4A24C" : "rgba(255,255,255,0.45)",
                       }}>
                       {type}
                     </motion.button>
@@ -295,7 +295,7 @@ export function RecurringTransactionsScreen() {
                         background: filterStatus === status ? "rgba(124,92,255,0.25)" : "rgba(255,255,255,0.06)",
                         border: filterStatus === status ? "1px solid rgba(124,92,255,0.5)" : "1px solid transparent",
                         fontSize:11, fontWeight:700,
-                        color: filterStatus === status ? "#9D7EFF" : "rgba(255,255,255,0.45)",
+                        color: filterStatus === status ? "#D4A24C" : "rgba(255,255,255,0.45)",
                       }}>
                       {status}
                     </motion.button>
@@ -429,3 +429,4 @@ export function RecurringTransactionsScreen() {
     </div>
   );
 }
+

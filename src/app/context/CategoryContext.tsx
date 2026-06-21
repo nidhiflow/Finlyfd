@@ -66,7 +66,7 @@ export const INITIAL_CATEGORIES: Cat[] = [
     ],
   },
   {
-    id:"provisions", name:"Home Provisions", emoji:"🛒", color:"#4CC9F0", type:"expense", usage:5,
+    id:"provisions", name:"Home Provisions", emoji:"🛒", color:"#D4A24C", type:"expense", usage:5,
     subs:[
       {id:"pr1", name:"Dairy",          emoji:"🥛"},
       {id:"pr2", name:"Meat",           emoji:"🍖"},
@@ -200,7 +200,7 @@ export const INITIAL_CATEGORIES: Cat[] = [
     ],
   },
   {
-    id:"biz-out", name:"Business", emoji:"💼", color:"#7C5CFF", type:"expense", usage:2,
+    id:"biz-out", name:"Business", emoji:"💼", color:"#D4A24C", type:"expense", usage:2,
     subs:[
       {id:"bz1", name:"Advertising",     emoji:"📢"},
       {id:"bz2", name:"Maintenance",     emoji:"🔧"},
@@ -244,14 +244,14 @@ export const INITIAL_CATEGORIES: Cat[] = [
     ],
   },
   {
-    id:"i-refunds", name:"Refunds", emoji:"🔁", color:"#4CC9F0", type:"income", usage:3,
+    id:"i-refunds", name:"Refunds", emoji:"🔁", color:"#D4A24C", type:"income", usage:3,
     subs:[
       {id:"irf1", name:"Product Refund", emoji:"💸"},
       {id:"irf2", name:"Service Refund", emoji:"🔄"},
     ],
   },
   {
-    id:"i-biz", name:"Business Income", emoji:"🏢", color:"#7C5CFF", type:"income", usage:4,
+    id:"i-biz", name:"Business Income", emoji:"🏢", color:"#D4A24C", type:"income", usage:4,
     monthlyEst:"₹45,000",
     subs:[
       {id:"ib1", name:"Sales Revenue",   emoji:"📢"},
@@ -367,3 +367,4 @@ export function useCategoryContext() {
   if (!ctx) throw new Error("useCategoryContext must be used inside <CategoryProvider>");
   return ctx;
 }
+

@@ -45,7 +45,7 @@ function PinDots({
                 ? "bg-emerald-400 border-emerald-400 scale-125"
                 : error
                 ? "bg-red-500 border-red-500 scale-110"
-                : "bg-gradient-to-br from-[#7C5CFF] to-[#9D7EFF] border-[#7C5CFF] scale-110"
+                : "bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] border-[#D4A24C] scale-110"
               : "border-white/25 bg-transparent"
           }`}
         />
@@ -91,7 +91,7 @@ function Keypad({
             key={idx}
             onClick={() => onPress(key)}
             disabled={disabled}
-            className="h-16 rounded-2xl bg-white/5 border border-white/10 text-white text-xl font-medium active:scale-95 active:bg-[#7C5CFF]/30 transition-all disabled:opacity-30 hover:bg-white/10"
+            className="h-16 rounded-2xl bg-white/5 border border-white/10 text-white text-xl font-medium active:scale-95 active:bg-[#D4A24C]/30 transition-all disabled:opacity-30 hover:bg-white/10"
           >
             {key}
           </button>
@@ -118,15 +118,15 @@ function BiometricButton({
         success
           ? "bg-emerald-500/20 border-2 border-emerald-400"
           : scanning
-          ? "bg-[#7C5CFF]/20 border-2 border-[#7C5CFF]"
-          : "bg-white/5 border-2 border-white/20 hover:border-[#7C5CFF]/50 hover:bg-[#7C5CFF]/10 active:scale-95"
+          ? "bg-[#D4A24C]/20 border-2 border-[#D4A24C]"
+          : "bg-white/5 border-2 border-white/20 hover:border-[#D4A24C]/50 hover:bg-[#D4A24C]/10 active:scale-95"
       }`}
     >
       {/* Pulse rings when scanning */}
       {scanning && (
         <>
-          <div className="absolute inset-0 rounded-full border-2 border-[#7C5CFF]/50 animate-ping-slow" />
-          <div className="absolute -inset-3 rounded-full border border-[#7C5CFF]/25 animate-ping-slower" />
+          <div className="absolute inset-0 rounded-full border-2 border-[#D4A24C]/50 animate-ping-slow" />
+          <div className="absolute -inset-3 rounded-full border border-[#D4A24C]/25 animate-ping-slower" />
         </>
       )}
 
@@ -135,7 +135,7 @@ function BiometricButton({
       ) : (
         <Fingerprint
           className={`w-8 h-8 transition-colors ${
-            scanning ? "text-[#7C5CFF]" : "text-white/50"
+            scanning ? "text-[#D4A24C]" : "text-white/50"
           }`}
         />
       )}
@@ -272,8 +272,8 @@ export function QuickLoginScreen() {
     >
       {/* ── Background accent ──────────────────────────── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-80 h-80 bg-[#7C5CFF]/8 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-[#4CC9F0]/5 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-80 h-80 bg-[#D4A24C]/8 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-[#D4A24C]/5 rounded-full blur-3xl" />
       </div>
 
       {/* ── Session expired banner ──────────────────────── */}
@@ -294,14 +294,14 @@ export function QuickLoginScreen() {
       <div className="flex flex-col items-center pt-16 pb-4 px-6">
         {/* Avatar */}
         <div className="relative mb-5">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center shadow-xl shadow-[#7C5CFF]/30">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-xl shadow-[#D4A24C]/30">
             <span className="text-3xl font-bold text-white">
               {userName.charAt(0).toUpperCase()}
             </span>
           </div>
           {/* Secure badge */}
-          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#0D0F14] border border-[#7C5CFF]/40 flex items-center justify-center">
-            <Lock className="w-3.5 h-3.5 text-[#7C5CFF]" />
+          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#0D0F14] border border-[#D4A24C]/40 flex items-center justify-center">
+            <Lock className="w-3.5 h-3.5 text-[#D4A24C]" />
           </div>
         </div>
 
@@ -346,9 +346,9 @@ export function QuickLoginScreen() {
         )}
 
         {scanning && (
-          <div className="flex items-center gap-2 bg-[#7C5CFF]/10 border border-[#7C5CFF]/20 rounded-xl px-4 py-2.5 mb-3 w-full max-w-xs">
-            <div className="w-4 h-4 border-2 border-[#7C5CFF] border-t-transparent rounded-full animate-spin flex-shrink-0" />
-            <p className="text-[#7C5CFF] text-sm">Verifying biometrics…</p>
+          <div className="flex items-center gap-2 bg-[#D4A24C]/10 border border-[#D4A24C]/20 rounded-xl px-4 py-2.5 mb-3 w-full max-w-xs">
+            <div className="w-4 h-4 border-2 border-[#D4A24C] border-t-transparent rounded-full animate-spin flex-shrink-0" />
+            <p className="text-[#D4A24C] text-sm">Verifying biometrics…</p>
           </div>
         )}
 
@@ -412,7 +412,7 @@ export function QuickLoginScreen() {
               localAuthService.clearAll();
               navigate("/login");
             }}
-            className="text-[#7C5CFF]/70 hover:text-[#7C5CFF]"
+            className="text-[#D4A24C]/70 hover:text-[#D4A24C]"
           >
             Switch account
           </button>
@@ -451,3 +451,4 @@ export function QuickLoginScreen() {
     </div>
   );
 }
+

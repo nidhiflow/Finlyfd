@@ -40,7 +40,7 @@ interface FormState {
 // ─── Constants ─────────────────────────────────────────────────────────────────
 const ACCOUNT_TYPES: { id: AccountType; label: string; emoji: string; color: string; hasBank: boolean }[] = [
   { id: "savings",    label: "Savings Account",    emoji: "🏦", color: "#4895EF", hasBank: true  },
-  { id: "current",    label: "Current Account",    emoji: "💼", color: "#7C5CFF", hasBank: true  },
+  { id: "current",    label: "Current Account",    emoji: "💼", color: "#D4A24C", hasBank: true  },
   { id: "credit",     label: "Credit Card",        emoji: "💳", color: "#F72585", hasBank: true  },
   { id: "liability",  label: "Liability Account",  emoji: "💸", color: "#EF4444", hasBank: true  },
   { id: "investment", label: "Investment Account", emoji: "📈", color: "#2EC4B6", hasBank: true  },
@@ -66,8 +66,8 @@ const BANKS = [
 
 const COLOR_TAGS = [
   "#4895EF","#22C55E","#F72585","#FFB703",
-  "#7C5CFF","#F7931A","#2EC4B6","#EF4444",
-  "#C77DFF","#FF6B9D","#4CC9F0","#06D6A0",
+  "#D4A24C","#F7931A","#2EC4B6","#EF4444",
+  "#C77DFF","#FF6B9D","#D4A24C","#06D6A0",
 ];
 
 const QUICK_TEMPLATES = [
@@ -274,7 +274,7 @@ function AccountCard({ account, visible, onEdit, onDelete, onTogglePrimary }: {
             })}
             {account.upiId && (
               <span className="px-2 py-0.5 rounded-full"
-                style={{ background:"rgba(76,201,240,0.12)", border:"1px solid rgba(76,201,240,0.22)", fontSize:9, color:"#4CC9F0" }}>
+                style={{ background:"rgba(76,201,240,0.12)", border:"1px solid rgba(76,201,240,0.22)", fontSize:9, color:"#D4A24C" }}>
                 {account.upiId}
               </span>
             )}
@@ -595,7 +595,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
                   <motion.button type="button" whileTap={{ scale:0.9 }}
                     onClick={() => set("trackBalance", !form.trackBalance)}
                     className="w-12 h-6 rounded-full relative transition-colors flex-shrink-0"
-                    style={{ background: form.trackBalance ? "linear-gradient(135deg,#7C5CFF,#4CC9F0)" : "rgba(255,255,255,0.12)" }}>
+                    style={{ background: form.trackBalance ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "rgba(255,255,255,0.12)" }}>
                     <motion.div
                       animate={{ x: form.trackBalance ? 24 : 2 }}
                       transition={{ duration:0.22, ease:[0.4,0,0.2,1] }}
@@ -717,7 +717,7 @@ function FilterSheet({ filter, onFilter, onClose }: {
         </div>
         <p className="text-white font-bold mb-4" style={{ fontSize:17 }}>Filter Accounts</p>
         <div className="space-y-2">
-          {[{ id:"all" as const, label:"All Accounts", emoji:"🗂️", color:"#7C5CFF" },
+          {[{ id:"all" as const, label:"All Accounts", emoji:"🗂️", color:"#D4A24C" },
             ...ACCOUNT_TYPES.map(t => ({ id: t.id as AccountType | "all", label:t.label, emoji:t.emoji, color:t.color }))
           ].map(opt => (
             <motion.button key={opt.id} whileTap={{ scale:0.97 }} onClick={() => { onFilter(opt.id as AccountType | "all"); onClose(); }}
@@ -919,7 +919,7 @@ export function AccountsScreen() {
       {/* ── Top row: search toggle + filter ── */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#7C5CFF]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />
           <p className="text-white/35" style={{ fontSize:11, fontWeight:500 }}>
             {visible.length} {visible.length === 1 ? "account" : "accounts"}
             {filter !== "all" && ` · ${ACCOUNT_TYPES.find(t => t.id === filter)?.label}`}
@@ -932,7 +932,7 @@ export function AccountsScreen() {
               background: showSearch ? "rgba(124,92,255,0.22)" : "rgba(255,255,255,0.06)",
               border:`1px solid ${showSearch ? "rgba(124,92,255,0.45)" : "rgba(255,255,255,0.08)"}`,
             }}>
-            <Search className="w-4 h-4" style={{ color: showSearch ? "#9D7EFF" : "rgba(255,255,255,0.38)" }} />
+            <Search className="w-4 h-4" style={{ color: showSearch ? "#D4A24C" : "rgba(255,255,255,0.38)" }} />
           </button>
           <button onClick={() => setShowFilter(true)}
             className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
@@ -940,7 +940,7 @@ export function AccountsScreen() {
               background: filter !== "all" ? "rgba(124,92,255,0.22)" : "rgba(255,255,255,0.06)",
               border:`1px solid ${filter !== "all" ? "rgba(124,92,255,0.45)" : "rgba(255,255,255,0.08)"}`,
             }}>
-            <SlidersHorizontal className="w-4 h-4" style={{ color: filter !== "all" ? "#9D7EFF" : "rgba(255,255,255,0.38)" }} />
+            <SlidersHorizontal className="w-4 h-4" style={{ color: filter !== "all" ? "#D4A24C" : "rgba(255,255,255,0.38)" }} />
           </button>
         </div>
       </div>
@@ -962,7 +962,7 @@ export function AccountsScreen() {
             {!search && filter === "all" && (
               <motion.button whileTap={{ scale:0.96 }} onClick={() => setModal("add")}
                 className="flex items-center gap-2 px-5 py-3 rounded-2xl"
-                style={{ background:"linear-gradient(135deg,#7C5CFF,#4CC9F0)", boxShadow:"0 6px 20px rgba(124,92,255,0.4)" }}>
+                style={{ background:"linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow:"0 6px 20px rgba(124,92,255,0.4)" }}>
                 <Plus className="w-4 h-4 text-white" />
                 <span className="text-white font-bold" style={{ fontSize:14 }}>Add First Account</span>
               </motion.button>
@@ -1016,7 +1016,7 @@ export function AccountsScreen() {
         className="fixed z-40 flex items-center justify-center rounded-2xl"
         style={{
           bottom:90, right:20, width:56, height:56,
-          background:"linear-gradient(135deg,#7C5CFF 0%,#4CC9F0 100%)",
+          background:"linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)",
           boxShadow:"0 8px 32px rgba(124,92,255,0.6)",
           animation:"accFabBreathe 3s ease-in-out infinite",
         }}

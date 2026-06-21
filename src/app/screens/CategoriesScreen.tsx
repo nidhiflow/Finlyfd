@@ -22,7 +22,7 @@ type DelTarget =
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
 const PALETTE = [
-  "#7C5CFF","#4CC9F0","#FF6B35","#06D6A0",
+  "#D4A24C","#D4A24C","#FF6B35","#06D6A0",
   "#F72585","#F7931A","#845EC2","#2EC4B6",
   "#FF6B9D","#22C55E","#4895EF","#C77DFF",
   "#FF4757","#FFB703","#2ED573","#00B4D8",
@@ -42,8 +42,8 @@ const AI_EXPENSE_SUGGESTIONS = [
   { name: "Music Classes",    emoji: "🎸", color: "#C77DFF" },
   { name: "Garden & Plants",  emoji: "🌱", color: "#22C55E" },
   { name: "Photography",      emoji: "📸", color: "#4895EF" },
-  { name: "Cleaning Service", emoji: "🧹", color: "#4CC9F0" },
-  { name: "Online Courses",   emoji: "🎓", color: "#7C5CFF" },
+  { name: "Cleaning Service", emoji: "🧹", color: "#D4A24C" },
+  { name: "Online Courses",   emoji: "🎓", color: "#D4A24C" },
   { name: "Meal Prep",        emoji: "🍱", color: "#FF6B35" },
   { name: "Hobby & Craft",    emoji: "🎨", color: "#F72585" },
 ];
@@ -52,10 +52,10 @@ const AI_INCOME_SUGGESTIONS = [
   { name: "Pension",          emoji: "🏛️", color: "#2EC4B6" },
   { name: "Royalties",        emoji: "🎵", color: "#C77DFF" },
   { name: "Consulting Fees",  emoji: "🧑‍💼", color: "#4895EF" },
-  { name: "Online Business",  emoji: "🌐", color: "#7C5CFF" },
+  { name: "Online Business",  emoji: "🌐", color: "#D4A24C" },
   { name: "Dividends",        emoji: "💹", color: "#22C55E" },
   { name: "Part-time Job",    emoji: "⏰", color: "#FF6B35" },
-  { name: "Affiliate Income", emoji: "🔗", color: "#4CC9F0" },
+  { name: "Affiliate Income", emoji: "🔗", color: "#D4A24C" },
   { name: "Content Creator",  emoji: "🎥", color: "#F72585" },
 ];
 
@@ -91,7 +91,7 @@ const INITIAL: Cat[] = [
     ],
   },
   {
-    id:"provisions", name:"Home Provisions", emoji:"🛒", color:"#4CC9F0", type:"expense", usage:5,
+    id:"provisions", name:"Home Provisions", emoji:"🛒", color:"#D4A24C", type:"expense", usage:5,
     subs:[
       {id:"pr1",name:"Dairy",emoji:"🥛"},           {id:"pr2",name:"Meat",emoji:"🍖"},
       {id:"pr3",name:"Online Fruits",emoji:"🍎"},   {id:"pr4",name:"Online Grocery",emoji:"🛒"},
@@ -192,7 +192,7 @@ const INITIAL: Cat[] = [
     ],
   },
   {
-    id:"biz-out", name:"Business", emoji:"💼", color:"#7C5CFF", type:"expense", usage:2,
+    id:"biz-out", name:"Business", emoji:"💼", color:"#D4A24C", type:"expense", usage:2,
     subs:[
       {id:"bz1",name:"Advertising",emoji:"📢"},      {id:"bz2",name:"Maintenance",emoji:"🔧"},
       {id:"bz3",name:"Employee Salary",emoji:"💰"},  {id:"bz4",name:"Shop Rent",emoji:"🏢"},
@@ -233,14 +233,14 @@ const INITIAL: Cat[] = [
     ],
   },
   {
-    id:"i-refunds", name:"Refunds", emoji:"🔁", color:"#4CC9F0", type:"income", usage:3,
+    id:"i-refunds", name:"Refunds", emoji:"🔁", color:"#D4A24C", type:"income", usage:3,
     subs:[
       {id:"irf1",name:"Product Refund",emoji:"💸"},
       {id:"irf2",name:"Service Refund",emoji:"🔄"},
     ],
   },
   {
-    id:"i-biz", name:"Business Income", emoji:"🏢", color:"#7C5CFF", type:"income", usage:4,
+    id:"i-biz", name:"Business Income", emoji:"🏢", color:"#D4A24C", type:"income", usage:4,
     monthlyEst:"₹45,000",
     subs:[
       {id:"ib1",name:"Sales Revenue",emoji:"📢"},
@@ -376,7 +376,7 @@ function CategoryCard({
       {/* Left accent bar */}
       <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full"
         style={{ background: isPrimary
-          ? "linear-gradient(180deg,#22C55E,#4CC9F0)"
+          ? "linear-gradient(180deg,#22C55E,#D4A24C)"
           : `linear-gradient(180deg, ${cat.color} 0%, ${cat.color}50 100%)` }} />
 
       {/* PRIMARY crown glow chip */}
@@ -411,7 +411,7 @@ function CategoryCard({
           )}
           {isIncome && isPrimary && (
             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg,#22C55E,#4CC9F0)", boxShadow: "0 2px 8px rgba(34,197,94,0.6)" }}>
+              style={{ background: "linear-gradient(135deg,#22C55E,#D4A24C)", boxShadow: "0 2px 8px rgba(34,197,94,0.6)" }}>
               <Crown className="w-2.5 h-2.5 text-white" />
             </div>
           )}
@@ -648,14 +648,14 @@ function CategoryModal({
                 }}>
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg flex items-center justify-center"
-                    style={{ background: isIncome ? "linear-gradient(135deg,#22C55E,#4CC9F0)" : "linear-gradient(135deg,#7C5CFF,#4CC9F0)" }}>
+                    style={{ background: isIncome ? "linear-gradient(135deg,#22C55E,#D4A24C)" : "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
                     <Sparkles className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <span className="font-semibold" style={{ fontSize: 13, color: showAI ? (isIncome ? "#4ADE80" : "#9D7EFF") : "rgba(255,255,255,0.6)" }}>
+                  <span className="font-semibold" style={{ fontSize: 13, color: showAI ? (isIncome ? "#4ADE80" : "#D4A24C") : "rgba(255,255,255,0.6)" }}>
                     {isIncome ? "AI Detect Income Type" : "AI Suggest Category"}
                   </span>
                 </div>
-                <Zap className="w-3.5 h-3.5" style={{ color: isIncome ? "#22C55E" : "#7C5CFF" }} />
+                <Zap className="w-3.5 h-3.5" style={{ color: isIncome ? "#22C55E" : "#D4A24C" }} />
               </button>
 
               <AnimatePresence>
@@ -774,7 +774,7 @@ function CategoryModal({
               style={{
                 fontSize: 14,
                 background: isIncome
-                  ? "linear-gradient(135deg,#22C55E,#4CC9F0)"
+                  ? "linear-gradient(135deg,#22C55E,#D4A24C)"
                   : `linear-gradient(135deg,${btnColor},${btnColor}bb)`,
                 boxShadow: name.trim() ? `0 6px 22px ${isIncome ? "rgba(34,197,94,0.45)" : btnColor + "48"}` : "none",
               }}>
@@ -905,8 +905,8 @@ export function CategoriesScreen() {
 
   // FAB gradient: purple for expense, green for income
   const fabGrad = isIncome
-    ? "linear-gradient(135deg,#22C55E 0%,#4CC9F0 100%)"
-    : "linear-gradient(135deg,#7C5CFF 0%,#4CC9F0 100%)";
+    ? "linear-gradient(135deg,#22C55E 0%,#D4A24C 100%)"
+    : "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)";
   const fabShadow = isIncome
     ? "0 8px 32px rgba(34,197,94,0.58)"
     : "0 8px 32px rgba(124,92,255,0.58)";
@@ -958,8 +958,8 @@ export function CategoriesScreen() {
             transition={{ duration:0.3, ease:[0.4,0,0.2,1] }}
             style={{
               background: activeType === "expense"
-                ? "linear-gradient(135deg,#F72585 0%,#7C5CFF 100%)"
-                : "linear-gradient(135deg,#22C55E 0%,#4CC9F0 100%)",
+                ? "linear-gradient(135deg,#F72585 0%,#D4A24C 100%)"
+                : "linear-gradient(135deg,#22C55E 0%,#D4A24C 100%)",
               boxShadow: activeType === "expense"
                 ? "0 4px 16px rgba(247,37,133,0.3)"
                 : "0 4px 16px rgba(34,197,94,0.3)",
@@ -983,7 +983,7 @@ export function CategoriesScreen() {
       {/* ── Stats row ── */}
       <div className="px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background: isIncome ? "#22C55E" : "#7C5CFF" }} />
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: isIncome ? "#22C55E" : "#D4A24C" }} />
           <p className="text-white/35" style={{ fontSize:11, fontWeight:500 }}>
             {visible.length} categories · {visible.reduce((a,c) => a+c.subs.length, 0)} subcategories
           </p>
@@ -994,7 +994,7 @@ export function CategoriesScreen() {
             background: showSearch ? (isIncome ? "rgba(34,197,94,0.2)" : "rgba(124,92,255,0.22)") : "rgba(255,255,255,0.06)",
             border: `1px solid ${showSearch ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(124,92,255,0.4)") : "rgba(255,255,255,0.08)"}`,
           }}>
-          <Search className="w-3.5 h-3.5" style={{ color: showSearch ? (isIncome ? "#4ADE80" : "#9D7EFF") : "rgba(255,255,255,0.38)" }} />
+          <Search className="w-3.5 h-3.5" style={{ color: showSearch ? (isIncome ? "#4ADE80" : "#D4A24C") : "rgba(255,255,255,0.38)" }} />
         </button>
       </div>
 
@@ -1119,3 +1119,4 @@ export function CategoriesScreen() {
     </div>
   );
 }
+
