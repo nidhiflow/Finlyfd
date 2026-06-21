@@ -227,47 +227,70 @@ export function DashboardScreen() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="rounded-3xl p-5 relative overflow-hidden"
+          className="rounded-3xl p-6 relative overflow-hidden"
           style={{
             background: "linear-gradient(135deg,#7C5CFF 0%,#4CC9F0 100%)",
             boxShadow: "0 12px 40px rgba(124,92,255,0.38)",
           }}>
           {/* Decorative blobs */}
-          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full"
-            style={{ background: "rgba(255,255,255,0.10)", filter: "blur(24px)" }} />
-          <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full"
-            style={{ background: "rgba(76,201,240,0.20)", filter: "blur(24px)" }} />
+          <div className="absolute top-0 right-0 w-36 h-36 rounded-full -mr-16 -mt-16"
+            style={{ background: "rgba(255,255,255,0.10)", filter: "blur(28px)" }} />
+          <div className="absolute bottom-0 left-0 w-28 h-28 rounded-full -ml-12 -mb-12"
+            style={{ background: "rgba(76,201,240,0.18)", filter: "blur(22px)" }} />
 
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-white/80" />
+              <Wallet className="w-4 h-4 text-white/80" />
               <span className="text-white/80 font-semibold" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
-                FRESH START
+                TOTAL BALANCE
               </span>
             </div>
-            <p className="text-white font-bold mb-1" style={{ fontSize: 22, letterSpacing: "-0.3px" }}>
+            <p className="text-white font-bold mb-1" style={{ fontSize: 38, letterSpacing: "-1px" }}>
               ₹ {stats.balance.toLocaleString("en-IN")}
             </p>
-            <p className="text-white/70 mb-4" style={{ fontSize: 13 }}>
-              Total balance · Start adding transactions
+            <p className="text-white/70 mb-5" style={{ fontSize: 13 }}>
+              Current balance for this period
             </p>
-            <div className="flex gap-2">
-              <motion.button
-                whileTap={{ scale: 0.96 }}
-                onClick={() => navigate("/dashboard/add-transaction")}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold"
-                style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(8px)", fontSize: 13, color: "white" }}>
-                <Plus className="w-4 h-4" />
-                Add Transaction
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.96 }}
-                onClick={() => navigate("/dashboard/accounts")}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold"
-                style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", fontSize: 13, color: "white/80" }}>
-                <Wallet className="w-4 h-4" />
-                Accounts
-              </motion.button>
+
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-3">
+                <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl"
+                  style={{ background: "rgba(34,197,94,0.18)", border: "1px solid rgba(34,197,94,0.28)", backdropFilter: "blur(8px)" }}>
+                  <div className="w-2 h-2 rounded-full" style={{ background: "#22C55E" }} />
+                  <div>
+                    <p className="text-white/60" style={{ fontSize: 10 }}>Income</p>
+                    <p className="text-white font-bold" style={{ fontSize: 13 }}>₹{stats.income.toLocaleString("en-IN")}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl"
+                  style={{ background: "rgba(239,68,68,0.18)", border: "1px solid rgba(239,68,68,0.28)", backdropFilter: "blur(8px)" }}>
+                  <div className="w-2 h-2 rounded-full" style={{ background: "#EF4444" }} />
+                  <div>
+                    <p className="text-white/60" style={{ fontSize: 10 }}>Expense</p>
+                    <p className="text-white font-bold" style={{ fontSize: 13 }}>₹{stats.expense.toLocaleString("en-IN")}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => navigate("/dashboard/add-transaction")}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold"
+                  style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(8px)", fontSize: 13, color: "white" }}>
+                  <Plus className="w-4 h-4" />
+                  Add Transaction
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => navigate("/dashboard/accounts")}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold"
+                  style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", fontSize: 13, color: "white/80" }}>
+                  <Wallet className="w-4 h-4" />
+                  Accounts
+                </motion.button>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -401,11 +424,7 @@ export function DashboardScreen() {
           </div>
         </div>
 
-        {/* ── Overview Card (BalanceCard) ── */}
-        <div>
-          <SectionHeader title="Overview" />
-          <BalanceCard balance={stats.balance} income={stats.income} expense={stats.expense} />
-        </div>
+
 
         {/* ── Spending Overview (pie chart) ── */}
         <SpendingOverview month={`${year}-${String(monthIdx + 1).padStart(2, "0")}`} />
