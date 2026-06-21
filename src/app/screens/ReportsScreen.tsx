@@ -84,10 +84,17 @@ function useAnimKey(dep: unknown) {
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
-const fmtINR = (n: number) =>
-  n >= 100000 ? `₹${(n/100000).toFixed(1)}L`
-  : n >= 1000  ? `₹${(n/1000).toFixed(0)}K`
-  : `₹${Math.round(n)}`;
+const fmtINR = (n: number) => {
+  if (n >= 100000) {
+    const val = parseFloat((n / 100000).toFixed(1));
+    return `₹${val}L`;
+  }
+  if (n >= 1000) {
+    const val = parseFloat((n / 1000).toFixed(1));
+    return `₹${val}K`;
+  }
+  return `₹${Math.round(n)}`;
+};
 
 const fmtFull = (n: number) => `₹${Math.abs(n).toLocaleString("en-IN")}`;
 
@@ -440,6 +447,8 @@ export function ReportsScreen() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [expenseData, setExpenseData] = useState<CatData[]>([]);
   const [incomeData, setIncomeData] = useState<CatData[]>([]);
+  const [compareExpenseData, setCompareExpenseData] = useState<CatData[]>([]);
+  const [compareIncomeData, setCompareIncomeData] = useState<CatData[]>([]);
   const [summaryData, setSummaryData] = useState({ income: 0, expense: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [customStart, setCustomStart] = useState<Date | null>(null);
@@ -449,15 +458,24 @@ export function ReportsScreen() {
   // Load data from API
   useEffect(() => {
     const monthStr = `${year}-${String(month + 1).padStart(2, "0")}`;
+    const prevMonth = month === 0 ? 11 : month - 1;
+    const prevYear = month === 0 ? year - 1 : year;
+    const prevMonthStr = `${prevYear}-${String(prevMonth + 1).padStart(2, "0")}`;
+
     setIsLoading(true);
     Promise.all([
       statsAPI.getCategoryBreakdown(monthStr),
       statsAPI.getSummary(monthStr),
-    ]).then(([breakdown, summary]) => {
+      statsAPI.getCategoryBreakdown(prevMonthStr),
+    ]).then(([breakdown, summary, prevBreakdown]) => {
       // breakdown is array: [{category_id, category_name, icon, color, total, type}]
       const allCats = breakdown || [];
       const totalExpense = allCats.filter((c: any) => c.type === 'expense').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
       const totalIncome = allCats.filter((c: any) => c.type === 'income').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
+
+      const allPrevCats = prevBreakdown || [];
+      const totalPrevExpense = allPrevCats.filter((c: any) => c.type === 'expense').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
+      const totalPrevIncome = allPrevCats.filter((c: any) => c.type === 'income').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
 
       const mapCats = (cats: any[], total: number): CatData[] => cats.map((c: any) => ({
         id: c.category_id || c.id,
@@ -472,6 +490,8 @@ export function ReportsScreen() {
 
       setExpenseData(mapCats(allCats.filter((c: any) => c.type === 'expense'), totalExpense));
       setIncomeData(mapCats(allCats.filter((c: any) => c.type === 'income'), totalIncome));
+      setCompareExpenseData(mapCats(allPrevCats.filter((c: any) => c.type === 'expense'), totalPrevExpense));
+      setCompareIncomeData(mapCats(allPrevCats.filter((c: any) => c.type === 'income'), totalPrevIncome));
       setSummaryData({ income: summary?.income || 0, expense: summary?.expense || 0 });
     }).catch(console.error).finally(() => setIsLoading(false));
   }, [month, year]);
@@ -480,7 +500,7 @@ export function ReportsScreen() {
 
   // Current data based on type
   const mainData   = chartType === "expense" ? expenseData : incomeData;
-  const compareData: CatData[] = [];
+  const compareData = chartType === "expense" ? compareExpenseData : compareIncomeData;
 
   // Drilldown
   const displayData: (CatData | SubData)[] = drillCat ? drillCat.subs : mainData;

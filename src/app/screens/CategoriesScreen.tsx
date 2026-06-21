@@ -286,8 +286,8 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
   }, 0);
   const formatted = total >= 1000
     ? total >= 100000
-      ? `₹${(total / 100000).toFixed(1)}L`
-      : `₹${(total / 1000).toFixed(0)}K`
+      ? `₹${parseFloat((total / 100000).toFixed(1))}L`
+      : `₹${parseFloat((total / 1000).toFixed(1))}K`
     : `₹${total}`;
 
   return (
