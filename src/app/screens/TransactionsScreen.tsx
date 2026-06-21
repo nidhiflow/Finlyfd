@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Star, Trash2, Plus, FileText, ChevronLeft, ChevronRight, ChevronDown,
   Utensils, Car, Zap, Coffee, ShoppingBag, Edit3,
-  ArrowDownLeft, Wallet, Calendar, X,
+  ArrowDownLeft, Wallet, Calendar, X, Search, SlidersHorizontal
 } from "lucide-react";
 import { toast } from "sonner";
 import { useCategoryContext } from "../context/CategoryContext";
@@ -120,6 +120,7 @@ const C_INCOME = "#EF4444"; // Red/Orange
 const C_EXPENSE = "#4CC9F0"; // Blue/Cyan
 const C_SAVINGS = "#FFB703";
 const C_BALANCE = "#FFFFFF"; // White
+const C_ACCENT = "#EF4444"; // Brand Accent Color
 
 // ─── Summary Card (reused for all period headers) ───────────────────────────────
 function SummaryCard({ income, expense, savings, balance }: { income: number; expense: number; savings: number; balance: number }) {
@@ -424,58 +425,82 @@ export function TransactionsScreen() {
   }, [dayStats, selectedDay, daysInMonth]);
 
   return (
-    <div className="pb-24 relative">
+    <div className="pb-24 relative" style={{ background: "#16171C", minHeight: "100vh" }}>
       {/* ─── Period Navigation ──────────────────────────────────────── */}
-      <div className="sticky top-[57px] z-30 bg-[#0D0F14]/95 backdrop-blur-xl border-b border-white/[0.06]">
-        <div className="flex items-center justify-between px-5 py-3">
-          <motion.button whileTap={{ scale: 0.85 }} 
-            onClick={() => shiftPeriod(-1)}
-            disabled={period === "Total"}
-            className={`w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center active:bg-white/10 transition-colors ${period === "Total" ? "opacity-30 cursor-not-allowed" : ""}`}>
-            <ChevronLeft className="w-4 h-4 text-white/60" />
-          </motion.button>
-          <p className="text-white font-semibold text-sm">{periodLabel}</p>
-          <motion.button whileTap={{ scale: 0.85 }} 
-            onClick={() => shiftPeriod(1)}
-            disabled={period === "Total"}
-            className={`w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center active:bg-white/10 transition-colors ${period === "Total" ? "opacity-30 cursor-not-allowed" : ""}`}>
-            <ChevronRight className="w-4 h-4 text-white/60" />
-          </motion.button>
+      <div className="sticky top-[57px] z-30 bg-[#16171C] border-b border-white/[0.06]">
+        <div className="flex items-center justify-between px-4 py-3">
+          {/* Left section: Month navigation */}
+          <div className="flex items-center gap-1.5">
+            <motion.button whileTap={{ scale: 0.85 }} 
+              onClick={() => shiftPeriod(-1)}
+              disabled={period === "Total"}
+              className={`p-1 text-white/70 active:text-white transition-colors ${period === "Total" ? "opacity-30 cursor-not-allowed" : ""}`}>
+              <ChevronLeft className="w-5 h-5" />
+            </motion.button>
+            <span className="text-white font-semibold text-[15px] min-w-[70px] text-center">{periodLabel}</span>
+            <motion.button whileTap={{ scale: 0.85 }} 
+              onClick={() => shiftPeriod(1)}
+              disabled={period === "Total"}
+              className={`p-1 text-white/70 active:text-white transition-colors ${period === "Total" ? "opacity-30 cursor-not-allowed" : ""}`}>
+              <ChevronRight className="w-5 h-5" />
+            </motion.button>
+          </div>
+
+          {/* Right section: Action Icons */}
+          <div className="flex items-center gap-4">
+            <motion.button whileTap={{ scale: 0.85 }} className="text-white/75 hover:text-white transition-colors">
+              <Star className="w-[18px] h-[18px]" />
+            </motion.button>
+            <motion.button whileTap={{ scale: 0.85 }} className="text-white/75 hover:text-white transition-colors">
+              <Search className="w-[18px] h-[18px]" />
+            </motion.button>
+            <motion.button whileTap={{ scale: 0.85 }} className="text-white/75 hover:text-white transition-colors">
+              <SlidersHorizontal className="w-[18px] h-[18px]" />
+            </motion.button>
+          </div>
         </div>
 
         {/* Period Tabs */}
-        <div className="flex px-4 pb-3 gap-1">
-          {(["Daily", "Calendar", "Monthly", "Total", "Note"] as PeriodTab[]).map(tab => (
-            <motion.button key={tab} whileTap={{ scale: 0.93 }}
-              onClick={() => handlePeriodChange(tab)}
-              className="flex-1 py-2 rounded-lg text-[11px] font-medium transition-all"
-              style={{
-                background: period === tab ? "rgba(124,92,255,0.15)" : "transparent",
-                color: period === tab ? "#9D7EFF" : "rgba(255,255,255,0.35)",
-                borderBottom: period === tab ? "2px solid #7C5CFF" : "2px solid transparent",
-              }}>
-              {tab}
-            </motion.button>
-          ))}
+        <div className="flex px-4 pb-2.5 gap-1 border-b border-white/[0.04]">
+          {(["Daily", "Calendar", "Monthly", "Total", "Note"] as PeriodTab[]).map(tab => {
+            const isSel = period === tab;
+            return (
+              <motion.button key={tab} whileTap={{ scale: 0.93 }}
+                onClick={() => handlePeriodChange(tab)}
+                className="flex-1 py-1.5 text-[13px] font-semibold transition-all relative text-center"
+                style={{
+                  color: isSel ? "#FFFFFF" : "rgba(255,255,255,0.45)",
+                }}>
+                {tab}
+                {isSel && (
+                  <motion.div layoutId="tabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#EF4444]" />
+                )}
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 
       {/* ─── Summary Strip ──────────────────────────────────────────── */}
-      <div className="px-5 py-3">
-        <div className="bg-[#1B2130]/60 rounded-xl p-4 border border-white/[0.05]">
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { label: "Income", value: summary.income, color: C_INCOME, prefix: "+" },
-              { label: "Expenses", value: summary.expense + summary.savings, color: C_EXPENSE, prefix: "-" },
-              { label: "Total", value: summary.income - (summary.expense + summary.savings), color: C_BALANCE, prefix: (summary.income - (summary.expense + summary.savings)) >= 0 ? "+" : "-" },
-            ].map(item => (
-              <div key={item.label} className="text-center">
-                <p className="text-[10px] text-white/40 mb-1 uppercase tracking-wider font-semibold">{item.label}</p>
-                <p className="text-[13px] font-bold tabular-nums" style={{ color: item.color }}>
-                  {item.prefix}₹ {formatINR(item.value)}
-                </p>
-              </div>
-            ))}
+      <div className="px-4 py-3.5 border-b border-white/[0.06] bg-[#16171C]">
+        <div className="grid grid-cols-3 text-center">
+          <div>
+            <p className="text-[11px] text-white/40 mb-1">Income</p>
+            <p className="text-[14px] font-bold tabular-nums" style={{ color: C_INCOME }}>
+              {formatINR(summary.income)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] text-white/40 mb-1">Expenses</p>
+            <p className="text-[14px] font-bold tabular-nums" style={{ color: C_EXPENSE }}>
+              {formatINR(summary.expense + summary.savings)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] text-white/40 mb-1">Total</p>
+            <p className="text-[14px] font-bold tabular-nums" style={{ color: C_BALANCE }}>
+              {formatINR(summary.income - (summary.expense + summary.savings))}
+            </p>
           </div>
         </div>
       </div>
@@ -496,35 +521,29 @@ export function TransactionsScreen() {
           dateGroups.map((group, gi) => {
             const isOpen = expandedGroups.has(group.dateKey);
             return (
-              <div key={group.dateKey}>
+              <div key={group.dateKey} className="border-b border-white/[0.04] pb-1">
                 <motion.button
-                  className="w-full pt-4 pb-2 cursor-pointer active:bg-white/[0.02] rounded-xl transition-colors flex items-center justify-between"
+                  className="w-full pt-4 pb-2 cursor-pointer active:bg-white/[0.02] rounded-xl transition-colors flex items-center justify-between text-left"
                   onClick={() => toggleGroup(group.dateKey)}
                   whileTap={{ scale: 0.99 }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-3xl font-extrabold text-white/90 leading-none">{group.dayNum}</span>
-                    <div className="flex flex-col items-start justify-center text-left leading-tight">
-                      <span className="text-[10px] font-bold text-white/50 uppercase tracking-wider">{group.dayName}</span>
-                      <span className="text-[10px] text-white/30">{group.monthYear}</span>
-                    </div>
+                    <span className="text-xl font-bold text-white">{group.dayNum}</span>
+                    <span className="text-[10px] font-bold text-white/70 px-1.5 py-0.5 rounded bg-white/10 uppercase leading-none">{group.dayName}</span>
+                    <span className="text-[11px] text-white/30">{group.monthYear}</span>
                   </div>
                   
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3 text-[11px] font-bold tabular-nums">
-                      {group.income > 0 && (
-                        <span style={{ color: C_INCOME }}>+₹ {formatINR(group.income)}</span>
-                      )}
-                      {(group.expense + group.savings) > 0 && (
-                        <span style={{ color: C_EXPENSE }}>-₹ {formatINR(group.expense + group.savings)}</span>
-                      )}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 text-[12px] font-bold tabular-nums">
+                      <span style={{ color: C_INCOME }}>₹ {formatINR(group.income)}</span>
+                      <span style={{ color: C_EXPENSE }}>₹ {formatINR(group.expense + group.savings)}</span>
                     </div>
                     <motion.div
                       animate={{ rotate: isOpen ? 180 : 0 }}
                       transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                       className="flex items-center"
                     >
-                      <ChevronDown className="w-4 h-4 text-white/30" />
+                      <ChevronDown className="w-3.5 h-3.5 text-white/30" />
                     </motion.div>
                   </div>
                 </motion.button>
@@ -537,7 +556,7 @@ export function TransactionsScreen() {
                       transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="border-l-2 border-white/[0.04] ml-4 pl-2">
+                      <div className="border-l border-white/[0.05] ml-4 pl-2">
                         {group.transactions.map(tx => (
                           <TransactionRow key={tx.id} transaction={tx} onLongPress={setActionTx} />
                         ))}
@@ -545,15 +564,14 @@ export function TransactionsScreen() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {gi < dateGroups.length - 1 && <div className="h-px bg-gradient-to-r from-transparent via-white/[0.04] to-transparent my-1" />}
               </div>
             );
           })
         ) : period === "Calendar" ? (
           /* ── Calendar View ───────────────────────────────── */
-          <div className="space-y-4">
+          <div className="space-y-4 pt-4">
             {/* Calendar Grid Container */}
-            <div className="bg-[#1B2130]/60 rounded-2xl p-4 border border-white/[0.05]">
+            <div className="bg-[#1B2130]/30 rounded-2xl p-4 border border-white/[0.05]">
               {/* Weekday Headers */}
               <div className="grid grid-cols-7 gap-2 mb-3">
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
@@ -582,8 +600,8 @@ export function TransactionsScreen() {
                       onClick={() => setSelectedDay(stat.day)}
                       className={`relative aspect-square rounded-xl flex flex-col items-center justify-center transition-colors ${
                         isSelected
-                          ? "bg-[#7C5CFF] text-white"
-                          : "bg-[#0D0F14] text-white/70 hover:bg-[#1B2130]"
+                          ? "bg-[#EF4444] text-white"
+                          : "bg-[#16171C] text-white/70 hover:bg-[#1B2130]"
                       }`}
                     >
                       <span className="text-sm font-semibold">{stat.day}</span>
@@ -609,12 +627,12 @@ export function TransactionsScreen() {
                 </h3>
 
                 {!selectedDayData || selectedDayData.transactions.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 text-center bg-[#1B2130]/30 rounded-2xl border border-white/[0.03]">
+                  <div className="flex flex-col items-center justify-center py-10 text-center bg-[#1B2130]/10 rounded-2xl border border-white/[0.03]">
                     <p className="text-2xl mb-1">📭</p>
                     <p className="text-white/40 text-xs">No transactions on this day</p>
                   </div>
                 ) : (
-                  <div className="space-y-1.5 border-l-2 border-white/[0.04] ml-2 pl-2">
+                  <div className="space-y-1.5 border-l border-white/[0.05] ml-2 pl-2">
                     {selectedDayData.transactions.map(tx => (
                       <TransactionRow key={tx.id} transaction={tx} onLongPress={setActionTx} />
                     ))}
@@ -625,22 +643,22 @@ export function TransactionsScreen() {
           </div>
         ) : (
           /* ── Monthly / Total View ────────────────────────────────── */
-          <div>
+          <div className="pt-4">
             {monthGroups.map((group) => {
               const aKey = `a-${group.key}`;
               const isOpen = expandedGroups.has(aKey);
               return (
-                <div key={group.key} className="mb-3">
+                <div key={group.key} className="mb-3 border-b border-white/[0.04] pb-2">
                   <motion.button
-                    className="w-full flex items-center justify-between bg-[#1B2130]/50 rounded-xl px-4 py-3 border border-white/[0.04] cursor-pointer active:bg-white/[0.06] transition-colors"
+                    className="w-full flex items-center justify-between bg-white/[0.02] rounded-xl px-4 py-3.5 border border-white/[0.04] cursor-pointer active:bg-white/[0.06] transition-colors"
                     onClick={() => toggleGroup(aKey)}
                     whileTap={{ scale: 0.99 }}
                   >
                     <p className="text-sm font-semibold text-white/80">{group.monthLabel} {group.year}</p>
                     <div className="flex items-center gap-2">
-                      <div className="flex gap-3 text-[10px] tabular-nums font-bold">
-                        <span style={{ color: C_INCOME }}>+₹ {formatINR(group.income)}</span>
-                        <span style={{ color: C_EXPENSE }}>-₹ {formatINR(group.expense + group.savings)}</span>
+                      <div className="flex gap-3 text-[11px] tabular-nums font-bold">
+                        <span style={{ color: C_INCOME }}>₹ {formatINR(group.income)}</span>
+                        <span style={{ color: C_EXPENSE }}>₹ {formatINR(group.expense + group.savings)}</span>
                         <span className="font-semibold" style={{ color: C_BALANCE }}>
                           ₹ {formatINR(group.income - (group.expense + group.savings))}
                         </span>
@@ -662,7 +680,7 @@ export function TransactionsScreen() {
                         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                         className="overflow-hidden"
                       >
-                        <div className="border-l-2 border-white/[0.04] ml-4 pl-2 mt-1">
+                        <div className="border-l border-white/[0.05] ml-4 pl-2 mt-1">
                           {group.transactions.map(tx => (
                             <TransactionRow key={tx.id} transaction={tx} onLongPress={setActionTx} />
                           ))}
@@ -682,8 +700,8 @@ export function TransactionsScreen() {
         onClick={() => navigate("/dashboard/add-transaction")}
         className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40"
         style={{
-          background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)",
-          boxShadow: "0 6px 24px rgba(124,92,255,0.45), 0 0 40px rgba(124,92,255,0.15)",
+          background: "#EF4444",
+          boxShadow: "0 6px 20px rgba(239,68,68,0.4)",
         }}>
         <Plus className="w-6 h-6 text-white" />
       </motion.button>

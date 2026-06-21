@@ -305,8 +305,8 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
       <motion.button whileTap={{ scale: 0.94 }} onClick={() => setOpen(v => !v)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-2xl transition-all"
         style={{
-          background: open ? "rgba(124,92,255,0.2)" : "rgba(255,255,255,0.07)",
-          border: `1px solid ${open ? "rgba(124,92,255,0.4)" : "rgba(255,255,255,0.1)"}`,
+          background: open ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.07)",
+          border: `1px solid ${open ? "rgba(239,68,68,0.4)" : "rgba(255,255,255,0.1)"}`,
         }}>
         <span style={{ fontSize: 13 }}>{cur.emoji}</span>
         <span className="text-white font-semibold" style={{ fontSize: 12 }}>{cur.label}</span>
@@ -334,10 +334,10 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
                 className="w-full flex items-center gap-2.5 px-4 py-2.5 transition-colors hover:bg-white/5"
                 style={{ fontSize: 13 }}>
                 <span>{opt.emoji}</span>
-                <span style={{ color: period === opt.id ? "#9D7EFF" : "rgba(255,255,255,0.72)", fontWeight: period === opt.id ? 700 : 400 }}>
+                <span style={{ color: period === opt.id ? "#EF4444" : "rgba(255,255,255,0.72)", fontWeight: period === opt.id ? 700 : 400 }}>
                   {opt.label}
                 </span>
-                {period === opt.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#7C5CFF]" />}
+                {period === opt.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#EF4444]" />}
               </button>
             ))}
           </motion.div>
@@ -358,14 +358,14 @@ function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartT
   return (
     <div className="mx-4 mb-3 rounded-2xl px-4 py-3.5 relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg,rgba(124,92,255,0.14) 0%,rgba(76,201,240,0.07) 100%)",
-        border: "1px solid rgba(124,92,255,0.25)",
+        background: "linear-gradient(135deg,rgba(239,68,68,0.14) 0%,rgba(76,201,240,0.07) 100%)",
+        border: "1px solid rgba(239,68,68,0.25)",
       }}>
       <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle,rgba(124,92,255,0.22) 0%,transparent 70%)" }} />
+        style={{ background: "radial-gradient(circle,rgba(239,68,68,0.22) 0%,transparent 70%)" }} />
       <div className="flex items-start gap-3 relative z-10">
         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)" }}>
+          style={{ background: "linear-gradient(135deg,#EF4444,#4CC9F0)" }}>
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -661,7 +661,7 @@ export function ReportsScreen() {
         // Empty state
         <div className="flex flex-col items-center justify-center py-20 gap-4 mx-4">
           <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-5xl"
-            style={{ background: "linear-gradient(135deg,rgba(124,92,255,0.1),rgba(76,201,240,0.05))", border: "1px solid rgba(124,92,255,0.2)" }}>
+            style={{ background: "linear-gradient(135deg,rgba(239,68,68,0.1),rgba(76,201,240,0.05))", border: "1px solid rgba(239,68,68,0.2)" }}>
             📊
           </div>
           <div className="text-center">
@@ -682,15 +682,15 @@ export function ReportsScreen() {
       {!drillCat && hasTransactions && (
         <div className="px-4 mb-3">
           <div className="flex items-center justify-between py-3 px-4 rounded-2xl"
-            style={{ background: compareMode ? "linear-gradient(135deg,rgba(124,92,255,0.12),rgba(76,201,240,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(124,92,255,0.25)" : "1px solid rgba(255,255,255,0.07)", transition: "all 0.3s" }}>
+            style={{ background: compareMode ? "linear-gradient(135deg,rgba(239,68,68,0.12),rgba(76,201,240,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(239,68,68,0.25)" : "1px solid rgba(255,255,255,0.07)", transition: "all 0.3s" }}>
             <div className="flex items-center gap-2.5">
-              <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#7C5CFF" : "rgba(255,255,255,0.45)" }} />
+              <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#EF4444" : "rgba(255,255,255,0.45)" }} />
               <p className="font-medium" style={{ fontSize: 13, color: compareMode ? "white" : "rgba(255,255,255,0.65)" }}>Compare with last month</p>
             </div>
             <motion.button whileTap={{ scale: 0.9 }}
               onClick={() => setCompareMode(v => !v)}
               className="w-11 h-6 rounded-full relative"
-              style={{ background: compareMode ? "linear-gradient(135deg,#7C5CFF,#4CC9F0)" : "rgba(255,255,255,0.12)" }}>
+              style={{ background: compareMode ? "linear-gradient(135deg,#EF4444,#4CC9F0)" : "rgba(255,255,255,0.12)" }}>
               <motion.div
                 animate={{ x: compareMode ? 23 : 2 }}
                 transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
@@ -712,9 +712,9 @@ export function ReportsScreen() {
           >
             {/* Summary insight cards */}
             <div className="grid grid-cols-2 gap-2.5 mb-3">
-              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.2)" }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>
                 <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "0.5px" }}>THIS MONTH</p>
-                <p className="font-bold mt-1" style={{ fontSize: 17, color: "#9D7EFF" }}>
+                <p className="font-bold mt-1" style={{ fontSize: 17, color: "#EF4444" }}>
                   {fmtFull(mainData.reduce((s, c) => s + c.amount, 0))}
                 </p>
               </div>
