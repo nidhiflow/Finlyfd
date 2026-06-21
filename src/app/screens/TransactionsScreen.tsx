@@ -116,11 +116,11 @@ function groupByMonth(txs: Transaction[]): MonthGroup[] {
 }
 
 // ─── Color constants ────────────────────────────────────────────────────────────
-const C_INCOME = "#EF4444"; // Red/Orange
-const C_EXPENSE = "#4CC9F0"; // Blue/Cyan
-const C_SAVINGS = "#FFB703";
+const C_INCOME = "#22C55E"; // Green
+const C_EXPENSE = "#EF4444"; // Red
+const C_SAVINGS = "#FFB703"; // Amber
 const C_BALANCE = "#FFFFFF"; // White
-const C_ACCENT = "#EF4444"; // Brand Accent Color
+const C_ACCENT = "#7C5CFF"; // Brand Accent Color (Purple)
 
 // ─── Summary Card (reused for all period headers) ───────────────────────────────
 function SummaryCard({ income, expense, savings, balance }: { income: number; expense: number; savings: number; balance: number }) {
@@ -425,9 +425,13 @@ export function TransactionsScreen() {
   }, [dayStats, selectedDay, daysInMonth]);
 
   return (
-    <div className="pb-24 relative" style={{ background: "#16171C", minHeight: "100vh" }}>
+    <div className="pb-24 relative" style={{ background: "linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight: "100vh" }}>
+      {/* Top ambient glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at 50% 0%,rgba(124,92,255,0.11) 0%,transparent 70%)" }} />
+
       {/* ─── Period Navigation ──────────────────────────────────────── */}
-      <div className="sticky top-[57px] z-30 bg-[#16171C] border-b border-white/[0.06]">
+      <div className="sticky top-[57px] z-30 bg-[#0B0F1A]/95 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="flex items-center justify-between px-4 py-3">
           {/* Left section: Month navigation */}
           <div className="flex items-center gap-1.5">
@@ -473,7 +477,7 @@ export function TransactionsScreen() {
                 }}>
                 {tab}
                 {isSel && (
-                  <motion.div layoutId="tabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#EF4444]" />
+                  <motion.div layoutId="tabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#7C5CFF]" />
                 )}
               </motion.button>
             );
@@ -482,31 +486,36 @@ export function TransactionsScreen() {
       </div>
 
       {/* ─── Summary Strip ──────────────────────────────────────────── */}
-      <div className="px-4 py-3.5 border-b border-white/[0.06] bg-[#16171C]">
-        <div className="grid grid-cols-3 text-center">
-          <div>
-            <p className="text-[11px] text-white/40 mb-1">Income</p>
-            <p className="text-[14px] font-bold tabular-nums" style={{ color: C_INCOME }}>
-              {formatINR(summary.income)}
-            </p>
-          </div>
-          <div>
-            <p className="text-[11px] text-white/40 mb-1">Expenses</p>
-            <p className="text-[14px] font-bold tabular-nums" style={{ color: C_EXPENSE }}>
-              {formatINR(summary.expense + summary.savings)}
-            </p>
-          </div>
-          <div>
-            <p className="text-[11px] text-white/40 mb-1">Total</p>
-            <p className="text-[14px] font-bold tabular-nums" style={{ color: C_BALANCE }}>
-              {formatINR(summary.income - (summary.expense + summary.savings))}
-            </p>
+      <div className="px-5 py-3">
+        <div className="rounded-2xl p-4 border border-white/7"
+          style={{
+            background: "linear-gradient(135deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%)",
+          }}>
+          <div className="grid grid-cols-3 text-center">
+            <div>
+              <p className="text-[11px] text-white/40 mb-1 uppercase tracking-wider font-semibold">Income</p>
+              <p className="text-[14px] font-bold tabular-nums" style={{ color: C_INCOME }}>
+                ₹ {formatINR(summary.income)}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] text-white/40 mb-1 uppercase tracking-wider font-semibold">Expenses</p>
+              <p className="text-[14px] font-bold tabular-nums" style={{ color: C_EXPENSE }}>
+                ₹ {formatINR(summary.expense + summary.savings)}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] text-white/40 mb-1 uppercase tracking-wider font-semibold">Total</p>
+              <p className="text-[14px] font-bold tabular-nums" style={{ color: C_BALANCE }}>
+                ₹ {formatINR(summary.income - (summary.expense + summary.savings))}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ─── Transaction List ───────────────────────────────────────── */}
-      <div className="px-4">
+      <div className="px-4 relative z-10">
         {filtered.length === 0 && period !== "Calendar" ? (
           <div className="flex flex-col items-center py-20">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
@@ -600,17 +609,17 @@ export function TransactionsScreen() {
                       onClick={() => setSelectedDay(stat.day)}
                       className={`relative aspect-square rounded-xl flex flex-col items-center justify-center transition-colors ${
                         isSelected
-                          ? "bg-[#EF4444] text-white"
-                          : "bg-[#16171C] text-white/70 hover:bg-[#1B2130]"
+                          ? "bg-[#7C5CFF] text-white"
+                          : "bg-white/[0.03] text-white/70 hover:bg-white/[0.07]"
                       }`}
                     >
                       <span className="text-sm font-semibold">{stat.day}</span>
                       <div className="flex gap-1 mt-1.5">
                         {hasIncome && (
-                          <div className={`w-1 h-1 rounded-full ${isSelected ? "bg-white" : "bg-[#EF4444]"}`} />
+                          <div className={`w-1 h-1 rounded-full ${isSelected ? "bg-white" : "bg-[#22C55E]"}`} />
                         )}
                         {hasExpense && (
-                          <div className={`w-1 h-1 rounded-full ${isSelected ? "bg-white" : "bg-[#4CC9F0]"}`} />
+                          <div className={`w-1 h-1 rounded-full ${isSelected ? "bg-white" : "bg-[#EF4444]"}`} />
                         )}
                       </div>
                     </button>
@@ -700,8 +709,8 @@ export function TransactionsScreen() {
         onClick={() => navigate("/dashboard/add-transaction")}
         className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40"
         style={{
-          background: "#EF4444",
-          boxShadow: "0 6px 20px rgba(239,68,68,0.4)",
+          background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)",
+          boxShadow: "0 6px 24px rgba(124,92,255,0.45), 0 0 40px rgba(124,92,255,0.15)",
         }}>
         <Plus className="w-6 h-6 text-white" />
       </motion.button>
