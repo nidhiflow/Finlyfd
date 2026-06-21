@@ -126,7 +126,7 @@ function SummaryCard({ income, expense, savings, balance }: { income: number; ex
   const totalExpense = expense + savings;
   const netTotal = income - totalExpense;
   return (
-    <div className="bg-[#161B26] rounded-lg p-2.5 border border-white/[0.05]">
+    <div className="bg-[#1B2130]/60 rounded-lg p-2.5 border border-white/[0.05]">
       <div className="grid grid-cols-3 gap-2">
         {[
           { l: "Income", v: income, c: C_INCOME, p: "+" },
@@ -450,9 +450,9 @@ export function TransactionsScreen() {
               onClick={() => handlePeriodChange(tab)}
               className="flex-1 py-2 rounded-lg text-[11px] font-medium transition-all"
               style={{
-                background: period === tab ? "rgba(239,68,68,0.12)" : "transparent",
-                color: period === tab ? "#EF4444" : "rgba(255,255,255,0.35)",
-                borderBottom: period === tab ? "2px solid #EF4444" : "2px solid transparent",
+                background: period === tab ? "rgba(124,92,255,0.15)" : "transparent",
+                color: period === tab ? "#9D7EFF" : "rgba(255,255,255,0.35)",
+                borderBottom: period === tab ? "2px solid #7C5CFF" : "2px solid transparent",
               }}>
               {tab}
             </motion.button>
@@ -462,7 +462,7 @@ export function TransactionsScreen() {
 
       {/* ─── Summary Strip ──────────────────────────────────────────── */}
       <div className="px-5 py-3">
-        <div className="bg-[#161B26] rounded-xl p-4 border border-white/[0.05]">
+        <div className="bg-[#1B2130]/60 rounded-xl p-4 border border-white/[0.05]">
           <div className="grid grid-cols-3 gap-2">
             {[
               { label: "Income", value: summary.income, color: C_INCOME, prefix: "+" },
@@ -553,7 +553,7 @@ export function TransactionsScreen() {
           /* ── Calendar View ───────────────────────────────── */
           <div className="space-y-4">
             {/* Calendar Grid Container */}
-            <div className="bg-[#161B26] rounded-2xl p-4 border border-white/[0.05]">
+            <div className="bg-[#1B2130]/60 rounded-2xl p-4 border border-white/[0.05]">
               {/* Weekday Headers */}
               <div className="grid grid-cols-7 gap-2 mb-3">
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
@@ -582,7 +582,7 @@ export function TransactionsScreen() {
                       onClick={() => setSelectedDay(stat.day)}
                       className={`relative aspect-square rounded-xl flex flex-col items-center justify-center transition-colors ${
                         isSelected
-                          ? "bg-[#EF4444] text-white"
+                          ? "bg-[#7C5CFF] text-white"
                           : "bg-[#0D0F14] text-white/70 hover:bg-[#1B2130]"
                       }`}
                     >
@@ -609,7 +609,7 @@ export function TransactionsScreen() {
                 </h3>
 
                 {!selectedDayData || selectedDayData.transactions.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 text-center bg-[#161B26]/30 rounded-2xl border border-white/[0.03]">
+                  <div className="flex flex-col items-center justify-center py-10 text-center bg-[#1B2130]/30 rounded-2xl border border-white/[0.03]">
                     <p className="text-2xl mb-1">📭</p>
                     <p className="text-white/40 text-xs">No transactions on this day</p>
                   </div>
@@ -632,7 +632,7 @@ export function TransactionsScreen() {
               return (
                 <div key={group.key} className="mb-3">
                   <motion.button
-                    className="w-full flex items-center justify-between bg-[#161B26] rounded-xl px-4 py-3 border border-white/[0.04] cursor-pointer active:bg-white/[0.06] transition-colors"
+                    className="w-full flex items-center justify-between bg-[#1B2130]/50 rounded-xl px-4 py-3 border border-white/[0.04] cursor-pointer active:bg-white/[0.06] transition-colors"
                     onClick={() => toggleGroup(aKey)}
                     whileTap={{ scale: 0.99 }}
                   >
@@ -680,9 +680,10 @@ export function TransactionsScreen() {
       {/* ─── Floating Add Button ────────────────────────────────────── */}
       <motion.button whileTap={{ scale: 0.9 }}
         onClick={() => navigate("/dashboard/add-transaction")}
-        className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40 bg-[#EF4444]"
+        className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40"
         style={{
-          boxShadow: "0 6px 24px rgba(239,68,68,0.4), 0 0 40px rgba(239,68,68,0.15)",
+          background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)",
+          boxShadow: "0 6px 24px rgba(124,92,255,0.45), 0 0 40px rgba(124,92,255,0.15)",
         }}>
         <Plus className="w-6 h-6 text-white" />
       </motion.button>
