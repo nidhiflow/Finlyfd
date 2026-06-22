@@ -503,7 +503,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
                 <div className="grid grid-cols-4 gap-2">
                   {ACCOUNT_TYPES.map(t => (
                     <button key={t.id} type="button"
-                      onClick={() => { set("type", t.id); if (!t.hasBank) set("bankName", ""); }}
+                      onClick={() => { set("type", t.id); if (!t.hasBank) set("bankName", ""); set("color", t.color); }}
                       className="flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all"
                       style={{
                         background: form.type === t.id ? `linear-gradient(135deg,${t.color}28,${t.color}12)` : "color-mix(in srgb, var(--ink) 4%, transparent)",
@@ -528,124 +528,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
                 </div>
               )}
 
-              {/* Supported Payments */}
-              <div>
-                <label className="text-ink/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>SUPPORTED PAYMENTS</label>
-                <div className="flex gap-2 flex-wrap">
-                  {PAYMENT_MODES.map(m => {
-                    const sel = form.paymentModes.includes(m.id);
-                    return (
-                      <motion.button key={m.id} whileTap={{ scale: 0.93 }} type="button"
-                        onClick={() => toggleMode(m.id)}
-                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl transition-all"
-                        style={{
-                          background: sel ? `${currType.color}22` : "color-mix(in srgb, var(--ink) 5%, transparent)",
-                          border: sel ? `1px solid ${currType.color}50` : "1px solid var(--divider)",
-                        }}>
-                        <m.icon className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: sel ? currType.color : "color-mix(in srgb, var(--ink) 45%, transparent)" }} />
-                        <span style={{ fontSize: 12, fontWeight: 600, color: sel ? currType.color : "color-mix(in srgb, var(--ink) 45%, transparent)" }}>{m.label}</span>
-                        {sel && <Check className="w-3 h-3" strokeWidth={1.75} style={{ color: currType.color }} />}
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* UPI ID (conditional) */}
-              {hasUPI && (
-                <div>
-                  <label className="text-ink/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>UPI ID <span className="normal-case font-normal text-ink/25">(optional)</span></label>
-                  <input value={form.upiId} onChange={e => set("upiId", e.target.value)}
-                    placeholder="yourname@upi"
-                    className="w-full px-4 py-3 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
-                    style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }} />
-                </div>
               )}
-
-              {/* Track Balance */}
-              <div>
-                <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl"
-                  style={{ background: "color-mix(in srgb, var(--ink) 4%, transparent)", border: "1px solid var(--divider)" }}>
-                  <div>
-                    <p className="text-ink font-medium" style={{ fontSize: 14 }}>Track Balance</p>
-                    <p className="text-ink/35" style={{ fontSize: 11 }}>Monitor this account's balance</p>
-                  </div>
-                  <motion.button type="button" whileTap={{ scale: 0.9 }}
-                    onClick={() => set("trackBalance", !form.trackBalance)}
-                    className="w-12 h-6 rounded-full relative transition-colors flex-shrink-0"
-                    style={{ background: form.trackBalance ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "var(--divider)" }}>
-                    <motion.div
-                      animate={{ x: form.trackBalance ? 24 : 2 }}
-                      transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-                      className="absolute top-0.5 w-5 h-5 rounded-full bg-white"
-                      style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }} />
-                  </motion.button>
-                </div>
-              </div>
-
-              {/* Opening Balance (conditional) */}
-              <AnimatePresence>
-                {form.trackBalance && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} style={{ overflow: "hidden" }}>
-                    <label className="text-ink/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>OPENING BALANCE</label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/50 font-bold" style={{ fontSize: 16 }}>₹</span>
-                      <input value={form.openingBalance} onChange={e => set("openingBalance", e.target.value)}
-                        placeholder="0.00" inputMode="decimal"
-                        className="w-full pl-9 pr-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
-                        style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: `1px solid ${errors.openingBalance ? "#EF4444" : "var(--divider)"}`, fontSize: 16, fontWeight: 700 }} />
-                    </div>
-                    {errors.openingBalance && <p className="text-rose-400 mt-1" style={{ fontSize: 11 }}>{errors.openingBalance}</p>}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Color Tag */}
-              <div>
-                <label className="text-ink/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>COLOR TAG</label>
-                <div className="flex gap-2 flex-wrap">
-                  {COLOR_TAGS.map(c => (
-                    <button key={c} type="button" onClick={() => set("color", c)}
-                      className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
-                      style={{
-                        background: c, opacity: form.color === c ? 1 : 0.45,
-                        transform: form.color === c ? "scale(1.18)" : "scale(1)",
-                        border: form.color === c ? "2px solid white" : "none",
-                        boxShadow: form.color === c ? `0 4px 12px ${c}70` : "none",
-                      }}>
-                      {form.color === c && <Check className="w-3 h-3 text-ink" strokeWidth={3} />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Primary Account */}
-              <div>
-                <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl"
-                  style={{
-                    background: form.isPrimary ? "rgba(255,183,3,0.08)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
-                    border: form.isPrimary ? "1px solid rgba(255,183,3,0.28)" : "1px solid var(--divider)",
-                  }}>
-                  <div className="flex items-center gap-2.5">
-                    <Star className={`w-4 h-4 transition-colors ${form.isPrimary ? "text-[var(--gold)] fill-[var(--gold)]" : "text-ink/30"}`} />
-                    <div>
-                      <p className="text-ink font-medium" style={{ fontSize: 14 }}>Primary Account</p>
-                      <p className="text-ink/35" style={{ fontSize: 11 }}>Your main account for transactions</p>
-                    </div>
-                  </div>
-                  <motion.button type="button" whileTap={{ scale: 0.9 }}
-                    onClick={() => set("isPrimary", !form.isPrimary)}
-                    className="w-12 h-6 rounded-full relative transition-colors flex-shrink-0"
-                    style={{ background: form.isPrimary ? "linear-gradient(135deg,#FFB703,#FF9500)" : "var(--divider)" }}>
-                    <motion.div
-                      animate={{ x: form.isPrimary ? 24 : 2 }}
-                      transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-                      className="absolute top-0.5 w-5 h-5 rounded-full bg-white"
-                      style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }} />
-                  </motion.button>
-                </div>
-              </div>
 
               {/* Action Buttons */}
               <div className="flex gap-3 pt-1">
