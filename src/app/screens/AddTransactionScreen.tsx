@@ -644,6 +644,7 @@ export function AddTransactionScreen() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
   const [ACCOUNTS, setACCOUNTS] = useState<Acc[]>([]);
+  const [loadingAccounts, setLoadingAccounts] = useState(true);
   const [recentNotes, setRecentNotes] = useState<string[]>([]);
   const [notesFetched, setNotesFetched] = useState(false);
   const [showNoteSuggestions, setShowNoteSuggestions] = useState(false);
@@ -668,7 +669,7 @@ export function AddTransactionScreen() {
       setACCOUNTS(mapped);
       if (mapped.length > 0 && !accId) setAccId(mapped[0].id);
       if (mapped.length > 1 && !toAccId) setToAccId(mapped[mapped.length - 1].id);
-    }).catch(console.error);
+    }).catch(console.error).finally(() => setLoadingAccounts(false));
   }, []);
 
   // ─── Load transaction in edit mode ──────────────────────────────────────────
@@ -697,7 +698,7 @@ export function AddTransactionScreen() {
   const cats = getCatsByType(txType === "income" ? "income" : "expense");
   const selectedCat = cats.find(c => c.id === catId);
   const selectedSub = selectedCat?.subs.find(s => s.id === subId);
-  const selectedAcc = ACCOUNTS.find(a => a.id === accId) || ACCOUNTS[0] || { id: '', name: 'Loading...', emoji: '🏦', type: '', color: '#4895EF', balance: 0 };
+  const selectedAcc = ACCOUNTS.find(a => a.id === accId) || ACCOUNTS[0] || { id: '', name: loadingAccounts ? 'Loading...' : 'Select Account', emoji: '🏦', type: '', color: '#4895EF', balance: 0 };
   const selectedTo = ACCOUNTS.find(a => a.id === toAccId);
   const recentIds = txType === "income" ? RECENT_INCOME_IDS : RECENT_IDS;
   const recentCats = cats.filter(c => recentIds.includes(c.id));
