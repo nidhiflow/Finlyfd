@@ -845,141 +845,112 @@ export function AddTransactionScreen() {
 
       <div className="relative z-10 pb-36">
 
-        {/* ── Header removed because MainLayout already provides it ── */}
-
         {/* ── Type Toggle ── */}
-        <div className="px-4 mb-4">
-          <div className="relative flex p-1 rounded-2xl"
-            style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1px solid var(--divider)" }}>
-            <motion.div className="absolute top-1 bottom-1 rounded-xl"
-              animate={{
-                left: txType === "expense" ? 4 : txType === "income" ? "calc(33.33% + 2px)" : "calc(66.66% + 0px)",
-                width: "calc(33.33% - 4px)",
-              }}
-              transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-              style={{ background: typeBg, boxShadow: `0 4px 16px ${typeAccent}35` }} />
-            {([
-              { id: "expense" as TxType, label: "Expense", icon: ArrowUpCircle },
-              { id: "income" as TxType, label: "Income", icon: ArrowDownCircle },
-              { id: "transfer" as TxType, label: "Transfer", icon: RefreshCw },
-            ] as { id: TxType; label: string; icon: typeof ArrowUpCircle }[]).map(t => (
+        <div className="flex gap-2 mx-5 mb-5 bg-[var(--surface)] rounded-[14px] p-1.5 mt-4">
+          {[
+            { id: "expense" as TxType, label: "Expense", icon: ArrowUpCircle },
+            { id: "income" as TxType, label: "Income", icon: ArrowDownCircle },
+            { id: "transfer" as TxType, label: "Transfer", icon: RefreshCw },
+          ].map(t => {
+            const isActive = txType === t.id;
+            return (
               <motion.button
                 key={t.id}
                 onClick={() => switchType(t.id)}
                 whileTap={{ scale: 0.97 }}
-                className="relative flex-1 py-3 rounded-[14px] z-10 flex items-center justify-center gap-1.5 transition-colors"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-[10px] transition-colors"
                 style={{
-                  fontSize: 12,
-                  fontWeight: 700,
-                  color: txType === t.id ? "#10171A" : "color-mix(in srgb, var(--ink) 38%, transparent)",
+                  fontSize: 13.5,
+                  fontWeight: 500,
+                  background: isActive ? `${typeAccent}33` : "transparent",
+                  color: isActive ? typeAccent : "var(--ink-muted)",
                 }}>
-                <t.icon className="w-3.5 h-3.5" strokeWidth={1.75} />
+                <t.icon className="w-[14px] h-[14px]" strokeWidth={1.75} />
                 {t.label}
               </motion.button>
-            ))}
-          </div>
+            )
+          })}
         </div>
 
         {/* ── Amount Card ── */}
-        <div className="mx-4 mb-4 rounded-[18px] overflow-hidden relative"
-          style={{
-            background: "linear-gradient(135deg,color-mix(in srgb, var(--ink) 6%, transparent) 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)",
-            border: `1px solid ${errors.amount ? "#E2725B" : `${typeAccent}30`}`,
-            boxShadow: `0 8px 32px ${typeAccent}12`,
-          }}>
-          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full pointer-events-none"
-            style={{ background: `radial-gradient(circle,${typeAccent}20 0%,transparent 70%)` }} />
-          <div className="p-6 relative z-10">
-            <div className="flex items-center justify-between mb-1">
-              <p style={{ fontSize: 11, fontWeight: 700, color: "color-mix(in srgb, var(--ink) 38%, transparent)", letterSpacing: "0.6px" }}>
-                {txType === "income" ? "INCOME AMOUNT" : txType === "transfer" ? "TRANSFER AMOUNT" : "EXPENSE AMOUNT"}
-              </p>
-              <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowCalc(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
-                style={{ background: `${typeAccent}18`, border: `1px solid ${typeAccent}30` }}>
-                <Calculator className="w-3.5 h-3.5" style={{ color: typeAccent }} />
-                <span style={{ fontSize: 11, fontWeight: 600, color: typeAccent }}>Calculator</span>
-              </motion.button>
-            </div>
-            <div className="flex items-center gap-3 mt-2">
-              <span className="font-bold" style={{ fontSize: 36, color: `${typeAccent}cc` }}>₹</span>
-              <input
-                type="text" inputMode="decimal"
-                value={amount} onChange={e => {
-                  const v = e.target.value.replace(/[^0-9.]/g, "");
-                  if ((v.match(/\./g) || []).length <= 1) setAmount(v);
-                }}
-                placeholder="0"
-                className="flex-1 bg-transparent font-bold text-ink focus:outline-none placeholder:text-ink/18 tabular-nums"
-                style={{ fontSize: 44, letterSpacing: "-1px" }}
-              />
-            </div>
-            {errors.amount && (
-              <p className="text-rose-400 mt-2" style={{ fontSize: 12 }}>{errors.amount}</p>
-            )}
+        <div className="mx-5 mb-[22px] bg-[var(--surface)] rounded-[18px] p-5 pb-[22px]">
+          <div className="flex justify-between items-center mb-3.5">
+            <p className="text-[11px] tracking-[0.07em] uppercase text-[var(--ink-muted)] m-0">
+              {txType === "income" ? "INCOME AMOUNT" : txType === "transfer" ? "TRANSFER AMOUNT" : "EXPENSE AMOUNT"}
+            </p>
+            <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowCalc(true)}
+              className="flex items-center gap-1.5 text-[12px] font-medium px-3 py-1.5 rounded-[20px]"
+              style={{
+                 color: typeAccent,
+                 background: `${typeAccent}25`
+              }}>
+              <Calculator className="w-[13px] h-[13px]" style={{ color: typeAccent }} />
+              Calculator
+            </motion.button>
           </div>
+          <div className="flex items-baseline gap-1.5 font-fraunces font-medium text-[40px]" style={{ color: typeAccent }}>
+            <span className="text-[24px] text-[var(--ink-faint)]">₹</span>
+            <input
+              type="text" inputMode="decimal"
+              value={amount} onChange={e => {
+                const v = e.target.value.replace(/[^0-9.]/g, "");
+                if ((v.match(/\./g) || []).length <= 1) setAmount(v);
+              }}
+              placeholder="0"
+              className="flex-1 bg-transparent font-fraunces font-medium focus:outline-none placeholder:text-[var(--ink-faint)] tabular-nums"
+              style={{ color: typeAccent, width: "100%", letterSpacing: "-1px" }}
+            />
+          </div>
+          {errors.amount && (
+            <p className="text-rose-400 mt-2" style={{ fontSize: 12 }}>{errors.amount}</p>
+          )}
         </div>
 
         {/* ── Category Section (Income/Expense only) ── */}
         {txType !== "transfer" && (
-          <div className="mb-4">
-            <div className="px-4 mb-2.5 flex items-center justify-between">
-              <p className="text-ink/38 font-semibold" style={{ fontSize: 11, letterSpacing: "0.5px" }}>CATEGORY</p>
-              {catId && (
-                <button onClick={resetCat}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-xl"
-                  style={{ background: "var(--divider)", fontSize: 11, color: "color-mix(in srgb, var(--ink) 45%, transparent)" }}>
-                  <X className="w-3 h-3" /> Clear
-                </button>
-              )}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mx-5 mb-3">
+               <p className="text-[11px] tracking-[0.07em] uppercase text-[var(--ink-muted)] m-0">Category</p>
+               {catId && (
+                  <button onClick={resetCat}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-xl"
+                    style={{ background: "var(--divider)", fontSize: 11, color: "color-mix(in srgb, var(--ink) 45%, transparent)" }}>
+                    <X className="w-3 h-3" /> Clear
+                  </button>
+                )}
             </div>
-
-
-
-            {/* Category grid */}
             {errors.cat && (
-              <p className="px-4 text-rose-400 mb-2" style={{ fontSize: 12 }}>{errors.cat}</p>
+              <p className="px-5 text-rose-400 mb-2" style={{ fontSize: 12 }}>{errors.cat}</p>
             )}
-            <div className="px-4">
-              <motion.div
-                key={txType}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                className="grid grid-cols-4 gap-2">
-                {cats.map(c => {
-                  const isSel = catId === c.id;
-                  return (
-                    <motion.button key={c.id}
-                      whileTap={{ scale: 0.92 }}
-                      onClick={() => {
-                        if (catId === c.id) { setShowSubSheet(true); return; }
-                        setCatId(c.id); setSubId(null); setErrors(e => ({ ...e, cat: undefined! }));
-                        setShowSubSheet(true);
-                      }}
-                      className="flex flex-col items-center gap-1.5 py-3 rounded-2xl relative overflow-hidden transition-all"
-                      style={{
-                        background: isSel ? `linear-gradient(135deg,${c.color}28,${c.color}10)` : "color-mix(in srgb, var(--ink) 5%, transparent)",
-                        border: isSel ? `1.5px solid ${c.color}55` : "1px solid var(--divider)",
-                        boxShadow: isSel ? `0 4px 14px ${c.color}25` : "none",
-                      }}>
-                      {c.icon ? <c.icon className="w-6 h-6 mb-1" style={{ color: isSel ? c.color : "color-mix(in srgb, var(--ink) 70%, transparent)" }} /> : <span style={{ fontSize: 18 }}>{c.emoji}</span>}
-                      <span style={{
-                        fontSize: 9.5, fontWeight: 700, textAlign: "center", lineHeight: 1.2,
-                        color: isSel ? c.color : "color-mix(in srgb, var(--ink) 45%, transparent)"
-                      }}>
-                        {c.name.replace(" &", "").replace(" and", "").replace("& ", "").slice(0, 10)}
-                      </span>
-                      {isSel && (
-                        <div className="absolute top-1 right-1 w-3 h-3 rounded-full flex items-center justify-center"
-                          style={{ background: c.color }}>
-                          <Check className="w-2 h-2 text-ink" strokeWidth={3} />
-                        </div>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </motion.div>
+            <div className="grid grid-cols-4 gap-2.5 mx-5 mb-6">
+              {cats.map(c => {
+                const isSel = catId === c.id;
+                return (
+                  <motion.button key={c.id}
+                    whileTap={{ scale: 0.92 }}
+                    onClick={() => {
+                      if (catId === c.id) { setShowSubSheet(true); return; }
+                      setCatId(c.id); setSubId(null); setErrors(e => ({ ...e, cat: undefined! }));
+                      setShowSubSheet(true);
+                    }}
+                    className="bg-[var(--surface)] rounded-[14px] pt-3.5 px-1 pb-2.5 flex flex-col items-center gap-2"
+                    style={{
+                      background: isSel ? `${typeAccent}33` : "var(--surface)",
+                      boxShadow: isSel ? `inset 0 0 0 1.5px ${typeAccent}` : "none",
+                    }}>
+                    <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center"
+                       style={{
+                          background: isSel ? `${typeAccent}25` : "var(--surface-raised)",
+                          color: isSel ? typeAccent : "var(--ink-muted)"
+                       }}>
+                      {c.icon ? <c.icon className="w-4 h-4" /> : <span style={{ fontSize: 16 }}>{c.emoji}</span>}
+                    </div>
+                    <span className="text-[10.5px] text-center leading-[1.3]" style={{ color: isSel ? "var(--ink)" : "var(--ink-muted)" }}>
+                      {c.name.replace(" &", "").replace(" and", "").replace("& ", "").slice(0, 10)}
+                    </span>
+                  </motion.button>
+                );
+              })}
             </div>
 
             {/* Selected subcategory display */}
@@ -987,7 +958,7 @@ export function AddTransactionScreen() {
               {catId && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22 }}
-                  className="px-4 mt-3 overflow-hidden">
+                  className="px-5 mt-3 overflow-hidden">
                   <div className="flex items-center gap-2.5 px-4 py-3 rounded-2xl"
                     style={{
                       background: selectedCat ? `${selectedCat.color}10` : "color-mix(in srgb, var(--ink) 5%, transparent)",
@@ -998,21 +969,14 @@ export function AddTransactionScreen() {
                         <p className="text-ink font-semibold" style={{ fontSize: 13 }}>{selectedCat?.name}</p>
                         {subId ? (
                           <div className="flex items-center gap-1.5 mt-0.5">
-                            {selectedSub?.icon ? <selectedSub.icon className="w-3.5 h-3.5" style={{ color: "color-mix(in srgb, var(--ink) 55%, transparent)" }} /> : <span style={{ fontSize: 12 }}>{selectedSub?.emoji}</span>}
-                            <span className="text-ink/55" style={{ fontSize: 12 }}>{selectedSub?.name}</span>
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: selectedCat?.color }} />
+                            <p className="text-ink/60" style={{ fontSize: 11 }}>{selectedSub?.name}</p>
                           </div>
-                      ) : (
-                        <p style={{ fontSize: 11, color: errors.sub ? "#F87171" : "color-mix(in srgb, var(--ink) 35%, transparent)" }}>
-                          {errors.sub || "No subcategory selected"}
-                        </p>
-                      )}
-                    </div>
-                    <motion.button whileTap={{ scale: 0.9 }}
-                      onClick={() => setShowSubSheet(true)}
-                      className="px-2.5 py-1.5 rounded-xl"
-                      style={{ background: `${selectedCat?.color}22`, fontSize: 11, fontWeight: 600, color: selectedCat?.color }}>
-                      {subId ? "Change" : "Select ↓"}
-                    </motion.button>
+                        ) : (
+                          <p className="text-ink/40" style={{ fontSize: 11 }}>Tap to select subcategory</p>
+                        )}
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-ink/30" />
                   </div>
                 </motion.div>
               )}
@@ -1020,381 +984,254 @@ export function AddTransactionScreen() {
           </div>
         )}
 
-        {/* ── Account Section ── */}
-        <div className="px-4 mb-4">
-          <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
-            {txType === "transfer" ? "FROM ACCOUNT" : "ACCOUNT"}
-          </p>
-          <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowAccSheet(true)}
-            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left"
-            style={{
-              background: `linear-gradient(135deg,${selectedAcc.color}18 0%,${selectedAcc.color}08 100%)`,
-              border: `1px solid ${selectedAcc.color}35`,
-            }}>
-            <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
-              style={{ background: `${selectedAcc.color}22`, border: `1px solid ${selectedAcc.color}35` }}>
+        {/* ── Account Selection ── */}
+        <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowAccSheet(true)}
+           className="mx-5 mb-[22px] rounded-[16px] px-4 py-3.5 flex items-center gap-3 text-left w-[calc(100%-40px)]"
+           style={{
+              background: `${typeAccent}33`,
+              border: errors.acc ? "1px solid #EF4444" : "none"
+           }}>
+           <div className="w-[38px] h-[38px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(0,0,0,0.2)", color: typeAccent }}>
               {(() => {
                 const AccIcon = getAccountIcon(selectedAcc.type);
-                return <AccIcon className="w-5 h-5" style={{ color: selectedAcc.color }} />;
+                return <AccIcon className="w-5 h-5" />;
               })()}
-            </div>
-            <div className="flex-1">
-              <p className="text-ink font-semibold" style={{ fontSize: 14 }}>{selectedAcc.name}</p>
-              <p className="text-ink/38" style={{ fontSize: 11 }}>{selectedAcc.type}</p>
-            </div>
-            <div className="text-right">
-              <p className="font-bold tabular-nums" style={{ fontSize: 14, color: selectedAcc.balance < 0 ? "var(--ink-faint)" : "var(--ink)" }}>
-                ₹{Math.abs(selectedAcc.balance).toLocaleString("en-IN")}
-              </p>
-              <ChevronDown className="w-4 h-4 text-ink/30 ml-auto mt-0.5" strokeWidth={1.75} />
-            </div>
-          </motion.button>
-        </div>
+           </div>
+           <div className="flex-1">
+              <p className="m-0 text-[14px] font-medium text-[var(--ink)]">{selectedAcc.name}</p>
+              <p className="m-0 mt-0.5 text-[11.5px] text-[var(--ink-muted)]">{selectedAcc.type}</p>
+           </div>
+           <span className="text-[14px] font-semibold tabular-nums" style={{ color: typeAccent }}>₹{Math.abs(selectedAcc.balance).toLocaleString("en-IN")}</span>
+           <ChevronDown className="w-[14px] h-[14px] ml-2" style={{ color: typeAccent }} strokeWidth={1.75} />
+        </motion.button>
+        {errors.acc && <p className="text-rose-400 mt-1.5 px-6" style={{ fontSize: 12 }}>{errors.acc}</p>}
 
         {/* ── Transfer To Account ── */}
         {txType === "transfer" && (
-          <div className="px-4 mb-4">
-            <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>TO ACCOUNT</p>
+          <>
             <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowToAcc(true)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left"
-              style={{
-                background: selectedTo ? `${selectedTo.color}18` : "color-mix(in srgb, var(--ink) 5%, transparent)",
-                border: errors.toAcc ? "1px solid #EF4444" : `1px solid ${selectedTo?.color ?? "var(--divider)"}35`,
-              }}>
-              {selectedTo ? (
-                <>
-                  <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
-                    style={{ background: `${selectedTo.color}22` }}>
-                    {(() => {
-                      const ToAccIcon = getAccountIcon(selectedTo.type);
-                      return <ToAccIcon className="w-5 h-5" style={{ color: selectedTo.color }} />;
-                    })()}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-ink font-semibold" style={{ fontSize: 14 }}>{selectedTo.name}</p>
-                    <p className="text-ink/38" style={{ fontSize: 11 }}>{selectedTo.type}</p>
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-ink/30" />
-                </>
-              ) : (
-                <>
-                  <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
-                    style={{ background: "var(--divider)" }}>
-                    <Plus className="w-5 h-5 text-ink/30" />
-                  </div>
-                  <p className="text-ink/35 flex-1" style={{ fontSize: 14 }}>Select destination account</p>
-                  <ChevronDown className="w-4 h-4 text-ink/30" />
-                </>
-              )}
+               className="mx-5 mb-[22px] rounded-[16px] px-4 py-3.5 flex items-center gap-3 text-left w-[calc(100%-40px)]"
+               style={{
+                  background: selectedTo ? `${selectedTo.color}25` : "color-mix(in srgb, var(--ink) 5%, transparent)",
+                  border: errors.toAcc ? "1px solid #EF4444" : "none"
+               }}>
+               {selectedTo ? (
+                  <>
+                     <div className="w-[38px] h-[38px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(0,0,0,0.2)", color: selectedTo.color }}>
+                        {(() => {
+                          const ToAccIcon = getAccountIcon(selectedTo.type);
+                          return <ToAccIcon className="w-5 h-5" />;
+                        })()}
+                     </div>
+                     <div className="flex-1">
+                        <p className="m-0 text-[14px] font-medium text-[var(--ink)]">{selectedTo.name}</p>
+                        <p className="m-0 mt-0.5 text-[11.5px] text-[var(--ink-muted)]">{selectedTo.type}</p>
+                     </div>
+                     <span className="text-[14px] font-semibold tabular-nums" style={{ color: selectedTo.color }}>₹{Math.abs(selectedTo.balance).toLocaleString("en-IN")}</span>
+                     <ChevronDown className="w-[14px] h-[14px] ml-2" style={{ color: selectedTo.color }} strokeWidth={1.75} />
+                  </>
+               ) : (
+                  <>
+                     <div className="w-[38px] h-[38px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "var(--divider)", color: "var(--ink-muted)" }}>
+                        <Plus className="w-5 h-5" />
+                     </div>
+                     <p className="flex-1 m-0 text-[14px] font-medium text-[var(--ink-muted)]">Select destination account</p>
+                     <ChevronDown className="w-[14px] h-[14px] ml-2 text-[var(--ink-muted)]" strokeWidth={1.75} />
+                  </>
+               )}
             </motion.button>
-            {errors.toAcc && <p className="text-rose-400 mt-1.5 px-1" style={{ fontSize: 12 }}>{errors.toAcc}</p>}
-          </div>
+            {errors.toAcc && <p className="text-rose-400 mt-1.5 px-6" style={{ fontSize: 12 }}>{errors.toAcc}</p>}
+          </>
         )}
-
+        
         {/* ── Date & Time ── */}
-        <div className="px-4 mb-4">
-          <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>DATE & TIME</p>
-          <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowDate(true)}
-            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl"
-            style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1px solid var(--divider)" }}>
-            <div className="flex gap-1.5">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: "rgba(212,162,76,0.18)" }}>
-                <Calendar className="w-4 h-4 text-[#D4A24C]" />
+        <p className="text-[11px] tracking-[0.07em] uppercase text-[var(--ink-muted)] m-0 mx-5 mb-3">Date & time</p>
+        <div className="mx-5 mb-[18px]">
+           <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowDate(true)}
+              className="w-full bg-[var(--surface)] rounded-[14px] px-4 py-3 flex items-center gap-3">
+              <div className="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center flex-shrink-0" style={{ background: "var(--orange-bg)", color: "var(--orange)" }}>
+                 <Calendar className="w-[15px] h-[15px]" />
               </div>
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: "rgba(212,162,76,0.18)" }}>
-                <Clock className="w-4 h-4 text-[#D4A24C]" />
-              </div>
-            </div>
-            <span className="flex-1 text-left text-ink font-semibold" style={{ fontSize: 14 }}>{fmtDate(date)}</span>
-            <ChevronDown className="w-4 h-4 text-ink/30" />
-          </motion.button>
+              <span className="flex-1 text-[13.5px] text-left text-[var(--ink)]">{fmtDate(date)}</span>
+              <ChevronDown className="w-[14px] h-[14px] text-[var(--ink-faint)]" />
+           </motion.button>
         </div>
 
         {/* ── Note ── */}
-        <div className="px-4 mb-4 relative z-20">
-          <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>NOTE</p>
-          <textarea
-            value={note} 
-            onChange={e => { setNote(e.target.value); setShowNoteSuggestions(true); }}
-            onFocus={() => setShowNoteSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowNoteSuggestions(false), 200)}
-            placeholder="Add a note…" rows={2}
-            className="w-full px-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none resize-none"
-            style={{
-              background: "color-mix(in srgb, var(--ink) 5%, transparent)",
-              border: `1px solid ${note ? `${typeAccent}35` : "var(--divider)"}`,
-              fontSize: 14, transition: "border-color 0.2s",
-            }} />
-          <AnimatePresence>
-            {showNoteSuggestions && note.length > 0 && filteredNotes.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-                className="absolute top-full left-4 right-4 mt-2 rounded-2xl overflow-hidden z-50 max-h-48 overflow-y-auto"
-                style={{ background: "var(--surface)", border: "1px solid var(--divider)", boxShadow: "0 8px 24px color-mix(in srgb, var(--ink) 12%, transparent)" }}>
-                {filteredNotes.map((s, i) => (
-                  <div key={i} 
-                    onClick={() => { setNote(s); setShowNoteSuggestions(false); }}
-                    className="px-4 py-3.5 border-b border-[var(--divider)] last:border-b-0 active:bg-ink/5 cursor-pointer text-ink transition-colors"
-                    style={{ fontSize: 14 }}>
-                    {renderHighlightedNote(s, note)}
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
+        <p className="text-[11px] tracking-[0.07em] uppercase text-[var(--ink-muted)] m-0 mx-5 mb-3">Note</p>
+        <div className="mx-5 mb-[22px] bg-[var(--surface)] rounded-[14px] p-4 relative z-20">
+           <textarea
+              value={note}
+              onChange={e => { setNote(e.target.value); setShowNoteSuggestions(true); }}
+              onFocus={() => setShowNoteSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowNoteSuggestions(false), 200)}
+              rows={2} placeholder="Add a note..."
+              className="w-full bg-transparent border-none text-[var(--ink)] font-inter text-[13.5px] resize-none outline-none placeholder:text-[var(--ink-faint)]"
+           />
+           <AnimatePresence>
+             {showNoteSuggestions && note.length > 0 && filteredNotes.length > 0 && (
+               <motion.div
+                 initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
+                 className="absolute top-full left-0 right-0 mt-2 rounded-[14px] overflow-hidden z-50 max-h-48 overflow-y-auto"
+                 style={{ background: "var(--surface)", border: "1px solid var(--divider)", boxShadow: "0 8px 24px color-mix(in srgb, var(--ink) 12%, transparent)" }}>
+                 {filteredNotes.map((s, i) => (
+                   <div key={i} 
+                     onClick={() => { setNote(s); setShowNoteSuggestions(false); }}
+                     className="px-4 py-3.5 border-b border-[var(--divider)] last:border-b-0 active:bg-ink/5 cursor-pointer text-[var(--ink)] transition-colors"
+                     style={{ fontSize: 13.5 }}>
+                     {renderHighlightedNote(s, note)}
+                   </div>
+                 ))}
+               </motion.div>
+             )}
+           </AnimatePresence>
         </div>
 
         {/* ── Attachments ── */}
-        <div className="px-4 mb-4">
-          <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>ATTACHMENTS</p>
-          <div className="grid grid-cols-2 gap-2.5">
-            {[
-              { icon: <Camera className="w-5 h-5" />, label: "Camera", bg: "rgba(212,162,76,0.12)" },
-              { icon: <ImageIcon className="w-5 h-5" />, label: "Gallery", bg: "rgba(212,162,76,0.12)" },
-            ].map(b => (
-              <motion.button key={b.label} whileTap={{ scale: 0.96 }}
-                className="flex items-center justify-center gap-2.5 py-3.5 rounded-2xl"
-                style={{ background: b.bg, border: "1px solid var(--divider)" }}>
-                <span className="text-ink/55">{b.icon}</span>
-                <span className="text-ink/55 font-semibold" style={{ fontSize: 13 }}>{b.label}</span>
-              </motion.button>
-            ))}
-          </div>
+        <p className="text-[11px] tracking-[0.07em] uppercase text-[var(--ink-muted)] m-0 mx-5 mb-3">Attachments</p>
+        <div className="flex gap-3 mx-5 mb-[22px]">
+           <motion.button whileTap={{ scale: 0.96 }}
+              className="flex-1 bg-[var(--surface)] rounded-[14px] py-3.5 flex items-center justify-center gap-2 text-[13px] text-[var(--ink-muted)]">
+              <Camera className="w-[15px] h-[15px]" /> Camera
+           </motion.button>
+           <motion.button whileTap={{ scale: 0.96 }}
+              className="flex-1 bg-[var(--surface)] rounded-[14px] py-3.5 flex items-center justify-center gap-2 text-[13px] text-[var(--ink-muted)]">
+              <ImageIcon className="w-[15px] h-[15px]" /> Gallery
+           </motion.button>
         </div>
 
         {/* ── AI Scan ── */}
-        <div className="px-4 mb-4">
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={handleAIScan}
-            disabled={aiScanning}
-            className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl relative overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)",
-              boxShadow: "0 8px 28px rgba(212,162,76,0.42)",
-            }}>
-            {aiScanning ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-5 h-5 rounded-full border-2 border-ink/30 border-t-white" />
-                <span className="text-ink font-bold" style={{ fontSize: 14 }}>Scanning Receipt…</span>
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-5 h-5 text-ink" />
-                <span className="text-ink font-bold" style={{ fontSize: 14 }}>Scan Receipt with AI</span>
-                <ScanLine className="w-4 h-4 text-ink/70" />
-              </>
-            )}
-          </motion.button>
+        <div className="mx-5 mb-[22px]">
+           <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={handleAIScan}
+              disabled={aiScanning}
+              className="w-full rounded-[14px] py-3.5 flex items-center justify-center gap-2 text-[13.5px] font-semibold text-[#241B0A]"
+              style={{ background: "linear-gradient(135deg, var(--gold), #E8B86B)" }}>
+              {aiScanning ? (
+                <>
+                   <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-4 h-4 rounded-full border-2 border-[#241B0A]/30 border-t-[#241B0A]" />
+                   <span>Scanning Receipt…</span>
+                </>
+              ) : (
+                <>
+                   <Sparkles className="w-[15px] h-[15px] stroke-[#241B0A]" />
+                   Scan Receipt with AI
+                </>
+              )}
+           </motion.button>
         </div>
 
         {/* ── Recurring ── */}
-        <div className="px-4 mb-6">
-          <div className="px-4 py-3.5 rounded-2xl"
-            style={{
-              background: recurring ? "rgba(212,162,76,0.10)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
-              border: recurring ? "1px solid rgba(212,162,76,0.3)" : "1px solid var(--divider)",
-            }}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                  style={{ background: recurring ? "rgba(212,162,76,0.22)" : "var(--divider)" }}>
-                  <Repeat className="w-4 h-4" style={{ color: recurring ? "#D4A24C" : "color-mix(in srgb, var(--ink) 35%, transparent)" }} />
-                </div>
-                <div>
-                  <p className="text-ink font-semibold" style={{ fontSize: 14 }}>Recurring Transaction</p>
-                  <p className="text-ink/35" style={{ fontSize: 11 }}>
-                    {recurring ? `Repeat ${recurFreq}` : "Automate this transaction"}
-                  </p>
+        <div className="mx-5 mb-6 bg-[var(--surface)] rounded-[14px] p-3.5 px-4 flex items-center gap-3">
+           <div className="w-[32px] h-[32px] rounded-[9px] bg-[var(--surface-raised)] flex items-center justify-center flex-shrink-0 text-[var(--ink-muted)]">
+              <Repeat className="w-4 h-4" />
+           </div>
+           <div className="flex-1">
+              <p className="m-0 text-[13.5px] font-medium text-[var(--ink)]">Recurring transaction</p>
+              <p className="m-0 mt-[2px] text-[11.5px] text-[var(--ink-faint)]">Automate this transaction</p>
+           </div>
+           <div onClick={() => setRecurring(!recurring)} className="relative w-[42px] h-[24px] rounded-[14px] flex-shrink-0 cursor-pointer transition-colors" style={{ background: recurring ? "var(--gold)" : "var(--surface-raised)" }}>
+              <motion.div className="absolute top-[3px] w-[18px] h-[18px] rounded-full"
+                 animate={{ left: recurring ? 21 : 3 }}
+                 style={{ background: recurring ? "#241B0A" : "var(--ink-faint)" }} />
+           </div>
+        </div>
+
+        <AnimatePresence>
+          {recurring && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="px-5 mb-6 overflow-hidden">
+              <div className="p-4 rounded-[16px]" style={{ background: "var(--surface)", border: `1px solid ${typeAccent}30` }}>
+                <p className="text-ink/60 font-semibold mb-3" style={{ fontSize: 11, letterSpacing: "0.5px" }}>RECURRING SETTINGS</p>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-ink" style={{ fontSize: 14 }}>Frequency</span>
+                    <select
+                      value={recurFreq} onChange={e => setRecurFreq(e.target.value as any)}
+                      className="bg-transparent text-right font-semibold focus:outline-none"
+                      style={{ fontSize: 14, color: typeAccent }}>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly</option>
+                      <option value="half-yearly">Half-yearly</option>
+                      <option value="yearly">Yearly</option>
+                    </select>
+                  </div>
+                  <div className="h-px bg-ink/5" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-ink" style={{ fontSize: 14 }}>Ends</span>
+                    <select
+                      value={recurEndType} onChange={e => setRecurEndType(e.target.value as any)}
+                      className="bg-transparent text-right font-semibold focus:outline-none"
+                      style={{ fontSize: 14, color: typeAccent }}>
+                      <option value="never">Never</option>
+                      <option value="date">On Date</option>
+                    </select>
+                  </div>
+                  {recurEndType === "date" && (
+                    <button onClick={() => setShowRecurEndDate(true)}
+                      className="w-full text-right mt-1" style={{ fontSize: 13, color: "var(--ink-muted)" }}>
+                      Selected: {fmtDate(recurEndDate)}
+                    </button>
+                  )}
                 </div>
               </div>
-              <motion.button whileTap={{ scale: 0.9 }}
-                onClick={() => setRecurring(v => !v)}
-                className="w-12 h-6 rounded-full relative flex-shrink-0"
-                style={{ background: recurring ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "var(--divider)" }}>
-                <motion.div
-                  animate={{ x: recurring ? 24 : 2 }}
-                  transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-                  className="absolute top-0.5 w-5 h-5 rounded-full bg-white"
-                  style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }} />
-              </motion.button>
-            </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-            {/* Configuration Panel */}
-            <AnimatePresence>
-              {recurring && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }}
-                  className="overflow-hidden">
-
-                  {/* Frequency Selector */}
-                  <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--divider)" }}>
-                    <p className="text-ink/45 mb-2 flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 600 }}>
-                      <CalendarClock className="w-3 h-3" strokeWidth={1.75} /> FREQUENCY
-                    </p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {(["daily", "weekly", "monthly", "quarterly", "half-yearly", "yearly"] as const).map(f => (
-                        <motion.button key={f} whileTap={{ scale: 0.92 }}
-                          onClick={() => setRecurFreq(f)}
-                          className="py-2 rounded-xl capitalize"
-                          style={{
-                            background: recurFreq === f ? "rgba(212,162,76,0.3)" : "color-mix(in srgb, var(--ink) 6%, transparent)",
-                            border: recurFreq === f ? "1px solid rgba(212,162,76,0.5)" : "1px solid transparent",
-                            fontSize: 10.5, fontWeight: 700,
-                            color: recurFreq === f ? "#D4A24C" : "color-mix(in srgb, var(--ink) 38%, transparent)",
-                          }}>
-                          {f === "half-yearly" ? "Half-Yearly" : f}
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* End Condition */}
-                  <div className="mt-3">
-                    <p className="text-ink/45 mb-2 flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 600 }}>
-                      <Hourglass className="w-3 h-3" strokeWidth={1.75} /> END CONDITION
-                    </p>
-                    <div className="space-y-2">
-                      {(["never", "date", "count"] as const).map(type => (
-                        <motion.button key={type} whileTap={{ scale: 0.98 }}
-                          onClick={() => setRecurEndType(type)}
-                          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl"
-                          style={{
-                            background: recurEndType === type ? "rgba(212,162,76,0.18)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
-                            border: recurEndType === type ? "1px solid rgba(212,162,76,0.4)" : "1px solid var(--divider)",
-                          }}>
-                          <div className="w-4 h-4 rounded-full flex items-center justify-center"
-                            style={{
-                              background: recurEndType === type ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "var(--divider)",
-                              border: "1px solid var(--divider)",
-                            }}>
-                            {recurEndType === type && <div className="w-2 h-2 rounded-full bg-white" />}
-                          </div>
-                          <span className="flex-1 text-left" style={{ fontSize: 13, fontWeight: 600, color: recurEndType === type ? "#D4A24C" : "color-mix(in srgb, var(--ink) 55%, transparent)" }}>
-                            {type === "never" && "Never ends"}
-                            {type === "date" && "End on specific date"}
-                            {type === "count" && "End after X occurrences"}
-                          </span>
-                        </motion.button>
-                      ))}
-                    </div>
-
-                    {/* End Date Picker */}
-                    {recurEndType === "date" && (
-                      <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-2">
-                        <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowRecurEndDate(true)}
-                          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl"
-                          style={{ background: "rgba(212,162,76,0.12)", border: "1px solid rgba(212,162,76,0.3)" }}>
-                          <Calendar className="w-4 h-4 text-[#D4A24C]" />
-                          <span className="flex-1 text-left text-ink" style={{ fontSize: 13, fontWeight: 600 }}>
-                            {fmtDate(recurEndDate).split(',')[0]}
-                          </span>
-                        </motion.button>
-                      </motion.div>
-                    )}
-
-                    {/* End Count Input */}
-                    {recurEndType === "count" && (
-                      <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-2 flex items-center gap-2">
-                        <span className="text-ink/55" style={{ fontSize: 13 }}>After</span>
-                        <input
-                          type="number"
-                          min="1"
-                          value={recurEndCount}
-                          onChange={e => setRecurEndCount(parseInt(e.target.value) || 1)}
-                          className="w-16 px-2 py-2 rounded-xl bg-transparent border border-[#D4A24C]/30 text-ink text-center focus:outline-none"
-                          style={{ fontSize: 14, fontWeight: 600 }}
-                        />
-                        <span className="text-ink/55" style={{ fontSize: 13 }}>occurrences</span>
-                      </motion.div>
-                    )}
-                  </div>
-
-                  {/* Preview Line */}
-                  <div className="mt-3 p-3 rounded-xl" style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.2)" }}>
-                    <p className="text-ink/45 mb-1" style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.5px" }}>PREVIEW</p>
-                    <p className="text-ink/75" style={{ fontSize: 12, lineHeight: 1.5 }}>
-                      {selectedCat?.name || "Transaction"} ₹{amount || "0"} will repeat{" "}
-                      <span className="text-[#D4A24C] font-semibold">
-                        {recurFreq === "quarterly" ? "every 3 months" :
-                          recurFreq === "half-yearly" ? "every 6 months" :
-                            recurFreq}
-                      </span>
-                      {" "}on{" "}
-                      <span className="text-[#D4A24C] font-semibold">
-                        {recurFreq === "monthly" || recurFreq === "quarterly" || recurFreq === "half-yearly" || recurFreq === "yearly"
-                          ? `${date.getDate()}${date.getDate() === 1 ? "st" : date.getDate() === 2 ? "nd" : date.getDate() === 3 ? "rd" : "th"}`
-                          : recurFreq === "weekly"
-                            ? ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][date.getDay()]
-                            : ""}
-                      </span>
-                      {" "}from{" "}
-                      <span className="text-[#D4A24C] font-semibold">{selectedAcc.name}</span>
-                      {" "}
-                      {recurEndType === "never" && "indefinitely"}
-                      {recurEndType === "date" && `until ${MONTHS_SHORT[recurEndDate.getMonth()]} ${recurEndDate.getFullYear()}`}
-                      {recurEndType === "count" && `for ${recurEndCount} times`}
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+        {/* ── Save Button ── */}
+        <div className="mx-5 mb-1.5">
+           <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={handleSave}
+              className="w-full rounded-[16px] py-4 flex items-center justify-center gap-2 text-[14.5px] font-semibold"
+              style={{ background: typeAccent, color: "#241310" }}>
+              <Check className="w-[15px] h-[15px]" style={{ stroke: "#241310" }} strokeWidth={2.5} />
+              Save Transaction
+           </motion.button>
         </div>
+
       </div>
 
-      {/* ── Sticky Save Button ── */}
-      <div className="fixed bottom-16 left-0 right-0 z-40 px-4 pb-2 max-w-md mx-auto"
-        style={{ background: "linear-gradient(0deg, var(--bg-deep) 60%, transparent 100%)" }}>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={handleSave}
-          className="w-full py-4 rounded-2xl text-ink font-bold flex items-center justify-center gap-2"
-          style={{
-            background: typeBg,
-            boxShadow: `0 8px 28px ${typeAccent}50`,
-            fontSize: 15,
-          }}>
-          <Check className="w-5 h-5" strokeWidth={2.5} />
-          {id ? "Update Transaction" : "Save Transaction"}
-        </motion.button>
-      </div>
-
-      {/* ── Modals ── */}
+      {/* ── Modals / Overlays ── */}
       <AnimatePresence>
         {showCalc && <CalcModal key="calc" value={amount} onChange={setAmount} onClose={() => setShowCalc(false)} />}
       </AnimatePresence>
       <AnimatePresence>
         {showSubSheet && selectedCat && (
           <SubcategorySheet
-            key="sub"
             cat={selectedCat}
             selectedSubId={subId}
-            onSelect={s => { setSubId(s.id); setErrors(e => ({ ...e, sub: undefined! })); setShowSubSheet(false); }}
-            onClose={() => setShowSubSheet(false)}
-          />
+            onSelect={s => setSubId(s.id)}
+            onClose={() => setShowSubSheet(false)} />
         )}
       </AnimatePresence>
       <AnimatePresence>
         {showAccSheet && (
-          <AccountSheet key="acc" selected={accId} excludeId={txType === "transfer" ? toAccId : undefined}
-            accounts={ACCOUNTS} onSelect={a => setAccId(a.id)} onClose={() => setShowAccSheet(false)} />
+          <AccountSheet
+            accounts={ACCOUNTS}
+            selected={accId} onSelect={a => setAccId(a.id)}
+            onClose={() => setShowAccSheet(false)}
+            excludeId={txType === "transfer" ? toAccId : undefined} />
         )}
       </AnimatePresence>
       <AnimatePresence>
         {showToAcc && (
-          <AccountSheet key="to-acc" selected={toAccId} excludeId={accId}
-            accounts={ACCOUNTS} onSelect={a => setToAccId(a.id)} onClose={() => setShowToAcc(false)} />
+          <AccountSheet
+            accounts={ACCOUNTS}
+            selected={toAccId} onSelect={a => setToAccId(a.id)}
+            onClose={() => setShowToAcc(false)}
+            excludeId={accId} />
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {showDate && (
-          <DatePickerModal key="date" date={date} onSelect={setDate} onClose={() => setShowDate(false)} />
-        )}
+        {showDate && <DatePickerModal key="tx-date" date={date} onSelect={setDate} onClose={() => setShowDate(false)} />}
       </AnimatePresence>
       <AnimatePresence>
         {showRecurEndDate && (
@@ -1412,9 +1249,6 @@ export function AddTransactionScreen() {
         onChange={handleFileSelection}
       />
 
-
     </div>
   );
 }
-
-
