@@ -1259,7 +1259,14 @@ export function AddTransactionScreen() {
             key="sub"
             cat={selectedCat}
             selectedSubId={subId}
-            onSelect={s => setSubId(s.id)}
+            onSelect={s => {
+              setSubId(s.id);
+              setShowSubSheet(false);
+              // Move to the next field
+              setTimeout(() => {
+                setShowAccSheet(true);
+              }, 300);
+            }}
             onClose={() => setShowSubSheet(false)} />
         )}
       </AnimatePresence>
