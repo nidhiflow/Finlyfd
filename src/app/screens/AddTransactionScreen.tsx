@@ -815,22 +815,7 @@ export function AddTransactionScreen() {
 
       <div className="relative z-10 pb-36">
 
-        {/* ── Header ── */}
-        <div className="flex items-center justify-between px-4 pt-4 pb-3">
-          <motion.button whileTap={{ scale: 0.88 }} onClick={() => navigate(-1)}
-            className="w-9 h-9 rounded-2xl flex items-center justify-center"
-            style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
-            <ArrowLeft className="w-5 h-5 text-ink/70" />
-          </motion.button>
-          <p className="text-ink font-bold" style={{ fontSize: 17 }}>{id ? "Edit Transaction" : "Add Transaction"}</p>
-          <div className="flex gap-2">
-            <motion.button whileTap={{ scale: 0.88 }}
-              className="w-9 h-9 rounded-2xl flex items-center justify-center"
-              style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
-              <Bell className="w-4.5 h-4.5 text-ink/55" />
-            </motion.button>
-          </div>
-        </div>
+        {/* ── Header removed because MainLayout already provides it ── */}
 
         {/* ── Type Toggle ── */}
         <div className="px-4 mb-4">
@@ -1172,7 +1157,6 @@ export function AddTransactionScreen() {
             style={{
               background: "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)",
               boxShadow: "0 8px 28px rgba(212,162,76,0.42)",
-              animation: aiScanning ? "none" : "aiGlow 2.5s ease-in-out infinite",
             }}>
             {aiScanning ? (
               <>
@@ -1411,12 +1395,7 @@ export function AddTransactionScreen() {
         onChange={handleFileSelection}
       />
 
-      <style>{`
-        @keyframes aiGlow {
-          0%,100% { box-shadow: 0 8px 28px rgba(212,162,76,0.42); }
-          50%      { box-shadow: 0 8px 48px rgba(212,162,76,0.72), 0 0 0 8px rgba(212,162,76,0.10); }
-        }
-      `}</style>
+
     </div>
   );
 }
