@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate, useParams } from "react-router";
 import { transactionsAPI, accountsAPI, aiAPI } from "../services/api";
@@ -37,6 +37,66 @@ const RECENT_INCOME_IDS = ["i-salary", "i-biz"];
 
 const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+// ─── Camera Modal ──────────────────────────────────────────────────────────────
+function CameraModal({ onCapture, onClose }: { onCapture: (base64: string) => void, onClose: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      })
+      .catch(err => {
+        console.error("Camera error:", err);
+        toast.error("Failed to access camera");
+        onClose();
+      });
+
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  const handleCapture = () => {
+    if (!videoRef.current) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      const base64 = canvas.toDataURL("image/jpeg");
+      onCapture(base64);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex flex-col bg-black"
+    >
+      <div className="flex items-center justify-between p-4 bg-black/50 absolute top-0 left-0 right-0 z-10">
+        <button onClick={onClose} className="p-2 rounded-full bg-white/10 text-white">
+          <X className="w-6 h-6" />
+        </button>
+      </div>
+      <video ref={videoRef} autoPlay playsInline className="flex-1 object-cover" />
+      <div className="p-6 bg-black absolute bottom-0 left-0 right-0 flex justify-center pb-10">
+        <button
+          onClick={handleCapture}
+          className="w-16 h-16 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center active:scale-95 transition-transform"
+        />
+      </div>
+    </motion.div>
+  );
+}
 
 // ─── Calculator Modal ──────────────────────────────────────────────────────────
 function CalcModal({ value, onChange, onClose }: {
@@ -595,6 +655,7 @@ export function AddTransactionScreen() {
   const [showToAcc, setShowToAcc] = useState(false);
   const [showDate, setShowDate] = useState(false);
   const [showRecurEndDate, setShowRecurEndDate] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
 
   // ─── Load accounts from API ─────────────────────────────────────────────────
   useEffect(() => {
@@ -746,6 +807,79 @@ export function AddTransactionScreen() {
     document.getElementById("receipt-file-input")?.click();
   };
 
+  const processReceiptData = async (base64Data: string) => {
+    setAiScan(true);
+    try {
+      const result = await aiAPI.scanReceipt(base64Data);
+      if (result.amount) setAmount(String(result.amount));
+      if (result.note) setNote(result.note);
+      if (result.date) setDate(new Date(result.date));
+
+      const targetType = result.type || txType;
+      if (result.type && (result.type === "expense" || result.type === "income" || result.type === "transfer")) {
+        setTxType(result.type);
+      }
+
+      const categorySuggestion = result.category_suggestion || (result.entries && result.entries[0]?.category_suggestion);
+      {
+        const targetCats = getCatsByType(targetType === "income" ? "income" : "expense");
+
+        // Try to match parent category first
+        let matchedCat = categorySuggestion ? targetCats.find(c =>
+          c.name.toLowerCase().includes(categorySuggestion.toLowerCase()) ||
+          categorySuggestion.toLowerCase().includes(c.name.toLowerCase())
+        ) : undefined;
+
+        let matchedSub = null;
+
+        if (!matchedCat && categorySuggestion) {
+          // Try to match subcategories
+          for (const c of targetCats) {
+            const sub = c.subs?.find(s =>
+              s.name.toLowerCase().includes(categorySuggestion.toLowerCase()) ||
+              categorySuggestion.toLowerCase().includes(s.name.toLowerCase())
+            );
+            if (sub) {
+              matchedCat = c;
+              matchedSub = sub;
+              break;
+            }
+          }
+        }
+
+        // The AI can suggest a category (e.g. "Other") that has no equivalent in
+        // this app's category list, leaving catId unset and silently blocking Save.
+        // Fall back to the first available category so the scan always produces a
+        // saveable transaction; the user can still change it before saving.
+        if (!matchedCat && targetCats.length > 0) {
+          matchedCat = targetCats[0];
+          toast.info("Couldn't match an exact category — please double-check before saving.");
+        }
+
+        if (matchedCat) {
+          setCatId(matchedCat.id);
+          setErrors(errs => ({ ...errs, cat: undefined! }));
+
+          if (matchedSub) {
+            setSubId(matchedSub.id);
+            setErrors(errs => ({ ...errs, sub: undefined! }));
+          } else if (matchedCat.subs && matchedCat.subs.length > 0) {
+            setSubId(matchedCat.subs[0].id);
+            setErrors(errs => ({ ...errs, sub: undefined! }));
+          } else {
+            setSubId(null);
+          }
+        }
+      }
+      toast.success("Receipt scanned and details extracted!");
+    } catch (err: any) {
+      console.error("Scan error:", err);
+      toast.error(err.message || "Failed to scan receipt");
+    } finally {
+      setAiScan(false);
+    }
+  };
+
   const handleFileSelection = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -753,76 +887,7 @@ export function AddTransactionScreen() {
     const reader = new FileReader();
     reader.onload = async () => {
       const base64Data = reader.result as string;
-      setAiScan(true);
-      try {
-        const result = await aiAPI.scanReceipt(base64Data);
-        if (result.amount) setAmount(String(result.amount));
-        if (result.note) setNote(result.note);
-        if (result.date) setDate(new Date(result.date));
-
-        const targetType = result.type || txType;
-        if (result.type && (result.type === "expense" || result.type === "income" || result.type === "transfer")) {
-          setTxType(result.type);
-        }
-
-        const categorySuggestion = result.category_suggestion || (result.entries && result.entries[0]?.category_suggestion);
-        {
-          const targetCats = getCatsByType(targetType === "income" ? "income" : "expense");
-
-          // Try to match parent category first
-          let matchedCat = categorySuggestion ? targetCats.find(c =>
-            c.name.toLowerCase().includes(categorySuggestion.toLowerCase()) ||
-            categorySuggestion.toLowerCase().includes(c.name.toLowerCase())
-          ) : undefined;
-
-          let matchedSub = null;
-
-          if (!matchedCat && categorySuggestion) {
-            // Try to match subcategories
-            for (const c of targetCats) {
-              const sub = c.subs?.find(s =>
-                s.name.toLowerCase().includes(categorySuggestion.toLowerCase()) ||
-                categorySuggestion.toLowerCase().includes(s.name.toLowerCase())
-              );
-              if (sub) {
-                matchedCat = c;
-                matchedSub = sub;
-                break;
-              }
-            }
-          }
-
-          // The AI can suggest a category (e.g. "Other") that has no equivalent in
-          // this app's category list, leaving catId unset and silently blocking Save.
-          // Fall back to the first available category so the scan always produces a
-          // saveable transaction; the user can still change it before saving.
-          if (!matchedCat && targetCats.length > 0) {
-            matchedCat = targetCats[0];
-            toast.info("Couldn't match an exact category — please double-check before saving.");
-          }
-
-          if (matchedCat) {
-            setCatId(matchedCat.id);
-            setErrors(errs => ({ ...errs, cat: undefined! }));
-
-            if (matchedSub) {
-              setSubId(matchedSub.id);
-              setErrors(errs => ({ ...errs, sub: undefined! }));
-            } else if (matchedCat.subs && matchedCat.subs.length > 0) {
-              setSubId(matchedCat.subs[0].id);
-              setErrors(errs => ({ ...errs, sub: undefined! }));
-            } else {
-              setSubId(null);
-            }
-          }
-        }
-        toast.success("Receipt scanned and details extracted!");
-      } catch (err: any) {
-        console.error("Scan error:", err);
-        toast.error(err.message || "Failed to scan receipt");
-      } finally {
-        setAiScan(false);
-      }
+      await processReceiptData(base64Data);
     };
     reader.readAsDataURL(file);
     e.target.value = "";
@@ -1101,10 +1166,12 @@ export function AddTransactionScreen() {
            {/* Camera / Gallery mini buttons */}
            <div className="flex gap-2 flex-1">
              <motion.button whileTap={{ scale: 0.96 }}
+                onClick={() => setShowCamera(true)}
                 className="flex-1 bg-[var(--surface)] rounded-[14px] flex items-center justify-center text-[var(--ink-muted)]">
                 <Camera className="w-[15px] h-[15px]" />
              </motion.button>
              <motion.button whileTap={{ scale: 0.96 }}
+                onClick={() => document.getElementById("receipt-file-input")?.click()}
                 className="flex-1 bg-[var(--surface)] rounded-[14px] flex items-center justify-center text-[var(--ink-muted)]">
                 <ImageIcon className="w-[15px] h-[15px]" />
              </motion.button>
@@ -1221,6 +1288,18 @@ export function AddTransactionScreen() {
       </AnimatePresence>
       <AnimatePresence>
         {saved && <SuccessOverlay key="success" txType={txType} onDone={() => navigate("/dashboard/transactions")} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showCamera && (
+          <CameraModal 
+            key="camera"
+            onCapture={(base64) => {
+              setShowCamera(false);
+              processReceiptData(base64);
+            }} 
+            onClose={() => setShowCamera(false)} 
+          />
+        )}
       </AnimatePresence>
       <input
         type="file"
