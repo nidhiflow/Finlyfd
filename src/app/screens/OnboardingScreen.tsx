@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronRight, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ChevronRight, ArrowUpRight, ArrowDownRight, Pizza, Home, Plane, Clapperboard } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════
 // SLIDE 1 ── Cash Flow Visualization
@@ -113,18 +113,24 @@ function CashFlowAnim() {
         {/* ── Expense Nodes ── */}
         {/* Food */}
         <circle cx="58" cy="234" r="24" fill="#200A16" stroke="#F72585" strokeWidth="1.5" />
-        <text x="58" y="230" textAnchor="middle" fontSize="15" fontFamily="sans-serif">🍕</text>
-        <text x="58" y="244" textAnchor="middle" fill="#F92A8B" fontSize="8" fontFamily="system-ui,sans-serif">₹850</text>
+        <foreignObject x="46" y="218" width="24" height="24">
+          <Pizza className="w-6 h-6 text-white/80" />
+        </foreignObject>
+        <text x="58" y="250" textAnchor="middle" fill="#F92A8B" fontSize="8" fontFamily="system-ui,sans-serif">₹850</text>
 
         {/* Bills */}
         <circle cx="160" cy="237" r="24" fill="#1C1306" stroke="#FF8C00" strokeWidth="1.5" />
-        <text x="160" y="233" textAnchor="middle" fontSize="15" fontFamily="sans-serif">🏠</text>
-        <text x="160" y="247" textAnchor="middle" fill="#FF8C00" fontSize="8" fontFamily="system-ui,sans-serif">₹1,200</text>
+        <foreignObject x="148" y="221" width="24" height="24">
+          <Home className="w-6 h-6 text-white/80" />
+        </foreignObject>
+        <text x="160" y="253" textAnchor="middle" fill="#FF8C00" fontSize="8" fontFamily="system-ui,sans-serif">₹1,200</text>
 
         {/* Travel */}
         <circle cx="262" cy="234" r="24" fill="#081420" stroke="#D4A24C" strokeWidth="1.5" />
-        <text x="262" y="230" textAnchor="middle" fontSize="15" fontFamily="sans-serif">✈️</text>
-        <text x="262" y="244" textAnchor="middle" fill="#D4A24C" fontSize="8" fontFamily="system-ui,sans-serif">₹450</text>
+        <foreignObject x="250" y="218" width="24" height="24">
+          <Plane className="w-6 h-6 text-white/80" />
+        </foreignObject>
+        <text x="262" y="250" textAnchor="middle" fill="#D4A24C" fontSize="8" fontFamily="system-ui,sans-serif">₹450</text>
 
         {/* ── Floating ₹ particles (ambient) ── */}
         {[
@@ -150,10 +156,10 @@ function CashFlowAnim() {
 // Staggered category cards with animated progress bars
 // ═══════════════════════════════════════════════════════════════════
 const EXPENSE_CATEGORIES = [
-  { emoji: "🍕", name: "Food & Dining", amount: "₹850", pct: 34, color: "#F72585", gradFrom: "#F72585" },
-  { emoji: "✈️", name: "Travel", amount: "₹450", pct: 18, color: "#D4A24C", gradFrom: "#D4A24C" },
-  { emoji: "🏠", name: "Housing", amount: "₹700", pct: 28, color: "#D4A24C", gradFrom: "#D4A24C" },
-  { emoji: "🎬", name: "Entertainment", amount: "₹320", pct: 13, color: "#FF8C00", gradFrom: "#FF8C00" },
+  { icon: Pizza, name: "Food & Dining", amount: "₹850", pct: 34, color: "#F72585", gradFrom: "#F72585" },
+  { icon: Plane, name: "Travel", amount: "₹450", pct: 18, color: "#D4A24C", gradFrom: "#D4A24C" },
+  { icon: Home, name: "Housing", amount: "₹700", pct: 28, color: "#D4A24C", gradFrom: "#D4A24C" },
+  { icon: Clapperboard, name: "Entertainment", amount: "₹320", pct: 13, color: "#FF8C00", gradFrom: "#FF8C00" },
 ];
 
 function ExpenseTrackingAnim() {
@@ -198,7 +204,7 @@ function ExpenseTrackingAnim() {
             }}
           >
             <div className="flex items-start justify-between mb-2">
-              <span style={{ fontSize: 22, lineHeight: 1 }}>{cat.emoji}</span>
+              <cat.icon className="w-6 h-6 text-white/80" />
               <span style={{ color: cat.color, fontSize: 11, fontWeight: 700 }}>{cat.pct}%</span>
             </div>
             <div>
@@ -258,8 +264,8 @@ const RING_RADIUS = 70;
 const RING_CIRCUM = 2 * Math.PI * RING_RADIUS;
 
 const GOALS = [
-  { name: "Vacation 🏖️", pct: 55, current: "₹2,750", target: "₹5,000", color: "#D4A24C" },
-  { name: "New Laptop 💻", pct: 38, current: "₹760", target: "₹2,000", color: "#F72585" },
+  { name: "Vacation", pct: 55, current: "₹2,750", target: "₹5,000", color: "#D4A24C" },
+  { name: "New Laptop", pct: 38, current: "₹760", target: "₹2,000", color: "#F72585" },
 ];
 
 function SavingsGoalsAnim() {

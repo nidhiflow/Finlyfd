@@ -320,7 +320,7 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
           {primaryCats.slice(0, 3).map(c => (
             <div key={c.id} className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl"
               style={{ background: `${c.color}20`, border: `1px solid ${c.color}30` }}>
-              <span style={{ fontSize: 12 }}>{c.emoji}</span>
+              {c.icon ? <c.icon className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.7)" }} /> : <span style={{ fontSize: 12 }}>{c.emoji}</span>}
               <span style={{ fontSize: 11, fontWeight: 600, color: c.color }}>{c.monthlyEst}</span>
             </div>
           ))}
@@ -401,7 +401,7 @@ function CategoryCard({
               : `1px solid ${cat.color}38`,
             boxShadow: isPrimary ? "0 0 12px rgba(34,197,94,0.3)" : "none",
           }}>
-          {cat.emoji}
+          {cat.icon ? <cat.icon className="w-6 h-6" style={{ color: "rgba(255,255,255,0.85)" }} /> : <span>{cat.emoji}</span>}
           {/* Pin badge for expense, Crown badge for income */}
           {!isIncome && isPinned && (
             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FFB703] flex items-center justify-center"
@@ -508,7 +508,7 @@ function CategoryCard({
                         background: isPrimary ? "rgba(34,197,94,0.14)" : `${cat.color}18`,
                         border: `1px solid ${isPrimary ? "rgba(34,197,94,0.22)" : cat.color + "25"}`,
                       }}>
-                      {sub.emoji}
+                      {sub.icon ? <sub.icon className="w-4 h-4" style={{ color: "rgba(255,255,255,0.75)" }} /> : <span>{sub.emoji}</span>}
                     </div>
                   </div>
                   <span className="flex-1 text-white/68" style={{ fontSize: 13 }}>{sub.name}</span>
@@ -553,7 +553,7 @@ function PinnedStrip({ cats, pinnedIds, onTap }: { cats: Cat[]; pinnedIds: Set<s
           <motion.button key={c.id} whileTap={{ scale: 0.93 }} onClick={() => onTap(c.id)}
             className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-2xl"
             style={{ background: `linear-gradient(135deg,${c.color}22 0%,${c.color}10 100%)`, border: `1px solid ${c.color}38` }}>
-            <span style={{ fontSize: 15 }}>{c.emoji}</span>
+            {c.icon ? <c.icon className="w-4 h-4" style={{ color: "rgba(255,255,255,0.8)" }} /> : <span style={{ fontSize: 15 }}>{c.emoji}</span>}
             <span className="text-white/80 whitespace-nowrap" style={{ fontSize: 12, fontWeight: 600 }}>{c.name}</span>
           </motion.button>
         ))}
@@ -624,7 +624,7 @@ function CategoryModal({
               )}
               {isSubModal && parentCat && (
                 <p className="text-white/38 mt-0.5" style={{ fontSize: 12 }}>
-                  in <span style={{ color: parentCat.color }}>{parentCat.emoji} {parentCat.name}</span>
+                  in <span className="inline-flex items-center gap-1" style={{ color: parentCat.color }}>{parentCat.icon ? <parentCat.icon className="w-3.5 h-3.5" /> : parentCat.emoji} {parentCat.name}</span>
                 </p>
               )}
             </div>

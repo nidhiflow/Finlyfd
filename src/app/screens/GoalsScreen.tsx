@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Plus, Target, Calendar, ArrowLeft, X, Check,
   Pause, Play, Trash2, Edit3, Archive, ChevronRight,
-  TrendingUp, Award, Search, Filter,
+  TrendingUp, Award, Search, Filter, Home, Car, Laptop, Plane, Briefcase, GraduationCap, Heart, Book, Coffee, Shield
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,7 +38,21 @@ interface Contribution {
 // ─── Initial Data ───────────────────────────────────────────────────────────────
 const INITIAL_GOALS: Goal[] = [];
 
-const GOAL_EMOJIS = ["🏥","✈️","💻","🚗","🏠","💍","📱","🎓","👶","💰","🏖️","🎯"];
+const GOAL_ICONS = [
+  { id: "target", icon: Target },
+  { id: "home", icon: Home },
+  { id: "car", icon: Car },
+  { id: "laptop", icon: Laptop },
+  { id: "plane", icon: Plane },
+  { id: "briefcase", icon: Briefcase },
+  { id: "grad", icon: GraduationCap },
+  { id: "heart", icon: Heart },
+  { id: "book", icon: Book },
+  { id: "coffee", icon: Coffee },
+  { id: "shield", icon: Shield },
+  { id: "award", icon: Award },
+];
+const getIcon = (id: string) => GOAL_ICONS.find(i => i.id === id)?.icon || Target;
 const ACCOUNTS = ["HDFC Savings","SBI Salary A/C","ICICI Credit Card","Cash Wallet"];
 const GOAL_COLORS = ["#D4A24C","#D4A24C","#22C55E","#FFA500","#F72585","#FFB703","#4895EF","#EF4444"];
 
@@ -51,7 +65,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
   goal?: Goal | null; onSave: (g: Partial<Goal>) => void; onClose: () => void;
 }) {
   const [name, setName] = useState(goal?.name || "");
-  const [emoji, setEmoji] = useState(goal?.emoji || "🎯");
+  const [iconId, setIconId] = useState(goal?.emoji || "target");
   const [target, setTarget] = useState(goal?.target?.toString() || "");
   const [saved, setSaved] = useState(goal?.saved?.toString() || "0");
   const [targetDate, setTargetDate] = useState(goal?.targetDate || "Dec 2026");
@@ -61,12 +75,12 @@ function GoalFormModal({ goal, onSave, onClose }: {
   const [carryForward, setCarryForward] = useState(goal?.carryForward ?? false);
   const [notes, setNotes] = useState(goal?.notes || "");
   const [color, setColor] = useState(goal?.color || GOAL_COLORS[0]);
-  const [showEmojis, setShowEmojis] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
 
   const handleSave = () => {
     if (!name.trim() || !target) { toast.error("Name and target amount are required"); return; }
     onSave({
-      name: name.trim(), emoji, target: parseFloat(target), saved: parseFloat(saved || "0"),
+      name: name.trim(), emoji: iconId, target: parseFloat(target), saved: parseFloat(saved || "0"),
       targetDate, type, trackingMode, linkedAccount, carryForward, notes, color,
       startDate: goal?.startDate || new Date().toLocaleDateString("en-IN", { month: "short", year: "numeric" }),
     });
@@ -86,24 +100,30 @@ function GoalFormModal({ goal, onSave, onClose }: {
         <h2 className="text-white font-bold text-lg mb-5">{goal ? "Edit Goal" : "Add New Goal"}</h2>
 
         <div className="space-y-4">
-          {/* Emoji + Name */}
+          {/* Icon + Name */}
           <div className="flex gap-3">
             <div className="relative">
-              <button onClick={() => setShowEmojis(!showEmojis)}
-                className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl hover:border-[#D4A24C] transition-colors">
-                {emoji}
+              <button onClick={() => setShowIcons(!showIcons)}
+                className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:border-[#D4A24C] transition-colors">
+                {(() => {
+                  const Icon = GOAL_ICONS.find(i => i.id === iconId)?.icon;
+                  return Icon ? <Icon className="w-7 h-7 text-white/80" /> : <span className="text-2xl">{iconId}</span>;
+                })()}
               </button>
               <AnimatePresence>
-                {showEmojis && (
+                {showIcons && (
                   <motion.div initial={{opacity:0, scale:0.9}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
                     className="absolute top-16 left-0 z-10 grid grid-cols-4 gap-1.5 p-3 rounded-xl border border-white/10"
                     style={{ background: "#1A2238" }}>
-                    {GOAL_EMOJIS.map(e => (
-                      <button key={e} onClick={() => { setEmoji(e); setShowEmojis(false); }}
-                        className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-lg hover:bg-white/10 transition-colors">
-                        {e}
-                      </button>
-                    ))}
+                    {GOAL_ICONS.map(i => {
+                      const Icon = i.icon;
+                      return (
+                        <button key={i.id} onClick={() => { setIconId(i.id); setShowIcons(false); }}
+                          className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                          <Icon className="w-5 h-5 text-white/80" />
+                        </button>
+                      );
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -244,9 +264,12 @@ function RecordSavingsModal({ goal, onSave, onClose }: {
         className="w-full max-w-sm rounded-2xl p-6 border border-white/10"
         style={{ background: "linear-gradient(180deg,#1A2238 0%,#131825 100%)" }}>
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center"
             style={{ background: `${goal.color}18`, border: `1px solid ${goal.color}30` }}>
-            {goal.emoji}
+            {(() => {
+              const Icon = GOAL_ICONS.find(i => i.id === goal.emoji)?.icon;
+              return Icon ? <Icon className="w-6 h-6 text-white/80" style={{ color: goal.color }} /> : <span className="text-2xl">{goal.emoji}</span>;
+            })()}
           </div>
           <div>
             <h3 className="text-white font-bold text-sm">{goal.name}</h3>
@@ -314,9 +337,12 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
       <div className="rounded-2xl p-5 mb-4 relative overflow-hidden"
         style={{ background: `linear-gradient(135deg,${goal.color}15 0%,rgba(255,255,255,0.02) 100%)`, border: `1px solid ${goal.color}25` }}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl"
+          <div className="w-14 h-14 rounded-xl flex items-center justify-center"
             style={{ background: `${goal.color}18`, border: `1px solid ${goal.color}30` }}>
-            {goal.emoji}
+            {(() => {
+              const Icon = GOAL_ICONS.find(i => i.id === goal.emoji)?.icon;
+              return Icon ? <Icon className="w-7 h-7 text-white/80" style={{ color: goal.color }} /> : <span className="text-3xl">{goal.emoji}</span>;
+            })()}
           </div>
           <div className="flex-1">
             <h2 className="text-white font-bold text-lg">{goal.name}</h2>
@@ -417,9 +443,12 @@ function GoalCard({ goal, onClick }: { goal: Goal; onClick: () => void }) {
         border: `1px solid ${goal.color}20`,
       }}>
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+        <div className="w-11 h-11 rounded-xl flex items-center justify-center"
           style={{ background: `${goal.color}18`, border: `1px solid ${goal.color}30` }}>
-          {goal.emoji}
+          {(() => {
+            const Icon = GOAL_ICONS.find(i => i.id === goal.emoji)?.icon;
+            return Icon ? <Icon className="w-5 h-5 text-white/80" style={{ color: goal.color }} /> : <span className="text-xl">{goal.emoji}</span>;
+          })()}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold text-sm truncate">{goal.name}</p>
@@ -466,7 +495,7 @@ export function GoalsScreen() {
       const mapped = data.map((g: any) => ({
         id: g.id,
         name: g.name,
-        emoji: g.emoji || "🎯",
+        emoji: g.emoji || "target",
         target: parseFloat(g.target_amount || "0"),
         saved: parseFloat(g.current_amount || "0"),
         targetDate: g.target_date || "Dec 2026",

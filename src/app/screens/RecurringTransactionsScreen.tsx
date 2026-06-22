@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import {
   ArrowLeft, Repeat, Edit2, Pause, Play, Trash2, Filter,
   ChevronDown, Calendar, TrendingUp, AlertCircle, CheckCircle2,
+  Landmark, Briefcase, CreditCard, Wallet, Coins, ArrowRightLeft, HandCoins
 } from "lucide-react";
 import { useCategoryContext } from "../context/CategoryContext";
 import { transactionsAPI } from "../services/api";
@@ -30,10 +31,10 @@ interface RecurringTransaction {
 }
 
 const ACCOUNTS = [
-  { id:"a1", name:"HDFC Savings",      emoji:"🏦", color:"#4895EF" },
-  { id:"a2", name:"SBI Salary A/C",   emoji:"💰", color:"#22C55E" },
-  { id:"a3", name:"ICICI Credit Card",emoji:"💳", color:"#F72585" },
-  { id:"a4", name:"Cash Wallet",      emoji:"💵", color:"#FFB703" },
+  { id:"a1", name:"HDFC Savings",      icon: Landmark, color:"#4895EF" },
+  { id:"a2", name:"SBI Salary A/C",   icon: Briefcase, color:"#22C55E" },
+  { id:"a3", name:"ICICI Credit Card",icon: CreditCard, color:"#F72585" },
+  { id:"a4", name:"Cash Wallet",      icon: Wallet, color:"#FFB703" },
 ];
 
 const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -342,9 +343,18 @@ export function RecurringTransactionsScreen() {
                     <div className="p-4">
                       {/* Header */}
                       <div className="flex items-start gap-3 mb-3">
-                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl flex-shrink-0"
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
                           style={{background:`${cat?.color || typeColor}18`, border:`1px solid ${cat?.color || typeColor}30`}}>
-                          {cat?.emoji || (rec.type === "income" ? "💰" : rec.type === "transfer" ? "🔄" : "💸")}
+                          {(() => {
+                            if (cat?.icon) {
+                              const CatIcon = cat.icon;
+                              return <CatIcon className="w-6 h-6 text-white/80" style={{ color: cat.color }} />;
+                            }
+                            if (cat?.emoji) return <span className="text-xl">{cat.emoji}</span>;
+                            
+                            const FallbackIcon = rec.type === "income" ? HandCoins : rec.type === "transfer" ? ArrowRightLeft : Coins;
+                            return <FallbackIcon className="w-6 h-6 text-white/80" />;
+                          })()}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold truncate" style={{fontSize:14}}>
@@ -381,7 +391,7 @@ export function RecurringTransactionsScreen() {
                         </div>
                         {acc && (
                           <div className="flex items-center gap-2">
-                            <span style={{fontSize:14}}>{acc.emoji}</span>
+                            <acc.icon className="w-3.5 h-3.5 text-white/65" />
                             <span className="text-white/65" style={{fontSize:12}}>
                               From {acc.name}
                             </span>

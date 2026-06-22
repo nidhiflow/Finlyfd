@@ -6,17 +6,18 @@ import {
 } from "lucide-react";
 import { statsAPI } from "../services/api";
 import { DateRangePicker } from "../components/DateRangePicker";
+import { useCategoryContext } from "../context/CategoryContext";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 type PeriodType = "daily" | "weekly" | "monthly" | "annual" | "custom";
 type ChartType  = "expense" | "income";
 
 interface SubData {
-  id: string; name: string; emoji: string;
+  id: string; name: string; emoji: string; icon?: any;
   color: string; amount: number; percentage: number;
 }
 interface CatData {
-  id: string; name: string; emoji: string;
+  id: string; name: string; emoji: string; icon?: any;
   color: string; amount: number; percentage: number;
   trend: number; // % change vs last period
   subs: SubData[];
@@ -205,10 +206,21 @@ function PieChartSVG({
               />
               <circle cx={connStart.x} cy={connStart.y} r="2" fill={cat.color} fillOpacity="0.7" />
               {/* Label bubble */}
-              <text x={labelX} y={labelPt.y - 4} textAnchor={anchor}
-                fill="rgba(255,255,255,0.85)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="600">
-                {cat.emoji} {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
-              </text>
+              {cat.icon ? (
+                <foreignObject x={isRight ? labelX : labelX - 120} y={labelPt.y - 12} width="120" height="20">
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: isRight ? "flex-start" : "flex-end", gap: "4px" }}>
+                    <cat.icon className="w-3 h-3 text-white/85" />
+                    <span style={{ color: "rgba(255,255,255,0.85)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
+                      {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
+                    </span>
+                  </div>
+                </foreignObject>
+              ) : (
+                <text x={labelX} y={labelPt.y - 4} textAnchor={anchor}
+                  fill="rgba(255,255,255,0.85)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="600">
+                  {cat.emoji} {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
+                </text>
+              )}
               <text x={labelX} y={labelPt.y + 7} textAnchor={anchor}
                 fill="rgba(255,255,255,0.5)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="500">
                 {cat.percentage.toFixed(1)}%
@@ -265,16 +277,27 @@ function PieChartSVG({
                     style={{ filter: "drop-shadow(0px 4px 12px rgba(0,0,0,0.5))" }}
                   />
                   {/* Category Name */}
-                  <text
-                    x={rx + 10}
-                    y={ry + 17}
-                    fill="rgba(255, 255, 255, 0.7)"
-                    fontSize="10"
-                    fontFamily="Inter,sans-serif"
-                    fontWeight="600"
-                  >
-                    {selected.emoji} {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
-                  </text>
+                  {selected.icon ? (
+                    <foreignObject x={rx + 10} y={ry + 8} width="105" height="15">
+                      <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                        <selected.icon className="w-3.5 h-3.5 text-white/70" />
+                        <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
+                          {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
+                        </span>
+                      </div>
+                    </foreignObject>
+                  ) : (
+                    <text
+                      x={rx + 10}
+                      y={ry + 17}
+                      fill="rgba(255, 255, 255, 0.7)"
+                      fontSize="10"
+                      fontFamily="Inter,sans-serif"
+                      fontWeight="600"
+                    >
+                      {selected.emoji} {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
+                    </text>
+                  )}
                   {/* Amount */}
                   <text
                     x={rx + 10}
@@ -351,9 +374,10 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
 function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartType }) {
   const top = data[0];
   const biggest = data.reduce((a, b) => b.amount > a.amount ? b : a, data[0]);
+  const InsightIcon = biggest.icon ? () => <biggest.icon className="w-3.5 h-3.5 inline-block -mt-0.5" /> : () => <>{biggest.emoji}</>;
   const text = chartType === "expense"
-    ? `You spent ${Math.round(biggest.percentage)}% on ${biggest.name} this month ${biggest.emoji}`
-    : `${biggest.name} is your top income source at ${Math.round(biggest.percentage)}% ${biggest.emoji}`;
+    ? <p>You spent {Math.round(biggest.percentage)}% on {biggest.name} this month <InsightIcon /></p>
+    : <p>{biggest.name} is your top income source at {Math.round(biggest.percentage)}% <InsightIcon /></p>;
 
   return (
     <div className="mx-4 mb-3 rounded-2xl px-4 py-3.5 relative overflow-hidden"
@@ -369,7 +393,7 @@ function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartT
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div>
-          <p className="text-white font-semibold" style={{ fontSize: 12.5, lineHeight: 1.5 }}>{text}</p>
+          <div className="text-white font-semibold" style={{ fontSize: 12.5, lineHeight: 1.5 }}>{text}</div>
           {top.trend !== 0 && (
             <div className="flex items-center gap-1 mt-1">
               {top.trend > 0
@@ -417,7 +441,7 @@ function CategoryRow({
 
       {/* Category Info */}
       <div className="flex-1 min-w-0 flex items-center gap-2">
-        <span className="text-base leading-none">{cat.emoji}</span>
+        {cat.icon ? <cat.icon className="w-4 h-4 text-white/85" /> : <span className="text-base leading-none">{cat.emoji}</span>}
         <p className="text-white font-semibold truncate text-[13px]">{cat.name}</p>
       </div>
 
@@ -431,6 +455,7 @@ function CategoryRow({
 
 // ─── Main Screen ───────────────────────────────────────────────────────────────
 export function ReportsScreen() {
+  const { categories } = useCategoryContext();
   const [chartType, setChartType] = useState<ChartType>("expense");
   const [period, setPeriod]       = useState<PeriodType>("monthly");
   const [month, setMonth]         = useState(new Date().getMonth()); // current month
@@ -471,16 +496,20 @@ export function ReportsScreen() {
       const totalPrevExpense = allPrevCats.filter((c: any) => c.type === 'expense').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
       const totalPrevIncome = allPrevCats.filter((c: any) => c.type === 'income').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
 
-      const mapCats = (cats: any[], total: number): CatData[] => cats.map((c: any) => ({
-        id: c.category_id || c.id,
-        name: c.category_name || c.name || 'Unknown',
-        emoji: c.icon || '📦',
-        color: c.color || '#D4A24C',
-        amount: parseFloat(c.total || 0),
-        percentage: total > 0 ? (parseFloat(c.total || 0) / total) * 100 : 0,
-        trend: 0,
-        subs: [],
-      }));
+      const mapCats = (cats: any[], total: number): CatData[] => cats.map((c: any) => {
+        const catObj = categories.find(cat => cat.id === (c.category_id || c.id));
+        return {
+          id: c.category_id || c.id,
+          name: c.category_name || c.name || 'Unknown',
+          emoji: c.icon || '📦',
+          icon: catObj?.icon,
+          color: c.color || '#D4A24C',
+          amount: parseFloat(c.total || 0),
+          percentage: total > 0 ? (parseFloat(c.total || 0) / total) * 100 : 0,
+          trend: 0,
+          subs: [],
+        };
+      });
 
       setExpenseData(mapCats(allCats.filter((c: any) => c.type === 'expense'), totalExpense));
       setIncomeData(mapCats(allCats.filter((c: any) => c.type === 'income'), totalIncome));
@@ -565,8 +594,8 @@ export function ReportsScreen() {
           <div className="text-center">
             <p className="text-white font-bold" style={{ fontSize: 15 }}>{periodLabel}</p>
             {drillCat && (
-              <p style={{ fontSize: 11, color: drillCat.color }}>
-                {drillCat.emoji} {drillCat.name}
+              <p className="flex items-center justify-center gap-1.5" style={{ fontSize: 11, color: drillCat.color }}>
+                {drillCat.icon ? <drillCat.icon className="w-3 h-3" /> : drillCat.emoji} {drillCat.name}
               </p>
             )}
           </div>
@@ -739,7 +768,7 @@ export function ReportsScreen() {
                   <div key={cat.id} className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span style={{ fontSize: 14 }}>{cat.emoji}</span>
+                        {cat.icon ? <cat.icon className="w-3.5 h-3.5 text-white/85" /> : <span style={{ fontSize: 14 }}>{cat.emoji}</span>}
                         <span className="text-white/80 font-medium" style={{ fontSize: 12 }}>{cat.name}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -780,14 +809,14 @@ export function ReportsScreen() {
 
             {/* Insight cards */}
             {(() => {
-              let highestIncrease = { name: "", pct: 0, emoji: "" };
-              let highestDecrease = { name: "", pct: 0, emoji: "" };
+              let highestIncrease = { name: "", pct: 0, emoji: "", icon: undefined as any };
+              let highestDecrease = { name: "", pct: 0, emoji: "", icon: undefined as any };
               mainData.forEach(cat => {
                 const prev = compareData.find(c => c.id === cat.id);
                 if (!prev || prev.amount === 0) return;
                 const pct = Math.round(((cat.amount - prev.amount) / prev.amount) * 100);
-                if (pct > highestIncrease.pct) highestIncrease = { name: cat.name, pct, emoji: cat.emoji };
-                if (pct < highestDecrease.pct) highestDecrease = { name: cat.name, pct, emoji: cat.emoji };
+                if (pct > highestIncrease.pct) highestIncrease = { name: cat.name, pct, emoji: cat.emoji, icon: cat.icon };
+                if (pct < highestDecrease.pct) highestDecrease = { name: cat.name, pct, emoji: cat.emoji, icon: cat.icon };
               });
               return (
                 <div className="grid grid-cols-2 gap-2.5 mt-3">
@@ -797,7 +826,9 @@ export function ReportsScreen() {
                         <TrendingUp className="w-3 h-3 text-rose-400" />
                         <span style={{ fontSize: 10, color: "#F87171", fontWeight: 700 }}>MOST INCREASED</span>
                       </div>
-                      <p className="text-white font-semibold" style={{ fontSize: 13 }}>{highestIncrease.emoji} {highestIncrease.name}</p>
+                      <div className="text-white font-semibold flex items-center gap-1.5" style={{ fontSize: 13 }}>
+                        {highestIncrease.icon ? <highestIncrease.icon className="w-3.5 h-3.5" /> : highestIncrease.emoji} {highestIncrease.name}
+                      </div>
                       <p style={{ fontSize: 11, color: "#F87171" }}>+{highestIncrease.pct}%</p>
                     </div>
                   )}
@@ -807,7 +838,9 @@ export function ReportsScreen() {
                         <TrendingDown className="w-3 h-3 text-emerald-400" />
                         <span style={{ fontSize: 10, color: "#4ADE80", fontWeight: 700 }}>MOST DECREASED</span>
                       </div>
-                      <p className="text-white font-semibold" style={{ fontSize: 13 }}>{highestDecrease.emoji} {highestDecrease.name}</p>
+                      <div className="text-white font-semibold flex items-center gap-1.5" style={{ fontSize: 13 }}>
+                        {highestDecrease.icon ? <highestDecrease.icon className="w-3.5 h-3.5" /> : highestDecrease.emoji} {highestDecrease.name}
+                      </div>
                       <p style={{ fontSize: 11, color: "#4ADE80" }}>{highestDecrease.pct}%</p>
                     </div>
                   )}
@@ -823,9 +856,9 @@ export function ReportsScreen() {
         <div className="px-4 pb-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: pieAccent }} />
-            <p className="text-white/38 font-semibold" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
+            <p className="text-white/38 font-semibold flex items-center gap-1.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
               {drillCat
-                ? `${drillCat.emoji} ${drillCat.name} BREAKDOWN`
+                ? <>{drillCat.icon ? <drillCat.icon className="w-3 h-3" /> : drillCat.emoji} {drillCat.name} BREAKDOWN</>
                 : `${chartType === "expense" ? "EXPENSE" : "INCOME"} BREAKDOWN`}
             </p>
             {selectedSeg && (

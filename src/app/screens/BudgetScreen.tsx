@@ -13,6 +13,7 @@ interface BudgetItem {
   spent: number;
   color: string;
   emoji: string;
+  icon?: any;
 }
 
 export function BudgetScreen() {
@@ -27,7 +28,8 @@ export function BudgetScreen() {
   const expenseCategories = getCatsByType('expense').map(c => ({
     id: c.id,
     name: c.name,
-    icon: c.emoji,
+    emoji: c.emoji,
+    icon: c.icon,
     color: c.color,
     type: c.type,
   }));
@@ -47,7 +49,8 @@ export function BudgetScreen() {
           budgeted: parseFloat(b.amount || "0"),
           spent: parseFloat(b.spent || "0"),
           color: cat?.color || "#D4A24C",
-          emoji: cat?.icon || "📦",
+          emoji: cat?.emoji || "📦",
+          icon: cat?.icon,
         };
       });
       setBudgets(mapped);
@@ -199,7 +202,9 @@ export function BudgetScreen() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{budget.emoji}</span>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${budget.color}15`, border: `1px solid ${budget.color}30` }}>
+                      {budget.icon ? <budget.icon className="w-5 h-5 text-white/80" style={{ color: budget.color }} /> : <span className="text-xl">{budget.emoji}</span>}
+                    </div>
                     <div>
                       <h4 className="text-white font-semibold">{budget.category}</h4>
                       <p className="text-xs text-white/50">
@@ -391,7 +396,7 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
                     background: selectedCat === cat.id ? `${cat.color || '#D4A24C'}28` : "rgba(255,255,255,0.04)",
                     border: selectedCat === cat.id ? `1.5px solid ${cat.color || '#D4A24C'}55` : "1px solid rgba(255,255,255,0.07)",
                   }}>
-                  <span style={{ fontSize: 20 }}>{cat.icon || "📦"}</span>
+                  {cat.icon ? <cat.icon className="w-6 h-6 mb-1 text-white/80" /> : <span style={{ fontSize: 20 }}>{cat.emoji || "📦"}</span>}
                   <span className="text-xs font-semibold truncate w-full text-center px-1"
                     style={{ color: selectedCat === cat.id ? (cat.color || '#D4A24C') : "rgba(255,255,255,0.45)" }}>
                     {cat.name}

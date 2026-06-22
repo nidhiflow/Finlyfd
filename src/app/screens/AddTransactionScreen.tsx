@@ -16,9 +16,20 @@ import {
 // Any changes made in CategoriesScreen are reflected here immediately.
 import { useCategoryContext, Cat, Sub } from "../context/CategoryContext";
 
+import { Briefcase, CreditCard, HandCoins, LineChart, Landmark } from "lucide-react";
 // ─── Local types ───────────────────────────────────────────────────────────────
 // Cat and Sub are imported from context; Acc is local to this screen.
 interface Acc { id: string; name: string; emoji: string; icon?: string; type: string; color: string; balance: number; }
+const getAccountIcon = (type: string) => {
+  switch (type?.toLowerCase()) {
+    case "current": return Briefcase;
+    case "credit": return CreditCard;
+    case "liability": return HandCoins;
+    case "investment": return LineChart;
+    case "savings":
+    default: return Landmark;
+  }
+};
 type TxType = "expense" | "income" | "transfer";
 
 const RECENT_IDS = ["food", "vehicle", "bills"];
@@ -187,9 +198,9 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
           {/* Header */}
           <div className="flex items-center justify-between mb-5 pt-2">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl"
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
                 style={{ background: `${cat.color}25`, border: `1px solid ${cat.color}35` }}>
-                {cat.emoji}
+                {cat.icon ? <cat.icon className="w-5 h-5" style={{ color: cat.color }} /> : <span className="text-xl">{cat.emoji}</span>}
               </div>
               <div>
                 <p className="text-white font-bold" style={{ fontSize: 17 }}>{cat.name}</p>
@@ -217,9 +228,9 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
                     boxShadow: isSel ? `0 4px 16px ${cat.color}18` : "none",
                   }}
                   onClick={() => onSelect(sub)}>
-                  <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center text-lg"
+                  <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center"
                     style={{ background: `${cat.color}18`, border: `1px solid ${cat.color}25` }}>
-                    {sub.emoji}
+                    {sub.icon ? <sub.icon className="w-4.5 h-4.5" style={{ color: cat.color }} /> : <span className="text-lg">{sub.emoji}</span>}
                   </div>
                   <span className="flex-1 font-semibold"
                     style={{ fontSize: 14, color: isSel ? "white" : "rgba(255,255,255,0.72)" }}>
@@ -326,9 +337,12 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
                   background: isSel ? `${acc.color}18` : "rgba(255,255,255,0.04)",
                   border: isSel ? `1.5px solid ${acc.color}45` : "1px solid rgba(255,255,255,0.07)",
                 }}>
-                <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl"
+                <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
                   style={{ background: `${acc.color}22`, border: `1px solid ${acc.color}35` }}>
-                  {acc.emoji}
+                  {(() => {
+                    const AccIcon = getAccountIcon(acc.type);
+                    return <AccIcon className="w-5 h-5" style={{ color: acc.color }} />;
+                  })()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-semibold" style={{ fontSize: 14 }}>{acc.name}</p>
@@ -929,7 +943,7 @@ export function AddTransactionScreen() {
                           background: catId === c.id ? `${c.color}22` : "rgba(255,255,255,0.06)",
                           border: catId === c.id ? `1.5px solid ${c.color}45` : "1px solid rgba(255,255,255,0.09)",
                         }}>
-                        <span style={{ fontSize: 14 }}>{c.emoji}</span>
+                        {c.icon ? <c.icon className="w-4 h-4" style={{ color: catId === c.id ? c.color : "rgba(255,255,255,0.55)" }} /> : <span style={{ fontSize: 14 }}>{c.emoji}</span>}
                         <span style={{ fontSize: 12, fontWeight: 600, color: catId === c.id ? c.color : "rgba(255,255,255,0.55)" }}>
                           {c.name}
                         </span>
@@ -967,7 +981,7 @@ export function AddTransactionScreen() {
                         border: isSel ? `1.5px solid ${c.color}55` : "1px solid rgba(255,255,255,0.07)",
                         boxShadow: isSel ? `0 4px 14px ${c.color}25` : "none",
                       }}>
-                      <span style={{ fontSize: 18 }}>{c.emoji}</span>
+                      {c.icon ? <c.icon className="w-6 h-6 mb-1" style={{ color: isSel ? c.color : "rgba(255,255,255,0.7)" }} /> : <span style={{ fontSize: 18 }}>{c.emoji}</span>}
                       <span style={{
                         fontSize: 9.5, fontWeight: 700, textAlign: "center", lineHeight: 1.2,
                         color: isSel ? c.color : "rgba(255,255,255,0.45)"
@@ -997,14 +1011,14 @@ export function AddTransactionScreen() {
                       background: selectedCat ? `${selectedCat.color}10` : "rgba(255,255,255,0.05)",
                       border: `1px solid ${selectedCat?.color ?? "#fff"}22`,
                     }}>
-                    <span style={{ fontSize: 18 }}>{selectedCat?.emoji}</span>
-                    <div className="flex-1">
-                      <p className="text-white font-semibold" style={{ fontSize: 13 }}>{selectedCat?.name}</p>
-                      {subId ? (
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span style={{ fontSize: 12 }}>{selectedSub?.emoji}</span>
-                          <span className="text-white/55" style={{ fontSize: 12 }}>{selectedSub?.name}</span>
-                        </div>
+                      {selectedCat?.icon ? <selectedCat.icon className="w-6 h-6" style={{ color: selectedCat.color }} /> : <span style={{ fontSize: 18 }}>{selectedCat?.emoji}</span>}
+                      <div className="flex-1">
+                        <p className="text-white font-semibold" style={{ fontSize: 13 }}>{selectedCat?.name}</p>
+                        {subId ? (
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            {selectedSub?.icon ? <selectedSub.icon className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.55)" }} /> : <span style={{ fontSize: 12 }}>{selectedSub?.emoji}</span>}
+                            <span className="text-white/55" style={{ fontSize: 12 }}>{selectedSub?.name}</span>
+                          </div>
                       ) : (
                         <p style={{ fontSize: 11, color: errors.sub ? "#F87171" : "rgba(255,255,255,0.35)" }}>
                           {errors.sub || "No subcategory selected"}
@@ -1035,9 +1049,12 @@ export function AddTransactionScreen() {
               background: `linear-gradient(135deg,${selectedAcc.color}18 0%,${selectedAcc.color}08 100%)`,
               border: `1px solid ${selectedAcc.color}35`,
             }}>
-            <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl"
+            <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
               style={{ background: `${selectedAcc.color}22`, border: `1px solid ${selectedAcc.color}35` }}>
-              {selectedAcc.emoji}
+              {(() => {
+                const AccIcon = getAccountIcon(selectedAcc.type);
+                return <AccIcon className="w-5 h-5" style={{ color: selectedAcc.color }} />;
+              })()}
             </div>
             <div className="flex-1">
               <p className="text-white font-semibold" style={{ fontSize: 14 }}>{selectedAcc.name}</p>
@@ -1064,9 +1081,12 @@ export function AddTransactionScreen() {
               }}>
               {selectedTo ? (
                 <>
-                  <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl"
+                  <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
                     style={{ background: `${selectedTo.color}22` }}>
-                    {selectedTo.emoji}
+                    {(() => {
+                      const ToAccIcon = getAccountIcon(selectedTo.type);
+                      return <ToAccIcon className="w-5 h-5" style={{ color: selectedTo.color }} />;
+                    })()}
                   </div>
                   <div className="flex-1">
                     <p className="text-white font-semibold" style={{ fontSize: 14 }}>{selectedTo.name}</p>
