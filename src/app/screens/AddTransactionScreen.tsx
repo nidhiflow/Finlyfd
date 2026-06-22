@@ -677,7 +677,7 @@ export function AddTransactionScreen() {
     if (!id) return;
     transactionsAPI.getById(id)
       .then((tx) => {
-        if (tx.type) setTxType(tx.type as TxType);
+        if (tx.type) setTxType(String(tx.type).toLowerCase() as TxType);
         if (tx.amount) setAmount(String(tx.amount));
         if (tx.category_id) setCatId(tx.category_id);
         if (tx.subcategory_id || tx.subcategoryId) setSubId(tx.subcategory_id || tx.subcategoryId);
@@ -756,7 +756,9 @@ export function AddTransactionScreen() {
       if (!catId) e.cat = "Please select a category";
       else if (selectedCat?.subs.length && !subId) e.sub = "Please select a subcategory";
       // Ensure category type matches transaction type
-      else if (selectedCat && selectedCat.type !== txType) {
+      else if (!selectedCat) {
+        e.cat = "Invalid category selected";
+      } else if (selectedCat.type !== txType) {
         e.cat = "Selected category doesn't match transaction type";
       }
     } else {
