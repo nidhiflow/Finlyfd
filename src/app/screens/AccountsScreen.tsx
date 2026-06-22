@@ -528,8 +528,6 @@ function AccountModal({ editAccount, onClose, onSave }: {
                 </div>
               )}
 
-              )}
-
               {/* Action Buttons */}
               <div className="flex gap-3 pt-1">
                 <button type="button" onClick={onClose}
