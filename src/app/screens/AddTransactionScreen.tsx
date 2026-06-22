@@ -904,40 +904,7 @@ export function AddTransactionScreen() {
               )}
             </div>
 
-            {/* Recent strip */}
-            <AnimatePresence mode="wait">
-              {recentCats.length > 0 && (
-                <motion.div
-                  key={txType}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                  className="px-4 mb-2.5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Zap className="w-3 h-3 text-[#FFB703]" />
-                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", fontWeight: 600 }}>RECENT</p>
-                  </div>
-                  <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-                    {recentCats.map(c => (
-                      <motion.button key={c.id}
-                        whileTap={{ scale: 0.92 }}
-                        onClick={() => { setCatId(c.id); setSubId(null); setShowSubSheet(true); }}
-                        className="flex items-center gap-2 px-3 py-2 rounded-2xl flex-shrink-0 transition-all"
-                        style={{
-                          background: catId === c.id ? `${c.color}22` : "rgba(255,255,255,0.06)",
-                          border: catId === c.id ? `1.5px solid ${c.color}45` : "1px solid var(--divider)",
-                        }}>
-                        {c.icon ? <c.icon className="w-4 h-4" style={{ color: catId === c.id ? c.color : "rgba(255,255,255,0.55)" }} /> : <span style={{ fontSize: 14 }}>{c.emoji}</span>}
-                        <span style={{ fontSize: 12, fontWeight: 600, color: catId === c.id ? c.color : "rgba(255,255,255,0.55)" }}>
-                          {c.name}
-                        </span>
-                      </motion.button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+
 
             {/* Category grid */}
             {errors.cat && (
