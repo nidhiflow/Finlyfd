@@ -80,7 +80,7 @@ function StatCard({
   return (
     <div className="rounded-2xl p-4 relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%)",
+        background: "linear-gradient(135deg,color-mix(in srgb, var(--ink) 6%, transparent) 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)",
         border: "1px solid var(--divider)",
       }}>
       <div className="absolute top-2 right-2 w-8 h-8 rounded-xl flex items-center justify-center"
@@ -305,15 +305,15 @@ export function DashboardScreen() {
           <div className="flex items-center gap-2">
             <button onClick={prevMonth}
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)" }}>
+              style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)" }}>
               <ChevronLeft className="w-4 h-4 text-ink/50" />
             </button>
-            <span className="font-semibold min-w-28 text-center" style={{ fontSize: 13, color: "rgba(255,255,255,0.75)" }}>
+            <span className="font-semibold min-w-28 text-center" style={{ fontSize: 13, color: "color-mix(in srgb, var(--ink) 75%, transparent)" }}>
               {MONTHS[monthIdx]} {year}
             </span>
             <button onClick={nextMonth}
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)" }}>
+              style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)" }}>
               <ChevronRight className="w-4 h-4 text-ink/50" />
             </button>
           </div>

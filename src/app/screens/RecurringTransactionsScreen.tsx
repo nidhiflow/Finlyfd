@@ -232,7 +232,7 @@ export function RecurringTransactionsScreen() {
               background: showFilters ? "rgba(212,162,76,0.22)" : "var(--divider)",
               border: `1px solid ${showFilters ? "rgba(212,162,76,0.4)" : "var(--divider)"}`,
             }}>
-            <Filter className="w-4.5 h-4.5" style={{color: showFilters ? "#D4A24C" : "rgba(255,255,255,0.55)"}} />
+            <Filter className="w-4.5 h-4.5" style={{color: showFilters ? "#D4A24C" : "color-mix(in srgb, var(--ink) 55%, transparent)"}} />
           </motion.button>
         </div>
 
@@ -241,21 +241,21 @@ export function RecurringTransactionsScreen() {
           <div className="grid grid-cols-3 gap-2">
             <div className="rounded-2xl px-3 py-3 relative overflow-hidden"
               style={{background:"linear-gradient(135deg,rgba(34,197,94,0.14),rgba(34,197,94,0.06))", border:"1px solid rgba(34,197,94,0.25)"}}>
-              <p style={{fontSize:10, fontWeight:700, color:"rgba(255,255,255,0.38)", letterSpacing:"0.6px"}}>ACTIVE</p>
+              <p style={{fontSize:10, fontWeight:700, color:"color-mix(in srgb, var(--ink) 38%, transparent)", letterSpacing:"0.6px"}}>ACTIVE</p>
               <p className="font-bold mt-0.5" style={{fontSize:18, color:"#4ADE80"}}>
                 {recurring.filter(r => r.status === "active").length}
               </p>
             </div>
             <div className="rounded-2xl px-3 py-3 relative overflow-hidden"
               style={{background:"linear-gradient(135deg,rgba(255,183,3,0.14),rgba(255,183,3,0.06))", border:"1px solid rgba(255,183,3,0.25)"}}>
-              <p style={{fontSize:10, fontWeight:700, color:"rgba(255,255,255,0.38)", letterSpacing:"0.6px"}}>PAUSED</p>
+              <p style={{fontSize:10, fontWeight:700, color:"color-mix(in srgb, var(--ink) 38%, transparent)", letterSpacing:"0.6px"}}>PAUSED</p>
               <p className="font-bold mt-0.5" style={{fontSize:18, color:"#FFB703"}}>
                 {recurring.filter(r => r.status === "paused").length}
               </p>
             </div>
             <div className="rounded-2xl px-3 py-3 relative overflow-hidden"
               style={{background:"linear-gradient(135deg,rgba(212,162,76,0.14),rgba(212,162,76,0.06))", border:"1px solid rgba(212,162,76,0.25)"}}>
-              <p style={{fontSize:10, fontWeight:700, color:"rgba(255,255,255,0.38)", letterSpacing:"0.6px"}}>TOTAL</p>
+              <p style={{fontSize:10, fontWeight:700, color:"color-mix(in srgb, var(--ink) 38%, transparent)", letterSpacing:"0.6px"}}>TOTAL</p>
               <p className="font-bold mt-0.5" style={{fontSize:18, color:"#D4A24C"}}>
                 {recurring.length}
               </p>
@@ -270,7 +270,7 @@ export function RecurringTransactionsScreen() {
               initial={{opacity:0, height:0}} animate={{opacity:1, height:"auto"}}
               exit={{opacity:0, height:0}} transition={{duration:0.2}}
               className="px-4 mb-4 overflow-hidden">
-              <div className="p-4 rounded-2xl" style={{background:"rgba(255,255,255,0.04)", border:"1px solid var(--divider)"}}>
+              <div className="p-4 rounded-2xl" style={{background:"color-mix(in srgb, var(--ink) 4%, transparent)", border:"1px solid var(--divider)"}}>
                 <p className="text-ink/45 mb-2" style={{fontSize:11, fontWeight:700}}>TYPE</p>
                 <div className="grid grid-cols-4 gap-2 mb-3">
                   {(["all","expense","income","transfer"] as const).map(type => (
@@ -278,10 +278,10 @@ export function RecurringTransactionsScreen() {
                       onClick={() => setFilterType(type)}
                       className="py-2 rounded-xl capitalize"
                       style={{
-                        background: filterType === type ? "rgba(212,162,76,0.25)" : "rgba(255,255,255,0.06)",
+                        background: filterType === type ? "rgba(212,162,76,0.25)" : "color-mix(in srgb, var(--ink) 6%, transparent)",
                         border: filterType === type ? "1px solid rgba(212,162,76,0.5)" : "1px solid transparent",
                         fontSize:11, fontWeight:700,
-                        color: filterType === type ? "#D4A24C" : "rgba(255,255,255,0.45)",
+                        color: filterType === type ? "#D4A24C" : "color-mix(in srgb, var(--ink) 45%, transparent)",
                       }}>
                       {type}
                     </motion.button>
@@ -294,10 +294,10 @@ export function RecurringTransactionsScreen() {
                       onClick={() => setFilterStatus(status)}
                       className="py-2 rounded-xl capitalize"
                       style={{
-                        background: filterStatus === status ? "rgba(212,162,76,0.25)" : "rgba(255,255,255,0.06)",
+                        background: filterStatus === status ? "rgba(212,162,76,0.25)" : "color-mix(in srgb, var(--ink) 6%, transparent)",
                         border: filterStatus === status ? "1px solid rgba(212,162,76,0.5)" : "1px solid transparent",
                         fontSize:11, fontWeight:700,
-                        color: filterStatus === status ? "#D4A24C" : "rgba(255,255,255,0.45)",
+                        color: filterStatus === status ? "#D4A24C" : "color-mix(in srgb, var(--ink) 45%, transparent)",
                       }}>
                       {status}
                     </motion.button>
@@ -337,7 +337,7 @@ export function RecurringTransactionsScreen() {
                     exit={{opacity:0, y:-5}} transition={{delay: i * 0.03, duration:0.2}}
                     className="mb-3 rounded-2xl overflow-hidden"
                     style={{
-                      background:`linear-gradient(135deg,${typeColor}08 0%,rgba(255,255,255,0.02) 100%)`,
+                      background:`linear-gradient(135deg,${typeColor}08 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)`,
                       border:`1px solid ${typeColor}20`,
                     }}>
                     <div className="p-4">

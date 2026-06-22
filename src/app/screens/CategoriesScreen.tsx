@@ -304,7 +304,7 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
         <div>
           <div className="flex items-center gap-1.5 mb-1">
             <TrendingUp className="w-3.5 h-3.5" style={{ color: "#22C55E" }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.45)", letterSpacing: "0.5px" }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "color-mix(in srgb, var(--ink) 45%, transparent)", letterSpacing: "0.5px" }}>
               MONTHLY INCOME ESTIMATE
             </span>
           </div>
@@ -312,7 +312,7 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
             {total > 0 ? formatted : "—"}
             <span className="font-inter text-ink/35 font-normal" style={{ fontSize: 13 }}> / month</span>
           </p>
-          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", marginTop: 2 }}>
+          <p style={{ fontSize: 11, color: "color-mix(in srgb, var(--ink) 38%, transparent)", marginTop: 2 }}>
             from {primaryIds.size} primary {primaryIds.size === 1 ? "source" : "sources"}
           </p>
         </div>
@@ -320,7 +320,7 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
           {primaryCats.slice(0, 3).map(c => (
             <div key={c.id} className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl"
               style={{ background: `${c.color}20`, border: `1px solid ${c.color}30` }}>
-              {c.icon ? <c.icon className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.7)" }} /> : <span style={{ fontSize: 12 }}>{c.emoji}</span>}
+              {c.icon ? <c.icon className="w-3.5 h-3.5" style={{ color: "color-mix(in srgb, var(--ink) 70%, transparent)" }} /> : <span style={{ fontSize: 12 }}>{c.emoji}</span>}
               <span style={{ fontSize: 11, fontWeight: 600, color: c.color }}>{c.monthlyEst}</span>
             </div>
           ))}
@@ -356,8 +356,8 @@ function CategoryCard({
   const bg = isPrimary
     ? `linear-gradient(135deg, rgba(34,197,94,0.10) 0%, ${cat.color}0A 100%)`
     : isExpanded
-      ? `linear-gradient(135deg, ${cat.color}12 0%, rgba(255,255,255,0.03) 100%)`
-      : "linear-gradient(135deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.018) 100%)";
+      ? `linear-gradient(135deg, ${cat.color}12 0%, color-mix(in srgb, var(--ink) 3%, transparent) 100%)`
+      : "linear-gradient(135deg, color-mix(in srgb, var(--ink) 5%, transparent) 0%, color-mix(in srgb, var(--ink) 2%, transparent) 100%)";
 
   return (
     <motion.div
@@ -401,7 +401,7 @@ function CategoryCard({
               : `1px solid ${cat.color}38`,
             boxShadow: isPrimary ? "0 0 12px rgba(34,197,94,0.3)" : "none",
           }}>
-          {cat.icon ? <cat.icon className="w-6 h-6" style={{ color: "rgba(255,255,255,0.85)" }} /> : <span>{cat.emoji}</span>}
+          {cat.icon ? <cat.icon className="w-6 h-6" style={{ color: "color-mix(in srgb, var(--ink) 85%, transparent)" }} /> : <span>{cat.emoji}</span>}
           {/* Pin badge for expense, Crown badge for income */}
           {!isIncome && isPinned && (
             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FFB703] flex items-center justify-center"
@@ -508,7 +508,7 @@ function CategoryCard({
                         background: isPrimary ? "rgba(34,197,94,0.14)" : `${cat.color}18`,
                         border: `1px solid ${isPrimary ? "rgba(34,197,94,0.22)" : cat.color + "25"}`,
                       }}>
-                      {sub.icon ? <sub.icon className="w-4 h-4" style={{ color: "rgba(255,255,255,0.75)" }} /> : <span>{sub.emoji}</span>}
+                      {sub.icon ? <sub.icon className="w-4 h-4" style={{ color: "color-mix(in srgb, var(--ink) 75%, transparent)" }} /> : <span>{sub.emoji}</span>}
                     </div>
                   </div>
                   <span className="flex-1 text-ink/68" style={{ fontSize: 13 }}>{sub.name}</span>
@@ -553,7 +553,7 @@ function PinnedStrip({ cats, pinnedIds, onTap }: { cats: Cat[]; pinnedIds: Set<s
           <motion.button key={c.id} whileTap={{ scale: 0.93 }} onClick={() => onTap(c.id)}
             className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-2xl"
             style={{ background: `linear-gradient(135deg,${c.color}22 0%,${c.color}10 100%)`, border: `1px solid ${c.color}38` }}>
-            {c.icon ? <c.icon className="w-4 h-4" style={{ color: "rgba(255,255,255,0.8)" }} /> : <span style={{ fontSize: 15 }}>{c.emoji}</span>}
+            {c.icon ? <c.icon className="w-4 h-4" style={{ color: "color-mix(in srgb, var(--ink) 80%, transparent)" }} /> : <span style={{ fontSize: 15 }}>{c.emoji}</span>}
             <span className="text-ink/80 whitespace-nowrap" style={{ fontSize: 12, fontWeight: 600 }}>{c.name}</span>
           </motion.button>
         ))}
@@ -643,7 +643,7 @@ function CategoryModal({
                 style={{
                   background: showAI
                     ? isIncome ? "linear-gradient(135deg,rgba(34,197,94,0.15),rgba(212,162,76,0.12))" : "linear-gradient(135deg,rgba(212,162,76,0.18),rgba(212,162,76,0.12))"
-                    : "rgba(255,255,255,0.05)",
+                    : "color-mix(in srgb, var(--ink) 5%, transparent)",
                   border: `1px solid ${showAI ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(212,162,76,0.4)") : "var(--divider)"}`,
                 }}>
                 <div className="flex items-center gap-2">
@@ -651,7 +651,7 @@ function CategoryModal({
                     style={{ background: isIncome ? "linear-gradient(135deg,#22C55E,#D4A24C)" : "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
                     <Sparkles className="w-3.5 h-3.5 text-ink" />
                   </div>
-                  <span className="font-semibold" style={{ fontSize: 13, color: showAI ? (isIncome ? "#4ADE80" : "#D4A24C") : "rgba(255,255,255,0.6)" }}>
+                  <span className="font-semibold" style={{ fontSize: 13, color: showAI ? (isIncome ? "#4ADE80" : "#D4A24C") : "color-mix(in srgb, var(--ink) 60%, transparent)" }}>
                     {isIncome ? "AI Detect Income Type" : "AI Suggest Category"}
                   </span>
                 </div>
@@ -704,7 +704,7 @@ function CategoryModal({
                   onChange={e => { const v = e.target.value; if (v) setEmoji(v.trim().slice(0, 4)); }}
                   placeholder="Paste or type emoji"
                   className="w-full px-3.5 py-2.5 rounded-xl text-ink placeholder:text-ink/22 focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)", fontSize: 14 }}
+                  style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}
                 />
                 <p className="text-ink/28 mt-1" style={{ fontSize: 10 }}>Or pick from grid below</p>
               </div>
@@ -714,7 +714,7 @@ function CategoryModal({
                 <button key={e} onClick={() => setEmoji(e)}
                   className="h-9 rounded-xl flex items-center justify-center text-lg transition-all"
                   style={{
-                    background: emoji === e ? `${btnColor}28` : "rgba(255,255,255,0.045)",
+                    background: emoji === e ? `${btnColor}28` : "color-mix(in srgb, var(--ink) 5%, transparent)",
                     border: emoji === e ? `1px solid ${btnColor}55` : "1px solid transparent",
                     transform: emoji === e ? "scale(1.12)" : "scale(1)",
                   }}>
@@ -732,7 +732,7 @@ function CategoryModal({
               onKeyDown={e => e.key === "Enter" && name.trim() && onSave(name.trim(), emoji, color)}
               className="w-full px-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
               style={{
-                background: "rgba(255,255,255,0.055)",
+                background: "color-mix(in srgb, var(--ink) 6%, transparent)",
                 border: `1px solid ${name ? btnColor + "45" : "var(--divider)"}`,
                 fontSize: 15, transition: "border-color 0.2s",
               }}
@@ -751,7 +751,7 @@ function CategoryModal({
                       background: c, opacity: color === c ? 1 : 0.42,
                       transform: color === c ? "scale(1.15)" : "scale(1)",
                       boxShadow: color === c ? `0 4px 12px ${c}70` : "none",
-                      border: color === c ? "2px solid rgba(255,255,255,0.85)" : "none",
+                      border: color === c ? "2px solid color-mix(in srgb, var(--ink) 85%, transparent)" : "none",
                     }}>
                     {color === c && <Check className="w-3 h-3 text-ink" strokeWidth={3} />}
                   </button>
@@ -764,7 +764,7 @@ function CategoryModal({
           <div className="flex gap-3 pt-1">
             <button onClick={onClose}
               className="flex-1 py-4 rounded-2xl font-semibold text-ink/50"
-              style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }}>
+              style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}>
               Cancel
             </button>
             <motion.button whileTap={{ scale: 0.97 }}
@@ -817,7 +817,7 @@ function DeleteModal({ target, onClose, onConfirm }: { target: DelTarget; onClos
         <div className="flex gap-3">
           <button onClick={onClose}
             className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)", fontSize: 14 }}>
+            style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}>
             Cancel
           </button>
           <motion.button whileTap={{ scale: 0.96 }} onClick={onConfirm}
@@ -952,7 +952,7 @@ export function CategoriesScreen() {
       {/* ── Type Toggle ── */}
       <div className="px-4 pt-4 pb-1">
         <div className="relative flex p-1 rounded-2xl"
-          style={{ background:"rgba(255,255,255,0.05)", border:"1px solid var(--divider)" }}>
+          style={{ background:"color-mix(in srgb, var(--ink) 5%, transparent)", border:"1px solid var(--divider)" }}>
           <motion.div className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl"
             animate={{ left: activeType === "expense" ? 4 : "calc(50%)" }}
             transition={{ duration:0.3, ease:[0.4,0,0.2,1] }}
@@ -967,13 +967,13 @@ export function CategoriesScreen() {
           {(["expense","income"] as const).map(t => (
             <button key={t} onClick={() => setActiveType(t)}
               className="relative flex-1 py-3 rounded-xl flex items-center justify-center gap-2 z-10 transition-all">
-              <span style={{ fontSize:13, fontWeight:700, color: activeType === t ? "white" : "rgba(255,255,255,0.35)" }}>
+              <span style={{ fontSize:13, fontWeight:700, color: activeType === t ? "white" : "color-mix(in srgb, var(--ink) 35%, transparent)" }}>
                 {t === "expense" ? "💸 Expense" : "💚 Income"}
               </span>
               <span className="rounded-full px-1.5 py-0.5" style={{
                 fontSize:10, fontWeight:800,
                 background: activeType === t ? "var(--divider)" : "var(--divider)",
-                color: activeType === t ? "white" : "rgba(255,255,255,0.3)",
+                color: activeType === t ? "white" : "color-mix(in srgb, var(--ink) 30%, transparent)",
               }}>{t === "expense" ? expCount : incCount}</span>
             </button>
           ))}
@@ -991,10 +991,10 @@ export function CategoriesScreen() {
         <button onClick={() => { setShowSearch(v => !v); if (showSearch) setSearch(""); }}
           className="w-7 h-7 rounded-xl flex items-center justify-center transition-all"
           style={{
-            background: showSearch ? (isIncome ? "rgba(34,197,94,0.2)" : "rgba(212,162,76,0.22)") : "rgba(255,255,255,0.06)",
+            background: showSearch ? (isIncome ? "rgba(34,197,94,0.2)" : "rgba(212,162,76,0.22)") : "color-mix(in srgb, var(--ink) 6%, transparent)",
             border: `1px solid ${showSearch ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(212,162,76,0.4)") : "var(--divider)"}`,
           }}>
-          <Search className="w-3.5 h-3.5" style={{ color: showSearch ? (isIncome ? "#4ADE80" : "#D4A24C") : "rgba(255,255,255,0.38)" }} />
+          <Search className="w-3.5 h-3.5" style={{ color: showSearch ? (isIncome ? "#4ADE80" : "#D4A24C") : "color-mix(in srgb, var(--ink) 38%, transparent)" }} />
         </button>
       </div>
 
@@ -1025,7 +1025,7 @@ export function CategoriesScreen() {
         <div className="mx-4 mb-3 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl"
           style={{ background:"rgba(34,197,94,0.07)", border:"1px dashed rgba(34,197,94,0.22)" }}>
           <Crown className="w-4 h-4 flex-shrink-0" style={{ color:"rgba(34,197,94,0.6)" }} />
-          <p style={{ fontSize:12, color:"rgba(255,255,255,0.42)", lineHeight:1.4 }}>
+          <p style={{ fontSize:12, color:"color-mix(in srgb, var(--ink) 42%, transparent)", lineHeight:1.4 }}>
             Tap <span style={{ color:"rgba(74,222,128,0.8)" }}>👑</span> on a category to mark it as your primary income source
           </p>
         </div>
@@ -1036,7 +1036,7 @@ export function CategoriesScreen() {
         {visible.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
             <div className="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl"
-              style={{ background:"rgba(255,255,255,0.05)", border:"1px solid var(--divider)" }}>
+              style={{ background:"color-mix(in srgb, var(--ink) 5%, transparent)", border:"1px solid var(--divider)" }}>
               {search ? "🔍" : isIncome ? "💰" : "🗂️"}
             </div>
             <p className="text-ink/38 text-center" style={{ fontSize:14 }}>

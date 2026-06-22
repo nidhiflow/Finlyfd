@@ -95,7 +95,7 @@ export function SpendingOverview({ month }: SpendingProps) {
   return (
     <div className="rounded-2xl p-5 relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%)",
+        background: "linear-gradient(135deg,color-mix(in srgb, var(--ink) 6%, transparent) 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)",
         border: "1px solid var(--divider)",
       }}>
 
@@ -109,7 +109,7 @@ export function SpendingOverview({ month }: SpendingProps) {
           <h3 className="text-ink font-bold" style={{ fontSize: 15 }}>Spending Overview</h3>
         </div>
         <span className="px-2.5 py-1 rounded-xl font-semibold"
-          style={{ fontSize: 11, background: hasData ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.06)", color: hasData ? "#D4A24C" : "rgba(255,255,255,0.30)" }}>
+          style={{ fontSize: 11, background: hasData ? "rgba(212,162,76,0.15)" : "color-mix(in srgb, var(--ink) 6%, transparent)", color: hasData ? "#D4A24C" : "color-mix(in srgb, var(--ink) 30%, transparent)" }}>
           {hasData ? `₹${totalExpense.toLocaleString("en-IN")}` : "No data"}
         </span>
       </div>
@@ -178,7 +178,7 @@ export function SpendingOverview({ month }: SpendingProps) {
                     </foreignObject>
                     {/* Percentage Label */}
                     <text x={labelX} y={labelPt.y + 6} textAnchor={anchor}
-                      fill="rgba(255,255,255,0.4)" fontSize="8.5" fontFamily="Inter, sans-serif" fontWeight="500">
+                      fill="color-mix(in srgb, var(--ink) 40%, transparent)" fontSize="8.5" fontFamily="Inter, sans-serif" fontWeight="500">
                       {cat.percentage.toFixed(0)}%
                     </text>
                   </g>
@@ -256,10 +256,10 @@ export function SpendingOverview({ month }: SpendingProps) {
                 </div>
               </div>
               <div className="text-right flex-shrink-0 ml-1.5">
-                <p className="font-bold leading-none" style={{ fontSize: 11, color: hasData ? (isSel ? "white" : cat.color) : "rgba(255,255,255,0.18)" }}>
+                <p className="font-bold leading-none" style={{ fontSize: 11, color: hasData ? (isSel ? "white" : cat.color) : "color-mix(in srgb, var(--ink) 18%, transparent)" }}>
                   ₹{(cat.value || 0).toLocaleString("en-IN")}
                 </p>
-                <p className="mt-0.5 leading-none" style={{ fontSize: 8.5, color: hasData ? "rgba(255,255,255,0.45)" : "var(--divider)" }}>
+                <p className="mt-0.5 leading-none" style={{ fontSize: 8.5, color: hasData ? "color-mix(in srgb, var(--ink) 45%, transparent)" : "var(--divider)" }}>
                   {(cat.percentage || 0).toFixed(0)}%
                 </p>
               </div>
@@ -270,8 +270,8 @@ export function SpendingOverview({ month }: SpendingProps) {
 
       {/* Bottom helper text */}
       <div className="mt-4 pt-3 flex items-center justify-center gap-2"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <span style={{ fontSize: 11, color: hasData ? "rgba(255,255,255,0.45)" : "var(--divider)" }}>
+        style={{ borderTop: "1px solid color-mix(in srgb, var(--ink) 6%, transparent)" }}>
+        <span style={{ fontSize: 11, color: hasData ? "color-mix(in srgb, var(--ink) 45%, transparent)" : "var(--divider)" }}>
           {hasData ? "📊 Based on your expense transactions" : "📊 Spending breakdown will appear after adding expenses"}
         </span>
       </div>

@@ -184,7 +184,7 @@ function AccountCard({ account, visible, onEdit, onDelete, onTogglePrimary }: {
       whileTap={{ scale: 0.978 }}
       className="relative rounded-[18px] overflow-hidden cursor-pointer"
       style={{
-        background: "linear-gradient(135deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.020) 100%)",
+        background: "linear-gradient(135deg,color-mix(in srgb, var(--ink) 5%, transparent) 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)",
         border: account.isPrimary
           ? "1px solid rgba(255,183,3,0.35)"
           : `1px solid var(--divider)`,
@@ -294,7 +294,7 @@ function BankDropdown({ value, onChange, accentColor }: {
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-colors"
         style={{
-          background: "rgba(255,255,255,0.055)",
+          background: "color-mix(in srgb, var(--ink) 6%, transparent)",
           border: `1px solid ${value ? accentColor + "45" : "var(--divider)"}`,
           fontSize: 14,
         }}>
@@ -328,7 +328,7 @@ function BankDropdown({ value, onChange, accentColor }: {
                 <button key={bank} type="button"
                   onClick={() => { onChange(bank); setOpen(false); setQ(""); }}
                   className="w-full text-left px-4 py-2.5 transition-colors hover:bg-ink/5 flex items-center gap-2 justify-between"
-                  style={{ fontSize: 13, color: bank === value ? accentColor : "rgba(255,255,255,0.68)" }}>
+                  style={{ fontSize: 13, color: bank === value ? accentColor : "color-mix(in srgb, var(--ink) 68%, transparent)" }}>
                   <span className="flex items-center gap-2"><Landmark className="w-3.5 h-3.5 flex-shrink-0" strokeWidth={1.75} /> {bank}</span>
                   {bank === value && <Check className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: accentColor }} />}
                 </button>
@@ -441,7 +441,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
           {/* ── STEP: Quick Templates ── */}
           {step === "quick" && (
             <div>
-              <p className="flex items-center gap-1.5" style={{ fontSize: 12, color: "rgba(255,255,255,0.38)", marginBottom: 12 }}>
+              <p className="flex items-center gap-1.5" style={{ fontSize: 12, color: "color-mix(in srgb, var(--ink) 38%, transparent)", marginBottom: 12 }}>
                 <Zap className="w-3 h-3" strokeWidth={1.75} /> Quick Add — one tap to create
               </p>
               <div className="grid grid-cols-2 gap-2.5 mb-5">
@@ -490,7 +490,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
                   placeholder="e.g. HDFC Savings, Cash…"
                   className="w-full px-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
                   style={{
-                    background: "rgba(255,255,255,0.055)",
+                    background: "color-mix(in srgb, var(--ink) 6%, transparent)",
                     border: `1px solid ${errors.name ? "#EF4444" : form.name ? currType.color + "45" : "var(--divider)"}`,
                     fontSize: 14, transition: "border-color 0.2s",
                   }} />
@@ -506,12 +506,12 @@ function AccountModal({ editAccount, onClose, onSave }: {
                       onClick={() => { set("type", t.id); if (!t.hasBank) set("bankName", ""); }}
                       className="flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all"
                       style={{
-                        background: form.type === t.id ? `linear-gradient(135deg,${t.color}28,${t.color}12)` : "rgba(255,255,255,0.04)",
+                        background: form.type === t.id ? `linear-gradient(135deg,${t.color}28,${t.color}12)` : "color-mix(in srgb, var(--ink) 4%, transparent)",
                         border: form.type === t.id ? `1.5px solid ${t.color}55` : "1px solid var(--divider)",
                         boxShadow: form.type === t.id ? `0 4px 14px ${t.color}20` : "none",
                       }}>
-                      <t.icon className="w-[18px] h-[18px]" strokeWidth={1.75} style={{ color: form.type === t.id ? t.color : "rgba(255,255,255,0.38)" }} />
-                      <span style={{ fontSize: 9.5, fontWeight: 700, color: form.type === t.id ? t.color : "rgba(255,255,255,0.38)", textAlign: "center", lineHeight: 1.3 }}>
+                      <t.icon className="w-[18px] h-[18px]" strokeWidth={1.75} style={{ color: form.type === t.id ? t.color : "color-mix(in srgb, var(--ink) 38%, transparent)" }} />
+                      <span style={{ fontSize: 9.5, fontWeight: 700, color: form.type === t.id ? t.color : "color-mix(in srgb, var(--ink) 38%, transparent)", textAlign: "center", lineHeight: 1.3 }}>
                         {t.label.replace(" Account", "").replace(" Wallet", "")}
                       </span>
                     </button>
@@ -539,11 +539,11 @@ function AccountModal({ editAccount, onClose, onSave }: {
                         onClick={() => toggleMode(m.id)}
                         className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl transition-all"
                         style={{
-                          background: sel ? `${currType.color}22` : "rgba(255,255,255,0.05)",
+                          background: sel ? `${currType.color}22` : "color-mix(in srgb, var(--ink) 5%, transparent)",
                           border: sel ? `1px solid ${currType.color}50` : "1px solid var(--divider)",
                         }}>
-                        <m.icon className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: sel ? currType.color : "rgba(255,255,255,0.45)" }} />
-                        <span style={{ fontSize: 12, fontWeight: 600, color: sel ? currType.color : "rgba(255,255,255,0.45)" }}>{m.label}</span>
+                        <m.icon className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: sel ? currType.color : "color-mix(in srgb, var(--ink) 45%, transparent)" }} />
+                        <span style={{ fontSize: 12, fontWeight: 600, color: sel ? currType.color : "color-mix(in srgb, var(--ink) 45%, transparent)" }}>{m.label}</span>
                         {sel && <Check className="w-3 h-3" strokeWidth={1.75} style={{ color: currType.color }} />}
                       </motion.button>
                     );
@@ -558,14 +558,14 @@ function AccountModal({ editAccount, onClose, onSave }: {
                   <input value={form.upiId} onChange={e => set("upiId", e.target.value)}
                     placeholder="yourname@upi"
                     className="w-full px-4 py-3 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }} />
+                    style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }} />
                 </div>
               )}
 
               {/* Track Balance */}
               <div>
                 <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--divider)" }}>
+                  style={{ background: "color-mix(in srgb, var(--ink) 4%, transparent)", border: "1px solid var(--divider)" }}>
                   <div>
                     <p className="text-ink font-medium" style={{ fontSize: 14 }}>Track Balance</p>
                     <p className="text-ink/35" style={{ fontSize: 11 }}>Monitor this account's balance</p>
@@ -594,7 +594,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
                       <input value={form.openingBalance} onChange={e => set("openingBalance", e.target.value)}
                         placeholder="0.00" inputMode="decimal"
                         className="w-full pl-9 pr-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
-                        style={{ background: "rgba(255,255,255,0.055)", border: `1px solid ${errors.openingBalance ? "#EF4444" : "var(--divider)"}`, fontSize: 16, fontWeight: 700 }} />
+                        style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: `1px solid ${errors.openingBalance ? "#EF4444" : "var(--divider)"}`, fontSize: 16, fontWeight: 700 }} />
                     </div>
                     {errors.openingBalance && <p className="text-rose-400 mt-1" style={{ fontSize: 11 }}>{errors.openingBalance}</p>}
                   </motion.div>
@@ -624,7 +624,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
               <div>
                 <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl"
                   style={{
-                    background: form.isPrimary ? "rgba(255,183,3,0.08)" : "rgba(255,255,255,0.04)",
+                    background: form.isPrimary ? "rgba(255,183,3,0.08)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
                     border: form.isPrimary ? "1px solid rgba(255,183,3,0.28)" : "1px solid var(--divider)",
                   }}>
                   <div className="flex items-center gap-2.5">
@@ -651,7 +651,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
               <div className="flex gap-3 pt-1">
                 <button type="button" onClick={onClose}
                   className="flex-1 py-4 rounded-2xl font-semibold text-ink/50"
-                  style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }}>
+                  style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}>
                   Cancel
                 </button>
                 <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleSave}
@@ -701,18 +701,18 @@ function FilterSheet({ filter, onFilter, onClose }: {
             <motion.button key={opt.id} whileTap={{ scale: 0.97 }} onClick={() => { onFilter(opt.id as AccountType | "all"); onClose(); }}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px] transition-all"
               style={{
-                background: filter === opt.id ? `${opt.color}18` : "rgba(255,255,255,0.04)",
+                background: filter === opt.id ? `${opt.color}18` : "color-mix(in srgb, var(--ink) 4%, transparent)",
                 border: filter === opt.id ? `1px solid ${opt.color}45` : "1px solid var(--divider)",
               }}>
               <opt.icon className="w-[18px] h-[18px]" strokeWidth={1.75} style={{ color: opt.color }} />
-              <span style={{ fontSize: 14, fontWeight: 600, color: filter === opt.id ? opt.color : "rgba(255,255,255,0.65)" }}>{opt.label}</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: filter === opt.id ? opt.color : "color-mix(in srgb, var(--ink) 65%, transparent)" }}>{opt.label}</span>
               {filter === opt.id && <Check className="w-4 h-4 ml-auto" strokeWidth={1.75} style={{ color: opt.color }} />}
             </motion.button>
           ))}
         </div>
         <button onClick={onClose}
           className="w-full mt-4 py-3.5 rounded-2xl text-ink/50 font-semibold"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--divider)", fontSize: 14 }}>
+          style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}>
           Close
         </button>
       </motion.div>
@@ -747,7 +747,7 @@ function DeleteModal({ name, onClose, onConfirm }: { name: string; onClose: () =
         <div className="flex gap-3">
           <button onClick={onClose}
             className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)", fontSize: 14 }}>
+            style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}>
             Cancel
           </button>
           <motion.button whileTap={{ scale: 0.96 }} onClick={onConfirm}
@@ -907,18 +907,18 @@ export function AccountsScreen() {
           <button onClick={() => { setShowSearch(v => !v); if (showSearch) setSearch(""); }}
             className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
             style={{
-              background: showSearch ? "rgba(212,162,76,0.22)" : "rgba(255,255,255,0.06)",
+              background: showSearch ? "rgba(212,162,76,0.22)" : "color-mix(in srgb, var(--ink) 6%, transparent)",
               border: `1px solid ${showSearch ? "rgba(212,162,76,0.45)" : "var(--divider)"}`,
             }}>
-            <Search className="w-4 h-4" style={{ color: showSearch ? "#D4A24C" : "rgba(255,255,255,0.38)" }} />
+            <Search className="w-4 h-4" style={{ color: showSearch ? "#D4A24C" : "color-mix(in srgb, var(--ink) 38%, transparent)" }} />
           </button>
           <button onClick={() => setShowFilter(true)}
             className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
             style={{
-              background: filter !== "all" ? "rgba(212,162,76,0.22)" : "rgba(255,255,255,0.06)",
+              background: filter !== "all" ? "rgba(212,162,76,0.22)" : "color-mix(in srgb, var(--ink) 6%, transparent)",
               border: `1px solid ${filter !== "all" ? "rgba(212,162,76,0.45)" : "var(--divider)"}`,
             }}>
-            <SlidersHorizontal className="w-4 h-4" style={{ color: filter !== "all" ? "#D4A24C" : "rgba(255,255,255,0.38)" }} />
+            <SlidersHorizontal className="w-4 h-4" style={{ color: filter !== "all" ? "#D4A24C" : "color-mix(in srgb, var(--ink) 38%, transparent)" }} />
           </button>
         </div>
       </div>
@@ -982,7 +982,7 @@ export function AccountsScreen() {
                     style={{ background: `${t.color}12`, border: `1px solid ${t.color}25` }}>
                     <t.icon className="w-5 h-5" strokeWidth={1.75} style={{ color: t.color }} />
                     <span className="font-fraunces tabular-nums" style={{ fontSize: 11, fontWeight: 700, color: t.color }}>{cnt}</span>
-                    <span style={{ fontSize: 9.5, color: "rgba(255,255,255,0.35)", textAlign: "center", lineHeight: 1.2 }}>
+                    <span style={{ fontSize: 9.5, color: "color-mix(in srgb, var(--ink) 35%, transparent)", textAlign: "center", lineHeight: 1.2 }}>
                       {t.label.replace(" Account", "").replace(" Wallet", "")}
                     </span>
                   </motion.button>

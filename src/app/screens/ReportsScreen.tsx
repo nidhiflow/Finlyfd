@@ -142,7 +142,7 @@ function PieChartSVG({
       {/* Background ring (track) */}
       <circle cx={CX} cy={CY} r={(OUTER_R + INNER_R) / 2}
         fill="none"
-        stroke="rgba(255,255,255,0.04)"
+        stroke="color-mix(in srgb, var(--ink) 4%, transparent)"
         strokeWidth={OUTER_R - INNER_R}
       />
 
@@ -210,19 +210,19 @@ function PieChartSVG({
                 <foreignObject x={isRight ? labelX : labelX - 120} y={labelPt.y - 12} width="120" height="20">
                   <div style={{ display: "flex", alignItems: "center", justifyContent: isRight ? "flex-start" : "flex-end", gap: "4px" }}>
                     <cat.icon className="w-3 h-3 text-ink/85" />
-                    <span style={{ color: "rgba(255,255,255,0.85)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
+                    <span style={{ color: "color-mix(in srgb, var(--ink) 85%, transparent)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
                       {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
                     </span>
                   </div>
                 </foreignObject>
               ) : (
                 <text x={labelX} y={labelPt.y - 4} textAnchor={anchor}
-                  fill="rgba(255,255,255,0.85)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="600">
+                  fill="color-mix(in srgb, var(--ink) 85%, transparent)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="600">
                   {cat.emoji} {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
                 </text>
               )}
               <text x={labelX} y={labelPt.y + 7} textAnchor={anchor}
-                fill="rgba(255,255,255,0.5)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="500">
+                fill="color-mix(in srgb, var(--ink) 50%, transparent)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="500">
                 {cat.percentage.toFixed(1)}%
               </text>
             </motion.g>
@@ -233,14 +233,14 @@ function PieChartSVG({
       {/* Center info */}
       <g style={{ transformOrigin: `${CX}px ${CY}px` }}>
         <text x={CX} y={CY - 14} textAnchor="middle"
-          fill="rgba(255,255,255,0.38)" fontSize="9" fontFamily="Inter,sans-serif" fontWeight="600"
+          fill="color-mix(in srgb, var(--ink) 38%, transparent)" fontSize="9" fontFamily="Inter,sans-serif" fontWeight="600"
           letterSpacing="0.6">{chartType === "expense" ? "TOTAL SPENT" : "TOTAL EARNED"}</text>
         <text x={CX} y={CY + 8} textAnchor="middle"
           fill="white" fontSize="18" fontFamily="Fraunces,serif" fontWeight="800" className="tabular-nums">
           {fmtFull(total)}
         </text>
         <text x={CX} y={CY + 23} textAnchor="middle"
-          fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="Inter,sans-serif">
+          fill="color-mix(in srgb, var(--ink) 35%, transparent)" fontSize="9" fontFamily="Inter,sans-serif">
           {data.length} categories
         </text>
       </g>
@@ -281,7 +281,7 @@ function PieChartSVG({
                     <foreignObject x={rx + 10} y={ry + 8} width="105" height="15">
                       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                         <selected.icon className="w-3.5 h-3.5 text-ink/70" />
-                        <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
+                        <span style={{ color: "color-mix(in srgb, var(--ink) 70%, transparent)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
                           {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
                         </span>
                       </div>
@@ -290,7 +290,7 @@ function PieChartSVG({
                     <text
                       x={rx + 10}
                       y={ry + 17}
-                      fill="rgba(255, 255, 255, 0.7)"
+                      fill="color-mix(in srgb, var(--ink) 70%, transparent)"
                       fontSize="10"
                       fontFamily="Inter,sans-serif"
                       fontWeight="600"
@@ -357,7 +357,7 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
                 className="w-full flex items-center gap-2.5 px-4 py-2.5 transition-colors hover:bg-ink/5"
                 style={{ fontSize: 13 }}>
                 <span>{opt.emoji}</span>
-                <span style={{ color: period === opt.id ? "#D4A24C" : "rgba(255,255,255,0.72)", fontWeight: period === opt.id ? 700 : 400 }}>
+                <span style={{ color: period === opt.id ? "#D4A24C" : "color-mix(in srgb, var(--ink) 72%, transparent)", fontWeight: period === opt.id ? 700 : 400 }}>
                   {opt.label}
                 </span>
                 {period === opt.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />}
@@ -426,11 +426,11 @@ function CategoryRow({
       className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all text-left"
       style={{
         background: isSelected
-          ? `rgba(255,255,255,0.05)`
-          : "rgba(255,255,255,0.02)",
+          ? `color-mix(in srgb, var(--ink) 5%, transparent)`
+          : "color-mix(in srgb, var(--ink) 2%, transparent)",
         border: isSelected
           ? `1px solid ${cat.color}50`
-          : "1px solid rgba(255,255,255,0.05)",
+          : "1px solid color-mix(in srgb, var(--ink) 5%, transparent)",
         marginBottom: 6,
       }}>
       {/* Percentage Badge */}
@@ -711,10 +711,10 @@ export function ReportsScreen() {
       {!drillCat && hasTransactions && (
         <div className="px-4 mb-3">
           <div className="flex items-center justify-between py-3 px-4 rounded-2xl"
-            style={{ background: compareMode ? "linear-gradient(135deg,rgba(212,162,76,0.12),rgba(212,162,76,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(212,162,76,0.25)" : "1px solid var(--divider)", transition: "all 0.3s" }}>
+            style={{ background: compareMode ? "linear-gradient(135deg,rgba(212,162,76,0.12),rgba(212,162,76,0.06))" : "color-mix(in srgb, var(--ink) 4%, transparent)", border: compareMode ? "1px solid rgba(212,162,76,0.25)" : "1px solid var(--divider)", transition: "all 0.3s" }}>
             <div className="flex items-center gap-2.5">
-              <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#D4A24C" : "rgba(255,255,255,0.45)" }} />
-              <p className="font-medium" style={{ fontSize: 13, color: compareMode ? "white" : "rgba(255,255,255,0.65)" }}>Compare with last month</p>
+              <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#D4A24C" : "color-mix(in srgb, var(--ink) 45%, transparent)" }} />
+              <p className="font-medium" style={{ fontSize: 13, color: compareMode ? "white" : "color-mix(in srgb, var(--ink) 65%, transparent)" }}>Compare with last month</p>
             </div>
             <motion.button whileTap={{ scale: 0.9 }}
               onClick={() => setCompareMode(v => !v)}
@@ -742,21 +742,21 @@ export function ReportsScreen() {
             {/* Summary insight cards */}
             <div className="grid grid-cols-2 gap-2.5 mb-3">
               <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.2)" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "0.5px" }}>THIS MONTH</p>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "color-mix(in srgb, var(--ink) 35%, transparent)", letterSpacing: "0.5px" }}>THIS MONTH</p>
                 <p className="font-bold mt-1" style={{ fontSize: 17, color: "#D4A24C" }}>
                   {fmtFull(mainData.reduce((s, c) => s + c.amount, 0))}
                 </p>
               </div>
-              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--divider)" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "0.5px" }}>LAST MONTH</p>
-                <p className="font-bold mt-1" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)" }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1px solid var(--divider)" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "color-mix(in srgb, var(--ink) 35%, transparent)", letterSpacing: "0.5px" }}>LAST MONTH</p>
+                <p className="font-bold mt-1" style={{ fontSize: 17, color: "color-mix(in srgb, var(--ink) 55%, transparent)" }}>
                   {fmtFull(compareData.reduce((s, c) => s + c.amount, 0))}
                 </p>
               </div>
             </div>
 
             {/* Side-by-side comparison bars */}
-            <div className="rounded-2xl p-4 space-y-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--divider)" }}>
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1px solid var(--divider)" }}>
               <p className="text-ink/40 font-semibold mb-2" style={{ fontSize: 11, letterSpacing: "0.5px" }}>CATEGORY COMPARISON</p>
               {mainData.map((cat) => {
                 const prev = compareData.find(c => c.id === cat.id);
@@ -783,7 +783,7 @@ export function ReportsScreen() {
                     {/* Current month bar */}
                     <div className="flex items-center gap-2">
                       <span className="text-ink/30 w-8" style={{ fontSize: 9 }}>Now</span>
-                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
                         <motion.div className="h-full rounded-full" initial={{ width: 0 }}
                           animate={{ width: `${maxAmt > 0 ? (cat.amount / maxAmt) * 100 : 0}%` }}
                           transition={{ duration: 0.6, delay: 0.1 }}
@@ -794,7 +794,7 @@ export function ReportsScreen() {
                     {/* Last month bar */}
                     <div className="flex items-center gap-2">
                       <span className="text-ink/20 w-8" style={{ fontSize: 9 }}>Prev</span>
-                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
                         <motion.div className="h-full rounded-full" initial={{ width: 0 }}
                           animate={{ width: `${maxAmt > 0 ? (prevAmt / maxAmt) * 100 : 0}%` }}
                           transition={{ duration: 0.6, delay: 0.15 }}
@@ -864,7 +864,7 @@ export function ReportsScreen() {
             {selectedSeg && (
               <button onClick={() => setSelectedSeg(null)}
                 className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-full"
-                style={{ background: "var(--divider)", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--divider)", fontSize: 11, color: "color-mix(in srgb, var(--ink) 40%, transparent)" }}>
                 <X className="w-2.5 h-2.5" />
                 Clear
               </button>

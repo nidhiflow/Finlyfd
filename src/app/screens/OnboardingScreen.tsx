@@ -236,7 +236,7 @@ function ExpenseTrackingAnim() {
         className="bg-ink/4 border border-ink/8 rounded-xl px-4 py-2 flex items-center gap-3"
       >
         <span className="text-ink/40" style={{ fontSize: 10 }}>TOTAL BREAKDOWN</span>
-        <div className="flex-1 h-1.5 rounded-full overflow-hidden flex gap-0.5" style={{ background: "rgba(255,255,255,0.06)" }}>
+        <div className="flex-1 h-1.5 rounded-full overflow-hidden flex gap-0.5" style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)" }}>
           {EXPENSE_CATEGORIES.map((cat) => (
             <div
               key={cat.name}
@@ -770,7 +770,7 @@ export function OnboardingScreen() {
                   width: i === current ? 28 : 8,
                   background: i === current
                     ? `linear-gradient(to right, ${slide.gradFrom}, ${slide.gradTo})`
-                    : "rgba(255,255,255,0.18)",
+                    : "color-mix(in srgb, var(--ink) 18%, transparent)",
                 }}
               />
             ))}

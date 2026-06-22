@@ -111,9 +111,9 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
             <button key={q.label} onClick={() => handleQuickSelect(q.days, q.label)}
               className="flex-1 py-2 rounded-xl text-center active:scale-95 transition-transform"
               style={{
-                background: "rgba(255,255,255,0.06)",
+                background: "color-mix(in srgb, var(--ink) 6%, transparent)",
                 border: "1px solid var(--divider)",
-                fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.55)",
+                fontSize: 11, fontWeight: 600, color: "color-mix(in srgb, var(--ink) 55%, transparent)",
               }}>
               {q.label}
             </button>
@@ -163,7 +163,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
                 <span style={{
                   fontSize: 13,
                   fontWeight: sel || isToday ? 700 : 400,
-                  color: sel ? "white" : inRange ? "#D4A24C" : isToday ? "#D4A24C" : "rgba(255,255,255,0.65)",
+                  color: sel ? "white" : inRange ? "#D4A24C" : isToday ? "#D4A24C" : "color-mix(in srgb, var(--ink) 65%, transparent)",
                 }}>
                   {day}
                 </span>
@@ -176,7 +176,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
         <div className="flex gap-3">
           <button onClick={onClose}
             className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
-            style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }}>
+            style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}>
             Cancel
           </button>
           <motion.button whileTap={{ scale: 0.97 }} onClick={handleConfirm}

@@ -223,7 +223,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
                   whileTap={{ scale: 0.97 }}
                   className="flex items-center gap-3 px-4 py-3 rounded-2xl cursor-pointer"
                   style={{
-                    background: isSel ? `${cat.color}1A` : "rgba(255,255,255,0.04)",
+                    background: isSel ? `${cat.color}1A` : "color-mix(in srgb, var(--ink) 4%, transparent)",
                     border: isSel ? `1.5px solid ${cat.color}50` : "1px solid var(--divider)",
                     boxShadow: isSel ? `0 4px 16px ${cat.color}18` : "none",
                   }}
@@ -233,7 +233,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
                     {sub.icon ? <sub.icon className="w-4.5 h-4.5" style={{ color: cat.color }} /> : <span className="text-lg">{sub.emoji}</span>}
                   </div>
                   <span className="flex-1 font-semibold"
-                    style={{ fontSize: 14, color: isSel ? "white" : "rgba(255,255,255,0.72)" }}>
+                    style={{ fontSize: 14, color: isSel ? "white" : "color-mix(in srgb, var(--ink) 72%, transparent)" }}>
                     {sub.name}
                   </span>
                   {isSel && (
@@ -260,7 +260,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
             {adding ? (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22 }}
-                className="mt-3 p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--divider)" }}>
+                className="mt-3 p-4 rounded-2xl" style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1px solid var(--divider)" }}>
                 <div className="flex gap-2 mb-2">
                   <input value={newEmoji} onChange={e => setNewEmoji(e.target.value.slice(-2))}
                     className="w-12 text-center rounded-xl text-xl bg-ink/7 focus:outline-none" style={{ fontSize: 20 }} />
@@ -273,7 +273,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
                 <div className="flex gap-2">
                   <button onClick={() => setAdding(false)}
                     className="flex-1 py-2 rounded-xl text-ink/40 text-sm"
-                    style={{ background: "rgba(255,255,255,0.05)" }}>Cancel</button>
+                    style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>Cancel</button>
                   <motion.button whileTap={{ scale: 0.96 }} onClick={addSub}
                     className="flex-1 py-2 rounded-xl text-ink font-semibold text-sm"
                     style={{ background: `linear-gradient(135deg,${cat.color},${cat.color}bb)` }}>Add</motion.button>
@@ -282,7 +282,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
             ) : (
               <motion.button whileTap={{ scale: 0.97 }} onClick={() => setAdding(true)}
                 className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-2xl"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed var(--divider)", color: cat.color, fontSize: 13, fontWeight: 600 }}>
+                style={{ background: "color-mix(in srgb, var(--ink) 4%, transparent)", border: "1px dashed var(--divider)", color: cat.color, fontSize: 13, fontWeight: 600 }}>
                 <Plus className="w-4 h-4" />
                 Add Subcategory
               </motion.button>
@@ -334,7 +334,7 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
               <motion.button key={acc.id} whileTap={{ scale: 0.97 }} onClick={() => { onSelect(acc); onClose(); }}
                 className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left"
                 style={{
-                  background: isSel ? `${acc.color}18` : "rgba(255,255,255,0.04)",
+                  background: isSel ? `${acc.color}18` : "color-mix(in srgb, var(--ink) 4%, transparent)",
                   border: isSel ? `1.5px solid ${acc.color}45` : "1px solid var(--divider)",
                 }}>
                 <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
@@ -460,7 +460,7 @@ function DatePickerModal({ date, onSelect, onClose }: {
                 }}>
                 <span style={{
                   fontSize: 13, fontWeight: isSel || isToday ? 700 : 400,
-                  color: isSel ? "white" : isToday ? "#D4A24C" : "rgba(255,255,255,0.65)"
+                  color: isSel ? "white" : isToday ? "#D4A24C" : "color-mix(in srgb, var(--ink) 65%, transparent)"
                 }}>
                   {day}
                 </span>
@@ -506,7 +506,7 @@ function DatePickerModal({ date, onSelect, onClose }: {
           {["Today", "Yesterday", "This Week"].map(s => (
             <button key={s} onClick={() => handleQuickSelect(s)}
               className="flex-1 py-2.5 rounded-xl text-center active:scale-95 transition-transform"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)", fontSize: 12, color: "rgba(255,255,255,0.65)", fontWeight: 600 }}>
+              style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 12, color: "color-mix(in srgb, var(--ink) 65%, transparent)", fontWeight: 600 }}>
               {s}
             </button>
           ))}
@@ -516,7 +516,7 @@ function DatePickerModal({ date, onSelect, onClose }: {
         <div className="flex gap-3">
           <motion.button whileTap={{ scale: 0.95 }} onClick={onClose}
             className="flex-1 py-3.5 rounded-2xl text-center font-semibold"
-            style={{ background: "var(--divider)", border: "1px solid var(--divider)", fontSize: 14, color: "rgba(255,255,255,0.6)" }}>
+            style={{ background: "var(--divider)", border: "1px solid var(--divider)", fontSize: 14, color: "color-mix(in srgb, var(--ink) 60%, transparent)" }}>
             Cancel
           </motion.button>
           <motion.button whileTap={{ scale: 0.95 }} onClick={handleConfirm}
@@ -820,7 +820,7 @@ export function AddTransactionScreen() {
         {/* ── Type Toggle ── */}
         <div className="px-4 mb-4">
           <div className="relative flex p-1 rounded-2xl"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--divider)" }}>
+            style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1px solid var(--divider)" }}>
             <motion.div className="absolute top-1 bottom-1 rounded-xl"
               animate={{
                 left: txType === "expense" ? 4 : txType === "income" ? "calc(33.33% + 2px)" : "calc(66.66% + 0px)",
@@ -841,7 +841,7 @@ export function AddTransactionScreen() {
                 style={{
                   fontSize: 12,
                   fontWeight: 700,
-                  color: txType === t.id ? "#10171A" : "rgba(255,255,255,0.38)",
+                  color: txType === t.id ? "#10171A" : "color-mix(in srgb, var(--ink) 38%, transparent)",
                 }}>
                 <t.icon className="w-3.5 h-3.5" strokeWidth={1.75} />
                 {t.label}
@@ -853,7 +853,7 @@ export function AddTransactionScreen() {
         {/* ── Amount Card ── */}
         <div className="mx-4 mb-4 rounded-[18px] overflow-hidden relative"
           style={{
-            background: "linear-gradient(135deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.02) 100%)",
+            background: "linear-gradient(135deg,color-mix(in srgb, var(--ink) 6%, transparent) 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)",
             border: `1px solid ${errors.amount ? "#E2725B" : `${typeAccent}30`}`,
             boxShadow: `0 8px 32px ${typeAccent}12`,
           }}>
@@ -861,7 +861,7 @@ export function AddTransactionScreen() {
             style={{ background: `radial-gradient(circle,${typeAccent}20 0%,transparent 70%)` }} />
           <div className="p-6 relative z-10">
             <div className="flex items-center justify-between mb-1">
-              <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.38)", letterSpacing: "0.6px" }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "color-mix(in srgb, var(--ink) 38%, transparent)", letterSpacing: "0.6px" }}>
                 {txType === "income" ? "INCOME AMOUNT" : txType === "transfer" ? "TRANSFER AMOUNT" : "EXPENSE AMOUNT"}
               </p>
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowCalc(true)}
@@ -898,7 +898,7 @@ export function AddTransactionScreen() {
               {catId && (
                 <button onClick={resetCat}
                   className="flex items-center gap-1 px-2.5 py-1 rounded-xl"
-                  style={{ background: "var(--divider)", fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
+                  style={{ background: "var(--divider)", fontSize: 11, color: "color-mix(in srgb, var(--ink) 45%, transparent)" }}>
                   <X className="w-3 h-3" /> Clear
                 </button>
               )}
@@ -929,14 +929,14 @@ export function AddTransactionScreen() {
                       }}
                       className="flex flex-col items-center gap-1.5 py-3 rounded-2xl relative overflow-hidden transition-all"
                       style={{
-                        background: isSel ? `linear-gradient(135deg,${c.color}28,${c.color}10)` : "rgba(255,255,255,0.05)",
+                        background: isSel ? `linear-gradient(135deg,${c.color}28,${c.color}10)` : "color-mix(in srgb, var(--ink) 5%, transparent)",
                         border: isSel ? `1.5px solid ${c.color}55` : "1px solid var(--divider)",
                         boxShadow: isSel ? `0 4px 14px ${c.color}25` : "none",
                       }}>
-                      {c.icon ? <c.icon className="w-6 h-6 mb-1" style={{ color: isSel ? c.color : "rgba(255,255,255,0.7)" }} /> : <span style={{ fontSize: 18 }}>{c.emoji}</span>}
+                      {c.icon ? <c.icon className="w-6 h-6 mb-1" style={{ color: isSel ? c.color : "color-mix(in srgb, var(--ink) 70%, transparent)" }} /> : <span style={{ fontSize: 18 }}>{c.emoji}</span>}
                       <span style={{
                         fontSize: 9.5, fontWeight: 700, textAlign: "center", lineHeight: 1.2,
-                        color: isSel ? c.color : "rgba(255,255,255,0.45)"
+                        color: isSel ? c.color : "color-mix(in srgb, var(--ink) 45%, transparent)"
                       }}>
                         {c.name.replace(" &", "").replace(" and", "").replace("& ", "").slice(0, 10)}
                       </span>
@@ -960,7 +960,7 @@ export function AddTransactionScreen() {
                   className="px-4 mt-3 overflow-hidden">
                   <div className="flex items-center gap-2.5 px-4 py-3 rounded-2xl"
                     style={{
-                      background: selectedCat ? `${selectedCat.color}10` : "rgba(255,255,255,0.05)",
+                      background: selectedCat ? `${selectedCat.color}10` : "color-mix(in srgb, var(--ink) 5%, transparent)",
                       border: `1px solid ${selectedCat?.color ?? "#fff"}22`,
                     }}>
                       {selectedCat?.icon ? <selectedCat.icon className="w-6 h-6" style={{ color: selectedCat.color }} /> : <span style={{ fontSize: 18 }}>{selectedCat?.emoji}</span>}
@@ -968,11 +968,11 @@ export function AddTransactionScreen() {
                         <p className="text-ink font-semibold" style={{ fontSize: 13 }}>{selectedCat?.name}</p>
                         {subId ? (
                           <div className="flex items-center gap-1.5 mt-0.5">
-                            {selectedSub?.icon ? <selectedSub.icon className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.55)" }} /> : <span style={{ fontSize: 12 }}>{selectedSub?.emoji}</span>}
+                            {selectedSub?.icon ? <selectedSub.icon className="w-3.5 h-3.5" style={{ color: "color-mix(in srgb, var(--ink) 55%, transparent)" }} /> : <span style={{ fontSize: 12 }}>{selectedSub?.emoji}</span>}
                             <span className="text-ink/55" style={{ fontSize: 12 }}>{selectedSub?.name}</span>
                           </div>
                       ) : (
-                        <p style={{ fontSize: 11, color: errors.sub ? "#F87171" : "rgba(255,255,255,0.35)" }}>
+                        <p style={{ fontSize: 11, color: errors.sub ? "#F87171" : "color-mix(in srgb, var(--ink) 35%, transparent)" }}>
                           {errors.sub || "No subcategory selected"}
                         </p>
                       )}
@@ -1028,7 +1028,7 @@ export function AddTransactionScreen() {
             <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowToAcc(true)}
               className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left"
               style={{
-                background: selectedTo ? `${selectedTo.color}18` : "rgba(255,255,255,0.05)",
+                background: selectedTo ? `${selectedTo.color}18` : "color-mix(in srgb, var(--ink) 5%, transparent)",
                 border: errors.toAcc ? "1px solid #EF4444" : `1px solid ${selectedTo?.color ?? "var(--divider)"}35`,
               }}>
               {selectedTo ? (
@@ -1066,7 +1066,7 @@ export function AddTransactionScreen() {
           <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>DATE & TIME</p>
           <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowDate(true)}
             className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--divider)" }}>
+            style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1px solid var(--divider)" }}>
             <div className="flex gap-1.5">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center"
                 style={{ background: "rgba(212,162,76,0.18)" }}>
@@ -1090,7 +1090,7 @@ export function AddTransactionScreen() {
             placeholder="Add a note…" rows={2}
             className="w-full px-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none resize-none"
             style={{
-              background: "rgba(255,255,255,0.05)",
+              background: "color-mix(in srgb, var(--ink) 5%, transparent)",
               border: `1px solid ${note ? `${typeAccent}35` : "var(--divider)"}`,
               fontSize: 14, transition: "border-color 0.2s",
             }} />
@@ -1146,14 +1146,14 @@ export function AddTransactionScreen() {
         <div className="px-4 mb-6">
           <div className="px-4 py-3.5 rounded-2xl"
             style={{
-              background: recurring ? "rgba(212,162,76,0.10)" : "rgba(255,255,255,0.04)",
+              background: recurring ? "rgba(212,162,76,0.10)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
               border: recurring ? "1px solid rgba(212,162,76,0.3)" : "1px solid var(--divider)",
             }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center"
                   style={{ background: recurring ? "rgba(212,162,76,0.22)" : "var(--divider)" }}>
-                  <Repeat className="w-4 h-4" style={{ color: recurring ? "#D4A24C" : "rgba(255,255,255,0.35)" }} />
+                  <Repeat className="w-4 h-4" style={{ color: recurring ? "#D4A24C" : "color-mix(in srgb, var(--ink) 35%, transparent)" }} />
                 </div>
                 <div>
                   <p className="text-ink font-semibold" style={{ fontSize: 14 }}>Recurring Transaction</p>
@@ -1192,10 +1192,10 @@ export function AddTransactionScreen() {
                           onClick={() => setRecurFreq(f)}
                           className="py-2 rounded-xl capitalize"
                           style={{
-                            background: recurFreq === f ? "rgba(212,162,76,0.3)" : "rgba(255,255,255,0.06)",
+                            background: recurFreq === f ? "rgba(212,162,76,0.3)" : "color-mix(in srgb, var(--ink) 6%, transparent)",
                             border: recurFreq === f ? "1px solid rgba(212,162,76,0.5)" : "1px solid transparent",
                             fontSize: 10.5, fontWeight: 700,
-                            color: recurFreq === f ? "#D4A24C" : "rgba(255,255,255,0.38)",
+                            color: recurFreq === f ? "#D4A24C" : "color-mix(in srgb, var(--ink) 38%, transparent)",
                           }}>
                           {f === "half-yearly" ? "Half-Yearly" : f}
                         </motion.button>
@@ -1214,7 +1214,7 @@ export function AddTransactionScreen() {
                           onClick={() => setRecurEndType(type)}
                           className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl"
                           style={{
-                            background: recurEndType === type ? "rgba(212,162,76,0.18)" : "rgba(255,255,255,0.04)",
+                            background: recurEndType === type ? "rgba(212,162,76,0.18)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
                             border: recurEndType === type ? "1px solid rgba(212,162,76,0.4)" : "1px solid var(--divider)",
                           }}>
                           <div className="w-4 h-4 rounded-full flex items-center justify-center"
@@ -1224,7 +1224,7 @@ export function AddTransactionScreen() {
                             }}>
                             {recurEndType === type && <div className="w-2 h-2 rounded-full bg-white" />}
                           </div>
-                          <span className="flex-1 text-left" style={{ fontSize: 13, fontWeight: 600, color: recurEndType === type ? "#D4A24C" : "rgba(255,255,255,0.55)" }}>
+                          <span className="flex-1 text-left" style={{ fontSize: 13, fontWeight: 600, color: recurEndType === type ? "#D4A24C" : "color-mix(in srgb, var(--ink) 55%, transparent)" }}>
                             {type === "never" && "Never ends"}
                             {type === "date" && "End on specific date"}
                             {type === "count" && "End after X occurrences"}

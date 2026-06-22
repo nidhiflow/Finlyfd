@@ -314,7 +314,7 @@ export function SettingsScreen() {
             </div>
             <button onClick={() => setShowCurrencyModal(false)}
               className="w-full mt-4 py-3 rounded-xl text-ink/50 font-medium"
-              style={{ background: "rgba(255,255,255,0.05)" }}>
+              style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
               Cancel
             </button>
           </div>
@@ -342,7 +342,7 @@ export function SettingsScreen() {
             </div>
             <button onClick={() => setShowWeekModal(false)}
               className="w-full mt-4 py-3 rounded-xl text-ink/50 font-medium"
-              style={{ background: "rgba(255,255,255,0.05)" }}>
+              style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
               Cancel
             </button>
           </div>

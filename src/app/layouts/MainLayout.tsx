@@ -149,7 +149,7 @@ export function MainLayout() {
                   ) : notifications.map((n, i) => (
                     <motion.div key={i} whileTap={{ scale: 0.98 }}
                       className="flex items-start gap-3 p-4 rounded-2xl"
-                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--divider)" }}>
+                      style={{ background: "color-mix(in srgb, var(--ink) 4%, transparent)", border: "1px solid var(--divider)" }}>
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{ background: `${n.color}18` }}>
                         <Bell className="w-4 h-4" style={{ color: n.color }} />
@@ -198,7 +198,7 @@ export function MainLayout() {
                 <div className="px-5 pb-8">
                   <div className="flex flex-col items-center py-10">
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1.5px dashed var(--divider)" }}>
+                      style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1.5px dashed var(--divider)" }}>
                       <Bookmark className="w-6 h-6 text-ink/20" />
                     </div>
                     <p className="text-ink/40 font-semibold" style={{ fontSize: 14 }}>No bookmarks yet</p>

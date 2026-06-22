@@ -292,7 +292,7 @@ export function BudgetScreen() {
               <div className="flex gap-3">
                 <button onClick={() => setShowDelete(null)}
                   className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)" }}>
+                  style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)" }}>
                   Cancel
                 </button>
                 <button onClick={handleDelete}
@@ -393,12 +393,12 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
                 <button key={cat.id} onClick={() => setSelectedCat(cat.id)}
                   className="flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all"
                   style={{
-                    background: selectedCat === cat.id ? `${cat.color || '#D4A24C'}28` : "rgba(255,255,255,0.04)",
+                    background: selectedCat === cat.id ? `${cat.color || '#D4A24C'}28` : "color-mix(in srgb, var(--ink) 4%, transparent)",
                     border: selectedCat === cat.id ? `1.5px solid ${cat.color || '#D4A24C'}55` : "1px solid var(--divider)",
                   }}>
                   {cat.icon ? <cat.icon className="w-6 h-6 mb-1 text-ink/80" /> : <span style={{ fontSize: 20 }}>{cat.emoji || "📦"}</span>}
                   <span className="text-xs font-semibold truncate w-full text-center px-1"
-                    style={{ color: selectedCat === cat.id ? (cat.color || '#D4A24C') : "rgba(255,255,255,0.45)" }}>
+                    style={{ color: selectedCat === cat.id ? (cat.color || '#D4A24C') : "color-mix(in srgb, var(--ink) 45%, transparent)" }}>
                     {cat.name}
                   </span>
                 </button>
@@ -423,7 +423,7 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
                 inputMode="decimal"
                 className="w-full pl-10 pr-4 py-4 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
                 style={{
-                  background: "rgba(255,255,255,0.055)",
+                  background: "color-mix(in srgb, var(--ink) 6%, transparent)",
                   border: "1px solid var(--divider)",
                   fontSize: 22, fontWeight: 700,
                 }}
@@ -435,7 +435,7 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
           <div className="flex gap-3 pt-1">
             <button onClick={onClose}
               className="flex-1 py-4 rounded-2xl font-semibold text-ink/50"
-              style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }}>
+              style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}>
               Cancel
             </button>
             <button onClick={handleSave} disabled={saving}

@@ -168,8 +168,8 @@ function GoalFormModal({ goal, onSave, onClose }: {
                 <button key={t} onClick={() => setType(t)}
                   className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all capitalize"
                   style={{
-                    background: type === t ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.04)",
-                    color: type === t ? "#D4A24C" : "rgba(255,255,255,0.4)",
+                    background: type === t ? "rgba(212,162,76,0.15)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
+                    color: type === t ? "#D4A24C" : "color-mix(in srgb, var(--ink) 40%, transparent)",
                     border: type === t ? "1px solid rgba(212,162,76,0.3)" : "1px solid var(--divider)",
                   }}>
                   {t.replace("-", " ")}
@@ -186,8 +186,8 @@ function GoalFormModal({ goal, onSave, onClose }: {
                 <button key={m} onClick={() => setTrackingMode(m)}
                   className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all"
                   style={{
-                    background: trackingMode === m ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.04)",
-                    color: trackingMode === m ? "#D4A24C" : "rgba(255,255,255,0.4)",
+                    background: trackingMode === m ? "rgba(212,162,76,0.15)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
+                    color: trackingMode === m ? "#D4A24C" : "color-mix(in srgb, var(--ink) 40%, transparent)",
                     border: trackingMode === m ? "1px solid rgba(212,162,76,0.3)" : "1px solid var(--divider)",
                   }}>
                   {m}
@@ -335,7 +335,7 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
 
       {/* Header */}
       <div className="rounded-2xl p-5 mb-4 relative overflow-hidden"
-        style={{ background: `linear-gradient(135deg,${goal.color}15 0%,rgba(255,255,255,0.02) 100%)`, border: `1px solid ${goal.color}25` }}>
+        style={{ background: `linear-gradient(135deg,${goal.color}15 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)`, border: `1px solid ${goal.color}25` }}>
         <div className="flex items-center gap-3 mb-4">
           <div className="w-14 h-14 rounded-xl flex items-center justify-center"
             style={{ background: `${goal.color}18`, border: `1px solid ${goal.color}30` }}>
@@ -390,13 +390,13 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
       </div>
 
       {/* Milestones */}
-      <div className="rounded-2xl p-4 mb-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+      <div className="rounded-2xl p-4 mb-4" style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1px solid color-mix(in srgb, var(--ink) 6%, transparent)" }}>
         <h3 className="text-ink font-semibold text-sm mb-3">Milestones</h3>
         <div className="space-y-3">
           {milestones.map(m => (
             <div key={m.pct} className="flex items-center gap-3">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center ${m.reached ? "" : "border border-ink/10"}`}
-                style={{ background: m.reached ? goal.color : "rgba(255,255,255,0.04)" }}>
+                style={{ background: m.reached ? goal.color : "color-mix(in srgb, var(--ink) 4%, transparent)" }}>
                 {m.reached ? <Check className="w-3.5 h-3.5 text-ink" /> : <span className="text-[10px] text-ink/30">{m.label}</span>}
               </div>
               <div className="flex-1">
@@ -409,7 +409,7 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
       </div>
 
       {/* Contribution History */}
-      <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+      <div className="rounded-2xl p-4" style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1px solid color-mix(in srgb, var(--ink) 6%, transparent)" }}>
         <h3 className="text-ink font-semibold text-sm mb-3">Savings History</h3>
         {goal.contributions.length === 0 ? (
           <p className="text-ink/25 text-xs text-center py-4">No contributions yet</p>
@@ -439,7 +439,7 @@ function GoalCard({ goal, onClick }: { goal: Goal; onClick: () => void }) {
     <motion.div whileTap={{scale:0.98}} onClick={onClick}
       className="rounded-2xl p-4 cursor-pointer relative overflow-hidden"
       style={{
-        background: `linear-gradient(135deg,${goal.color}08 0%,rgba(255,255,255,0.02) 100%)`,
+        background: `linear-gradient(135deg,${goal.color}08 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)`,
         border: `1px solid ${goal.color}20`,
       }}>
       <div className="flex items-center gap-3 mb-3">
@@ -681,9 +681,9 @@ export function GoalsScreen() {
           <button key={t} onClick={() => setTab(t)}
             className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all capitalize"
             style={{
-              background: tab === t ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.04)",
-              color: tab === t ? "#D4A24C" : "rgba(255,255,255,0.35)",
-              border: tab === t ? "1px solid rgba(212,162,76,0.3)" : "1px solid rgba(255,255,255,0.06)",
+              background: tab === t ? "rgba(212,162,76,0.15)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
+              color: tab === t ? "#D4A24C" : "color-mix(in srgb, var(--ink) 35%, transparent)",
+              border: tab === t ? "1px solid rgba(212,162,76,0.3)" : "1px solid color-mix(in srgb, var(--ink) 6%, transparent)",
             }}>
             {t} ({t === "active" ? activeGoals.length : completedGoals.length})
           </button>
@@ -694,7 +694,7 @@ export function GoalsScreen() {
       {displayedGoals.length === 0 ? (
         <div className="flex flex-col items-center py-16">
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-3xl"
-            style={{ background: "rgba(255,255,255,0.03)", border: "1.5px dashed var(--divider)" }}>
+            style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1.5px dashed var(--divider)" }}>
             🎯
           </div>
           <p className="text-ink/40 font-semibold text-sm">
