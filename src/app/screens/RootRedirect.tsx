@@ -56,7 +56,7 @@ export function RootRedirect() {
       <div className="flex flex-col items-center gap-5">
         <div className="relative">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-2xl shadow-[#D4A24C]/40">
-            <span className="text-white font-black text-2xl">F</span>
+            <span className="text-ink font-black text-2xl">F</span>
           </div>
           <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-[#D4A24C]/30 to-[#D4A24C]/30 blur-lg -z-10 animate-pulse" />
         </div>

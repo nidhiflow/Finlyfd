@@ -222,15 +222,15 @@ export function RecurringTransactionsScreen() {
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
           <motion.button whileTap={{scale:0.88}} onClick={() => navigate(-1)}
             className="w-9 h-9 rounded-2xl flex items-center justify-center"
-            style={{background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.1)"}}>
-            <ArrowLeft className="w-5 h-5 text-white/70" />
+            style={{background:"var(--divider)", border:"1px solid var(--divider)"}}>
+            <ArrowLeft className="w-5 h-5 text-ink/70" />
           </motion.button>
-          <p className="text-white font-bold" style={{fontSize:17}}>Recurring Transactions</p>
+          <p className="text-ink font-bold" style={{fontSize:17}}>Recurring Transactions</p>
           <motion.button whileTap={{scale:0.88}} onClick={() => setShowFilters(v => !v)}
             className="w-9 h-9 rounded-2xl flex items-center justify-center"
             style={{
-              background: showFilters ? "rgba(212,162,76,0.22)" : "rgba(255,255,255,0.07)",
-              border: `1px solid ${showFilters ? "rgba(212,162,76,0.4)" : "rgba(255,255,255,0.1)"}`,
+              background: showFilters ? "rgba(212,162,76,0.22)" : "var(--divider)",
+              border: `1px solid ${showFilters ? "rgba(212,162,76,0.4)" : "var(--divider)"}`,
             }}>
             <Filter className="w-4.5 h-4.5" style={{color: showFilters ? "#D4A24C" : "rgba(255,255,255,0.55)"}} />
           </motion.button>
@@ -270,8 +270,8 @@ export function RecurringTransactionsScreen() {
               initial={{opacity:0, height:0}} animate={{opacity:1, height:"auto"}}
               exit={{opacity:0, height:0}} transition={{duration:0.2}}
               className="px-4 mb-4 overflow-hidden">
-              <div className="p-4 rounded-2xl" style={{background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.07)"}}>
-                <p className="text-white/45 mb-2" style={{fontSize:11, fontWeight:700}}>TYPE</p>
+              <div className="p-4 rounded-2xl" style={{background:"rgba(255,255,255,0.04)", border:"1px solid var(--divider)"}}>
+                <p className="text-ink/45 mb-2" style={{fontSize:11, fontWeight:700}}>TYPE</p>
                 <div className="grid grid-cols-4 gap-2 mb-3">
                   {(["all","expense","income","transfer"] as const).map(type => (
                     <motion.button key={type} whileTap={{scale:0.92}}
@@ -287,7 +287,7 @@ export function RecurringTransactionsScreen() {
                     </motion.button>
                   ))}
                 </div>
-                <p className="text-white/45 mb-2" style={{fontSize:11, fontWeight:700}}>STATUS</p>
+                <p className="text-ink/45 mb-2" style={{fontSize:11, fontWeight:700}}>STATUS</p>
                 <div className="grid grid-cols-4 gap-2">
                   {(["all","active","paused","completed"] as const).map(status => (
                     <motion.button key={status} whileTap={{scale:0.92}}
@@ -316,8 +316,8 @@ export function RecurringTransactionsScreen() {
                 style={{background:"rgba(212,162,76,0.1)", border:"1px solid rgba(212,162,76,0.2)"}}>
                 🔁
               </div>
-              <p className="text-white font-bold" style={{fontSize:16}}>No recurring transactions</p>
-              <p className="text-white/45 text-center" style={{fontSize:13}}>
+              <p className="text-ink font-bold" style={{fontSize:16}}>No recurring transactions</p>
+              <p className="text-ink/45 text-center" style={{fontSize:13}}>
                 Create your first recurring<br />transaction to automate your finances
               </p>
             </div>
@@ -348,19 +348,19 @@ export function RecurringTransactionsScreen() {
                           {(() => {
                             if (cat?.icon) {
                               const CatIcon = cat.icon;
-                              return <CatIcon className="w-6 h-6 text-white/80" style={{ color: cat.color }} />;
+                              return <CatIcon className="w-6 h-6 text-ink/80" style={{ color: cat.color }} />;
                             }
                             if (cat?.emoji) return <span className="text-xl">{cat.emoji}</span>;
                             
                             const FallbackIcon = rec.type === "income" ? HandCoins : rec.type === "transfer" ? ArrowRightLeft : Coins;
-                            return <FallbackIcon className="w-6 h-6 text-white/80" />;
+                            return <FallbackIcon className="w-6 h-6 text-ink/80" />;
                           })()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-white font-bold truncate" style={{fontSize:14}}>
+                          <p className="text-ink font-bold truncate" style={{fontSize:14}}>
                             {cat?.name || rec.note || "Transaction"}
                           </p>
-                          <p className="text-white/55" style={{fontSize:11}}>{rec.note}</p>
+                          <p className="text-ink/55" style={{fontSize:11}}>{rec.note}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
                           <p className="font-bold" style={{fontSize:16, color:typeColor}}>
@@ -378,21 +378,21 @@ export function RecurringTransactionsScreen() {
                       {/* Details */}
                       <div className="space-y-2 mb-3">
                         <div className="flex items-center gap-2">
-                          <Repeat className="w-3.5 h-3.5 text-white/35" />
-                          <span className="text-white/65" style={{fontSize:12}}>
+                          <Repeat className="w-3.5 h-3.5 text-ink/35" />
+                          <span className="text-ink/65" style={{fontSize:12}}>
                             {formatFrequency(rec.frequency)} • {getRepeatText(rec)}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-3.5 h-3.5 text-white/35" />
-                          <span className="text-white/65" style={{fontSize:12}}>
+                          <Calendar className="w-3.5 h-3.5 text-ink/35" />
+                          <span className="text-ink/65" style={{fontSize:12}}>
                             {getEndText(rec)}
                           </span>
                         </div>
                         {acc && (
                           <div className="flex items-center gap-2">
-                            <acc.icon className="w-3.5 h-3.5 text-white/65" />
-                            <span className="text-white/65" style={{fontSize:12}}>
+                            <acc.icon className="w-3.5 h-3.5 text-ink/65" />
+                            <span className="text-ink/65" style={{fontSize:12}}>
                               From {acc.name}
                             </span>
                           </div>

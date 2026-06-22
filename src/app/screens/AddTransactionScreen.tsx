@@ -112,13 +112,13 @@ function CalcModal({ value, onChange, onClose }: {
         style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none" }}>
 
         <div className="flex justify-center mb-3">
-          <div className="w-9 h-1 rounded-full bg-white/15" />
+          <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>
 
         {/* Display */}
         <div className="text-right mb-4 px-2">
-          <p className="text-white/35" style={{ fontSize: 12 }}>Amount</p>
-          <p className="text-white font-bold truncate" style={{ fontSize: 34, letterSpacing: "-1px" }}>
+          <p className="text-ink/35" style={{ fontSize: 12 }}>Amount</p>
+          <p className="text-ink font-bold truncate" style={{ fontSize: 34, letterSpacing: "-1px" }}>
             {expression.length > 14 ? "..." + expression.slice(-14) : expression}
           </p>
           {preview && (
@@ -139,7 +139,7 @@ function CalcModal({ value, onChange, onClose }: {
                     : k === "C" ? "rgba(239,68,68,0.15)"
                       : k === "⌫" ? "rgba(255,183,3,0.12)"
                         : isOp(k) || k === "=" ? "rgba(212,162,76,0.15)"
-                          : "rgba(255,255,255,0.07)",
+                          : "var(--divider)",
                   color: k === "✓" ? "white" : k === "C" ? "#F87171" : k === "⌫" ? "#FFB703"
                     : isOp(k) || k === "=" ? "#D4A24C" : "white",
                   boxShadow: k === "✓" ? "0 4px 16px rgba(212,162,76,0.4)" : "none",
@@ -191,7 +191,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
         style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "80vh", overflowY: "auto" }}>
 
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-9 h-1 rounded-full bg-white/15" />
+          <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>
 
         <div className="px-5 pb-8">
@@ -203,14 +203,14 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
                 {cat.icon ? <cat.icon className="w-5 h-5" style={{ color: cat.color }} /> : <span className="text-xl">{cat.emoji}</span>}
               </div>
               <div>
-                <p className="text-white font-bold" style={{ fontSize: 17 }}>{cat.name}</p>
-                <p className="text-white/38" style={{ fontSize: 12 }}>Select subcategory</p>
+                <p className="text-ink font-bold" style={{ fontSize: 17 }}>{cat.name}</p>
+                <p className="text-ink/38" style={{ fontSize: 12 }}>Select subcategory</p>
               </div>
             </div>
             <button onClick={onClose}
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.07)" }}>
-              <X className="w-4 h-4 text-white/50" />
+              style={{ background: "var(--divider)" }}>
+              <X className="w-4 h-4 text-ink/50" />
             </button>
           </div>
 
@@ -224,7 +224,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
                   className="flex items-center gap-3 px-4 py-3 rounded-2xl cursor-pointer"
                   style={{
                     background: isSel ? `${cat.color}1A` : "rgba(255,255,255,0.04)",
-                    border: isSel ? `1.5px solid ${cat.color}50` : "1px solid rgba(255,255,255,0.07)",
+                    border: isSel ? `1.5px solid ${cat.color}50` : "1px solid var(--divider)",
                     boxShadow: isSel ? `0 4px 16px ${cat.color}18` : "none",
                   }}
                   onClick={() => onSelect(sub)}>
@@ -239,7 +239,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
                   {isSel && (
                     <div className="w-6 h-6 rounded-full flex items-center justify-center"
                       style={{ background: `linear-gradient(135deg,${cat.color},${cat.color}cc)` }}>
-                      <Check className="w-3.5 h-3.5 text-white" />
+                      <Check className="w-3.5 h-3.5 text-ink" />
                     </div>
                   )}
                   {!isSel && (
@@ -260,29 +260,29 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
             {adding ? (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22 }}
-                className="mt-3 p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                className="mt-3 p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--divider)" }}>
                 <div className="flex gap-2 mb-2">
                   <input value={newEmoji} onChange={e => setNewEmoji(e.target.value.slice(-2))}
-                    className="w-12 text-center rounded-xl text-xl bg-white/7 focus:outline-none" style={{ fontSize: 20 }} />
+                    className="w-12 text-center rounded-xl text-xl bg-ink/7 focus:outline-none" style={{ fontSize: 20 }} />
                   <input value={newName} onChange={e => setNewName(e.target.value)}
                     placeholder="Subcategory name…" autoFocus
                     onKeyDown={e => e.key === "Enter" && addSub()}
-                    className="flex-1 px-3 py-2 rounded-xl text-white placeholder:text-white/22 focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.07)", border: `1px solid ${cat.color}30`, fontSize: 14 }} />
+                    className="flex-1 px-3 py-2 rounded-xl text-ink placeholder:text-ink/22 focus:outline-none"
+                    style={{ background: "var(--divider)", border: `1px solid ${cat.color}30`, fontSize: 14 }} />
                 </div>
                 <div className="flex gap-2">
                   <button onClick={() => setAdding(false)}
-                    className="flex-1 py-2 rounded-xl text-white/40 text-sm"
+                    className="flex-1 py-2 rounded-xl text-ink/40 text-sm"
                     style={{ background: "rgba(255,255,255,0.05)" }}>Cancel</button>
                   <motion.button whileTap={{ scale: 0.96 }} onClick={addSub}
-                    className="flex-1 py-2 rounded-xl text-white font-semibold text-sm"
+                    className="flex-1 py-2 rounded-xl text-ink font-semibold text-sm"
                     style={{ background: `linear-gradient(135deg,${cat.color},${cat.color}bb)` }}>Add</motion.button>
                 </div>
               </motion.div>
             ) : (
               <motion.button whileTap={{ scale: 0.97 }} onClick={() => setAdding(true)}
                 className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-2xl"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.15)", color: cat.color, fontSize: 13, fontWeight: 600 }}>
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed var(--divider)", color: cat.color, fontSize: 13, fontWeight: 600 }}>
                 <Plus className="w-4 h-4" />
                 Add Subcategory
               </motion.button>
@@ -312,16 +312,16 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
         className="w-full max-w-md mx-auto rounded-t-[18px] p-5"
         style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none" }}>
         <div className="flex justify-center mb-4">
-          <div className="w-9 h-1 rounded-full bg-white/15" />
+          <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>
-        <p className="text-white font-bold mb-4" style={{ fontSize: 17 }}>Select Account</p>
+        <p className="text-ink font-bold mb-4" style={{ fontSize: 17 }}>Select Account</p>
         <div className="space-y-2.5 pb-2">
           {list.length === 0 && (
             <div className="text-center py-6">
-              <p className="text-white/40 text-sm mb-3">No accounts added yet</p>
+              <p className="text-ink/40 text-sm mb-3">No accounts added yet</p>
               <motion.button whileTap={{ scale: 0.97 }}
                 onClick={() => { onClose(); window.location.href = '/dashboard/accounts'; }}
-                className="mx-auto flex items-center gap-2 px-5 py-3 rounded-2xl text-white font-semibold text-sm"
+                className="mx-auto flex items-center gap-2 px-5 py-3 rounded-2xl text-ink font-semibold text-sm"
                 style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(212,162,76,0.4)" }}>
                 <Plus className="w-4 h-4" />
                 Add Bank / Account
@@ -335,7 +335,7 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
                 className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left"
                 style={{
                   background: isSel ? `${acc.color}18` : "rgba(255,255,255,0.04)",
-                  border: isSel ? `1.5px solid ${acc.color}45` : "1px solid rgba(255,255,255,0.07)",
+                  border: isSel ? `1.5px solid ${acc.color}45` : "1px solid var(--divider)",
                 }}>
                 <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
                   style={{ background: `${acc.color}22`, border: `1px solid ${acc.color}35` }}>
@@ -345,8 +345,8 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
                   })()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold" style={{ fontSize: 14 }}>{acc.name}</p>
-                  <p className="text-white/38" style={{ fontSize: 11 }}>{acc.type}</p>
+                  <p className="text-ink font-semibold" style={{ fontSize: 14 }}>{acc.name}</p>
+                  <p className="text-ink/38" style={{ fontSize: 11 }}>{acc.type}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold tabular-nums" style={{ fontSize: 14, color: acc.balance < 0 ? "var(--ink-faint)" : "var(--ink)" }}>
@@ -414,34 +414,34 @@ function DatePickerModal({ date, onSelect, onClose }: {
         className="w-full max-w-md mx-auto rounded-t-[18px] p-5"
         style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none" }}>
         <div className="flex justify-center mb-3">
-          <div className="w-9 h-1 rounded-full bg-white/15" />
+          <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>
 
-        <p className="text-white font-bold mb-2 text-center" style={{ fontSize: 17 }}>Select Date & Time</p>
+        <p className="text-ink font-bold mb-2 text-center" style={{ fontSize: 17 }}>Select Date & Time</p>
 
         {/* Selected preview */}
         <div className="mb-4 py-2.5 px-4 rounded-xl text-center"
           style={{ background: "rgba(212,162,76,0.12)", border: "1px solid rgba(212,162,76,0.25)" }}>
-          <p className="text-white font-semibold" style={{ fontSize: 14 }}>{previewStr}</p>
+          <p className="text-ink font-semibold" style={{ fontSize: 14 }}>{previewStr}</p>
         </div>
 
         {/* Month nav */}
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => setView(v => new Date(v.getFullYear(), v.getMonth() - 1, 1))}
-            className="w-8 h-8 rounded-xl flex items-center justify-center bg-white/7 active:scale-90 transition-transform">
-            <ChevronLeft className="w-4 h-4 text-white/55" />
+            className="w-8 h-8 rounded-xl flex items-center justify-center bg-ink/7 active:scale-90 transition-transform">
+            <ChevronLeft className="w-4 h-4 text-ink/55" />
           </button>
-          <p className="text-white font-bold" style={{ fontSize: 16 }}>
+          <p className="text-ink font-bold" style={{ fontSize: 16 }}>
             {MONTHS_SHORT[view.getMonth()]} {view.getFullYear()}
           </p>
           <button onClick={() => setView(v => new Date(v.getFullYear(), v.getMonth() + 1, 1))}
-            className="w-8 h-8 rounded-xl flex items-center justify-center bg-white/7 active:scale-90 transition-transform">
-            <ChevronRight className="w-4 h-4 text-white/55" />
+            className="w-8 h-8 rounded-xl flex items-center justify-center bg-ink/7 active:scale-90 transition-transform">
+            <ChevronRight className="w-4 h-4 text-ink/55" />
           </button>
         </div>
         <div className="grid grid-cols-7 mb-2">
           {DAYS.map(d => (
-            <p key={d} className="text-center text-white/30 font-semibold" style={{ fontSize: 11 }}>{d}</p>
+            <p key={d} className="text-center text-ink/30 font-semibold" style={{ fontSize: 11 }}>{d}</p>
           ))}
         </div>
         <div className="grid grid-cols-7 gap-y-1 mb-4">
@@ -471,26 +471,26 @@ function DatePickerModal({ date, onSelect, onClose }: {
 
         {/* Time selector with stepper buttons */}
         <div className="mb-4">
-          <p className="text-white/38 mb-2" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.5px" }}>TIME</p>
+          <p className="text-ink/38 mb-2" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.5px" }}>TIME</p>
           <div className="flex items-center gap-2">
             <div className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl"
-              style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <button onClick={() => setHours(h => h > 0 ? h - 1 : 23)} className="w-7 h-7 rounded-lg bg-white/8 flex items-center justify-center active:scale-90 transition-transform">
-                <ChevronLeft className="w-3.5 h-3.5 text-white/50" />
+              style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+              <button onClick={() => setHours(h => h > 0 ? h - 1 : 23)} className="w-7 h-7 rounded-lg bg-ink/8 flex items-center justify-center active:scale-90 transition-transform">
+                <ChevronLeft className="w-3.5 h-3.5 text-ink/50" />
               </button>
-              <span className="w-8 text-center text-white font-bold" style={{ fontSize: 18 }}>{hours < 10 ? `0${hours}` : hours}</span>
-              <button onClick={() => setHours(h => h < 23 ? h + 1 : 0)} className="w-7 h-7 rounded-lg bg-white/8 flex items-center justify-center active:scale-90 transition-transform">
-                <ChevronRight className="w-3.5 h-3.5 text-white/50" />
+              <span className="w-8 text-center text-ink font-bold" style={{ fontSize: 18 }}>{hours < 10 ? `0${hours}` : hours}</span>
+              <button onClick={() => setHours(h => h < 23 ? h + 1 : 0)} className="w-7 h-7 rounded-lg bg-ink/8 flex items-center justify-center active:scale-90 transition-transform">
+                <ChevronRight className="w-3.5 h-3.5 text-ink/50" />
               </button>
-              <span className="text-white/30 mx-0.5" style={{ fontSize: 18 }}>:</span>
-              <button onClick={() => setMinutes(m => m > 0 ? m - 1 : 59)} className="w-7 h-7 rounded-lg bg-white/8 flex items-center justify-center active:scale-90 transition-transform">
-                <ChevronLeft className="w-3.5 h-3.5 text-white/50" />
+              <span className="text-ink/30 mx-0.5" style={{ fontSize: 18 }}>:</span>
+              <button onClick={() => setMinutes(m => m > 0 ? m - 1 : 59)} className="w-7 h-7 rounded-lg bg-ink/8 flex items-center justify-center active:scale-90 transition-transform">
+                <ChevronLeft className="w-3.5 h-3.5 text-ink/50" />
               </button>
-              <span className="w-8 text-center text-white font-bold" style={{ fontSize: 18 }}>{minutes < 10 ? `0${minutes}` : minutes}</span>
-              <button onClick={() => setMinutes(m => m < 59 ? m + 1 : 0)} className="w-7 h-7 rounded-lg bg-white/8 flex items-center justify-center active:scale-90 transition-transform">
-                <ChevronRight className="w-3.5 h-3.5 text-white/50" />
+              <span className="w-8 text-center text-ink font-bold" style={{ fontSize: 18 }}>{minutes < 10 ? `0${minutes}` : minutes}</span>
+              <button onClick={() => setMinutes(m => m < 59 ? m + 1 : 0)} className="w-7 h-7 rounded-lg bg-ink/8 flex items-center justify-center active:scale-90 transition-transform">
+                <ChevronRight className="w-3.5 h-3.5 text-ink/50" />
               </button>
-              <span className="text-white/50 ml-1 font-semibold" style={{ fontSize: 12 }}>{ampm}</span>
+              <span className="text-ink/50 ml-1 font-semibold" style={{ fontSize: 12 }}>{ampm}</span>
             </div>
             <button
               onClick={() => { const now = new Date(); setHours(now.getHours()); setMinutes(now.getMinutes()); }}
@@ -506,7 +506,7 @@ function DatePickerModal({ date, onSelect, onClose }: {
           {["Today", "Yesterday", "This Week"].map(s => (
             <button key={s} onClick={() => handleQuickSelect(s)}
               className="flex-1 py-2.5 rounded-xl text-center active:scale-95 transition-transform"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.09)", fontSize: 12, color: "rgba(255,255,255,0.65)", fontWeight: 600 }}>
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)", fontSize: 12, color: "rgba(255,255,255,0.65)", fontWeight: 600 }}>
               {s}
             </button>
           ))}
@@ -516,12 +516,12 @@ function DatePickerModal({ date, onSelect, onClose }: {
         <div className="flex gap-3">
           <motion.button whileTap={{ scale: 0.95 }} onClick={onClose}
             className="flex-1 py-3.5 rounded-2xl text-center font-semibold"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", fontSize: 14, color: "rgba(255,255,255,0.6)" }}>
+            style={{ background: "var(--divider)", border: "1px solid var(--divider)", fontSize: 14, color: "rgba(255,255,255,0.6)" }}>
             Cancel
           </motion.button>
           <motion.button whileTap={{ scale: 0.95 }} onClick={handleConfirm}
             className="flex-1 py-3.5 rounded-2xl text-center font-bold"
-            style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(212,162,76,0.4)", fontSize: 14, color: "white" }}>
+            style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(212,162,76,0.4)", fontSize: 14, color: "var(--ink)" }}>
             Save
           </motion.button>
         </div>
@@ -819,15 +819,15 @@ export function AddTransactionScreen() {
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
           <motion.button whileTap={{ scale: 0.88 }} onClick={() => navigate(-1)}
             className="w-9 h-9 rounded-2xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-            <ArrowLeft className="w-5 h-5 text-white/70" />
+            style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+            <ArrowLeft className="w-5 h-5 text-ink/70" />
           </motion.button>
-          <p className="text-white font-bold" style={{ fontSize: 17 }}>{id ? "Edit Transaction" : "Add Transaction"}</p>
+          <p className="text-ink font-bold" style={{ fontSize: 17 }}>{id ? "Edit Transaction" : "Add Transaction"}</p>
           <div className="flex gap-2">
             <motion.button whileTap={{ scale: 0.88 }}
               className="w-9 h-9 rounded-2xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <Bell className="w-4.5 h-4.5 text-white/55" />
+              style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+              <Bell className="w-4.5 h-4.5 text-ink/55" />
             </motion.button>
           </div>
         </div>
@@ -835,7 +835,7 @@ export function AddTransactionScreen() {
         {/* ── Type Toggle ── */}
         <div className="px-4 mb-4">
           <div className="relative flex p-1 rounded-2xl"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--divider)" }}>
             <motion.div className="absolute top-1 bottom-1 rounded-xl"
               animate={{
                 left: txType === "expense" ? 4 : txType === "income" ? "calc(33.33% + 2px)" : "calc(66.66% + 0px)",
@@ -895,7 +895,7 @@ export function AddTransactionScreen() {
                   if ((v.match(/\./g) || []).length <= 1) setAmount(v);
                 }}
                 placeholder="0"
-                className="flex-1 bg-transparent font-bold text-white focus:outline-none placeholder:text-white/18 tabular-nums"
+                className="flex-1 bg-transparent font-bold text-ink focus:outline-none placeholder:text-ink/18 tabular-nums"
                 style={{ fontSize: 44, letterSpacing: "-1px" }}
               />
             </div>
@@ -909,11 +909,11 @@ export function AddTransactionScreen() {
         {txType !== "transfer" && (
           <div className="mb-4">
             <div className="px-4 mb-2.5 flex items-center justify-between">
-              <p className="text-white/38 font-semibold" style={{ fontSize: 11, letterSpacing: "0.5px" }}>CATEGORY</p>
+              <p className="text-ink/38 font-semibold" style={{ fontSize: 11, letterSpacing: "0.5px" }}>CATEGORY</p>
               {catId && (
                 <button onClick={resetCat}
                   className="flex items-center gap-1 px-2.5 py-1 rounded-xl"
-                  style={{ background: "rgba(255,255,255,0.07)", fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
+                  style={{ background: "var(--divider)", fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
                   <X className="w-3 h-3" /> Clear
                 </button>
               )}
@@ -941,7 +941,7 @@ export function AddTransactionScreen() {
                         className="flex items-center gap-2 px-3 py-2 rounded-2xl flex-shrink-0 transition-all"
                         style={{
                           background: catId === c.id ? `${c.color}22` : "rgba(255,255,255,0.06)",
-                          border: catId === c.id ? `1.5px solid ${c.color}45` : "1px solid rgba(255,255,255,0.09)",
+                          border: catId === c.id ? `1.5px solid ${c.color}45` : "1px solid var(--divider)",
                         }}>
                         {c.icon ? <c.icon className="w-4 h-4" style={{ color: catId === c.id ? c.color : "rgba(255,255,255,0.55)" }} /> : <span style={{ fontSize: 14 }}>{c.emoji}</span>}
                         <span style={{ fontSize: 12, fontWeight: 600, color: catId === c.id ? c.color : "rgba(255,255,255,0.55)" }}>
@@ -978,7 +978,7 @@ export function AddTransactionScreen() {
                       className="flex flex-col items-center gap-1.5 py-3 rounded-2xl relative overflow-hidden transition-all"
                       style={{
                         background: isSel ? `linear-gradient(135deg,${c.color}28,${c.color}10)` : "rgba(255,255,255,0.05)",
-                        border: isSel ? `1.5px solid ${c.color}55` : "1px solid rgba(255,255,255,0.07)",
+                        border: isSel ? `1.5px solid ${c.color}55` : "1px solid var(--divider)",
                         boxShadow: isSel ? `0 4px 14px ${c.color}25` : "none",
                       }}>
                       {c.icon ? <c.icon className="w-6 h-6 mb-1" style={{ color: isSel ? c.color : "rgba(255,255,255,0.7)" }} /> : <span style={{ fontSize: 18 }}>{c.emoji}</span>}
@@ -991,7 +991,7 @@ export function AddTransactionScreen() {
                       {isSel && (
                         <div className="absolute top-1 right-1 w-3 h-3 rounded-full flex items-center justify-center"
                           style={{ background: c.color }}>
-                          <Check className="w-2 h-2 text-white" strokeWidth={3} />
+                          <Check className="w-2 h-2 text-ink" strokeWidth={3} />
                         </div>
                       )}
                     </motion.button>
@@ -1013,11 +1013,11 @@ export function AddTransactionScreen() {
                     }}>
                       {selectedCat?.icon ? <selectedCat.icon className="w-6 h-6" style={{ color: selectedCat.color }} /> : <span style={{ fontSize: 18 }}>{selectedCat?.emoji}</span>}
                       <div className="flex-1">
-                        <p className="text-white font-semibold" style={{ fontSize: 13 }}>{selectedCat?.name}</p>
+                        <p className="text-ink font-semibold" style={{ fontSize: 13 }}>{selectedCat?.name}</p>
                         {subId ? (
                           <div className="flex items-center gap-1.5 mt-0.5">
                             {selectedSub?.icon ? <selectedSub.icon className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.55)" }} /> : <span style={{ fontSize: 12 }}>{selectedSub?.emoji}</span>}
-                            <span className="text-white/55" style={{ fontSize: 12 }}>{selectedSub?.name}</span>
+                            <span className="text-ink/55" style={{ fontSize: 12 }}>{selectedSub?.name}</span>
                           </div>
                       ) : (
                         <p style={{ fontSize: 11, color: errors.sub ? "#F87171" : "rgba(255,255,255,0.35)" }}>
@@ -1040,7 +1040,7 @@ export function AddTransactionScreen() {
 
         {/* ── Account Section ── */}
         <div className="px-4 mb-4">
-          <p className="text-white/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
+          <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
             {txType === "transfer" ? "FROM ACCOUNT" : "ACCOUNT"}
           </p>
           <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowAccSheet(true)}
@@ -1057,14 +1057,14 @@ export function AddTransactionScreen() {
               })()}
             </div>
             <div className="flex-1">
-              <p className="text-white font-semibold" style={{ fontSize: 14 }}>{selectedAcc.name}</p>
-              <p className="text-white/38" style={{ fontSize: 11 }}>{selectedAcc.type}</p>
+              <p className="text-ink font-semibold" style={{ fontSize: 14 }}>{selectedAcc.name}</p>
+              <p className="text-ink/38" style={{ fontSize: 11 }}>{selectedAcc.type}</p>
             </div>
             <div className="text-right">
               <p className="font-bold tabular-nums" style={{ fontSize: 14, color: selectedAcc.balance < 0 ? "var(--ink-faint)" : "var(--ink)" }}>
                 ₹{Math.abs(selectedAcc.balance).toLocaleString("en-IN")}
               </p>
-              <ChevronDown className="w-4 h-4 text-white/30 ml-auto mt-0.5" strokeWidth={1.75} />
+              <ChevronDown className="w-4 h-4 text-ink/30 ml-auto mt-0.5" strokeWidth={1.75} />
             </div>
           </motion.button>
         </div>
@@ -1072,12 +1072,12 @@ export function AddTransactionScreen() {
         {/* ── Transfer To Account ── */}
         {txType === "transfer" && (
           <div className="px-4 mb-4">
-            <p className="text-white/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>TO ACCOUNT</p>
+            <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>TO ACCOUNT</p>
             <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowToAcc(true)}
               className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left"
               style={{
                 background: selectedTo ? `${selectedTo.color}18` : "rgba(255,255,255,0.05)",
-                border: errors.toAcc ? "1px solid #EF4444" : `1px solid ${selectedTo?.color ?? "rgba(255,255,255,0.09)"}35`,
+                border: errors.toAcc ? "1px solid #EF4444" : `1px solid ${selectedTo?.color ?? "var(--divider)"}35`,
               }}>
               {selectedTo ? (
                 <>
@@ -1089,19 +1089,19 @@ export function AddTransactionScreen() {
                     })()}
                   </div>
                   <div className="flex-1">
-                    <p className="text-white font-semibold" style={{ fontSize: 14 }}>{selectedTo.name}</p>
-                    <p className="text-white/38" style={{ fontSize: 11 }}>{selectedTo.type}</p>
+                    <p className="text-ink font-semibold" style={{ fontSize: 14 }}>{selectedTo.name}</p>
+                    <p className="text-ink/38" style={{ fontSize: 11 }}>{selectedTo.type}</p>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-white/30" />
+                  <ChevronDown className="w-4 h-4 text-ink/30" />
                 </>
               ) : (
                 <>
                   <div className="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center"
-                    style={{ background: "rgba(255,255,255,0.07)" }}>
-                    <Plus className="w-5 h-5 text-white/30" />
+                    style={{ background: "var(--divider)" }}>
+                    <Plus className="w-5 h-5 text-ink/30" />
                   </div>
-                  <p className="text-white/35 flex-1" style={{ fontSize: 14 }}>Select destination account</p>
-                  <ChevronDown className="w-4 h-4 text-white/30" />
+                  <p className="text-ink/35 flex-1" style={{ fontSize: 14 }}>Select destination account</p>
+                  <ChevronDown className="w-4 h-4 text-ink/30" />
                 </>
               )}
             </motion.button>
@@ -1111,10 +1111,10 @@ export function AddTransactionScreen() {
 
         {/* ── Date & Time ── */}
         <div className="px-4 mb-4">
-          <p className="text-white/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>DATE & TIME</p>
+          <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>DATE & TIME</p>
           <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowDate(true)}
             className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)" }}>
+            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--divider)" }}>
             <div className="flex gap-1.5">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center"
                 style={{ background: "rgba(212,162,76,0.18)" }}>
@@ -1125,28 +1125,28 @@ export function AddTransactionScreen() {
                 <Clock className="w-4 h-4 text-[#D4A24C]" />
               </div>
             </div>
-            <span className="flex-1 text-left text-white font-semibold" style={{ fontSize: 14 }}>{fmtDate(date)}</span>
-            <ChevronDown className="w-4 h-4 text-white/30" />
+            <span className="flex-1 text-left text-ink font-semibold" style={{ fontSize: 14 }}>{fmtDate(date)}</span>
+            <ChevronDown className="w-4 h-4 text-ink/30" />
           </motion.button>
         </div>
 
         {/* ── Note ── */}
         <div className="px-4 mb-4">
-          <p className="text-white/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>NOTE</p>
+          <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>NOTE</p>
           <textarea
             value={note} onChange={e => setNote(e.target.value)}
             placeholder="Add a note…" rows={2}
-            className="w-full px-4 py-3.5 rounded-2xl text-white placeholder:text-white/22 focus:outline-none resize-none"
+            className="w-full px-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none resize-none"
             style={{
               background: "rgba(255,255,255,0.05)",
-              border: `1px solid ${note ? `${typeAccent}35` : "rgba(255,255,255,0.09)"}`,
+              border: `1px solid ${note ? `${typeAccent}35` : "var(--divider)"}`,
               fontSize: 14, transition: "border-color 0.2s",
             }} />
         </div>
 
         {/* ── Attachments ── */}
         <div className="px-4 mb-4">
-          <p className="text-white/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>ATTACHMENTS</p>
+          <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>ATTACHMENTS</p>
           <div className="grid grid-cols-2 gap-2.5">
             {[
               { icon: <Camera className="w-5 h-5" />, label: "Camera", bg: "rgba(212,162,76,0.12)" },
@@ -1154,9 +1154,9 @@ export function AddTransactionScreen() {
             ].map(b => (
               <motion.button key={b.label} whileTap={{ scale: 0.96 }}
                 className="flex items-center justify-center gap-2.5 py-3.5 rounded-2xl"
-                style={{ background: b.bg, border: "1px solid rgba(255,255,255,0.09)" }}>
-                <span className="text-white/55">{b.icon}</span>
-                <span className="text-white/55 font-semibold" style={{ fontSize: 13 }}>{b.label}</span>
+                style={{ background: b.bg, border: "1px solid var(--divider)" }}>
+                <span className="text-ink/55">{b.icon}</span>
+                <span className="text-ink/55 font-semibold" style={{ fontSize: 13 }}>{b.label}</span>
               </motion.button>
             ))}
           </div>
@@ -1178,14 +1178,14 @@ export function AddTransactionScreen() {
               <>
                 <motion.div
                   animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white" />
-                <span className="text-white font-bold" style={{ fontSize: 14 }}>Scanning Receipt…</span>
+                  className="w-5 h-5 rounded-full border-2 border-ink/30 border-t-white" />
+                <span className="text-ink font-bold" style={{ fontSize: 14 }}>Scanning Receipt…</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-5 h-5 text-white" />
-                <span className="text-white font-bold" style={{ fontSize: 14 }}>Scan Receipt with AI</span>
-                <ScanLine className="w-4 h-4 text-white/70" />
+                <Sparkles className="w-5 h-5 text-ink" />
+                <span className="text-ink font-bold" style={{ fontSize: 14 }}>Scan Receipt with AI</span>
+                <ScanLine className="w-4 h-4 text-ink/70" />
               </>
             )}
           </motion.button>
@@ -1196,17 +1196,17 @@ export function AddTransactionScreen() {
           <div className="px-4 py-3.5 rounded-2xl"
             style={{
               background: recurring ? "rgba(212,162,76,0.10)" : "rgba(255,255,255,0.04)",
-              border: recurring ? "1px solid rgba(212,162,76,0.3)" : "1px solid rgba(255,255,255,0.07)",
+              border: recurring ? "1px solid rgba(212,162,76,0.3)" : "1px solid var(--divider)",
             }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                  style={{ background: recurring ? "rgba(212,162,76,0.22)" : "rgba(255,255,255,0.07)" }}>
+                  style={{ background: recurring ? "rgba(212,162,76,0.22)" : "var(--divider)" }}>
                   <Repeat className="w-4 h-4" style={{ color: recurring ? "#D4A24C" : "rgba(255,255,255,0.35)" }} />
                 </div>
                 <div>
-                  <p className="text-white font-semibold" style={{ fontSize: 14 }}>Recurring Transaction</p>
-                  <p className="text-white/35" style={{ fontSize: 11 }}>
+                  <p className="text-ink font-semibold" style={{ fontSize: 14 }}>Recurring Transaction</p>
+                  <p className="text-ink/35" style={{ fontSize: 11 }}>
                     {recurring ? `Repeat ${recurFreq}` : "Automate this transaction"}
                   </p>
                 </div>
@@ -1214,7 +1214,7 @@ export function AddTransactionScreen() {
               <motion.button whileTap={{ scale: 0.9 }}
                 onClick={() => setRecurring(v => !v)}
                 className="w-12 h-6 rounded-full relative flex-shrink-0"
-                style={{ background: recurring ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "rgba(255,255,255,0.12)" }}>
+                style={{ background: recurring ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "var(--divider)" }}>
                 <motion.div
                   animate={{ x: recurring ? 24 : 2 }}
                   transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
@@ -1231,8 +1231,8 @@ export function AddTransactionScreen() {
                   className="overflow-hidden">
 
                   {/* Frequency Selector */}
-                  <div className="mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-                    <p className="text-white/45 mb-2 flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 600 }}>
+                  <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--divider)" }}>
+                    <p className="text-ink/45 mb-2 flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 600 }}>
                       <CalendarClock className="w-3 h-3" strokeWidth={1.75} /> FREQUENCY
                     </p>
                     <div className="grid grid-cols-3 gap-2">
@@ -1254,7 +1254,7 @@ export function AddTransactionScreen() {
 
                   {/* End Condition */}
                   <div className="mt-3">
-                    <p className="text-white/45 mb-2 flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 600 }}>
+                    <p className="text-ink/45 mb-2 flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 600 }}>
                       <Hourglass className="w-3 h-3" strokeWidth={1.75} /> END CONDITION
                     </p>
                     <div className="space-y-2">
@@ -1264,12 +1264,12 @@ export function AddTransactionScreen() {
                           className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl"
                           style={{
                             background: recurEndType === type ? "rgba(212,162,76,0.18)" : "rgba(255,255,255,0.04)",
-                            border: recurEndType === type ? "1px solid rgba(212,162,76,0.4)" : "1px solid rgba(255,255,255,0.07)",
+                            border: recurEndType === type ? "1px solid rgba(212,162,76,0.4)" : "1px solid var(--divider)",
                           }}>
                           <div className="w-4 h-4 rounded-full flex items-center justify-center"
                             style={{
-                              background: recurEndType === type ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "rgba(255,255,255,0.1)",
-                              border: "1px solid rgba(255,255,255,0.15)",
+                              background: recurEndType === type ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "var(--divider)",
+                              border: "1px solid var(--divider)",
                             }}>
                             {recurEndType === type && <div className="w-2 h-2 rounded-full bg-white" />}
                           </div>
@@ -1289,7 +1289,7 @@ export function AddTransactionScreen() {
                           className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl"
                           style={{ background: "rgba(212,162,76,0.12)", border: "1px solid rgba(212,162,76,0.3)" }}>
                           <Calendar className="w-4 h-4 text-[#D4A24C]" />
-                          <span className="flex-1 text-left text-white" style={{ fontSize: 13, fontWeight: 600 }}>
+                          <span className="flex-1 text-left text-ink" style={{ fontSize: 13, fontWeight: 600 }}>
                             {fmtDate(recurEndDate).split(',')[0]}
                           </span>
                         </motion.button>
@@ -1299,24 +1299,24 @@ export function AddTransactionScreen() {
                     {/* End Count Input */}
                     {recurEndType === "count" && (
                       <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-2 flex items-center gap-2">
-                        <span className="text-white/55" style={{ fontSize: 13 }}>After</span>
+                        <span className="text-ink/55" style={{ fontSize: 13 }}>After</span>
                         <input
                           type="number"
                           min="1"
                           value={recurEndCount}
                           onChange={e => setRecurEndCount(parseInt(e.target.value) || 1)}
-                          className="w-16 px-2 py-2 rounded-xl bg-transparent border border-[#D4A24C]/30 text-white text-center focus:outline-none"
+                          className="w-16 px-2 py-2 rounded-xl bg-transparent border border-[#D4A24C]/30 text-ink text-center focus:outline-none"
                           style={{ fontSize: 14, fontWeight: 600 }}
                         />
-                        <span className="text-white/55" style={{ fontSize: 13 }}>occurrences</span>
+                        <span className="text-ink/55" style={{ fontSize: 13 }}>occurrences</span>
                       </motion.div>
                     )}
                   </div>
 
                   {/* Preview Line */}
                   <div className="mt-3 p-3 rounded-xl" style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.2)" }}>
-                    <p className="text-white/45 mb-1" style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.5px" }}>PREVIEW</p>
-                    <p className="text-white/75" style={{ fontSize: 12, lineHeight: 1.5 }}>
+                    <p className="text-ink/45 mb-1" style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.5px" }}>PREVIEW</p>
+                    <p className="text-ink/75" style={{ fontSize: 12, lineHeight: 1.5 }}>
                       {selectedCat?.name || "Transaction"} ₹{amount || "0"} will repeat{" "}
                       <span className="text-[#D4A24C] font-semibold">
                         {recurFreq === "quarterly" ? "every 3 months" :
@@ -1352,7 +1352,7 @@ export function AddTransactionScreen() {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={handleSave}
-          className="w-full py-4 rounded-2xl text-white font-bold flex items-center justify-center gap-2"
+          className="w-full py-4 rounded-2xl text-ink font-bold flex items-center justify-center gap-2"
           style={{
             background: typeBg,
             boxShadow: `0 8px 28px ${typeAccent}50`,

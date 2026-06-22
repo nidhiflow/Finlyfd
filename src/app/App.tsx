@@ -27,8 +27,8 @@ export default function App() {
         toastOptions={{
           style: {
             background: '#1B2130',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: 'white',
+            border: '1px solid var(--divider)',
+            color: "var(--ink)",
             fontSize: '13px',
           },
         }}

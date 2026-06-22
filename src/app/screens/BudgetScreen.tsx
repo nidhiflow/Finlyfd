@@ -103,22 +103,22 @@ export function BudgetScreen() {
       {/* Month Selector */}
       <div className="flex items-center justify-between">
         <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
-          <ChevronLeft className="w-5 h-5 text-white" />
+          <ChevronLeft className="w-5 h-5 text-ink" />
         </button>
-        <h2 className="text-xl font-semibold text-white">{monthLabel}</h2>
+        <h2 className="text-xl font-semibold text-ink">{monthLabel}</h2>
         <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
-          <ChevronRight className="w-5 h-5 text-white" />
+          <ChevronRight className="w-5 h-5 text-ink" />
         </button>
       </div>
 
       {/* Budget Summary */}
       <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
-        <h3 className="text-white/80 text-sm mb-2">Budget Remaining</h3>
-        <p className="font-fraunces tabular-nums text-4xl font-bold text-white mb-4">₹{budgetLeft.toLocaleString()}</p>
-        <div className="bg-white/10 backdrop-blur-sm rounded-full h-3 overflow-hidden mb-3">
+        <h3 className="text-ink/80 text-sm mb-2">Budget Remaining</h3>
+        <p className="font-fraunces tabular-nums text-4xl font-bold text-ink mb-4">₹{budgetLeft.toLocaleString()}</p>
+        <div className="bg-ink/10 backdrop-blur-sm rounded-full h-3 overflow-hidden mb-3">
           <div className="h-full bg-white rounded-full transition-all" style={{ width: `${Math.min(percentUsed, 100)}%` }} />
         </div>
-        <div className="flex items-center justify-between text-sm text-white/80">
+        <div className="flex items-center justify-between text-sm text-ink/80">
           <span>₹{totalSpent.toLocaleString()} spent</span>
           <span>₹{totalBudgeted.toLocaleString()} budgeted</span>
         </div>
@@ -130,8 +130,8 @@ export function BudgetScreen() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-[#EF4444] flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-white font-medium mb-1">Pressure Alert</p>
-              <p className="text-sm text-white/60">
+              <p className="text-ink font-medium mb-1">Pressure Alert</p>
+              <p className="text-sm text-ink/60">
                 {pressureCategory.category} is at{" "}
                 {((pressureCategory.spent / pressureCategory.budgeted) * 100).toFixed(0)}%
                 (₹{pressureCategory.spent.toLocaleString()} of ₹{pressureCategory.budgeted.toLocaleString()})
@@ -148,8 +148,8 @@ export function BudgetScreen() {
             <Bot className="w-5 h-5 text-[#D4A24C]" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white mb-2">AI Suggestions</h3>
-            <ul className="space-y-2 text-sm text-white/60">
+            <h3 className="text-lg font-semibold text-ink mb-2">AI Suggestions</h3>
+            <ul className="space-y-2 text-sm text-ink/60">
               <li className="flex items-start gap-2">
                 <span className="text-[#D4A24C]">•</span>
                 <span>Based on last month, increase Transport budget by ₹1,000</span>
@@ -170,7 +170,7 @@ export function BudgetScreen() {
       {/* Add Budget Button */}
       <button
         onClick={() => { setEditBudget(null); setShowModal(true); }}
-        className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-white font-semibold shadow-lg shadow-[#D4A24C]/30"
+        className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-ink font-semibold shadow-lg shadow-[#D4A24C]/30"
       >
         <Plus className="w-5 h-5" />
         <span>Add Budget</span>
@@ -178,12 +178,12 @@ export function BudgetScreen() {
 
       {/* Budget List */}
       <div>
-        <h3 className="text-lg font-semibold text-white mb-4">Category Budgets</h3>
+        <h3 className="text-lg font-semibold text-ink mb-4">Category Budgets</h3>
         {budgets.length === 0 && !isLoading && (
           <div className="flex flex-col items-center py-8">
             <p className="text-2xl mb-2">📊</p>
-            <p className="text-white/50 text-sm">No budgets set for this month</p>
-            <p className="text-white/30 text-xs mt-1">Tap "Add Budget" to get started</p>
+            <p className="text-ink/50 text-sm">No budgets set for this month</p>
+            <p className="text-ink/30 text-xs mt-1">Tap "Add Budget" to get started</p>
           </div>
         )}
         <div className="space-y-4">
@@ -203,23 +203,23 @@ export function BudgetScreen() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${budget.color}15`, border: `1px solid ${budget.color}30` }}>
-                      {budget.icon ? <budget.icon className="w-5 h-5 text-white/80" style={{ color: budget.color }} /> : <span className="text-xl">{budget.emoji}</span>}
+                      {budget.icon ? <budget.icon className="w-5 h-5 text-ink/80" style={{ color: budget.color }} /> : <span className="text-xl">{budget.emoji}</span>}
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold">{budget.category}</h4>
-                      <p className="text-xs text-white/50">
+                      <h4 className="text-ink font-semibold">{budget.category}</h4>
+                      <p className="text-xs text-ink/50">
                         {remaining >= 0 ? `₹${remaining.toLocaleString()} left` : `₹${Math.abs(remaining).toLocaleString()} over`}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="text-right mr-2">
-                      <p className="font-fraunces tabular-nums text-white font-semibold">₹{budget.spent.toLocaleString()}</p>
-                      <p className="font-fraunces tabular-nums text-xs text-white/50">of ₹{budget.budgeted.toLocaleString()}</p>
+                      <p className="font-fraunces tabular-nums text-ink font-semibold">₹{budget.spent.toLocaleString()}</p>
+                      <p className="font-fraunces tabular-nums text-xs text-ink/50">of ₹{budget.budgeted.toLocaleString()}</p>
                     </div>
                     <button onClick={() => { setEditBudget(budget); setShowModal(true); }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors">
-                      <Pencil className="w-3.5 h-3.5 text-white/40" />
+                      className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-ink/10 transition-colors">
+                      <Pencil className="w-3.5 h-3.5 text-ink/40" />
                     </button>
                     <button onClick={() => setShowDelete(budget)}
                       className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-rose-500/10 transition-colors">
@@ -228,7 +228,7 @@ export function BudgetScreen() {
                   </div>
                 </div>
 
-                <div className="bg-white/10 rounded-full h-2.5 overflow-hidden mb-2">
+                <div className="bg-ink/10 rounded-full h-2.5 overflow-hidden mb-2">
                   <div
                     className="h-full rounded-full transition-all"
                     style={{
@@ -239,7 +239,7 @@ export function BudgetScreen() {
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                  <span className={isOverBudget ? "text-[#EF4444]" : isPressure ? "text-[#FFA500]" : "text-white/50"}>
+                  <span className={isOverBudget ? "text-[#EF4444]" : isPressure ? "text-[#FFA500]" : "text-ink/50"}>
                     {percentSpent.toFixed(0)}% used
                   </span>
                   {isPressure && !isOverBudget && <span className="text-[#FFA500]">⚠️ High usage</span>}
@@ -279,24 +279,24 @@ export function BudgetScreen() {
               exit={{ scale: 0.86, opacity: 0 }}
               onClick={e => e.stopPropagation()}
               className="w-full max-w-sm rounded-3xl p-6"
-              style={{ background: "linear-gradient(135deg,#212C30,#10171A)", border: "1px solid rgba(255,255,255,0.10)" }}
+              style={{ background: "linear-gradient(135deg,#212C30,#10171A)", border: "1px solid var(--divider)" }}
             >
               <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
                 style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.25)" }}>
                 <Trash2 className="w-6 h-6 text-rose-400" />
               </div>
-              <h3 className="text-white font-bold text-center mb-2" style={{ fontSize: 17 }}>Delete Budget?</h3>
-              <p className="text-white/42 text-center mb-6" style={{ fontSize: 13 }}>
-                Remove the budget for <span className="text-white/68 font-medium">"{showDelete.category}"</span>?
+              <h3 className="text-ink font-bold text-center mb-2" style={{ fontSize: 17 }}>Delete Budget?</h3>
+              <p className="text-ink/42 text-center mb-6" style={{ fontSize: 13 }}>
+                Remove the budget for <span className="text-ink/68 font-medium">"{showDelete.category}"</span>?
               </p>
               <div className="flex gap-3">
                 <button onClick={() => setShowDelete(null)}
-                  className="flex-1 py-3.5 rounded-2xl font-semibold text-white/50"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
+                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)" }}>
                   Cancel
                 </button>
                 <button onClick={handleDelete}
-                  className="flex-1 py-3.5 rounded-2xl font-bold text-white"
+                  className="flex-1 py-3.5 rounded-2xl font-bold text-ink"
                   style={{ background: "linear-gradient(135deg,#F72585,#EF4444)", boxShadow: "0 6px 20px rgba(247,37,133,0.38)" }}>
                   Delete
                 </button>
@@ -362,30 +362,30 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
         className="w-full max-w-md mx-auto rounded-t-3xl"
         style={{
           background: "linear-gradient(180deg,#192225 0%,#10171A 100%)",
-          border: "1px solid rgba(255,255,255,0.09)", borderBottom: "none",
+          border: "1px solid var(--divider)", borderBottom: "none",
           maxHeight: "85vh", overflowY: "auto",
         }}
       >
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-9 h-1 rounded-full bg-white/15" />
+          <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>
 
         <div className="px-5 pb-8 pt-2 space-y-5">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h2 className="text-white font-bold" style={{ fontSize: 19 }}>
+            <h2 className="text-ink font-bold" style={{ fontSize: 19 }}>
               {isEdit ? "Edit Budget" : "Add Budget"}
             </h2>
             <button onClick={onClose}
               className="w-8 h-8 rounded-2xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.09)" }}>
-              <X className="w-4 h-4 text-white/50" />
+              style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+              <X className="w-4 h-4 text-ink/50" />
             </button>
           </div>
 
           {/* Category Selection */}
           <div>
-            <label className="text-white/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>
+            <label className="text-ink/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>
               CATEGORY
             </label>
             <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
@@ -394,9 +394,9 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
                   className="flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all"
                   style={{
                     background: selectedCat === cat.id ? `${cat.color || '#D4A24C'}28` : "rgba(255,255,255,0.04)",
-                    border: selectedCat === cat.id ? `1.5px solid ${cat.color || '#D4A24C'}55` : "1px solid rgba(255,255,255,0.07)",
+                    border: selectedCat === cat.id ? `1.5px solid ${cat.color || '#D4A24C'}55` : "1px solid var(--divider)",
                   }}>
-                  {cat.icon ? <cat.icon className="w-6 h-6 mb-1 text-white/80" /> : <span style={{ fontSize: 20 }}>{cat.emoji || "📦"}</span>}
+                  {cat.icon ? <cat.icon className="w-6 h-6 mb-1 text-ink/80" /> : <span style={{ fontSize: 20 }}>{cat.emoji || "📦"}</span>}
                   <span className="text-xs font-semibold truncate w-full text-center px-1"
                     style={{ color: selectedCat === cat.id ? (cat.color || '#D4A24C') : "rgba(255,255,255,0.45)" }}>
                     {cat.name}
@@ -405,26 +405,26 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
               ))}
             </div>
             {availableCats.length === 0 && (
-              <p className="text-white/30 text-sm text-center py-4">All categories already have budgets</p>
+              <p className="text-ink/30 text-sm text-center py-4">All categories already have budgets</p>
             )}
           </div>
 
           {/* Amount Input */}
           <div>
-            <label className="text-white/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>
+            <label className="text-ink/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>
               BUDGET AMOUNT
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 font-bold" style={{ fontSize: 18 }}>₹</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/50 font-bold" style={{ fontSize: 18 }}>₹</span>
               <input
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 placeholder="0"
                 inputMode="decimal"
-                className="w-full pl-10 pr-4 py-4 rounded-2xl text-white placeholder:text-white/22 focus:outline-none"
+                className="w-full pl-10 pr-4 py-4 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
                 style={{
                   background: "rgba(255,255,255,0.055)",
-                  border: "1px solid rgba(255,255,255,0.10)",
+                  border: "1px solid var(--divider)",
                   fontSize: 22, fontWeight: 700,
                 }}
               />
@@ -434,12 +434,12 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-1">
             <button onClick={onClose}
-              className="flex-1 py-4 rounded-2xl font-semibold text-white/50"
-              style={{ background: "rgba(255,255,255,0.055)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 14 }}>
+              className="flex-1 py-4 rounded-2xl font-semibold text-ink/50"
+              style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }}>
               Cancel
             </button>
             <button onClick={handleSave} disabled={saving}
-              className="flex-1 py-4 rounded-2xl text-white font-bold"
+              className="flex-1 py-4 rounded-2xl text-ink font-bold"
               style={{
                 fontSize: 14,
                 background: "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)",

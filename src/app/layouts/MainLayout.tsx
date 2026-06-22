@@ -130,39 +130,39 @@ export function MainLayout() {
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 onClick={e => e.stopPropagation()}
                 className="w-full max-w-md mx-auto rounded-t-3xl"
-                style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid rgba(255,255,255,0.1)", borderBottom: "none", maxHeight: "70vh" }}
+                style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
               >
                 <div className="flex justify-center pt-3 pb-1">
-                  <div className="w-9 h-1 rounded-full bg-white/15" />
+                  <div className="w-9 h-1 rounded-full bg-ink/15" />
                 </div>
                 <div className="flex items-center justify-between px-5 py-3">
-                  <h2 className="text-white font-bold" style={{ fontSize: 18 }}>Notifications</h2>
-                  <button onClick={() => setShowNotifications(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5">
-                    <X className="w-4 h-4 text-white/50" />
+                  <h2 className="text-ink font-bold" style={{ fontSize: 18 }}>Notifications</h2>
+                  <button onClick={() => setShowNotifications(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-ink/5">
+                    <X className="w-4 h-4 text-ink/50" />
                   </button>
                 </div>
                 <div className="px-5 pb-8 space-y-3">
                   {notifications.length === 0 ? (
                     <div className="flex flex-col items-center py-6">
-                      <p className="text-white/40" style={{ fontSize: 13 }}>No new notifications</p>
+                      <p className="text-ink/40" style={{ fontSize: 13 }}>No new notifications</p>
                     </div>
                   ) : notifications.map((n, i) => (
                     <motion.div key={i} whileTap={{ scale: 0.98 }}
                       className="flex items-start gap-3 p-4 rounded-2xl"
-                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--divider)" }}>
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{ background: `${n.color}18` }}>
                         <Bell className="w-4 h-4" style={{ color: n.color }} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-semibold" style={{ fontSize: 13 }}>{n.title}</p>
-                        <p className="text-white/50 mt-0.5" style={{ fontSize: 12 }}>{n.desc}</p>
-                        <p className="text-white/25 mt-1" style={{ fontSize: 11 }}>{n.time}</p>
+                        <p className="text-ink font-semibold" style={{ fontSize: 13 }}>{n.title}</p>
+                        <p className="text-ink/50 mt-0.5" style={{ fontSize: 12 }}>{n.desc}</p>
+                        <p className="text-ink/25 mt-1" style={{ fontSize: 11 }}>{n.time}</p>
                       </div>
                     </motion.div>
                   ))}
                   <div className="flex flex-col items-center py-6">
-                    <p className="text-white/30" style={{ fontSize: 13 }}>That's all for now</p>
+                    <p className="text-ink/30" style={{ fontSize: 13 }}>That's all for now</p>
                   </div>
                 </div>
               </motion.div>
@@ -184,25 +184,25 @@ export function MainLayout() {
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 onClick={e => e.stopPropagation()}
                 className="w-full max-w-md mx-auto rounded-t-3xl"
-                style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid rgba(255,255,255,0.1)", borderBottom: "none", maxHeight: "70vh" }}
+                style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
               >
                 <div className="flex justify-center pt-3 pb-1">
-                  <div className="w-9 h-1 rounded-full bg-white/15" />
+                  <div className="w-9 h-1 rounded-full bg-ink/15" />
                 </div>
                 <div className="flex items-center justify-between px-5 py-3">
-                  <h2 className="text-white font-bold" style={{ fontSize: 18 }}>Bookmarked</h2>
-                  <button onClick={() => setShowBookmarks(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5">
-                    <X className="w-4 h-4 text-white/50" />
+                  <h2 className="text-ink font-bold" style={{ fontSize: 18 }}>Bookmarked</h2>
+                  <button onClick={() => setShowBookmarks(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-ink/5">
+                    <X className="w-4 h-4 text-ink/50" />
                   </button>
                 </div>
                 <div className="px-5 pb-8">
                   <div className="flex flex-col items-center py-10">
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1.5px dashed rgba(255,255,255,0.15)" }}>
-                      <Bookmark className="w-6 h-6 text-white/20" />
+                      style={{ background: "rgba(255,255,255,0.05)", border: "1.5px dashed var(--divider)" }}>
+                      <Bookmark className="w-6 h-6 text-ink/20" />
                     </div>
-                    <p className="text-white/40 font-semibold" style={{ fontSize: 14 }}>No bookmarks yet</p>
-                    <p className="text-white/25 mt-1" style={{ fontSize: 12 }}>Star transactions to save them here</p>
+                    <p className="text-ink/40 font-semibold" style={{ fontSize: 14 }}>No bookmarks yet</p>
+                    <p className="text-ink/25 mt-1" style={{ fontSize: 12 }}>Star transactions to save them here</p>
                   </div>
                 </div>
               </motion.div>

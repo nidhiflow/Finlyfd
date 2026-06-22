@@ -96,7 +96,7 @@ export function SpendingOverview({ month }: SpendingProps) {
     <div className="rounded-2xl p-5 relative overflow-hidden"
       style={{
         background: "linear-gradient(135deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%)",
-        border: "1px solid rgba(255,255,255,0.07)",
+        border: "1px solid var(--divider)",
       }}>
 
       {/* Header */}
@@ -106,7 +106,7 @@ export function SpendingOverview({ month }: SpendingProps) {
             style={{ background: "rgba(212,162,76,0.18)" }}>
             <PieIcon className="w-3.5 h-3.5 text-[#D4A24C]" />
           </div>
-          <h3 className="text-white font-bold" style={{ fontSize: 15 }}>Spending Overview</h3>
+          <h3 className="text-ink font-bold" style={{ fontSize: 15 }}>Spending Overview</h3>
         </div>
         <span className="px-2.5 py-1 rounded-xl font-semibold"
           style={{ fontSize: 11, background: hasData ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.06)", color: hasData ? "#D4A24C" : "rgba(255,255,255,0.30)" }}>
@@ -142,7 +142,7 @@ export function SpendingOverview({ month }: SpendingProps) {
               cy={CY}
               r={(OUTER_R + INNER_R) / 2}
               fill="none"
-              stroke="rgba(255,255,255,0.07)"
+              stroke="var(--divider)"
               strokeWidth={OUTER_R - INNER_R}
             />
           ) : (
@@ -170,8 +170,8 @@ export function SpendingOverview({ month }: SpendingProps) {
                     {/* Category Label */}
                     <foreignObject x={isRight ? labelX : labelX - 80} y={labelPt.y - 10} width={80} height={20}>
                       <div className={`flex items-center gap-1 w-full ${isRight ? 'justify-start' : 'justify-end'}`}>
-                        {cat.icon && <cat.icon className="w-[11px] h-[11px] text-white/85" strokeWidth={2} />}
-                        <span className="text-[9px] font-semibold text-white/85 leading-none truncate">
+                        {cat.icon && <cat.icon className="w-[11px] h-[11px] text-ink/85" strokeWidth={2} />}
+                        <span className="text-[9px] font-semibold text-ink/85 leading-none truncate">
                           {cat.name.length > 8 ? cat.name.slice(0, 7) + '..' : cat.name}
                         </span>
                       </div>
@@ -222,15 +222,15 @@ export function SpendingOverview({ month }: SpendingProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none text-center">
           {hasData ? (
             <>
-              <p className="text-white font-extrabold text-[13px] leading-tight">
+              <p className="text-ink font-extrabold text-[13px] leading-tight">
                 {categories.length}
               </p>
-              <p className="text-white/45 text-[8px] uppercase tracking-wider font-semibold">cats</p>
+              <p className="text-ink/45 text-[8px] uppercase tracking-wider font-semibold">cats</p>
             </>
           ) : (
             <>
               <p style={{ fontSize: 14 }}>🍃</p>
-              <p className="text-white/20 text-[8px] font-bold uppercase tracking-wider">0%</p>
+              <p className="text-ink/20 text-[8px] font-bold uppercase tracking-wider">0%</p>
             </>
           )}
         </div>
@@ -243,14 +243,14 @@ export function SpendingOverview({ month }: SpendingProps) {
           return (
             <div key={cat.id}
               onClick={() => hasData && setSelectedId(prev => prev === cat.id ? null : cat.id)}
-              className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl transition-all ${hasData ? "cursor-pointer hover:bg-white/[0.03]" : ""}`}
+              className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl transition-all ${hasData ? "cursor-pointer hover:bg-ink/[0.03]" : ""}`}
               style={{
                 background: isSel ? `${cat.color}15` : "transparent",
                 border: isSel ? `1px solid ${cat.color}35` : "1px solid transparent",
               }}>
               <div className="flex items-center gap-1.5 min-w-0">
                 <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: cat.color, opacity: hasData ? 1 : 0.25 }} />
-                <div className="flex items-center gap-1.5 truncate text-white font-semibold leading-none" style={{ fontSize: 11, opacity: hasData ? 0.95 : 0.35 }}>
+                <div className="flex items-center gap-1.5 truncate text-ink font-semibold leading-none" style={{ fontSize: 11, opacity: hasData ? 0.95 : 0.35 }}>
                   {cat.icon && <cat.icon className="w-3.5 h-3.5" strokeWidth={1.75} />}
                   <span>{cat.name}</span>
                 </div>
@@ -259,7 +259,7 @@ export function SpendingOverview({ month }: SpendingProps) {
                 <p className="font-bold leading-none" style={{ fontSize: 11, color: hasData ? (isSel ? "white" : cat.color) : "rgba(255,255,255,0.18)" }}>
                   ₹{(cat.value || 0).toLocaleString("en-IN")}
                 </p>
-                <p className="mt-0.5 leading-none" style={{ fontSize: 8.5, color: hasData ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.14)" }}>
+                <p className="mt-0.5 leading-none" style={{ fontSize: 8.5, color: hasData ? "rgba(255,255,255,0.45)" : "var(--divider)" }}>
                   {(cat.percentage || 0).toFixed(0)}%
                 </p>
               </div>
@@ -271,7 +271,7 @@ export function SpendingOverview({ month }: SpendingProps) {
       {/* Bottom helper text */}
       <div className="mt-4 pt-3 flex items-center justify-center gap-2"
         style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <span style={{ fontSize: 11, color: hasData ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.25)" }}>
+        <span style={{ fontSize: 11, color: hasData ? "rgba(255,255,255,0.45)" : "var(--divider)" }}>
           {hasData ? "📊 Based on your expense transactions" : "📊 Spending breakdown will appear after adding expenses"}
         </span>
       </div>

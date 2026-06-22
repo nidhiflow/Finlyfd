@@ -129,12 +129,12 @@ export function SettingsScreen() {
       {/* Profile Card */}
       <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-            <User className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-2xl bg-ink/20 backdrop-blur-sm flex items-center justify-center">
+            <User className="w-8 h-8 text-ink" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">{user?.name || "User"}</h2>
-            <p className="text-white/80 text-sm">{user?.email || "user@example.com"}</p>
+            <h2 className="text-xl font-bold text-ink">{user?.name || "User"}</h2>
+            <p className="text-ink/80 text-sm">{user?.email || "user@example.com"}</p>
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@ export function SettingsScreen() {
       {/* Settings Sections */}
       {settingsSections.map((section) => (
         <div key={section.title}>
-          <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider px-1">
+          <h3 className="text-sm font-semibold text-ink/50 mb-3 uppercase tracking-wider px-1">
             {section.title}
           </h3>
           <div className="bg-[var(--surface)] rounded-2xl border border-[var(--divider)] overflow-hidden">
@@ -152,13 +152,13 @@ export function SettingsScreen() {
                 <button
                   key={item.label}
                   onClick={item.action}
-                  className={`w-full flex items-center justify-between px-4 py-4 hover:bg-white/5 transition-colors ${
+                  className={`w-full flex items-center justify-between px-4 py-4 hover:bg-ink/5 transition-colors ${
                     index !== section.items.length - 1 ? "border-b border-[var(--divider)]" : ""
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-5 h-5 text-white/70" />
-                    <span className="text-white font-medium">{item.label}</span>
+                    <Icon className="w-5 h-5 text-ink/70" />
+                    <span className="text-ink font-medium">{item.label}</span>
                   </div>
 
                   {item.isToggle ? (
@@ -168,7 +168,7 @@ export function SettingsScreen() {
                       style={{
                         background: item.value
                           ? "linear-gradient(135deg,#D4A24C,#D4A24C)"
-                          : "rgba(255,255,255,0.15)",
+                          : "var(--divider)",
                         boxShadow: item.value ? "0 2px 10px rgba(212,162,76,0.4)" : "none",
                       }}
                     >
@@ -186,11 +186,11 @@ export function SettingsScreen() {
                     </motion.div>
                   ) : item.value ? (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-white/50">{item.value}</span>
-                      <ChevronRight className="w-4 h-4 text-white/40" />
+                      <span className="text-sm text-ink/50">{item.value}</span>
+                      <ChevronRight className="w-4 h-4 text-ink/40" />
                     </div>
                   ) : (
-                    <ChevronRight className="w-4 h-4 text-white/40" />
+                    <ChevronRight className="w-4 h-4 text-ink/40" />
                   )}
                 </button>
               );
@@ -204,8 +204,8 @@ export function SettingsScreen() {
         <div className="flex items-start gap-3 mb-3">
           <Shield className="w-5 h-5 text-[#D4A24C] flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="text-white font-semibold mb-2">Privacy & AI</h3>
-            <p className="text-sm text-white/60 leading-relaxed">
+            <h3 className="text-ink font-semibold mb-2">Privacy & AI</h3>
+            <p className="text-sm text-ink/60 leading-relaxed">
               Your financial data is encrypted end-to-end and stored securely. AI features process data locally when possible. We never share your data with third parties.
             </p>
           </div>
@@ -214,15 +214,15 @@ export function SettingsScreen() {
 
       {/* Export Options */}
       <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[var(--divider)]">
-        <h3 className="text-white font-semibold mb-3">Export Data</h3>
+        <h3 className="text-ink font-semibold mb-3">Export Data</h3>
         <div className="space-y-2">
-          <button onClick={handleExportCSV} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white text-sm font-medium hover:border-[#D4A24C]/30">
+          <button onClick={handleExportCSV} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink text-sm font-medium hover:border-[#D4A24C]/30">
             Export All Data (CSV)
           </button>
-          <button onClick={handleExportCSV} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white text-sm font-medium hover:border-[#D4A24C]/30">
+          <button onClick={handleExportCSV} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink text-sm font-medium hover:border-[#D4A24C]/30">
             Export Last 30 Days
           </button>
-          <button onClick={() => toast.info("Custom range export coming soon")} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white text-sm font-medium hover:border-[#D4A24C]/30">
+          <button onClick={() => toast.info("Custom range export coming soon")} className="w-full py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink text-sm font-medium hover:border-[#D4A24C]/30">
             Export Custom Range
           </button>
         </div>
@@ -234,7 +234,7 @@ export function SettingsScreen() {
         <div className="space-y-2">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white font-medium hover:border-[#EF4444]/30"
+            className="w-full flex items-center justify-center gap-2 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink font-medium hover:border-[#EF4444]/30"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
@@ -251,8 +251,8 @@ export function SettingsScreen() {
 
       {/* App Info */}
       <div className="text-center py-4">
-        <p className="text-sm text-white/50">Finly v1.0.0</p>
-        <p className="text-xs text-white/30 mt-1">Made with ❤️ for better finances</p>
+        <p className="text-sm text-ink/50">Finly v1.0.0</p>
+        <p className="text-xs text-ink/30 mt-1">Made with ❤️ for better finances</p>
       </div>
 
       {/* Delete Account Modal */}
@@ -263,14 +263,14 @@ export function SettingsScreen() {
             <div className="w-12 h-12 rounded-full bg-[#EF4444]/20 flex items-center justify-center mx-auto mb-4">
               <Trash2 className="w-6 h-6 text-[#EF4444]" />
             </div>
-            <h2 className="text-xl font-bold text-white text-center mb-2">Delete Account?</h2>
-            <p className="text-sm text-white/60 text-center mb-6">
+            <h2 className="text-xl font-bold text-ink text-center mb-2">Delete Account?</h2>
+            <p className="text-sm text-ink/60 text-center mb-6">
               This will permanently delete all your data including transactions, budgets, and goals. This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-white font-medium"
+                className="flex-1 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink font-medium"
               >
                 Cancel
               </button>
@@ -295,17 +295,17 @@ export function SettingsScreen() {
         <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCurrencyModal(false)} />
           <div className="relative max-w-sm w-full bg-[var(--surface)] rounded-2xl p-6 border border-[var(--divider)]">
-            <h2 className="text-lg font-bold text-white mb-4">Select Currency</h2>
+            <h2 className="text-lg font-bold text-ink mb-4">Select Currency</h2>
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {["INR (₹)", "USD ($)", "EUR (€)", "GBP (£)", "JPY (¥)"].map(c => {
                 const code = c.split(" ")[0];
                 return (
                   <button key={c} onClick={() => { setCurrency(code); setShowCurrencyModal(false); toast.success(`Currency set to ${code}`); }}
-                    className="w-full text-left px-4 py-3 rounded-xl transition-colors hover:bg-white/5"
+                    className="w-full text-left px-4 py-3 rounded-xl transition-colors hover:bg-ink/5"
                     style={{
                       background: currency === code ? "rgba(212,162,76,0.15)" : "transparent",
                       border: currency === code ? "1px solid rgba(212,162,76,0.4)" : "1px solid transparent",
-                      color: "white",
+                      color: "var(--ink)",
                     }}>
                     {c}
                   </button>
@@ -313,7 +313,7 @@ export function SettingsScreen() {
               })}
             </div>
             <button onClick={() => setShowCurrencyModal(false)}
-              className="w-full mt-4 py-3 rounded-xl text-white/50 font-medium"
+              className="w-full mt-4 py-3 rounded-xl text-ink/50 font-medium"
               style={{ background: "rgba(255,255,255,0.05)" }}>
               Cancel
             </button>
@@ -326,22 +326,22 @@ export function SettingsScreen() {
         <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowWeekModal(false)} />
           <div className="relative max-w-sm w-full bg-[var(--surface)] rounded-2xl p-6 border border-[var(--divider)]">
-            <h2 className="text-lg font-bold text-white mb-4">Week Starts On</h2>
+            <h2 className="text-lg font-bold text-ink mb-4">Week Starts On</h2>
             <div className="space-y-2">
               {["Sunday", "Monday", "Saturday"].map(day => (
                 <button key={day} onClick={() => { setWeekStart(day); setShowWeekModal(false); toast.success(`Week starts on ${day}`); }}
-                  className="w-full text-left px-4 py-3 rounded-xl transition-colors hover:bg-white/5"
+                  className="w-full text-left px-4 py-3 rounded-xl transition-colors hover:bg-ink/5"
                   style={{
                     background: weekStart === day ? "rgba(212,162,76,0.15)" : "transparent",
                     border: weekStart === day ? "1px solid rgba(212,162,76,0.4)" : "1px solid transparent",
-                    color: "white",
+                    color: "var(--ink)",
                   }}>
                   {day}
                 </button>
               ))}
             </div>
             <button onClick={() => setShowWeekModal(false)}
-              className="w-full mt-4 py-3 rounded-xl text-white/50 font-medium"
+              className="w-full mt-4 py-3 rounded-xl text-ink/50 font-medium"
               style={{ background: "rgba(255,255,255,0.05)" }}>
               Cancel
             </button>

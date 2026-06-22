@@ -187,7 +187,7 @@ function AccountCard({ account, visible, onEdit, onDelete, onTogglePrimary }: {
         background: "linear-gradient(135deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.020) 100%)",
         border: account.isPrimary
           ? "1px solid rgba(255,183,3,0.35)"
-          : `1px solid rgba(255,255,255,0.07)`,
+          : `1px solid var(--divider)`,
         boxShadow: account.isPrimary ? "0 4px 20px rgba(255,183,3,0.10)" : "none",
       }}
     >
@@ -207,20 +207,20 @@ function AccountCard({ account, visible, onEdit, onDelete, onTogglePrimary }: {
             {account.isPrimary && (
               <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center"
                 style={{ background: "linear-gradient(135deg,#FFB703,#FF9500)", boxShadow: "0 2px 6px rgba(255,183,3,0.6)" }}>
-                <Star className="w-2.5 h-2.5 text-white fill-white" />
+                <Star className="w-2.5 h-2.5 text-ink fill-white" />
               </div>
             )}
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="text-white font-semibold truncate" style={{ fontSize: 14 }}>{account.name}</p>
+              <p className="text-ink font-semibold truncate" style={{ fontSize: 14 }}>{account.name}</p>
               {account.isCustom && (
                 <span className="px-1.5 py-0.5 rounded-full flex-shrink-0"
                   style={{ fontSize: 9, fontWeight: 700, background: `${account.color}22`, color: account.color }}>CUSTOM</span>
               )}
             </div>
-            <p className="text-white/38 mt-0.5 truncate" style={{ fontSize: 11 }}>
+            <p className="text-ink/38 mt-0.5 truncate" style={{ fontSize: 11 }}>
               {info.label}{account.bankName ? ` · ${account.bankName}` : ""}
             </p>
           </div>
@@ -232,7 +232,7 @@ function AccountCard({ account, visible, onEdit, onDelete, onTogglePrimary }: {
                 {visible ? fmtBal(account.balance) : "••••••"}
               </p>
             ) : (
-              <p className="text-white/28" style={{ fontSize: 12 }}>Not tracked</p>
+              <p className="text-ink/28" style={{ fontSize: 12 }}>Not tracked</p>
             )}
           </div>
         </div>
@@ -261,18 +261,18 @@ function AccountCard({ account, visible, onEdit, onDelete, onTogglePrimary }: {
           {/* Action icons */}
           <div className="flex items-center gap-0.5 flex-shrink-0">
             <motion.button whileTap={{ scale: 0.8 }} onClick={e => { e.stopPropagation(); onTogglePrimary(); }}
-              className="w-7 h-7 rounded-xl flex items-center justify-center transition-colors hover:bg-white/6">
-              <Star className={`w-3.5 h-3.5 transition-colors ${account.isPrimary ? "text-[var(--gold)] fill-[var(--gold)]" : "text-white/28"}`} />
+              className="w-7 h-7 rounded-xl flex items-center justify-center transition-colors hover:bg-ink/6">
+              <Star className={`w-3.5 h-3.5 transition-colors ${account.isPrimary ? "text-[var(--gold)] fill-[var(--gold)]" : "text-ink/28"}`} />
             </motion.button>
             <motion.button whileTap={{ scale: 0.8 }} onClick={e => { e.stopPropagation(); onEdit(); }}
-              className="w-7 h-7 rounded-xl flex items-center justify-center transition-colors hover:bg-white/6">
-              <Pencil className="w-3 h-3 text-white/38" />
+              className="w-7 h-7 rounded-xl flex items-center justify-center transition-colors hover:bg-ink/6">
+              <Pencil className="w-3 h-3 text-ink/38" />
             </motion.button>
             <motion.button whileTap={{ scale: 0.8 }} onClick={e => { e.stopPropagation(); onDelete(); }}
               className="w-7 h-7 rounded-xl flex items-center justify-center transition-colors hover:bg-rose-500/12">
               <Trash2 className="w-3 h-3 text-rose-400/55" />
             </motion.button>
-            <ChevronRight className="w-4 h-4 text-white/20 ml-0.5" />
+            <ChevronRight className="w-4 h-4 text-ink/20 ml-0.5" />
           </div>
         </div>
       </div>
@@ -295,14 +295,14 @@ function BankDropdown({ value, onChange, accentColor }: {
         className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-colors"
         style={{
           background: "rgba(255,255,255,0.055)",
-          border: `1px solid ${value ? accentColor + "45" : "rgba(255,255,255,0.10)"}`,
+          border: `1px solid ${value ? accentColor + "45" : "var(--divider)"}`,
           fontSize: 14,
         }}>
-        <span style={{ color: value ? "white" : "rgba(255,255,255,0.25)" }}>
+        <span style={{ color: value ? "white" : "var(--divider)" }}>
           {value || "Select bank…"}
         </span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronRight className="w-4 h-4 text-white/30 rotate-90" />
+          <ChevronRight className="w-4 h-4 text-ink/30 rotate-90" />
         </motion.div>
       </button>
 
@@ -312,22 +312,22 @@ function BankDropdown({ value, onChange, accentColor }: {
             initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }}
             className="mt-1.5 rounded-2xl overflow-hidden"
-            style={{ background: "var(--surface-raised)", border: "1px solid rgba(255,255,255,0.10)", maxHeight: 220, overflowY: "auto" }}
+            style={{ background: "var(--surface-raised)", border: "1px solid var(--divider)", maxHeight: 220, overflowY: "auto" }}
           >
             <div className="sticky top-0 p-2" style={{ background: "var(--surface-raised)" }}>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/35" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink/35" />
                 <input autoFocus value={q} onChange={e => setQ(e.target.value)}
                   placeholder="Search banks…"
-                  className="w-full pl-9 pr-3 py-2 rounded-xl text-white placeholder:text-white/25 focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.10)", fontSize: 13 }} />
+                  className="w-full pl-9 pr-3 py-2 rounded-xl text-ink placeholder:text-ink/25 focus:outline-none"
+                  style={{ background: "var(--divider)", border: "1px solid var(--divider)", fontSize: 13 }} />
               </div>
             </div>
             <div className="pb-2">
               {filtered.map(bank => (
                 <button key={bank} type="button"
                   onClick={() => { onChange(bank); setOpen(false); setQ(""); }}
-                  className="w-full text-left px-4 py-2.5 transition-colors hover:bg-white/5 flex items-center gap-2 justify-between"
+                  className="w-full text-left px-4 py-2.5 transition-colors hover:bg-ink/5 flex items-center gap-2 justify-between"
                   style={{ fontSize: 13, color: bank === value ? accentColor : "rgba(255,255,255,0.68)" }}>
                   <span className="flex items-center gap-2"><Landmark className="w-3.5 h-3.5 flex-shrink-0" strokeWidth={1.75} /> {bank}</span>
                   {bank === value && <Check className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: accentColor }} />}
@@ -414,27 +414,27 @@ function AccountModal({ editAccount, onClose, onSave }: {
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-9 h-1 rounded-full bg-white/15" />
+          <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>
 
         <div className="px-5 pb-8 pt-2">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-white font-bold" style={{ fontSize: 19 }}>
+              <h2 className="text-ink font-bold" style={{ fontSize: 19 }}>
                 {isEdit ? "Edit Account" : step === "quick" ? "Add Account" : "Configure Account"}
               </h2>
               {!isEdit && step === "form" && (
                 <button onClick={() => setStep("quick")}
-                  className="text-white/38 mt-0.5" style={{ fontSize: 12 }}>
+                  className="text-ink/38 mt-0.5" style={{ fontSize: 12 }}>
                   ← Back to templates
                 </button>
               )}
             </div>
             <button onClick={onClose}
               className="w-8 h-8 rounded-2xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.09)" }}>
-              <X className="w-4 h-4 text-white/50" />
+              style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+              <X className="w-4 h-4 text-ink/50" />
             </button>
           </div>
 
@@ -459,21 +459,21 @@ function AccountModal({ editAccount, onClose, onSave }: {
                         <ti.icon className="w-4 h-4" strokeWidth={1.75} style={{ color: t.color }} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-white font-semibold truncate" style={{ fontSize: 13 }}>{t.name}</p>
-                        <p className="text-white/35 truncate" style={{ fontSize: 11 }}>{ti.label}</p>
+                        <p className="text-ink font-semibold truncate" style={{ fontSize: 13 }}>{t.name}</p>
+                        <p className="text-ink/35 truncate" style={{ fontSize: 11 }}>{ti.label}</p>
                       </div>
                     </motion.button>
                   );
                 })}
               </div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex-1 h-px bg-white/8" />
-                <span className="text-white/28" style={{ fontSize: 12 }}>or create manually</span>
-                <div className="flex-1 h-px bg-white/8" />
+                <div className="flex-1 h-px bg-ink/8" />
+                <span className="text-ink/28" style={{ fontSize: 12 }}>or create manually</span>
+                <div className="flex-1 h-px bg-ink/8" />
               </div>
               <motion.button whileTap={{ scale: 0.97 }} onClick={() => setStep("form")}
-                className="w-full py-3.5 rounded-2xl text-white font-semibold flex items-center justify-center gap-2"
-                style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", fontSize: 14 }}>
+                className="w-full py-3.5 rounded-2xl text-ink font-semibold flex items-center justify-center gap-2"
+                style={{ background: "var(--divider)", border: "1px solid var(--divider)", fontSize: 14 }}>
                 <Plus className="w-4 h-4" />
                 Custom Account
               </motion.button>
@@ -485,13 +485,13 @@ function AccountModal({ editAccount, onClose, onSave }: {
             <div className="space-y-4">
               {/* Account Name */}
               <div>
-                <label className="text-white/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>ACCOUNT NAME</label>
+                <label className="text-ink/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>ACCOUNT NAME</label>
                 <input value={form.name} onChange={e => set("name", e.target.value)}
                   placeholder="e.g. HDFC Savings, Cash…"
-                  className="w-full px-4 py-3.5 rounded-2xl text-white placeholder:text-white/22 focus:outline-none"
+                  className="w-full px-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
                   style={{
                     background: "rgba(255,255,255,0.055)",
-                    border: `1px solid ${errors.name ? "#EF4444" : form.name ? currType.color + "45" : "rgba(255,255,255,0.10)"}`,
+                    border: `1px solid ${errors.name ? "#EF4444" : form.name ? currType.color + "45" : "var(--divider)"}`,
                     fontSize: 14, transition: "border-color 0.2s",
                   }} />
                 {errors.name && <p className="text-rose-400 mt-1" style={{ fontSize: 11 }}>{errors.name}</p>}
@@ -499,7 +499,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
 
               {/* Account Type */}
               <div>
-                <label className="text-white/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>ACCOUNT TYPE</label>
+                <label className="text-ink/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>ACCOUNT TYPE</label>
                 <div className="grid grid-cols-4 gap-2">
                   {ACCOUNT_TYPES.map(t => (
                     <button key={t.id} type="button"
@@ -507,7 +507,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
                       className="flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all"
                       style={{
                         background: form.type === t.id ? `linear-gradient(135deg,${t.color}28,${t.color}12)` : "rgba(255,255,255,0.04)",
-                        border: form.type === t.id ? `1.5px solid ${t.color}55` : "1px solid rgba(255,255,255,0.07)",
+                        border: form.type === t.id ? `1.5px solid ${t.color}55` : "1px solid var(--divider)",
                         boxShadow: form.type === t.id ? `0 4px 14px ${t.color}20` : "none",
                       }}>
                       <t.icon className="w-[18px] h-[18px]" strokeWidth={1.75} style={{ color: form.type === t.id ? t.color : "rgba(255,255,255,0.38)" }} />
@@ -522,7 +522,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
               {/* Bank Name (conditional) */}
               {currType.hasBank && (
                 <div>
-                  <label className="text-white/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>BANK NAME</label>
+                  <label className="text-ink/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>BANK NAME</label>
                   <BankDropdown value={form.bankName} onChange={v => set("bankName", v)} accentColor={currType.color} />
                   {errors.bankName && <p className="text-rose-400 mt-1" style={{ fontSize: 11 }}>{errors.bankName}</p>}
                 </div>
@@ -530,7 +530,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
 
               {/* Supported Payments */}
               <div>
-                <label className="text-white/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>SUPPORTED PAYMENTS</label>
+                <label className="text-ink/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>SUPPORTED PAYMENTS</label>
                 <div className="flex gap-2 flex-wrap">
                   {PAYMENT_MODES.map(m => {
                     const sel = form.paymentModes.includes(m.id);
@@ -540,7 +540,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
                         className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl transition-all"
                         style={{
                           background: sel ? `${currType.color}22` : "rgba(255,255,255,0.05)",
-                          border: sel ? `1px solid ${currType.color}50` : "1px solid rgba(255,255,255,0.09)",
+                          border: sel ? `1px solid ${currType.color}50` : "1px solid var(--divider)",
                         }}>
                         <m.icon className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: sel ? currType.color : "rgba(255,255,255,0.45)" }} />
                         <span style={{ fontSize: 12, fontWeight: 600, color: sel ? currType.color : "rgba(255,255,255,0.45)" }}>{m.label}</span>
@@ -554,26 +554,26 @@ function AccountModal({ editAccount, onClose, onSave }: {
               {/* UPI ID (conditional) */}
               {hasUPI && (
                 <div>
-                  <label className="text-white/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>UPI ID <span className="normal-case font-normal text-white/25">(optional)</span></label>
+                  <label className="text-ink/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>UPI ID <span className="normal-case font-normal text-ink/25">(optional)</span></label>
                   <input value={form.upiId} onChange={e => set("upiId", e.target.value)}
                     placeholder="yourname@upi"
-                    className="w-full px-4 py-3 rounded-2xl text-white placeholder:text-white/22 focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.055)", border: "1px solid rgba(255,255,255,0.10)", fontSize: 14 }} />
+                    className="w-full px-4 py-3 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
+                    style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }} />
                 </div>
               )}
 
               {/* Track Balance */}
               <div>
                 <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--divider)" }}>
                   <div>
-                    <p className="text-white font-medium" style={{ fontSize: 14 }}>Track Balance</p>
-                    <p className="text-white/35" style={{ fontSize: 11 }}>Monitor this account's balance</p>
+                    <p className="text-ink font-medium" style={{ fontSize: 14 }}>Track Balance</p>
+                    <p className="text-ink/35" style={{ fontSize: 11 }}>Monitor this account's balance</p>
                   </div>
                   <motion.button type="button" whileTap={{ scale: 0.9 }}
                     onClick={() => set("trackBalance", !form.trackBalance)}
                     className="w-12 h-6 rounded-full relative transition-colors flex-shrink-0"
-                    style={{ background: form.trackBalance ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "rgba(255,255,255,0.12)" }}>
+                    style={{ background: form.trackBalance ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "var(--divider)" }}>
                     <motion.div
                       animate={{ x: form.trackBalance ? 24 : 2 }}
                       transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
@@ -588,13 +588,13 @@ function AccountModal({ editAccount, onClose, onSave }: {
                 {form.trackBalance && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} style={{ overflow: "hidden" }}>
-                    <label className="text-white/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>OPENING BALANCE</label>
+                    <label className="text-ink/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>OPENING BALANCE</label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 font-bold" style={{ fontSize: 16 }}>₹</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/50 font-bold" style={{ fontSize: 16 }}>₹</span>
                       <input value={form.openingBalance} onChange={e => set("openingBalance", e.target.value)}
                         placeholder="0.00" inputMode="decimal"
-                        className="w-full pl-9 pr-4 py-3.5 rounded-2xl text-white placeholder:text-white/22 focus:outline-none"
-                        style={{ background: "rgba(255,255,255,0.055)", border: `1px solid ${errors.openingBalance ? "#EF4444" : "rgba(255,255,255,0.10)"}`, fontSize: 16, fontWeight: 700 }} />
+                        className="w-full pl-9 pr-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
+                        style={{ background: "rgba(255,255,255,0.055)", border: `1px solid ${errors.openingBalance ? "#EF4444" : "var(--divider)"}`, fontSize: 16, fontWeight: 700 }} />
                     </div>
                     {errors.openingBalance && <p className="text-rose-400 mt-1" style={{ fontSize: 11 }}>{errors.openingBalance}</p>}
                   </motion.div>
@@ -603,7 +603,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
 
               {/* Color Tag */}
               <div>
-                <label className="text-white/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>COLOR TAG</label>
+                <label className="text-ink/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.6px" }}>COLOR TAG</label>
                 <div className="flex gap-2 flex-wrap">
                   {COLOR_TAGS.map(c => (
                     <button key={c} type="button" onClick={() => set("color", c)}
@@ -614,7 +614,7 @@ function AccountModal({ editAccount, onClose, onSave }: {
                         border: form.color === c ? "2px solid white" : "none",
                         boxShadow: form.color === c ? `0 4px 12px ${c}70` : "none",
                       }}>
-                      {form.color === c && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                      {form.color === c && <Check className="w-3 h-3 text-ink" strokeWidth={3} />}
                     </button>
                   ))}
                 </div>
@@ -625,19 +625,19 @@ function AccountModal({ editAccount, onClose, onSave }: {
                 <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl"
                   style={{
                     background: form.isPrimary ? "rgba(255,183,3,0.08)" : "rgba(255,255,255,0.04)",
-                    border: form.isPrimary ? "1px solid rgba(255,183,3,0.28)" : "1px solid rgba(255,255,255,0.07)",
+                    border: form.isPrimary ? "1px solid rgba(255,183,3,0.28)" : "1px solid var(--divider)",
                   }}>
                   <div className="flex items-center gap-2.5">
-                    <Star className={`w-4 h-4 transition-colors ${form.isPrimary ? "text-[var(--gold)] fill-[var(--gold)]" : "text-white/30"}`} />
+                    <Star className={`w-4 h-4 transition-colors ${form.isPrimary ? "text-[var(--gold)] fill-[var(--gold)]" : "text-ink/30"}`} />
                     <div>
-                      <p className="text-white font-medium" style={{ fontSize: 14 }}>Primary Account</p>
-                      <p className="text-white/35" style={{ fontSize: 11 }}>Your main account for transactions</p>
+                      <p className="text-ink font-medium" style={{ fontSize: 14 }}>Primary Account</p>
+                      <p className="text-ink/35" style={{ fontSize: 11 }}>Your main account for transactions</p>
                     </div>
                   </div>
                   <motion.button type="button" whileTap={{ scale: 0.9 }}
                     onClick={() => set("isPrimary", !form.isPrimary)}
                     className="w-12 h-6 rounded-full relative transition-colors flex-shrink-0"
-                    style={{ background: form.isPrimary ? "linear-gradient(135deg,#FFB703,#FF9500)" : "rgba(255,255,255,0.12)" }}>
+                    style={{ background: form.isPrimary ? "linear-gradient(135deg,#FFB703,#FF9500)" : "var(--divider)" }}>
                     <motion.div
                       animate={{ x: form.isPrimary ? 24 : 2 }}
                       transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
@@ -650,12 +650,12 @@ function AccountModal({ editAccount, onClose, onSave }: {
               {/* Action Buttons */}
               <div className="flex gap-3 pt-1">
                 <button type="button" onClick={onClose}
-                  className="flex-1 py-4 rounded-2xl font-semibold text-white/50"
-                  style={{ background: "rgba(255,255,255,0.055)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 14 }}>
+                  className="flex-1 py-4 rounded-2xl font-semibold text-ink/50"
+                  style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }}>
                   Cancel
                 </button>
                 <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleSave}
-                  className="flex-1 py-4 rounded-2xl text-white font-bold"
+                  className="flex-1 py-4 rounded-2xl text-ink font-bold"
                   style={{
                     fontSize: 14,
                     background: `linear-gradient(135deg,${currType.color} 0%,${currType.color}bb 100%)`,
@@ -691,9 +691,9 @@ function FilterSheet({ filter, onFilter, onClose }: {
         style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none" }}
       >
         <div className="flex justify-center mb-4">
-          <div className="w-9 h-1 rounded-full bg-white/15" />
+          <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>
-        <p className="text-white font-bold mb-4" style={{ fontSize: 17 }}>Filter Accounts</p>
+        <p className="text-ink font-bold mb-4" style={{ fontSize: 17 }}>Filter Accounts</p>
         <div className="space-y-2">
           {[{ id: "all" as const, label: "All Accounts", icon: LayoutGrid as IconType, color: "#D4A24C" },
           ...ACCOUNT_TYPES.map(t => ({ id: t.id as AccountType | "all", label: t.label, icon: t.icon, color: t.color }))
@@ -702,7 +702,7 @@ function FilterSheet({ filter, onFilter, onClose }: {
               className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px] transition-all"
               style={{
                 background: filter === opt.id ? `${opt.color}18` : "rgba(255,255,255,0.04)",
-                border: filter === opt.id ? `1px solid ${opt.color}45` : "1px solid rgba(255,255,255,0.07)",
+                border: filter === opt.id ? `1px solid ${opt.color}45` : "1px solid var(--divider)",
               }}>
               <opt.icon className="w-[18px] h-[18px]" strokeWidth={1.75} style={{ color: opt.color }} />
               <span style={{ fontSize: 14, fontWeight: 600, color: filter === opt.id ? opt.color : "rgba(255,255,255,0.65)" }}>{opt.label}</span>
@@ -711,8 +711,8 @@ function FilterSheet({ filter, onFilter, onClose }: {
           ))}
         </div>
         <button onClick={onClose}
-          className="w-full mt-4 py-3.5 rounded-2xl text-white/50 font-semibold"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 14 }}>
+          className="w-full mt-4 py-3.5 rounded-2xl text-ink/50 font-semibold"
+          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--divider)", fontSize: 14 }}>
           Close
         </button>
       </motion.div>
@@ -740,14 +740,14 @@ function DeleteModal({ name, onClose, onConfirm }: { name: string; onClose: () =
           style={{ background: "var(--expense-chip)" }}>
           <Trash2 className="w-6 h-6" strokeWidth={1.75} style={{ color: "var(--expense)" }} />
         </div>
-        <h3 className="text-white font-bold text-center mb-2" style={{ fontSize: 17 }}>Delete Account?</h3>
-        <p className="text-white/42 text-center mb-6 leading-relaxed" style={{ fontSize: 13 }}>
-          <span className="text-white/68 font-medium">"{name}"</span> and all its transaction history will be permanently removed.
+        <h3 className="text-ink font-bold text-center mb-2" style={{ fontSize: 17 }}>Delete Account?</h3>
+        <p className="text-ink/42 text-center mb-6 leading-relaxed" style={{ fontSize: 13 }}>
+          <span className="text-ink/68 font-medium">"{name}"</span> and all its transaction history will be permanently removed.
         </p>
         <div className="flex gap-3">
           <button onClick={onClose}
-            className="flex-1 py-3.5 rounded-2xl font-semibold text-white/50"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 14 }}>
+            className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
+            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)", fontSize: 14 }}>
             Cancel
           </button>
           <motion.button whileTap={{ scale: 0.96 }} onClick={onConfirm}
@@ -878,15 +878,15 @@ export function AccountsScreen() {
             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }}
             className="px-4 pt-3 overflow-hidden">
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/35" />
               <input autoFocus value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search accounts…"
-                className="w-full pl-10 pr-9 py-3 rounded-2xl text-white placeholder:text-white/25 focus:outline-none"
-                style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(212,162,76,0.28)", fontSize: 13 }} />
+                className="w-full pl-10 pr-9 py-3 rounded-2xl text-ink placeholder:text-ink/25 focus:outline-none"
+                style={{ background: "var(--divider)", border: "1px solid rgba(212,162,76,0.28)", fontSize: 13 }} />
               {search && (
                 <button onClick={() => setSearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
-                  <X className="w-3 h-3 text-white/60" />
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-ink/10 flex items-center justify-center">
+                  <X className="w-3 h-3 text-ink/60" />
                 </button>
               )}
             </div>
@@ -898,7 +898,7 @@ export function AccountsScreen() {
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />
-          <p className="text-white/35" style={{ fontSize: 11, fontWeight: 500 }}>
+          <p className="text-ink/35" style={{ fontSize: 11, fontWeight: 500 }}>
             {visible.length} {visible.length === 1 ? "account" : "accounts"}
             {filter !== "all" && ` · ${ACCOUNT_TYPES.find(t => t.id === filter)?.label}`}
           </p>
@@ -908,7 +908,7 @@ export function AccountsScreen() {
             className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
             style={{
               background: showSearch ? "rgba(212,162,76,0.22)" : "rgba(255,255,255,0.06)",
-              border: `1px solid ${showSearch ? "rgba(212,162,76,0.45)" : "rgba(255,255,255,0.08)"}`,
+              border: `1px solid ${showSearch ? "rgba(212,162,76,0.45)" : "var(--divider)"}`,
             }}>
             <Search className="w-4 h-4" style={{ color: showSearch ? "#D4A24C" : "rgba(255,255,255,0.38)" }} />
           </button>
@@ -916,7 +916,7 @@ export function AccountsScreen() {
             className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
             style={{
               background: filter !== "all" ? "rgba(212,162,76,0.22)" : "rgba(255,255,255,0.06)",
-              border: `1px solid ${filter !== "all" ? "rgba(212,162,76,0.45)" : "rgba(255,255,255,0.08)"}`,
+              border: `1px solid ${filter !== "all" ? "rgba(212,162,76,0.45)" : "var(--divider)"}`,
             }}>
             <SlidersHorizontal className="w-4 h-4" style={{ color: filter !== "all" ? "#D4A24C" : "rgba(255,255,255,0.38)" }} />
           </button>
@@ -930,7 +930,7 @@ export function AccountsScreen() {
       <div className="px-4 space-y-2.5 pb-4">
         {isLoading && (
           <div className="flex items-center justify-center py-16">
-            <p className="text-white/38" style={{ fontSize: 14 }}>Loading accounts…</p>
+            <p className="text-ink/38" style={{ fontSize: 14 }}>Loading accounts…</p>
           </div>
         )}
 
@@ -940,7 +940,7 @@ export function AccountsScreen() {
               style={{ background: "var(--surface-raised)", border: "1px solid var(--divider)" }}>
               {search ? <Search className="w-6 h-6" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} /> : <Landmark className="w-6 h-6" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />}
             </div>
-            <p className="text-white/38 text-center" style={{ fontSize: 14 }}>
+            <p className="text-ink/38 text-center" style={{ fontSize: 14 }}>
               {search ? `No results for "${search}"` : filter !== "all" ? "No accounts of this type" : "No accounts yet"}
             </p>
             {!search && filter === "all" && (
@@ -972,7 +972,7 @@ export function AccountsScreen() {
         {/* Type overview strip */}
         {visible.length > 0 && filter === "all" && !search && (
           <div className="pt-2">
-            <p className="text-white/28 mb-3" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.5px" }}>BY TYPE</p>
+            <p className="text-ink/28 mb-3" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.5px" }}>BY TYPE</p>
             <div className="grid grid-cols-4 gap-2">
               {ACCOUNT_TYPES.filter(t => accounts.some(a => a.type === t.id)).map(t => {
                 const cnt = accounts.filter(a => a.type === t.id).length;

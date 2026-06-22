@@ -209,7 +209,7 @@ function PieChartSVG({
               {cat.icon ? (
                 <foreignObject x={isRight ? labelX : labelX - 120} y={labelPt.y - 12} width="120" height="20">
                   <div style={{ display: "flex", alignItems: "center", justifyContent: isRight ? "flex-start" : "flex-end", gap: "4px" }}>
-                    <cat.icon className="w-3 h-3 text-white/85" />
+                    <cat.icon className="w-3 h-3 text-ink/85" />
                     <span style={{ color: "rgba(255,255,255,0.85)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
                       {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
                     </span>
@@ -280,7 +280,7 @@ function PieChartSVG({
                   {selected.icon ? (
                     <foreignObject x={rx + 10} y={ry + 8} width="105" height="15">
                       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <selected.icon className="w-3.5 h-3.5 text-white/70" />
+                        <selected.icon className="w-3.5 h-3.5 text-ink/70" />
                         <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
                           {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
                         </span>
@@ -328,13 +328,13 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
       <motion.button whileTap={{ scale: 0.94 }} onClick={() => setOpen(v => !v)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-2xl transition-all"
         style={{
-          background: open ? "rgba(212,162,76,0.2)" : "rgba(255,255,255,0.07)",
-          border: `1px solid ${open ? "rgba(212,162,76,0.4)" : "rgba(255,255,255,0.1)"}`,
+          background: open ? "rgba(212,162,76,0.2)" : "var(--divider)",
+          border: `1px solid ${open ? "rgba(212,162,76,0.4)" : "var(--divider)"}`,
         }}>
         <span style={{ fontSize: 13 }}>{cur.emoji}</span>
-        <span className="text-white font-semibold" style={{ fontSize: 12 }}>{cur.label}</span>
+        <span className="text-ink font-semibold" style={{ fontSize: 12 }}>{cur.label}</span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown className="w-3.5 h-3.5 text-white/45" />
+          <ChevronDown className="w-3.5 h-3.5 text-ink/45" />
         </motion.div>
       </motion.button>
 
@@ -348,13 +348,13 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
             className="absolute right-0 top-full mt-2 rounded-2xl py-1.5 z-50 min-w-[170px]"
             style={{
               background: "linear-gradient(180deg,#212C30 0%,#10171A 100%)",
-              border: "1px solid rgba(255,255,255,0.12)",
+              border: "1px solid var(--divider)",
               boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
             }}>
             {PERIOD_OPTIONS.map(opt => (
               <button key={opt.id}
                 onClick={() => { onChange(opt.id); setOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-4 py-2.5 transition-colors hover:bg-white/5"
+                className="w-full flex items-center gap-2.5 px-4 py-2.5 transition-colors hover:bg-ink/5"
                 style={{ fontSize: 13 }}>
                 <span>{opt.emoji}</span>
                 <span style={{ color: period === opt.id ? "#D4A24C" : "rgba(255,255,255,0.72)", fontWeight: period === opt.id ? 700 : 400 }}>
@@ -390,10 +390,10 @@ function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartT
       <div className="flex items-start gap-3 relative z-10">
         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
-          <Sparkles className="w-4 h-4 text-white" />
+          <Sparkles className="w-4 h-4 text-ink" />
         </div>
         <div>
-          <div className="text-white font-semibold" style={{ fontSize: 12.5, lineHeight: 1.5 }}>{text}</div>
+          <div className="text-ink font-semibold" style={{ fontSize: 12.5, lineHeight: 1.5 }}>{text}</div>
           {top.trend !== 0 && (
             <div className="flex items-center gap-1 mt-1">
               {top.trend > 0
@@ -434,20 +434,20 @@ function CategoryRow({
         marginBottom: 6,
       }}>
       {/* Percentage Badge */}
-      <div className="w-12 py-1 flex items-center justify-center text-[10px] font-extrabold text-white rounded-lg flex-shrink-0"
+      <div className="w-12 py-1 flex items-center justify-center text-[10px] font-extrabold text-ink rounded-lg flex-shrink-0"
         style={{ background: cat.color }}>
         {cat.percentage.toFixed(0)}%
       </div>
 
       {/* Category Info */}
       <div className="flex-1 min-w-0 flex items-center gap-2">
-        {cat.icon ? <cat.icon className="w-4 h-4 text-white/85" /> : <span className="text-base leading-none">{cat.emoji}</span>}
-        <p className="text-white font-semibold truncate text-[13px]">{cat.name}</p>
+        {cat.icon ? <cat.icon className="w-4 h-4 text-ink/85" /> : <span className="text-base leading-none">{cat.emoji}</span>}
+        <p className="text-ink font-semibold truncate text-[13px]">{cat.name}</p>
       </div>
 
       {/* Amount */}
       <div className="text-right flex-shrink-0">
-        <p className="font-fraunces font-bold text-white text-[13px] tabular-nums">{fmtFull(cat.amount)}</p>
+        <p className="font-fraunces font-bold text-ink text-[13px] tabular-nums">{fmtFull(cat.amount)}</p>
       </div>
     </motion.button>
   );
@@ -588,11 +588,11 @@ export function ReportsScreen() {
         <div className="flex items-center gap-3">
           <motion.button whileTap={{ scale: 0.88 }} onClick={prevPeriod}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-            <ChevronLeft className="w-4 h-4 text-white/55" />
+            style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+            <ChevronLeft className="w-4 h-4 text-ink/55" />
           </motion.button>
           <div className="text-center">
-            <p className="text-white font-bold" style={{ fontSize: 15 }}>{periodLabel}</p>
+            <p className="text-ink font-bold" style={{ fontSize: 15 }}>{periodLabel}</p>
             {drillCat && (
               <p className="flex items-center justify-center gap-1.5" style={{ fontSize: 11, color: drillCat.color }}>
                 {drillCat.icon ? <drillCat.icon className="w-3 h-3" /> : drillCat.emoji} {drillCat.name}
@@ -601,8 +601,8 @@ export function ReportsScreen() {
           </div>
           <motion.button whileTap={{ scale: 0.88 }} onClick={nextPeriod}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-            <ChevronRight className="w-4 h-4 text-white/55" />
+            style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+            <ChevronRight className="w-4 h-4 text-ink/55" />
           </motion.button>
         </div>
         <PeriodDropdown period={period} onChange={p => {
@@ -613,13 +613,13 @@ export function ReportsScreen() {
 
       {/* ── Income / Expense Toggle Tab Bar ── */}
       {hasTransactions && (
-        <div className="flex border-b border-white/[0.08] px-4 mb-4 relative">
+        <div className="flex border-b border-ink/[0.08] px-4 mb-4 relative">
           <button
             onClick={() => { setChartType("income"); setSelectedSeg(null); setDrillCat(null); }}
             className="flex-1 pb-3 text-center relative focus:outline-none cursor-pointer"
           >
-            <span className="block text-white/50 text-[10px] mb-1 font-bold tracking-wider">INCOME</span>
-            <span className={`font-fraunces text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "income" ? "text-[var(--income)]" : "text-white/60"}`}>
+            <span className="block text-ink/50 text-[10px] mb-1 font-bold tracking-wider">INCOME</span>
+            <span className={`font-fraunces text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "income" ? "text-[var(--income)]" : "text-ink/60"}`}>
               {fmtFull(totalIncome)}
             </span>
             {chartType === "income" && (
@@ -634,8 +634,8 @@ export function ReportsScreen() {
             onClick={() => { setChartType("expense"); setSelectedSeg(null); setDrillCat(null); }}
             className="flex-1 pb-3 text-center relative focus:outline-none cursor-pointer"
           >
-            <span className="block text-white/50 text-[10px] mb-1 font-bold tracking-wider">EXPENSES</span>
-            <span className={`font-fraunces text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "expense" ? "text-[var(--expense)]" : "text-white/60"}`}>
+            <span className="block text-ink/50 text-[10px] mb-1 font-bold tracking-wider">EXPENSES</span>
+            <span className={`font-fraunces text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "expense" ? "text-[var(--expense)]" : "text-ink/60"}`}>
               {fmtFull(totalExpense)}
             </span>
             {chartType === "expense" && (
@@ -694,8 +694,8 @@ export function ReportsScreen() {
             📊
           </div>
           <div className="text-center">
-            <p className="text-white font-bold mb-1" style={{ fontSize: 17 }}>No data available</p>
-            <p className="text-white/45" style={{ fontSize: 13, lineHeight: 1.5 }}>
+            <p className="text-ink font-bold mb-1" style={{ fontSize: 17 }}>No data available</p>
+            <p className="text-ink/45" style={{ fontSize: 13, lineHeight: 1.5 }}>
               Start adding income or expenses<br />to see your financial reports
             </p>
           </div>
@@ -711,7 +711,7 @@ export function ReportsScreen() {
       {!drillCat && hasTransactions && (
         <div className="px-4 mb-3">
           <div className="flex items-center justify-between py-3 px-4 rounded-2xl"
-            style={{ background: compareMode ? "linear-gradient(135deg,rgba(212,162,76,0.12),rgba(212,162,76,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(212,162,76,0.25)" : "1px solid rgba(255,255,255,0.07)", transition: "all 0.3s" }}>
+            style={{ background: compareMode ? "linear-gradient(135deg,rgba(212,162,76,0.12),rgba(212,162,76,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(212,162,76,0.25)" : "1px solid var(--divider)", transition: "all 0.3s" }}>
             <div className="flex items-center gap-2.5">
               <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#D4A24C" : "rgba(255,255,255,0.45)" }} />
               <p className="font-medium" style={{ fontSize: 13, color: compareMode ? "white" : "rgba(255,255,255,0.65)" }}>Compare with last month</p>
@@ -719,7 +719,7 @@ export function ReportsScreen() {
             <motion.button whileTap={{ scale: 0.9 }}
               onClick={() => setCompareMode(v => !v)}
               className="w-11 h-6 rounded-full relative"
-              style={{ background: compareMode ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "rgba(255,255,255,0.12)" }}>
+              style={{ background: compareMode ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "var(--divider)" }}>
               <motion.div
                 animate={{ x: compareMode ? 23 : 2 }}
                 transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
@@ -747,7 +747,7 @@ export function ReportsScreen() {
                   {fmtFull(mainData.reduce((s, c) => s + c.amount, 0))}
                 </p>
               </div>
-              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--divider)" }}>
                 <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "0.5px" }}>LAST MONTH</p>
                 <p className="font-bold mt-1" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)" }}>
                   {fmtFull(compareData.reduce((s, c) => s + c.amount, 0))}
@@ -756,8 +756,8 @@ export function ReportsScreen() {
             </div>
 
             {/* Side-by-side comparison bars */}
-            <div className="rounded-2xl p-4 space-y-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <p className="text-white/40 font-semibold mb-2" style={{ fontSize: 11, letterSpacing: "0.5px" }}>CATEGORY COMPARISON</p>
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--divider)" }}>
+              <p className="text-ink/40 font-semibold mb-2" style={{ fontSize: 11, letterSpacing: "0.5px" }}>CATEGORY COMPARISON</p>
               {mainData.map((cat) => {
                 const prev = compareData.find(c => c.id === cat.id);
                 const prevAmt = prev?.amount || 0;
@@ -768,8 +768,8 @@ export function ReportsScreen() {
                   <div key={cat.id} className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {cat.icon ? <cat.icon className="w-3.5 h-3.5 text-white/85" /> : <span style={{ fontSize: 14 }}>{cat.emoji}</span>}
-                        <span className="text-white/80 font-medium" style={{ fontSize: 12 }}>{cat.name}</span>
+                        {cat.icon ? <cat.icon className="w-3.5 h-3.5 text-ink/85" /> : <span style={{ fontSize: 14 }}>{cat.emoji}</span>}
+                        <span className="text-ink/80 font-medium" style={{ fontSize: 12 }}>{cat.name}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         {change !== 0 && (
@@ -782,25 +782,25 @@ export function ReportsScreen() {
                     </div>
                     {/* Current month bar */}
                     <div className="flex items-center gap-2">
-                      <span className="text-white/30 w-8" style={{ fontSize: 9 }}>Now</span>
+                      <span className="text-ink/30 w-8" style={{ fontSize: 9 }}>Now</span>
                       <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
                         <motion.div className="h-full rounded-full" initial={{ width: 0 }}
                           animate={{ width: `${maxAmt > 0 ? (cat.amount / maxAmt) * 100 : 0}%` }}
                           transition={{ duration: 0.6, delay: 0.1 }}
                           style={{ background: cat.color }} />
                       </div>
-                      <span className="text-white/60 w-14 text-right font-semibold" style={{ fontSize: 10 }}>{fmtINR(cat.amount)}</span>
+                      <span className="text-ink/60 w-14 text-right font-semibold" style={{ fontSize: 10 }}>{fmtINR(cat.amount)}</span>
                     </div>
                     {/* Last month bar */}
                     <div className="flex items-center gap-2">
-                      <span className="text-white/20 w-8" style={{ fontSize: 9 }}>Prev</span>
+                      <span className="text-ink/20 w-8" style={{ fontSize: 9 }}>Prev</span>
                       <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
                         <motion.div className="h-full rounded-full" initial={{ width: 0 }}
                           animate={{ width: `${maxAmt > 0 ? (prevAmt / maxAmt) * 100 : 0}%` }}
                           transition={{ duration: 0.6, delay: 0.15 }}
                           style={{ background: cat.color, opacity: 0.35 }} />
                       </div>
-                      <span className="text-white/35 w-14 text-right" style={{ fontSize: 10 }}>{fmtINR(prevAmt)}</span>
+                      <span className="text-ink/35 w-14 text-right" style={{ fontSize: 10 }}>{fmtINR(prevAmt)}</span>
                     </div>
                   </div>
                 );
@@ -826,7 +826,7 @@ export function ReportsScreen() {
                         <TrendingUp className="w-3 h-3 text-rose-400" />
                         <span style={{ fontSize: 10, color: "#F87171", fontWeight: 700 }}>MOST INCREASED</span>
                       </div>
-                      <div className="text-white font-semibold flex items-center gap-1.5" style={{ fontSize: 13 }}>
+                      <div className="text-ink font-semibold flex items-center gap-1.5" style={{ fontSize: 13 }}>
                         {highestIncrease.icon ? <highestIncrease.icon className="w-3.5 h-3.5" /> : highestIncrease.emoji} {highestIncrease.name}
                       </div>
                       <p style={{ fontSize: 11, color: "#F87171" }}>+{highestIncrease.pct}%</p>
@@ -838,7 +838,7 @@ export function ReportsScreen() {
                         <TrendingDown className="w-3 h-3 text-emerald-400" />
                         <span style={{ fontSize: 10, color: "#4ADE80", fontWeight: 700 }}>MOST DECREASED</span>
                       </div>
-                      <div className="text-white font-semibold flex items-center gap-1.5" style={{ fontSize: 13 }}>
+                      <div className="text-ink font-semibold flex items-center gap-1.5" style={{ fontSize: 13 }}>
                         {highestDecrease.icon ? <highestDecrease.icon className="w-3.5 h-3.5" /> : highestDecrease.emoji} {highestDecrease.name}
                       </div>
                       <p style={{ fontSize: 11, color: "#4ADE80" }}>{highestDecrease.pct}%</p>
@@ -856,7 +856,7 @@ export function ReportsScreen() {
         <div className="px-4 pb-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: pieAccent }} />
-            <p className="text-white/38 font-semibold flex items-center gap-1.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
+            <p className="text-ink/38 font-semibold flex items-center gap-1.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
               {drillCat
                 ? <>{drillCat.icon ? <drillCat.icon className="w-3 h-3" /> : drillCat.emoji} {drillCat.name} BREAKDOWN</>
                 : `${chartType === "expense" ? "EXPENSE" : "INCOME"} BREAKDOWN`}
@@ -864,7 +864,7 @@ export function ReportsScreen() {
             {selectedSeg && (
               <button onClick={() => setSelectedSeg(null)}
                 className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-full"
-                style={{ background: "rgba(255,255,255,0.07)", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--divider)", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
                 <X className="w-2.5 h-2.5" />
                 Clear
               </button>
@@ -898,7 +898,7 @@ export function ReportsScreen() {
               transition={{ delay: displayData.length * 0.04 + 0.1 }}
               className="mt-2 flex items-center justify-between px-4 py-3 rounded-2xl"
               style={{ background: `${pieAccent}10`, border: `1px solid ${pieAccent}25` }}>
-              <p className="text-white/55 font-semibold" style={{ fontSize: 13 }}>
+              <p className="text-ink/55 font-semibold" style={{ fontSize: 13 }}>
                 {drillCat ? "Subtotal" : chartType === "expense" ? "Total Expenses" : "Total Income"}
               </p>
               <p className="font-bold" style={{ fontSize: 15, color: pieAccent }}>

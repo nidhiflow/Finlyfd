@@ -117,6 +117,15 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Finly Custom Semantic Variables */
+  --color-bg-deep: var(--bg-deep);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-divider: var(--divider);
 }
 
 @layer base {
@@ -130,7 +139,7 @@
     font-family: 'Inter', sans-serif;
   }
 
-  :root {
+  :root, .dark-mode {
     --bg-deep: #10171A;
     --surface: #192225;
     --surface-raised: #212C30;
@@ -155,6 +164,26 @@
     --mint: #6FBE9B;
     --coral: #E2725B;
     --orange: #D4A24C;
+  }
+
+  .light-mode {
+    --bg-deep: #F5F7FA;
+    --surface: #FFFFFF;
+    --surface-raised: #F1F3F5;
+    --ink: #111827;
+    --ink-muted: #6B7280;
+    --ink-faint: #9CA3AF;
+    --divider: rgba(0,0,0,0.1);
+
+    /* Light mode semantic category overrides if needed, currently same */
+    --income: #10B981;
+    --income-chip: #D1FAE5;
+    --expense: #EF4444;
+    --expense-chip: #FEE2E2;
+    --savings: #F59E0B;
+    --savings-chip: #FEF3C7;
+    --neutral-chip: #F1F5F9;
+    --neutral-icon: #64748B;
   }
 
   .font-fraunces { font-family: 'Fraunces', serif; }

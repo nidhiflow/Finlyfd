@@ -114,21 +114,21 @@ function CashFlowAnim() {
         {/* Food */}
         <circle cx="58" cy="234" r="24" fill="#200A16" stroke="#F72585" strokeWidth="1.5" />
         <foreignObject x="46" y="218" width="24" height="24">
-          <Pizza className="w-6 h-6 text-white/80" />
+          <Pizza className="w-6 h-6 text-ink/80" />
         </foreignObject>
         <text x="58" y="250" textAnchor="middle" fill="#F92A8B" fontSize="8" fontFamily="system-ui,sans-serif">₹850</text>
 
         {/* Bills */}
         <circle cx="160" cy="237" r="24" fill="#1C1306" stroke="#FF8C00" strokeWidth="1.5" />
         <foreignObject x="148" y="221" width="24" height="24">
-          <Home className="w-6 h-6 text-white/80" />
+          <Home className="w-6 h-6 text-ink/80" />
         </foreignObject>
         <text x="160" y="253" textAnchor="middle" fill="#FF8C00" fontSize="8" fontFamily="system-ui,sans-serif">₹1,200</text>
 
         {/* Travel */}
         <circle cx="262" cy="234" r="24" fill="#081420" stroke="#D4A24C" strokeWidth="1.5" />
         <foreignObject x="250" y="218" width="24" height="24">
-          <Plane className="w-6 h-6 text-white/80" />
+          <Plane className="w-6 h-6 text-ink/80" />
         </foreignObject>
         <text x="262" y="250" textAnchor="middle" fill="#D4A24C" fontSize="8" fontFamily="system-ui,sans-serif">₹450</text>
 
@@ -177,11 +177,11 @@ function ExpenseTrackingAnim() {
         initial={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center justify-between bg-white/4 border border-white/8 rounded-xl px-4 py-2.5"
+        className="flex items-center justify-between bg-ink/4 border border-ink/8 rounded-xl px-4 py-2.5"
       >
         <div>
-          <p className="text-white/40" style={{ fontSize: 10, lineHeight: 1.2 }}>TOTAL TRACKED</p>
-          <p className="text-white font-bold" style={{ fontSize: 15, lineHeight: 1.3 }}>₹2,320 / month</p>
+          <p className="text-ink/40" style={{ fontSize: 10, lineHeight: 1.2 }}>TOTAL TRACKED</p>
+          <p className="text-ink font-bold" style={{ fontSize: 15, lineHeight: 1.3 }}>₹2,320 / month</p>
         </div>
         <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/25 rounded-full px-2.5 py-1">
           <ArrowDownRight className="w-3 h-3 text-emerald-400" />
@@ -204,14 +204,14 @@ function ExpenseTrackingAnim() {
             }}
           >
             <div className="flex items-start justify-between mb-2">
-              <cat.icon className="w-6 h-6 text-white/80" />
+              <cat.icon className="w-6 h-6 text-ink/80" />
               <span style={{ color: cat.color, fontSize: 11, fontWeight: 700 }}>{cat.pct}%</span>
             </div>
             <div>
-              <p className="text-white font-semibold" style={{ fontSize: 12 }}>{cat.name}</p>
-              <p className="text-white/50" style={{ fontSize: 11 }}>{cat.amount}</p>
+              <p className="text-ink font-semibold" style={{ fontSize: 12 }}>{cat.name}</p>
+              <p className="text-ink/50" style={{ fontSize: 11 }}>{cat.amount}</p>
               {/* Animated bar */}
-              <div className="h-1.5 rounded-full mt-2 overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+              <div className="h-1.5 rounded-full mt-2 overflow-hidden" style={{ background: "var(--divider)" }}>
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
@@ -233,9 +233,9 @@ function ExpenseTrackingAnim() {
         initial={{ y: 12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.4 }}
-        className="bg-white/4 border border-white/8 rounded-xl px-4 py-2 flex items-center gap-3"
+        className="bg-ink/4 border border-ink/8 rounded-xl px-4 py-2 flex items-center gap-3"
       >
-        <span className="text-white/40" style={{ fontSize: 10 }}>TOTAL BREAKDOWN</span>
+        <span className="text-ink/40" style={{ fontSize: 10 }}>TOTAL BREAKDOWN</span>
         <div className="flex-1 h-1.5 rounded-full overflow-hidden flex gap-0.5" style={{ background: "rgba(255,255,255,0.06)" }}>
           {EXPENSE_CATEGORIES.map((cat) => (
             <div
@@ -371,8 +371,8 @@ function SavingsGoalsAnim() {
 
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className="text-white font-black" style={{ fontSize: 30, lineHeight: 1 }}>{countUp}%</p>
-          <p className="text-white/45" style={{ fontSize: 10, lineHeight: 1.4, marginTop: 2 }}>Emergency Fund</p>
+          <p className="text-ink font-black" style={{ fontSize: 30, lineHeight: 1 }}>{countUp}%</p>
+          <p className="text-ink/45" style={{ fontSize: 10, lineHeight: 1.4, marginTop: 2 }}>Emergency Fund</p>
           <p style={{ color: "#D4A24C", fontSize: 11, fontWeight: 700, marginTop: 2 }}>₹14,400 / ₹20K</p>
         </div>
       </div>
@@ -387,10 +387,10 @@ function SavingsGoalsAnim() {
             transition={{ delay: 0.5 + i * 0.15, duration: 0.4 }}
           >
             <div className="flex justify-between items-center mb-1.5">
-              <span className="text-white font-medium" style={{ fontSize: 13 }}>{goal.name}</span>
+              <span className="text-ink font-medium" style={{ fontSize: 13 }}>{goal.name}</span>
               <span style={{ color: goal.color, fontSize: 11, fontWeight: 700 }}>{goal.pct}%</span>
             </div>
-            <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+            <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--divider)" }}>
               <div className="h-full rounded-full transition-all"
                 style={{
                   width: barsOn ? `${goal.pct}%` : "0%",
@@ -402,8 +402,8 @@ function SavingsGoalsAnim() {
               />
             </div>
             <div className="flex justify-between mt-1">
-              <span className="text-white/35" style={{ fontSize: 10 }}>{goal.current}</span>
-              <span className="text-white/35" style={{ fontSize: 10 }}>of {goal.target}</span>
+              <span className="text-ink/35" style={{ fontSize: 10 }}>{goal.current}</span>
+              <span className="text-ink/35" style={{ fontSize: 10 }}>of {goal.target}</span>
             </div>
           </motion.div>
         ))}
@@ -443,7 +443,7 @@ function AIInsightsAnim() {
   return (
     <div className="w-full h-full px-4 flex flex-col gap-3 py-2">
       {/* Sparkline chart */}
-      <div className="relative rounded-2xl border border-white/8 overflow-hidden flex-shrink-0"
+      <div className="relative rounded-2xl border border-ink/8 overflow-hidden flex-shrink-0"
         style={{ background: "linear-gradient(135deg, #0F1623 0%, #111827 100%)" }}>
         {/* Subtle grid */}
         <div className="absolute inset-0 opacity-40" style={{
@@ -498,7 +498,7 @@ function AIInsightsAnim() {
         {/* Week labels */}
         <div className="flex justify-between px-2 pb-2 -mt-1">
           {WEEK_LABELS.map((d) => (
-            <span key={d} className="text-white/25" style={{ fontSize: 9 }}>{d}</span>
+            <span key={d} className="text-ink/25" style={{ fontSize: 9 }}>{d}</span>
           ))}
         </div>
 
@@ -510,7 +510,7 @@ function AIInsightsAnim() {
                 style={{ animation: `pulse 1.5s ${d}s infinite` }} />
             ))}
           </div>
-          <span className="text-white/50" style={{ fontSize: 9, letterSpacing: "0.5px", fontWeight: 600 }}>AI ANALYSIS</span>
+          <span className="text-ink/50" style={{ fontSize: 9, letterSpacing: "0.5px", fontWeight: 600 }}>AI ANALYSIS</span>
         </div>
 
         {/* Current value badge */}
@@ -530,11 +530,11 @@ function AIInsightsAnim() {
               : { x: 32, opacity: 0 }
             }
             transition={{ duration: 0.38, ease: [0.4, 0, 0.2, 1] }}
-            className="flex items-center gap-3 rounded-xl border border-white/8 px-3.5 py-2.5"
+            className="flex items-center gap-3 rounded-xl border border-ink/8 px-3.5 py-2.5"
             style={{ background: `linear-gradient(135deg, ${insight.color}10 0%, rgba(27,33,48,0.8) 100%)` }}
           >
             <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0 }}>{insight.icon}</span>
-            <p className="text-white/80 flex-1" style={{ fontSize: 12, lineHeight: 1.4 }}>{insight.text}</p>
+            <p className="text-ink/80 flex-1" style={{ fontSize: 12, lineHeight: 1.4 }}>{insight.text}</p>
             <span className="rounded-full px-2 py-0.5 flex-shrink-0"
               style={{ background: `${insight.color}20`, color: insight.color, fontSize: 9, fontWeight: 700 }}>
               {insight.label}
@@ -694,14 +694,14 @@ export function OnboardingScreen() {
         <div className="flex items-center justify-between px-6 pt-12 pb-3 flex-shrink-0 relative z-10">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-lg shadow-[#D4A24C]/35">
-              <span className="text-white font-black" style={{ fontSize: 15 }}>F</span>
+              <span className="text-ink font-black" style={{ fontSize: 15 }}>F</span>
             </div>
-            <span className="text-white font-bold" style={{ fontSize: 17 }}>Finly</span>
+            <span className="text-ink font-bold" style={{ fontSize: 17 }}>Finly</span>
           </div>
 
           <button
             onClick={() => { finishOnboarding(); navigate("/login"); }}
-            className="text-white/40 font-medium hover:text-white/70 transition-colors"
+            className="text-ink/40 font-medium hover:text-ink/70 transition-colors"
             style={{ fontSize: 14 }}
           >
             Skip
@@ -744,12 +744,12 @@ export function OnboardingScreen() {
               </div>
 
               <h1
-                className="text-white font-black mb-3 whitespace-pre-line"
+                className="text-ink font-black mb-3 whitespace-pre-line"
                 style={{ fontSize: 32, lineHeight: 1.15 }}
               >
                 {slide.title}
               </h1>
-              <p className="text-white/55 leading-relaxed" style={{ fontSize: 14 }}>
+              <p className="text-ink/55 leading-relaxed" style={{ fontSize: 14 }}>
                 {slide.description}
               </p>
             </motion.div>
@@ -774,7 +774,7 @@ export function OnboardingScreen() {
                 }}
               />
             ))}
-            <span className="ml-auto text-white/30" style={{ fontSize: 12 }}>{current + 1} / {SLIDES.length}</span>
+            <span className="ml-auto text-ink/30" style={{ fontSize: 12 }}>{current + 1} / {SLIDES.length}</span>
           </div>
 
           {/* CTA */}
@@ -787,7 +787,7 @@ export function OnboardingScreen() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
                 onClick={goNext}
-                className="w-full py-4 rounded-2xl text-white font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+                className="w-full py-4 rounded-2xl text-ink font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
                 style={{
                   background: `linear-gradient(135deg, ${slide.gradFrom} 0%, ${slide.gradTo} 100%)`,
                   boxShadow: `0 10px 28px ${slide.accent}40`,
@@ -808,7 +808,7 @@ export function OnboardingScreen() {
               >
                 <button
                   onClick={() => { finishOnboarding(); navigate("/signup"); }}
-                  className="w-full py-4 rounded-2xl text-white font-bold active:scale-[0.97] transition-transform flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-2xl text-ink font-bold active:scale-[0.97] transition-transform flex items-center justify-center gap-2"
                   style={{
                     background: "linear-gradient(135deg, #D4A24C 0%, #D4A24C 100%)",
                     boxShadow: "0 10px 28px rgba(212,162,76,0.42)",
@@ -820,7 +820,7 @@ export function OnboardingScreen() {
                 </button>
                 <button
                   onClick={() => { finishOnboarding(); navigate("/login"); }}
-                  className="w-full py-3.5 rounded-2xl text-white/65 font-medium border border-white/10 hover:border-white/20 transition-colors"
+                  className="w-full py-3.5 rounded-2xl text-ink/65 font-medium border border-ink/10 hover:border-ink/20 transition-colors"
                   style={{ fontSize: 15 }}
                 >
                   I Already Have an Account

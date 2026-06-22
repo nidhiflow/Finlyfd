@@ -81,20 +81,20 @@ function StatCard({
     <div className="rounded-2xl p-4 relative overflow-hidden"
       style={{
         background: "linear-gradient(135deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%)",
-        border: "1px solid rgba(255,255,255,0.07)",
+        border: "1px solid var(--divider)",
       }}>
       <div className="absolute top-2 right-2 w-8 h-8 rounded-xl flex items-center justify-center"
         style={{ background: `${accentColor}18` }}>
         <Icon className="w-4 h-4" style={{ color: accentColor }} />
       </div>
-      <p className="text-white/40 mb-1.5" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.4px" }}>
+      <p className="text-ink/40 mb-1.5" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.4px" }}>
         {label.toUpperCase()}
       </p>
-      <p className="font-bold" style={{ fontSize: 24, color: isEmpty ? "rgba(255,255,255,0.22)" : accentColor }}>
+      <p className="font-bold" style={{ fontSize: 24, color: isEmpty ? "var(--divider)" : accentColor }}>
         {value}
       </p>
       {isEmpty && (
-        <p className="text-white/20 mt-1" style={{ fontSize: 10 }}>No data yet</p>
+        <p className="text-ink/20 mt-1" style={{ fontSize: 10 }}>No data yet</p>
       )}
     </div>
   );
@@ -305,16 +305,16 @@ export function DashboardScreen() {
           <div className="flex items-center gap-2">
             <button onClick={prevMonth}
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.09)" }}>
-              <ChevronLeft className="w-4 h-4 text-white/50" />
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)" }}>
+              <ChevronLeft className="w-4 h-4 text-ink/50" />
             </button>
             <span className="font-semibold min-w-28 text-center" style={{ fontSize: 13, color: "rgba(255,255,255,0.75)" }}>
               {MONTHS[monthIdx]} {year}
             </span>
             <button onClick={nextMonth}
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.09)" }}>
-              <ChevronRight className="w-4 h-4 text-white/50" />
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)" }}>
+              <ChevronRight className="w-4 h-4 text-ink/50" />
             </button>
           </div>
           ) : (
@@ -670,7 +670,7 @@ export function DashboardScreen() {
               className="w-full max-w-sm rounded-3xl p-6 relative overflow-hidden text-left"
               style={{
                 background: "linear-gradient(135deg, #212C30, #10171A)",
-                border: "1px solid rgba(255,255,255,0.1)",
+                border: "1px solid var(--divider)",
                 boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
               }}
             >
@@ -682,10 +682,10 @@ export function DashboardScreen() {
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#D4A24C]/15 border border-[#D4A24C]/25">
                   <Award className="w-5 h-5 text-[#D4A24C]" />
                 </div>
-                <h3 className="text-white font-bold text-lg">About Finly Score</h3>
+                <h3 className="text-ink font-bold text-lg">About Finly Score</h3>
               </div>
 
-              <p className="text-white/70 text-sm leading-relaxed mb-5">
+              <p className="text-ink/70 text-sm leading-relaxed mb-5">
                 The Finly Score measures your monthly financial health and budget discipline. It is computed dynamically using three key factors:
               </p>
 
@@ -693,24 +693,24 @@ export function DashboardScreen() {
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xs text-emerald-400 font-bold flex-shrink-0 mt-0.5">50</div>
                   <div>
-                    <h4 className="text-white font-semibold text-xs">Savings Rate (Up to 50 pts)</h4>
-                    <p className="text-white/40 text-[11px] mt-0.5">Calculated as the percentage of your monthly income you save (Income - Expenses).</p>
+                    <h4 className="text-ink font-semibold text-xs">Savings Rate (Up to 50 pts)</h4>
+                    <p className="text-ink/40 text-[11px] mt-0.5">Calculated as the percentage of your monthly income you save (Income - Expenses).</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-xs text-blue-400 font-bold flex-shrink-0 mt-0.5">30</div>
                   <div>
-                    <h4 className="text-white font-semibold text-xs">Expense Control (Up to 30 pts)</h4>
-                    <p className="text-white/40 text-[11px] mt-0.5">Points awarded for keeping total spending under 50%, 70%, or 85% of your earnings.</p>
+                    <h4 className="text-ink font-semibold text-xs">Expense Control (Up to 30 pts)</h4>
+                    <p className="text-ink/40 text-[11px] mt-0.5">Points awarded for keeping total spending under 50%, 70%, or 85% of your earnings.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-xs text-purple-400 font-bold flex-shrink-0 mt-0.5">20</div>
                   <div>
-                    <h4 className="text-white font-semibold text-xs">Tracking Activity (Up to 20 pts)</h4>
-                    <p className="text-white/40 text-[11px] mt-0.5">Earned by consistently logging transactions in the ledger.</p>
+                    <h4 className="text-ink font-semibold text-xs">Tracking Activity (Up to 20 pts)</h4>
+                    <p className="text-ink/40 text-[11px] mt-0.5">Earned by consistently logging transactions in the ledger.</p>
                   </div>
                 </div>
               </div>
@@ -718,7 +718,7 @@ export function DashboardScreen() {
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setShowScoreInfo(false)}
-                className="w-full py-3 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-white font-semibold text-sm shadow-md shadow-[#D4A24C]/25"
+                className="w-full py-3 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-ink font-semibold text-sm shadow-md shadow-[#D4A24C]/25"
               >
                 Got it
               </motion.button>

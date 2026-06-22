@@ -271,7 +271,7 @@ function UsageDots({ level, color }: { level: number; color: string }) {
     <div className="flex items-center gap-0.5">
       {[1,2,3,4,5].map(i => (
         <div key={i} className="w-1 h-1 rounded-full transition-all"
-          style={{ background: i <= level ? color : "rgba(255,255,255,0.12)" }} />
+          style={{ background: i <= level ? color : "var(--divider)" }} />
       ))}
     </div>
   );
@@ -308,9 +308,9 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
               MONTHLY INCOME ESTIMATE
             </span>
           </div>
-          <p className="font-fraunces font-bold tabular-nums text-white" style={{ fontSize: 22 }}>
+          <p className="font-fraunces font-bold tabular-nums text-ink" style={{ fontSize: 22 }}>
             {total > 0 ? formatted : "—"}
-            <span className="font-inter text-white/35 font-normal" style={{ fontSize: 13 }}> / month</span>
+            <span className="font-inter text-ink/35 font-normal" style={{ fontSize: 13 }}> / month</span>
           </p>
           <p style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", marginTop: 2 }}>
             from {primaryIds.size} primary {primaryIds.size === 1 ? "source" : "sources"}
@@ -325,7 +325,7 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
             </div>
           ))}
           {primaryCats.length === 0 && (
-            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.25)" }}>Mark categories as primary</p>
+            <p style={{ fontSize: 11, color: "var(--divider)" }}>Mark categories as primary</p>
           )}
         </div>
       </div>
@@ -351,7 +351,7 @@ function CategoryCard({
     ? "rgba(34,197,94,0.45)"
     : isExpanded
       ? cat.color + "35"
-      : "rgba(255,255,255,0.07)";
+      : "var(--divider)";
 
   const bg = isPrimary
     ? `linear-gradient(135deg, rgba(34,197,94,0.10) 0%, ${cat.color}0A 100%)`
@@ -406,21 +406,21 @@ function CategoryCard({
           {!isIncome && isPinned && (
             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FFB703] flex items-center justify-center"
               style={{ boxShadow: "0 2px 6px rgba(255,183,3,0.6)" }}>
-              <Star className="w-2.5 h-2.5 text-white fill-white" />
+              <Star className="w-2.5 h-2.5 text-ink fill-white" />
             </div>
           )}
           {isIncome && isPrimary && (
             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center"
               style={{ background: "linear-gradient(135deg,#22C55E,#D4A24C)", boxShadow: "0 2px 8px rgba(34,197,94,0.6)" }}>
-              <Crown className="w-2.5 h-2.5 text-white" />
+              <Crown className="w-2.5 h-2.5 text-ink" />
             </div>
           )}
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-white font-semibold leading-tight" style={{ fontSize: 14 }}>{cat.name}</p>
+          <p className="text-ink font-semibold leading-tight" style={{ fontSize: 14 }}>{cat.name}</p>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-            <p className="text-white/38" style={{ fontSize: 11 }}>
+            <p className="text-ink/38" style={{ fontSize: 11 }}>
               {cat.subs.length} {cat.subs.length === 1 ? "subcategory" : "subcategories"}
             </p>
             {/* Monthly income badge for primary income */}
@@ -431,7 +431,7 @@ function CategoryCard({
             )}
             {cat.usage && !isPrimary && (
               <>
-                <div className="w-px h-2.5 bg-white/12" />
+                <div className="w-px h-2.5 bg-ink/12" />
                 <UsageDots level={cat.usage} color={isIncome ? "#22C55E" : cat.color} />
               </>
             )}
@@ -446,21 +446,21 @@ function CategoryCard({
           {!isIncome ? (
             <motion.button whileTap={{ scale: 0.8 }}
               onClick={e => { e.stopPropagation(); onPin(); }}
-              className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-white/6">
-              <Star className={`w-3.5 h-3.5 transition-colors ${isPinned ? "text-[#FFB703] fill-[#FFB703]" : "text-white/28"}`} />
+              className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-ink/6">
+              <Star className={`w-3.5 h-3.5 transition-colors ${isPinned ? "text-[#FFB703] fill-[#FFB703]" : "text-ink/28"}`} />
             </motion.button>
           ) : (
             <motion.button whileTap={{ scale: 0.8 }}
               onClick={e => { e.stopPropagation(); onTogglePrimary(); }}
-              className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/6"
+              className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-ink/6"
               style={{ background: isPrimary ? "rgba(34,197,94,0.12)" : "transparent" }}>
-              <Crown className={`w-3.5 h-3.5 transition-colors ${isPrimary ? "text-[#22C55E]" : "text-white/28"}`} />
+              <Crown className={`w-3.5 h-3.5 transition-colors ${isPrimary ? "text-[#22C55E]" : "text-ink/28"}`} />
             </motion.button>
           )}
           <motion.button whileTap={{ scale: 0.8 }}
             onClick={e => { e.stopPropagation(); onEdit(); }}
-            className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-white/6">
-            <Pencil className="w-3.5 h-3.5 text-white/40" />
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-ink/6">
+            <Pencil className="w-3.5 h-3.5 text-ink/40" />
           </motion.button>
           <motion.button whileTap={{ scale: 0.8 }}
             onClick={e => { e.stopPropagation(); onDelete(); }}
@@ -469,7 +469,7 @@ function CategoryCard({
           </motion.button>
           <div className="w-7 h-8 flex items-center justify-center">
             <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.25, ease: [0.4,0,0.2,1] }}>
-              <ChevronDown className="w-4 h-4 text-white/30" />
+              <ChevronDown className="w-4 h-4 text-ink/30" />
             </motion.div>
           </div>
         </div>
@@ -489,14 +489,14 @@ function CategoryCard({
               style={{ background: `linear-gradient(to right, ${isPrimary ? "#22C55E" : cat.color}40, transparent)` }} />
             <div className="px-4 pb-3 space-y-0.5">
               {cat.subs.length === 0 && (
-                <p className="text-white/25 text-center py-3" style={{ fontSize: 12 }}>No subcategories yet</p>
+                <p className="text-ink/25 text-center py-3" style={{ fontSize: 12 }}>No subcategories yet</p>
               )}
               {cat.subs.map((sub, i) => (
                 <motion.div key={sub.id}
                   initial={{ x: -10, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: i * 0.03, duration: 0.17 }}
-                  className="flex items-center gap-2.5 pl-1 pr-1 py-1.5 rounded-xl hover:bg-white/4 transition-colors group"
+                  className="flex items-center gap-2.5 pl-1 pr-1 py-1.5 rounded-xl hover:bg-ink/4 transition-colors group"
                 >
                   <div className="relative flex-shrink-0 flex items-center" style={{ width: 34 }}>
                     <div className="absolute left-[9px] top-0 bottom-0 w-px"
@@ -511,11 +511,11 @@ function CategoryCard({
                       {sub.icon ? <sub.icon className="w-4 h-4" style={{ color: "rgba(255,255,255,0.75)" }} /> : <span>{sub.emoji}</span>}
                     </div>
                   </div>
-                  <span className="flex-1 text-white/68" style={{ fontSize: 13 }}>{sub.name}</span>
+                  <span className="flex-1 text-ink/68" style={{ fontSize: 13 }}>{sub.name}</span>
                   <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                     <motion.button whileTap={{ scale: 0.8 }} onClick={() => onEditSub(sub)}
-                      className="w-6 h-6 rounded-lg flex items-center justify-center hover:bg-white/10">
-                      <Pencil className="w-2.5 h-2.5 text-white/45" />
+                      className="w-6 h-6 rounded-lg flex items-center justify-center hover:bg-ink/10">
+                      <Pencil className="w-2.5 h-2.5 text-ink/45" />
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.8 }} onClick={() => onDeleteSub(sub)}
                       className="w-6 h-6 rounded-lg flex items-center justify-center hover:bg-rose-500/15">
@@ -525,7 +525,7 @@ function CategoryCard({
                 </motion.div>
               ))}
               <motion.button whileTap={{ scale: 0.97 }} onClick={onAddSub}
-                className="mt-1.5 ml-1 flex items-center gap-1.5 py-2 px-3 rounded-xl hover:bg-white/5 transition-colors"
+                className="mt-1.5 ml-1 flex items-center gap-1.5 py-2 px-3 rounded-xl hover:bg-ink/5 transition-colors"
                 style={{ color: isPrimary ? "#22C55E" : cat.color, fontSize: 12, fontWeight: 600 }}>
                 <Plus className="w-3.5 h-3.5" />
                 Add Subcategory
@@ -546,7 +546,7 @@ function PinnedStrip({ cats, pinnedIds, onTap }: { cats: Cat[]; pinnedIds: Set<s
     <div className="px-4 pb-1">
       <div className="flex items-center gap-2 mb-2">
         <Star className="w-3 h-3 text-[#FFB703] fill-[#FFB703]" />
-        <span className="text-white/38" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.5px" }}>PINNED</span>
+        <span className="text-ink/38" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.5px" }}>PINNED</span>
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
         {pinned.map(c => (
@@ -554,7 +554,7 @@ function PinnedStrip({ cats, pinnedIds, onTap }: { cats: Cat[]; pinnedIds: Set<s
             className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-2xl"
             style={{ background: `linear-gradient(135deg,${c.color}22 0%,${c.color}10 100%)`, border: `1px solid ${c.color}38` }}>
             {c.icon ? <c.icon className="w-4 h-4" style={{ color: "rgba(255,255,255,0.8)" }} /> : <span style={{ fontSize: 15 }}>{c.emoji}</span>}
-            <span className="text-white/80 whitespace-nowrap" style={{ fontSize: 12, fontWeight: 600 }}>{c.name}</span>
+            <span className="text-ink/80 whitespace-nowrap" style={{ fontSize: 12, fontWeight: 600 }}>{c.name}</span>
           </motion.button>
         ))}
       </div>
@@ -602,36 +602,36 @@ function CategoryModal({
           background: isIncome
             ? "linear-gradient(180deg, #102218 0%, #0B1A10 50%, var(--bg-deep) 100%)"
             : "linear-gradient(180deg, var(--surface) 0%, var(--bg-deep) 100%)",
-          border: `1px solid ${isIncome ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.09)"}`,
+          border: `1px solid ${isIncome ? "rgba(34,197,94,0.15)" : "var(--divider)"}`,
           borderBottom: "none",
           maxHeight: "90vh", overflowY: "auto",
         }}
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-9 h-1 rounded-full" style={{ background: isIncome ? "rgba(34,197,94,0.3)" : "rgba(255,255,255,0.14)" }} />
+          <div className="w-9 h-1 rounded-full" style={{ background: isIncome ? "rgba(34,197,94,0.3)" : "var(--divider)" }} />
         </div>
 
         <div className="px-5 pb-8 pt-3">
           {/* Header */}
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h2 className="text-white font-bold" style={{ fontSize: 19 }}>{title}</h2>
+              <h2 className="text-ink font-bold" style={{ fontSize: 19 }}>{title}</h2>
               {isIncome && !isSubModal && (
                 <p style={{ fontSize: 12, color: "rgba(74,222,128,0.7)", marginTop: 2 }}>
                   💰 Income Category
                 </p>
               )}
               {isSubModal && parentCat && (
-                <p className="text-white/38 mt-0.5" style={{ fontSize: 12 }}>
+                <p className="text-ink/38 mt-0.5" style={{ fontSize: 12 }}>
                   in <span className="inline-flex items-center gap-1" style={{ color: parentCat.color }}>{parentCat.icon ? <parentCat.icon className="w-3.5 h-3.5" /> : parentCat.emoji} {parentCat.name}</span>
                 </p>
               )}
             </div>
             <button onClick={onClose}
               className="w-8 h-8 rounded-2xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.09)" }}>
-              <X className="w-4 h-4 text-white/50" />
+              style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+              <X className="w-4 h-4 text-ink/50" />
             </button>
           </div>
 
@@ -644,12 +644,12 @@ function CategoryModal({
                   background: showAI
                     ? isIncome ? "linear-gradient(135deg,rgba(34,197,94,0.15),rgba(212,162,76,0.12))" : "linear-gradient(135deg,rgba(212,162,76,0.18),rgba(212,162,76,0.12))"
                     : "rgba(255,255,255,0.05)",
-                  border: `1px solid ${showAI ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(212,162,76,0.4)") : "rgba(255,255,255,0.09)"}`,
+                  border: `1px solid ${showAI ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(212,162,76,0.4)") : "var(--divider)"}`,
                 }}>
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg flex items-center justify-center"
                     style={{ background: isIncome ? "linear-gradient(135deg,#22C55E,#D4A24C)" : "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
-                    <Sparkles className="w-3.5 h-3.5 text-white" />
+                    <Sparkles className="w-3.5 h-3.5 text-ink" />
                   </div>
                   <span className="font-semibold" style={{ fontSize: 13, color: showAI ? (isIncome ? "#4ADE80" : "#D4A24C") : "rgba(255,255,255,0.6)" }}>
                     {isIncome ? "AI Detect Income Type" : "AI Suggest Category"}
@@ -666,7 +666,7 @@ function CategoryModal({
                     style={{ overflow: "hidden" }}
                   >
                     <div className="pt-2.5 pb-1">
-                      <p className="text-white/35 mb-2.5" style={{ fontSize: 11 }}>
+                      <p className="text-ink/35 mb-2.5" style={{ fontSize: 11 }}>
                         {isIncome ? "Common income sources you might want to track:" : "Common categories based on spending patterns:"}
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -689,7 +689,7 @@ function CategoryModal({
 
           {/* Emoji */}
           <div className="mb-4">
-            <label className="text-white/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.7px" }}>ICON</label>
+            <label className="text-ink/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.7px" }}>ICON</label>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
                 style={{
@@ -703,10 +703,10 @@ function CategoryModal({
                 <input value={emoji}
                   onChange={e => { const v = e.target.value; if (v) setEmoji(v.trim().slice(0, 4)); }}
                   placeholder="Paste or type emoji"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-white placeholder:text-white/22 focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", fontSize: 14 }}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-ink placeholder:text-ink/22 focus:outline-none"
+                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)", fontSize: 14 }}
                 />
-                <p className="text-white/28 mt-1" style={{ fontSize: 10 }}>Or pick from grid below</p>
+                <p className="text-ink/28 mt-1" style={{ fontSize: 10 }}>Or pick from grid below</p>
               </div>
             </div>
             <div className="grid grid-cols-9 gap-1">
@@ -726,14 +726,14 @@ function CategoryModal({
 
           {/* Name */}
           <div className="mb-4">
-            <label className="text-white/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.7px" }}>NAME</label>
+            <label className="text-ink/40 mb-2 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.7px" }}>NAME</label>
             <input value={name} onChange={e => setName(e.target.value)}
               placeholder={isSubModal ? "Subcategory name…" : isIncome ? "Income category name…" : "Category name…"}
               onKeyDown={e => e.key === "Enter" && name.trim() && onSave(name.trim(), emoji, color)}
-              className="w-full px-4 py-3.5 rounded-2xl text-white placeholder:text-white/22 focus:outline-none"
+              className="w-full px-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none"
               style={{
                 background: "rgba(255,255,255,0.055)",
-                border: `1px solid ${name ? btnColor + "45" : "rgba(255,255,255,0.1)"}`,
+                border: `1px solid ${name ? btnColor + "45" : "var(--divider)"}`,
                 fontSize: 15, transition: "border-color 0.2s",
               }}
             />
@@ -742,7 +742,7 @@ function CategoryModal({
           {/* Color (categories only) */}
           {!isSubModal && (
             <div className="mb-5">
-              <label className="text-white/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.7px" }}>ACCENT COLOR</label>
+              <label className="text-ink/40 mb-2.5 block" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.7px" }}>ACCENT COLOR</label>
               <div className="grid grid-cols-10 gap-1.5">
                 {PALETTE.map(c => (
                   <button key={c} onClick={() => setColor(c)}
@@ -753,7 +753,7 @@ function CategoryModal({
                       boxShadow: color === c ? `0 4px 12px ${c}70` : "none",
                       border: color === c ? "2px solid rgba(255,255,255,0.85)" : "none",
                     }}>
-                    {color === c && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                    {color === c && <Check className="w-3 h-3 text-ink" strokeWidth={3} />}
                   </button>
                 ))}
               </div>
@@ -763,14 +763,14 @@ function CategoryModal({
           {/* Buttons */}
           <div className="flex gap-3 pt-1">
             <button onClick={onClose}
-              className="flex-1 py-4 rounded-2xl font-semibold text-white/50"
-              style={{ background: "rgba(255,255,255,0.055)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 14 }}>
+              className="flex-1 py-4 rounded-2xl font-semibold text-ink/50"
+              style={{ background: "rgba(255,255,255,0.055)", border: "1px solid var(--divider)", fontSize: 14 }}>
               Cancel
             </button>
             <motion.button whileTap={{ scale: 0.97 }}
               onClick={() => name.trim() && onSave(name.trim(), emoji, color)}
               disabled={!name.trim()}
-              className="flex-1 py-4 rounded-2xl text-white font-bold disabled:opacity-35"
+              className="flex-1 py-4 rounded-2xl text-ink font-bold disabled:opacity-35"
               style={{
                 fontSize: 14,
                 background: isIncome
@@ -801,27 +801,27 @@ function DeleteModal({ target, onClose, onConfirm }: { target: DelTarget; onClos
         exit={{ scale: 0.86, opacity: 0 }} transition={{ duration: 0.22, ease: [0.4,0,0.2,1] }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-sm rounded-3xl p-6"
-        style={{ background: "linear-gradient(135deg,#212C30 0%,#10171A 100%)", border: "1px solid rgba(255,255,255,0.10)" }}
+        style={{ background: "linear-gradient(135deg,#212C30 0%,#10171A 100%)", border: "1px solid var(--divider)" }}
       >
         <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
           style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.25)" }}>
           <Trash2 className="w-6 h-6 text-rose-400" />
         </div>
-        <h3 className="text-white font-bold text-center mb-2" style={{ fontSize: 17 }}>
+        <h3 className="text-ink font-bold text-center mb-2" style={{ fontSize: 17 }}>
           Delete {target.kind === "cat" ? "Category" : "Subcategory"}?
         </h3>
-        <p className="text-white/42 text-center mb-6 leading-relaxed" style={{ fontSize: 13 }}>
-          <span className="text-white/68 font-medium">"{target.name}"</span> will be permanently removed.
+        <p className="text-ink/42 text-center mb-6 leading-relaxed" style={{ fontSize: 13 }}>
+          <span className="text-ink/68 font-medium">"{target.name}"</span> will be permanently removed.
           {target.kind === "cat" && <> All its subcategories will also be deleted.</>}
         </p>
         <div className="flex gap-3">
           <button onClick={onClose}
-            className="flex-1 py-3.5 rounded-2xl font-semibold text-white/50"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 14 }}>
+            className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
+            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--divider)", fontSize: 14 }}>
             Cancel
           </button>
           <motion.button whileTap={{ scale: 0.96 }} onClick={onConfirm}
-            className="flex-1 py-3.5 rounded-2xl font-bold text-white"
+            className="flex-1 py-3.5 rounded-2xl font-bold text-ink"
             style={{ background: "linear-gradient(135deg,#F72585,#EF4444)", boxShadow: "0 6px 20px rgba(247,37,133,0.38)", fontSize: 14 }}>
             Delete
           </motion.button>
@@ -928,20 +928,20 @@ export function CategoriesScreen() {
             exit={{ height:0, opacity:0 }} transition={{ duration:0.22 }}
             className="px-4 pt-3 overflow-hidden">
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/35" />
               <input ref={searchRef} autoFocus value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search categories & subcategories…"
-                className="w-full pl-10 pr-9 py-3 rounded-2xl text-white placeholder:text-white/25 focus:outline-none"
+                className="w-full pl-10 pr-9 py-3 rounded-2xl text-ink placeholder:text-ink/25 focus:outline-none"
                 style={{
-                  background: "rgba(255,255,255,0.07)",
+                  background: "var(--divider)",
                   border: `1px solid ${isIncome ? "rgba(34,197,94,0.28)" : "rgba(212,162,76,0.28)"}`,
                   fontSize: 13,
                 }}
               />
               {search && (
                 <button onClick={() => setSearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
-                  <X className="w-3 h-3 text-white/60" />
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-ink/10 flex items-center justify-center">
+                  <X className="w-3 h-3 text-ink/60" />
                 </button>
               )}
             </div>
@@ -952,7 +952,7 @@ export function CategoriesScreen() {
       {/* ── Type Toggle ── */}
       <div className="px-4 pt-4 pb-1">
         <div className="relative flex p-1 rounded-2xl"
-          style={{ background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.07)" }}>
+          style={{ background:"rgba(255,255,255,0.05)", border:"1px solid var(--divider)" }}>
           <motion.div className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl"
             animate={{ left: activeType === "expense" ? 4 : "calc(50%)" }}
             transition={{ duration:0.3, ease:[0.4,0,0.2,1] }}
@@ -972,7 +972,7 @@ export function CategoriesScreen() {
               </span>
               <span className="rounded-full px-1.5 py-0.5" style={{
                 fontSize:10, fontWeight:800,
-                background: activeType === t ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.07)",
+                background: activeType === t ? "var(--divider)" : "var(--divider)",
                 color: activeType === t ? "white" : "rgba(255,255,255,0.3)",
               }}>{t === "expense" ? expCount : incCount}</span>
             </button>
@@ -984,7 +984,7 @@ export function CategoriesScreen() {
       <div className="px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full" style={{ background: isIncome ? "#22C55E" : "#D4A24C" }} />
-          <p className="text-white/35" style={{ fontSize:11, fontWeight:500 }}>
+          <p className="text-ink/35" style={{ fontSize:11, fontWeight:500 }}>
             {visible.length} categories · {visible.reduce((a,c) => a+c.subs.length, 0)} subcategories
           </p>
         </div>
@@ -992,7 +992,7 @@ export function CategoriesScreen() {
           className="w-7 h-7 rounded-xl flex items-center justify-center transition-all"
           style={{
             background: showSearch ? (isIncome ? "rgba(34,197,94,0.2)" : "rgba(212,162,76,0.22)") : "rgba(255,255,255,0.06)",
-            border: `1px solid ${showSearch ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(212,162,76,0.4)") : "rgba(255,255,255,0.08)"}`,
+            border: `1px solid ${showSearch ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(212,162,76,0.4)") : "var(--divider)"}`,
           }}>
           <Search className="w-3.5 h-3.5" style={{ color: showSearch ? (isIncome ? "#4ADE80" : "#D4A24C") : "rgba(255,255,255,0.38)" }} />
         </button>
@@ -1036,18 +1036,18 @@ export function CategoriesScreen() {
         {visible.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
             <div className="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl"
-              style={{ background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)" }}>
+              style={{ background:"rgba(255,255,255,0.05)", border:"1px solid var(--divider)" }}>
               {search ? "🔍" : isIncome ? "💰" : "🗂️"}
             </div>
-            <p className="text-white/38 text-center" style={{ fontSize:14 }}>
+            <p className="text-ink/38 text-center" style={{ fontSize:14 }}>
               {search ? `No results for "${search}"` : isIncome ? "No income categories yet" : "No categories yet"}
             </p>
             {!search && (
               <motion.button whileTap={{ scale:0.96 }} onClick={() => setModal({ kind:"add-cat", activeType })}
                 className="flex items-center gap-2 px-5 py-3 rounded-2xl"
                 style={{ background: fabGrad, boxShadow: fabShadow }}>
-                <Plus className="w-4 h-4 text-white" />
-                <span className="text-white font-bold" style={{ fontSize:14 }}>
+                <Plus className="w-4 h-4 text-ink" />
+                <span className="text-ink font-bold" style={{ fontSize:14 }}>
                   Add {isIncome ? "Income " : ""}Category
                 </span>
               </motion.button>
@@ -1095,7 +1095,7 @@ export function CategoriesScreen() {
           animation: "catFabBreathe 3s ease-in-out infinite",
         }}
       >
-        <Plus className="w-6 h-6 text-white" strokeWidth={2.8} />
+        <Plus className="w-6 h-6 text-ink" strokeWidth={2.8} />
       </motion.button>
 
       {/* ── Modals ── */}

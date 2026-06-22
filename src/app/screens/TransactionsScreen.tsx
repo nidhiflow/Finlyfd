@@ -168,7 +168,7 @@ function TransactionRow({ transaction, onLongPress }: {
   return (
     <motion.div
       onClick={() => onLongPress(transaction)}
-      className="flex items-center gap-3 py-3 px-2 rounded-[14px] transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] cursor-pointer"
+      className="flex items-center gap-3 py-3 px-2 rounded-[14px] transition-colors hover:bg-ink/[0.04] active:bg-ink/[0.06] cursor-pointer"
       style={{ userSelect: "none" }}
     >
       {/* Column 1: Category & Subcategory */}
@@ -233,7 +233,7 @@ function ActionSheet({ transaction, onDelete, onEdit, onClose }: {
         </div>
         <div className="space-y-1.5">
           <motion.button whileTap={{ scale: 0.97 }} onClick={onEdit}
-            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-sm active:bg-white/10 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-sm active:bg-ink/10 transition-colors"
             style={{ background: "var(--surface-raised)", color: "var(--ink)" }}>
             <Edit3 className="w-4 h-4" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} /> Edit Transaction
           </motion.button>
@@ -555,7 +555,7 @@ export function TransactionsScreen() {
             return (
               <div key={group.dateKey} className="border-b border-[var(--divider)] pb-1">
                 <motion.button
-                  className="w-full pt-4 pb-2 cursor-pointer active:bg-white/[0.02] rounded-[14px] transition-colors flex items-center justify-between text-left"
+                  className="w-full pt-4 pb-2 cursor-pointer active:bg-ink/[0.02] rounded-[14px] transition-colors flex items-center justify-between text-left"
                   onClick={() => toggleGroup(group.dateKey)}
                   whileTap={{ scale: 0.99 }}
                 >
@@ -668,7 +668,7 @@ export function TransactionsScreen() {
                     <p className="text-xs" style={{ color: "var(--ink-faint)" }}>No transactions on this day</p>
                   </div>
                 ) : (
-                  <div className="space-y-1.5 border-l border-white/[0.05] ml-2 pl-2">
+                  <div className="space-y-1.5 border-l border-ink/[0.05] ml-2 pl-2">
                     {selectedDayData.transactions.map(tx => (
                       <TransactionRow key={tx.id} transaction={tx} onLongPress={setActionTx} />
                     ))}
@@ -686,7 +686,7 @@ export function TransactionsScreen() {
               return (
                 <div key={group.key} className="mb-3 border-b border-[var(--divider)] pb-2">
                   <motion.button
-                    className="w-full flex items-center justify-between rounded-[14px] px-4 py-3.5 cursor-pointer active:bg-white/[0.06] transition-colors"
+                    className="w-full flex items-center justify-between rounded-[14px] px-4 py-3.5 cursor-pointer active:bg-ink/[0.06] transition-colors"
                     style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}
                     onClick={() => toggleGroup(aKey)}
                     whileTap={{ scale: 0.99 }}

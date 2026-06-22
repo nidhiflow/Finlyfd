@@ -46,7 +46,7 @@ function PinDots({
                 : error
                 ? "bg-red-500 border-red-500 scale-110"
                 : "bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] border-[#D4A24C] scale-110"
-              : "border-white/25 bg-transparent"
+              : "border-ink/25 bg-transparent"
           }`}
         />
       ))}
@@ -80,9 +80,9 @@ function Keypad({
               key={idx}
               onClick={onDelete}
               disabled={disabled}
-              className="h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center active:scale-95 active:bg-white/10 transition-all disabled:opacity-30"
+              className="h-16 rounded-2xl bg-ink/5 border border-ink/10 flex items-center justify-center active:scale-95 active:bg-ink/10 transition-all disabled:opacity-30"
             >
-              <Delete className="w-5 h-5 text-white/60" />
+              <Delete className="w-5 h-5 text-ink/60" />
             </button>
           );
         }
@@ -91,7 +91,7 @@ function Keypad({
             key={idx}
             onClick={() => onPress(key)}
             disabled={disabled}
-            className="h-16 rounded-2xl bg-white/5 border border-white/10 text-white text-xl font-medium active:scale-95 active:bg-[#D4A24C]/30 transition-all disabled:opacity-30 hover:bg-white/10"
+            className="h-16 rounded-2xl bg-ink/5 border border-ink/10 text-ink text-xl font-medium active:scale-95 active:bg-[#D4A24C]/30 transition-all disabled:opacity-30 hover:bg-ink/10"
           >
             {key}
           </button>
@@ -119,7 +119,7 @@ function BiometricButton({
           ? "bg-emerald-500/20 border-2 border-emerald-400"
           : scanning
           ? "bg-[#D4A24C]/20 border-2 border-[#D4A24C]"
-          : "bg-white/5 border-2 border-white/20 hover:border-[#D4A24C]/50 hover:bg-[#D4A24C]/10 active:scale-95"
+          : "bg-ink/5 border-2 border-ink/20 hover:border-[#D4A24C]/50 hover:bg-[#D4A24C]/10 active:scale-95"
       }`}
     >
       {/* Pulse rings when scanning */}
@@ -135,7 +135,7 @@ function BiometricButton({
       ) : (
         <Fingerprint
           className={`w-8 h-8 transition-colors ${
-            scanning ? "text-[#D4A24C]" : "text-white/50"
+            scanning ? "text-[#D4A24C]" : "text-ink/50"
           }`}
         />
       )}
@@ -295,7 +295,7 @@ export function QuickLoginScreen() {
         {/* Avatar */}
         <div className="relative mb-5">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-xl shadow-[#D4A24C]/30">
-            <span className="text-3xl font-bold text-white">
+            <span className="text-3xl font-bold text-ink">
               {userName.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -305,11 +305,11 @@ export function QuickLoginScreen() {
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-white">
+        <h2 className="text-2xl font-bold text-ink">
           Welcome back, {userName}
         </h2>
         {maskedEmail && (
-          <p className="text-white/40 text-sm mt-1">{maskedEmail}</p>
+          <p className="text-ink/40 text-sm mt-1">{maskedEmail}</p>
         )}
 
         {/* Session status */}
@@ -325,7 +325,7 @@ export function QuickLoginScreen() {
 
       {/* ── PIN area ────────────────────────────────────── */}
       <div className="flex flex-col items-center px-6 flex-1">
-        <p className="text-white/50 text-sm mb-1">
+        <p className="text-ink/50 text-sm mb-1">
           Enter your {mpinLength}-digit PIN
         </p>
 
@@ -377,7 +377,7 @@ export function QuickLoginScreen() {
             scanning={scanning}
             success={biometricSuccess}
           />
-          <p className="text-white/40 text-xs mt-2.5">
+          <p className="text-ink/40 text-xs mt-2.5">
             {scanning ? "Scanning…" : "Use biometrics"}
           </p>
         </div>
@@ -387,10 +387,10 @@ export function QuickLoginScreen() {
       <div className="px-6 pb-8 space-y-3">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/8" />
+            <div className="w-full border-t border-ink/8" />
           </div>
           <div className="relative flex justify-center">
-            <span className="px-4 bg-[#0D0F14] text-xs text-white/30">
+            <span className="px-4 bg-[#0D0F14] text-xs text-ink/30">
               or
             </span>
           </div>
@@ -398,13 +398,13 @@ export function QuickLoginScreen() {
 
         <button
           onClick={() => navigate("/login")}
-          className="w-full flex items-center justify-center gap-2 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white/60 text-sm hover:border-white/20 hover:text-white/80 transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3.5 bg-ink/5 border border-ink/10 rounded-xl text-ink/60 text-sm hover:border-ink/20 hover:text-ink/80 transition-all"
         >
           Use Password Instead
           <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
         </button>
 
-        <p className="text-center text-xs text-white/25">
+        <p className="text-center text-xs text-ink/25">
           Not you?{" "}
           <button
             onClick={() => {

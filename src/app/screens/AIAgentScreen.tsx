@@ -91,8 +91,8 @@ export function AIAgentScreen() {
             <Bot className="w-5 h-5 text-[#D4A24C]" />
           </div>
           <div className="flex-1">
-            <h3 className="text-white font-semibold text-sm">AI Financial Coach</h3>
-            <p className="text-xs text-white/60">Powered by advanced AI • Always learning</p>
+            <h3 className="text-ink font-semibold text-sm">AI Financial Coach</h3>
+            <p className="text-xs text-ink/60">Powered by advanced AI • Always learning</p>
           </div>
         </div>
       </div>
@@ -113,18 +113,18 @@ export function AIAgentScreen() {
               <div className={`px-4 py-3 rounded-2xl max-w-[85%] ${
                 msg.type === "ai" ? "bg-[var(--surface)] border border-[var(--divider)]" : "bg-gradient-to-r from-[#D4A24C] to-[#D4A24C]"
               }`}>
-                <p className="text-sm text-white whitespace-pre-line">
+                <p className="text-sm text-ink whitespace-pre-line">
                   {msg.content === "Thinking..." ? <span className="animate-pulse">Thinking...</span> : msg.content}
                 </p>
               </div>
-              {msg.timestamp && <p className="text-xs text-white/40 mt-1 px-1">{msg.timestamp}</p>}
+              {msg.timestamp && <p className="text-xs text-ink/40 mt-1 px-1">{msg.timestamp}</p>}
             </div>
           </div>
         ))}
 
         {messages.filter(m => m.type === "user").length === 0 && (
           <div className="space-y-2 pt-4">
-            <p className="text-xs text-white/50 px-1">Quick Suggestions:</p>
+            <p className="text-xs text-ink/50 px-1">Quick Suggestions:</p>
             {suggestions.map((s, i) => {
               const Icon = s.icon;
               return (
@@ -133,7 +133,7 @@ export function AIAgentScreen() {
                   <div className="w-8 h-8 rounded-lg bg-[#D4A24C]/20 flex items-center justify-center">
                     <Icon className="w-4 h-4 text-[#D4A24C]" />
                   </div>
-                  <span className="text-sm text-white">{s.text}</span>
+                  <span className="text-sm text-ink">{s.text}</span>
                 </button>
               );
             })}
@@ -144,13 +144,13 @@ export function AIAgentScreen() {
 
       <div className="px-5 py-4 border-t border-[var(--divider)] bg-[var(--bg-deep)]">
         <div className="flex items-center gap-2 mb-3">
-          <button onClick={() => toast.info("Receipt scanning coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-white/10 rounded-lg text-sm text-white hover:border-[#D4A24C]/30 active:scale-95 transition-all">
+          <button onClick={() => toast.info("Receipt scanning coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-ink/10 rounded-lg text-sm text-ink hover:border-[#D4A24C]/30 active:scale-95 transition-all">
             <Image className="w-4 h-4" /><span>Scan Receipt</span>
           </button>
-          <button onClick={() => toast.info("Voice input coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-white/10 rounded-lg text-sm text-white hover:border-[#D4A24C]/30 active:scale-95 transition-all">
+          <button onClick={() => toast.info("Voice input coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-ink/10 rounded-lg text-sm text-ink hover:border-[#D4A24C]/30 active:scale-95 transition-all">
             <Mic className="w-4 h-4" /><span>Voice</span>
           </button>
-          <button onClick={handleClear} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-white/10 rounded-lg text-sm text-white hover:border-[#EF4444]/30 active:scale-95 transition-all">
+          <button onClick={handleClear} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-ink/10 rounded-lg text-sm text-ink hover:border-[#EF4444]/30 active:scale-95 transition-all">
             <Trash2 className="w-4 h-4" /><span>Clear</span>
           </button>
         </div>
@@ -158,11 +158,11 @@ export function AIAgentScreen() {
           <input type="text" value={message} onChange={e => setMessage(e.target.value)}
             onKeyDown={e => e.key === "Enter" && handleSend()}
             placeholder="Ask me anything about your finances..."
-            className="flex-1 px-4 py-3 bg-[var(--surface)] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#D4A24C] focus:outline-none"
+            className="flex-1 px-4 py-3 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
             disabled={isLoading} />
           <button onClick={handleSend} disabled={isLoading || !message.trim()}
             className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-lg shadow-[#D4A24C]/30 active:scale-95 transition-transform disabled:opacity-50">
-            <Send className="w-5 h-5 text-white" />
+            <Send className="w-5 h-5 text-ink" />
           </button>
         </div>
       </div>
