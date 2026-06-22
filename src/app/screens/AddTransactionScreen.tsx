@@ -584,6 +584,8 @@ export function AddTransactionScreen() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
   const [ACCOUNTS, setACCOUNTS] = useState<Acc[]>([]);
+  const [recentNotes, setRecentNotes] = useState<string[]>([]);
+  const [showNoteSuggestions, setShowNoteSuggestions] = useState(false);
 
   // Modal states
   const [showCalc, setShowCalc] = useState(false);
@@ -628,6 +630,16 @@ export function AddTransactionScreen() {
       });
   }, [id]);
 
+  // ─── Fetch unique past notes for autocomplete ─────────────────────────────────
+  useEffect(() => {
+    transactionsAPI.getAll({}).then((txs: any[]) => {
+      if (!txs) return;
+      const notes = txs.map((t: any) => t.note || t.description).filter(Boolean);
+      const unique = Array.from(new Set(notes));
+      setRecentNotes(unique as string[]);
+    }).catch(console.error);
+  }, []);
+
   // ─── Derive live category list from context ─────────────────────────────────
   const { getCatsByType } = useCategoryContext();
   const cats = getCatsByType(txType === "income" ? "income" : "expense");
@@ -643,6 +655,24 @@ export function AddTransactionScreen() {
   // suffix trick throughout for translucent fills/borders, which only works with raw hex.
   const typeAccent = txType === "income" ? "#6FBE9B" : txType === "transfer" ? "#D4A24C" : "#E2725B";
   const typeBg = typeAccent;
+
+  const renderHighlightedNote = (text: string, query: string) => {
+    if (!query) return text;
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    return (
+      <>
+        {parts.map((p, i) =>
+          p.toLowerCase() === query.toLowerCase() ? (
+            <span key={i} className="text-[#EF4444] font-semibold">{p}</span>
+          ) : (
+            <span key={i}>{p}</span>
+          )
+        )}
+      </>
+    );
+  };
+  
+  const filteredNotes = recentNotes.filter(n => n.toLowerCase().includes(note.toLowerCase()) && n !== note);
 
   // ── Format date with time ──
   const fmtDate = (d: Date) => {
@@ -1083,10 +1113,13 @@ export function AddTransactionScreen() {
         </div>
 
         {/* ── Note ── */}
-        <div className="px-4 mb-4">
+        <div className="px-4 mb-4 relative z-20">
           <p className="text-ink/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>NOTE</p>
           <textarea
-            value={note} onChange={e => setNote(e.target.value)}
+            value={note} 
+            onChange={e => { setNote(e.target.value); setShowNoteSuggestions(true); }}
+            onFocus={() => setShowNoteSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowNoteSuggestions(false), 200)}
             placeholder="Add a note…" rows={2}
             className="w-full px-4 py-3.5 rounded-2xl text-ink placeholder:text-ink/22 focus:outline-none resize-none"
             style={{
@@ -1094,6 +1127,23 @@ export function AddTransactionScreen() {
               border: `1px solid ${note ? `${typeAccent}35` : "var(--divider)"}`,
               fontSize: 14, transition: "border-color 0.2s",
             }} />
+          <AnimatePresence>
+            {showNoteSuggestions && note.length > 0 && filteredNotes.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
+                className="absolute top-full left-4 right-4 mt-2 rounded-2xl overflow-hidden z-50 max-h-48 overflow-y-auto"
+                style={{ background: "var(--surface)", border: "1px solid var(--divider)", boxShadow: "0 8px 24px color-mix(in srgb, var(--ink) 12%, transparent)" }}>
+                {filteredNotes.map((s, i) => (
+                  <div key={i} 
+                    onClick={() => { setNote(s); setShowNoteSuggestions(false); }}
+                    className="px-4 py-3.5 border-b border-[var(--divider)] last:border-b-0 active:bg-ink/5 cursor-pointer text-ink transition-colors"
+                    style={{ fontSize: 14 }}>
+                    {renderHighlightedNote(s, note)}
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* ── Attachments ── */}
