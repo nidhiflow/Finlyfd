@@ -101,9 +101,7 @@ function NetWorthBanner({ accounts, visible, onToggle }: {
   accounts: Account[]; visible: boolean; onToggle: () => void;
 }) {
   const tracked = accounts.filter(a => a.trackBalance);
-  const assets = tracked.filter(a => a.balance > 0).reduce((s, a) => s + a.balance, 0);
-  const debt = tracked.filter(a => a.balance < 0).reduce((s, a) => s + Math.abs(a.balance), 0);
-  const net = assets - debt;
+  const totalBalance = tracked.reduce((s, a) => s + a.balance, 0);
   const primary = accounts.find(a => a.isPrimary);
 
   return (
@@ -120,7 +118,7 @@ function NetWorthBanner({ accounts, visible, onToggle }: {
 
       <div className="relative z-10 p-5">
         <div className="flex items-start justify-between mb-1">
-          <p style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-faint)", letterSpacing: "0.6px" }}>NET WORTH</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-faint)", letterSpacing: "0.6px" }}>TOTAL BALANCE</p>
           <button onClick={onToggle}
             className="w-7 h-7 rounded-[14px] flex items-center justify-center"
             style={{ background: "var(--surface-raised)" }}>
@@ -128,33 +126,12 @@ function NetWorthBanner({ accounts, visible, onToggle }: {
           </button>
         </div>
 
-        <p className="font-fraunces tabular-nums mb-4" style={{ fontSize: 28, fontWeight: 500, letterSpacing: "-0.5px", color: "var(--ink)" }}>
-          {visible ? fmtBal(net) : "₹ ••••••"}
+        <p className="font-fraunces tabular-nums" style={{ fontSize: 32, fontWeight: 500, letterSpacing: "-0.5px", color: "var(--ink)" }}>
+          {visible ? fmtBal(totalBalance) : "₹ ••••••"}
         </p>
 
-        <div className="grid grid-cols-2 gap-2.5">
-          <div className="rounded-[14px] px-3.5 py-3" style={{ background: "var(--surface-raised)" }}>
-            <div className="flex items-center gap-1.5 mb-1">
-              <TrendingUp className="w-3 h-3" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />
-              <span style={{ fontSize: 10, fontWeight: 700, color: "var(--ink-faint)" }}>ASSETS</span>
-            </div>
-            <p className="font-fraunces font-bold tabular-nums" style={{ fontSize: 15, color: "var(--ink)" }}>
-              {visible ? fmtBal(assets) : "••••••"}
-            </p>
-          </div>
-          <div className="rounded-[14px] px-3.5 py-3" style={{ background: "var(--surface-raised)" }}>
-            <div className="flex items-center gap-1.5 mb-1">
-              <TrendingDown className="w-3 h-3" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />
-              <span style={{ fontSize: 10, fontWeight: 700, color: "var(--ink-faint)" }}>DEBT</span>
-            </div>
-            <p className="font-fraunces font-bold tabular-nums" style={{ fontSize: 15, color: "var(--ink-muted)" }}>
-              {visible ? fmtBal(debt) : "••••••"}
-            </p>
-          </div>
-        </div>
-
         {primary && (
-          <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-[14px]"
+          <div className="mt-4 flex items-center gap-2 px-3 py-2 rounded-[14px]"
             style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.18)" }}>
             <Star className="w-3 h-3" strokeWidth={1.75} style={{ fill: "var(--gold)", color: "var(--gold)" }} />
             <p style={{ fontSize: 11, color: "var(--ink-muted)" }}>
