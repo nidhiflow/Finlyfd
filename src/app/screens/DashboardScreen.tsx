@@ -198,7 +198,7 @@ export function DashboardScreen() {
 
   return (
     <div className="relative pb-36"
-      style={{ background: "linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight: "100vh" }}>
+      style={{ background: "var(--bg-deep)", minHeight: "100vh" }}>
 
       {/* Top ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 pointer-events-none"
@@ -669,7 +669,7 @@ export function DashboardScreen() {
               onClick={e => e.stopPropagation()}
               className="w-full max-w-sm rounded-3xl p-6 relative overflow-hidden text-left"
               style={{
-                background: "linear-gradient(135deg, #212C30, #10171A)",
+                background: "var(--surface)",
                 border: "1px solid var(--divider)",
                 boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
               }}

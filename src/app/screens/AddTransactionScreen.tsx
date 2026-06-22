@@ -1299,7 +1299,7 @@ export function AddTransactionScreen() {
 
       {/* ── Sticky Save Button ── */}
       <div className="fixed bottom-16 left-0 right-0 z-40 px-4 pb-2 max-w-md mx-auto"
-        style={{ background: "linear-gradient(0deg,#0B0F1A 60%,transparent 100%)" }}>
+        style={{ background: "linear-gradient(0deg, var(--bg-deep) 60%, transparent 100%)" }}>
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={handleSave}

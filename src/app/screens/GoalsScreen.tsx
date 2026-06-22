@@ -95,7 +95,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
       <motion.div initial={{y:"100%"}} animate={{y:0}} exit={{y:"100%"}}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} onClick={e => e.stopPropagation()}
         className="w-full max-w-md mx-auto rounded-t-3xl border-t border-ink/10 p-5 max-h-[85vh] overflow-y-auto"
-        style={{ background: "linear-gradient(180deg,#1A2238 0%,#131825 100%)" }}>
+        style={{ background: "var(--bg-deep)" }}>
         <div className="flex justify-center mb-4"><div className="w-8 h-1 rounded-full bg-ink/15" /></div>
         <h2 className="text-ink font-bold text-lg mb-5">{goal ? "Edit Goal" : "Add New Goal"}</h2>
 
@@ -262,7 +262,7 @@ function RecordSavingsModal({ goal, onSave, onClose }: {
       style={{ background: "rgba(0,0,0,0.85)" }} onClick={onClose}>
       <motion.div initial={{scale:0.9}} animate={{scale:1}} onClick={e => e.stopPropagation()}
         className="w-full max-w-sm rounded-2xl p-6 border border-ink/10"
-        style={{ background: "linear-gradient(180deg,#1A2238 0%,#131825 100%)" }}>
+        style={{ background: "var(--bg-deep)" }}>
         <div className="flex items-center gap-3 mb-5">
           <div className="w-12 h-12 rounded-xl flex items-center justify-center"
             style={{ background: `${goal.color}18`, border: `1px solid ${goal.color}30` }}>

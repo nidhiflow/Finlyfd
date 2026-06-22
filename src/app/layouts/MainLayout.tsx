@@ -130,7 +130,7 @@ export function MainLayout() {
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 onClick={e => e.stopPropagation()}
                 className="w-full max-w-md mx-auto rounded-t-3xl"
-                style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
+                style={{ background: "var(--bg-deep)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
               >
                 <div className="flex justify-center pt-3 pb-1">
                   <div className="w-9 h-1 rounded-full bg-ink/15" />
@@ -184,7 +184,7 @@ export function MainLayout() {
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 onClick={e => e.stopPropagation()}
                 className="w-full max-w-md mx-auto rounded-t-3xl"
-                style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
+                style={{ background: "var(--bg-deep)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
               >
                 <div className="flex justify-center pt-3 pb-1">
                   <div className="w-9 h-1 rounded-full bg-ink/15" />

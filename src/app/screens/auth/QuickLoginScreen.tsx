@@ -266,7 +266,7 @@ export function QuickLoginScreen() {
 
   return (
     <div
-      className={`flex flex-col min-h-screen bg-[#0D0F14] transition-all duration-500 ${
+      className={`flex flex-col min-h-screen bg-[var(--bg-deep)] transition-all duration-500 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
       }`}
     >
@@ -300,7 +300,7 @@ export function QuickLoginScreen() {
             </span>
           </div>
           {/* Secure badge */}
-          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#0D0F14] border border-[#D4A24C]/40 flex items-center justify-center">
+          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[var(--bg-deep)] border border-[#D4A24C]/40 flex items-center justify-center">
             <Lock className="w-3.5 h-3.5 text-[#D4A24C]" />
           </div>
         </div>
@@ -390,7 +390,7 @@ export function QuickLoginScreen() {
             <div className="w-full border-t border-ink/8" />
           </div>
           <div className="relative flex justify-center">
-            <span className="px-4 bg-[#0D0F14] text-xs text-ink/30">
+            <span className="px-4 bg-[var(--bg-deep)] text-xs text-ink/30">
               or
             </span>
           </div>

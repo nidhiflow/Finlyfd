@@ -444,7 +444,7 @@ function AIInsightsAnim() {
     <div className="w-full h-full px-4 flex flex-col gap-3 py-2">
       {/* Sparkline chart */}
       <div className="relative rounded-2xl border border-ink/8 overflow-hidden flex-shrink-0"
-        style={{ background: "linear-gradient(135deg, #0F1623 0%, #111827 100%)" }}>
+        style={{ background: "var(--bg-deep)" }}>
         {/* Subtle grid */}
         <div className="absolute inset-0 opacity-40" style={{
           backgroundImage: "linear-gradient(to right,rgba(212,162,76,0.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(212,162,76,0.06) 1px,transparent 1px)",

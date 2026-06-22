@@ -79,7 +79,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
         transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-md mx-auto rounded-t-3xl p-5"
-        style={{ background: "linear-gradient(180deg,#192225 0%,#10171A 100%)", border: "1px solid var(--divider)", borderBottom: "none" }}>
+        style={{ background: "var(--bg-deep)", border: "1px solid var(--divider)", borderBottom: "none" }}>
         <div className="flex justify-center mb-3">
           <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>

@@ -117,7 +117,7 @@ export function ForgotPasswordScreen() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                    className="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                   />
                 </div>
               </div>
@@ -135,7 +135,7 @@ export function ForgotPasswordScreen() {
 
         {step === "otp" && (
           <>
-            <div className="bg-[#1B2130] border border-ink/10 rounded-2xl p-6 mb-6">
+            <div className="bg-[var(--surface)] border border-ink/10 rounded-2xl p-6 mb-6">
               <p className="text-sm text-ink/50 mb-2">
                 Enter the 6-digit code sent to {email}
               </p>
@@ -150,7 +150,7 @@ export function ForgotPasswordScreen() {
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOTPChange(index, e.target.value)}
-                    className="w-12 h-14 bg-[#0D0F14] border border-ink/10 rounded-xl text-ink text-center text-xl font-semibold focus:border-[#D4A24C] focus:outline-none"
+                    className="w-12 h-14 bg-[var(--bg-deep)] border border-ink/10 rounded-xl text-ink text-center text-xl font-semibold focus:border-[#D4A24C] focus:outline-none"
                   />
                 ))}
               </div>
@@ -182,7 +182,7 @@ export function ForgotPasswordScreen() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password"
-                    className="w-full pl-12 pr-12 py-3.5 bg-[#1B2130] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                    className="w-full pl-12 pr-12 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                   />
                   <button
                     type="button"
@@ -207,7 +207,7 @@ export function ForgotPasswordScreen() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
-                    className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                    className="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                   />
                 </div>
               </div>
@@ -225,7 +225,7 @@ export function ForgotPasswordScreen() {
 
         <button
           onClick={() => navigate("/login")}
-          className="w-full py-4 mt-4 bg-[#1B2130] border border-ink/10 rounded-xl text-ink font-semibold"
+          className="w-full py-4 mt-4 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink font-semibold"
         >
           Back to Login
         </button>

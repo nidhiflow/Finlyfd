@@ -801,7 +801,7 @@ function DeleteModal({ target, onClose, onConfirm }: { target: DelTarget; onClos
         exit={{ scale: 0.86, opacity: 0 }} transition={{ duration: 0.22, ease: [0.4,0,0.2,1] }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-sm rounded-3xl p-6"
-        style={{ background: "linear-gradient(135deg,#212C30 0%,#10171A 100%)", border: "1px solid var(--divider)" }}
+        style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}
       >
         <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
           style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.25)" }}>
@@ -913,7 +913,7 @@ export function CategoriesScreen() {
 
   return (
     <div className="relative pb-32"
-      style={{ background: "linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight:"calc(100vh - 56px)" }}>
+      style={{ background: "var(--bg-deep)", minHeight:"calc(100vh - 56px)" }}>
 
       {/* Top radial glow — shifts color per tab */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-28 pointer-events-none"

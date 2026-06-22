@@ -347,7 +347,7 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
             transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
             className="absolute right-0 top-full mt-2 rounded-2xl py-1.5 z-50 min-w-[170px]"
             style={{
-              background: "linear-gradient(180deg,#212C30 0%,#10171A 100%)",
+              background: "var(--surface)",
               border: "1px solid var(--divider)",
               boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
             }}>
@@ -576,7 +576,7 @@ export function ReportsScreen() {
   return (
     <>
     <div className="relative pb-32"
-      style={{ background: "linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight: "calc(100vh - 56px)" }}>
+      style={{ background: "var(--bg-deep)", minHeight: "calc(100vh - 56px)" }}>
 
       {/* Top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-28 pointer-events-none"

@@ -155,7 +155,7 @@ export function SignupScreen() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                  className="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                 />
               </div>
             </div>
@@ -169,7 +169,7 @@ export function SignupScreen() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@gmail.com"
-                  className={`w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border rounded-xl text-ink placeholder:text-ink/30 focus:outline-none transition-colors ${
+                  className={`w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border rounded-xl text-ink placeholder:text-ink/30 focus:outline-none transition-colors ${
                     email && !isOfficialEmail(email)
                       ? "border-red-500/50 focus:border-red-500"
                       : "border-ink/10 focus:border-[#D4A24C]"
@@ -192,7 +192,7 @@ export function SignupScreen() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="123-456-7890"
-                  className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                  className="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                 />
               </div>
             </div>
@@ -206,7 +206,7 @@ export function SignupScreen() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a password"
-                  className="w-full pl-12 pr-12 py-3.5 bg-[#1B2130] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                  className="w-full pl-12 pr-12 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -254,7 +254,7 @@ export function SignupScreen() {
               </div>
             )}
             
-            <div className="bg-[#1B2130] border border-ink/10 rounded-2xl p-6 mb-6">
+            <div className="bg-[var(--surface)] border border-ink/10 rounded-2xl p-6 mb-6">
               <h2 className="text-xl font-semibold text-ink mb-2">Verify Your Email</h2>
               <p className="text-sm text-ink/50 mb-2">
                 Enter the 6-digit code sent to {email}
@@ -273,7 +273,7 @@ export function SignupScreen() {
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOTPChange(index, e.target.value)}
-                    className="w-12 h-14 bg-[#0D0F14] border border-ink/10 rounded-xl text-ink text-center text-xl font-semibold focus:border-[#D4A24C] focus:outline-none"
+                    className="w-12 h-14 bg-[var(--bg-deep)] border border-ink/10 rounded-xl text-ink text-center text-xl font-semibold focus:border-[#D4A24C] focus:outline-none"
                   />
                 ))}
               </div>
@@ -297,7 +297,7 @@ export function SignupScreen() {
 
             <button
               onClick={() => setShowOTP(false)}
-              className="w-full py-4 bg-[#1B2130] border border-ink/10 rounded-xl text-ink font-semibold"
+              className="w-full py-4 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink font-semibold"
             >
               Back
             </button>

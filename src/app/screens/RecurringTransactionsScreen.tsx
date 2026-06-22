@@ -212,7 +212,7 @@ export function RecurringTransactionsScreen() {
   };
 
   return (
-    <div className="relative pb-24" style={{background:"linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight:"100vh"}}>
+    <div className="relative pb-24" style={{background:"var(--bg-deep)", minHeight:"100vh"}}>
       {/* Top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-28 pointer-events-none"
         style={{background:"radial-gradient(ellipse at 50% 0%,rgba(212,162,76,0.12) 0%,transparent 70%)"}} />

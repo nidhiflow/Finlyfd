@@ -279,7 +279,7 @@ export function BudgetScreen() {
               exit={{ scale: 0.86, opacity: 0 }}
               onClick={e => e.stopPropagation()}
               className="w-full max-w-sm rounded-3xl p-6"
-              style={{ background: "linear-gradient(135deg,#212C30,#10171A)", border: "1px solid var(--divider)" }}
+              style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}
             >
               <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
                 style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.25)" }}>
@@ -361,7 +361,7 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
         onClick={e => e.stopPropagation()}
         className="w-full max-w-md mx-auto rounded-t-3xl"
         style={{
-          background: "linear-gradient(180deg,#192225 0%,#10171A 100%)",
+          background: "var(--bg-deep)",
           border: "1px solid var(--divider)", borderBottom: "none",
           maxHeight: "85vh", overflowY: "auto",
         }}

@@ -208,7 +208,7 @@ export function QuickAuthSetupScreen() {
 
   return (
     <div
-      className={`flex flex-col min-h-screen bg-[#0D0F14] transition-all duration-500 ${
+      className={`flex flex-col min-h-screen bg-[var(--bg-deep)] transition-all duration-500 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
       }`}
     >
@@ -238,7 +238,7 @@ export function QuickAuthSetupScreen() {
               className={`w-full p-5 rounded-2xl border text-left transition-all duration-300 ${
                 biometricEnabled
                   ? "bg-[#D4A24C]/10 border-[#D4A24C]/50 shadow-lg shadow-[#D4A24C]/10"
-                  : "bg-[#1B2130] border-ink/10 hover:border-ink/20"
+                  : "bg-[var(--surface)] border-ink/10 hover:border-ink/20"
               }`}
             >
               <div className="flex items-center gap-4">
@@ -292,7 +292,7 @@ export function QuickAuthSetupScreen() {
               className={`w-full p-5 rounded-2xl border text-left transition-all duration-300 ${
                 mpinDone
                   ? "bg-emerald-500/10 border-emerald-500/40 shadow-lg shadow-emerald-500/10"
-                  : "bg-[#1B2130] border-ink/10 hover:border-ink/20"
+                  : "bg-[var(--surface)] border-ink/10 hover:border-ink/20"
               }`}
             >
               <div className="flex items-center gap-4">
@@ -413,7 +413,7 @@ export function QuickAuthSetupScreen() {
                 className={`w-full p-5 rounded-2xl border text-left transition-all active:scale-[0.98] ${
                   mpinLength === len
                     ? "bg-[#D4A24C]/10 border-[#D4A24C]/50"
-                    : "bg-[#1B2130] border-ink/10 hover:border-ink/20"
+                    : "bg-[var(--surface)] border-ink/10 hover:border-ink/20"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -549,7 +549,7 @@ export function QuickAuthSetupScreen() {
           {/* What's enabled */}
           <div className="w-full space-y-3 mb-10">
             {biometricEnabled && (
-              <div className="flex items-center gap-4 bg-[#1B2130] border border-ink/10 rounded-2xl p-4">
+              <div className="flex items-center gap-4 bg-[var(--surface)] border border-ink/10 rounded-2xl p-4">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center flex-shrink-0">
                   <Fingerprint className="w-6 h-6 text-ink" />
                 </div>
@@ -562,7 +562,7 @@ export function QuickAuthSetupScreen() {
             )}
 
             {mpinDone && (
-              <div className="flex items-center gap-4 bg-[#1B2130] border border-ink/10 rounded-2xl p-4">
+              <div className="flex items-center gap-4 bg-[var(--surface)] border border-ink/10 rounded-2xl p-4">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0">
                   <Lock className="w-6 h-6 text-ink" />
                 </div>
@@ -575,7 +575,7 @@ export function QuickAuthSetupScreen() {
             )}
 
             {!biometricEnabled && !mpinDone && (
-              <div className="flex items-center gap-4 bg-[#1B2130] border border-ink/10 rounded-2xl p-4">
+              <div className="flex items-center gap-4 bg-[var(--surface)] border border-ink/10 rounded-2xl p-4">
                 <div className="w-12 h-12 rounded-xl bg-ink/5 flex items-center justify-center flex-shrink-0">
                   <Shield className="w-6 h-6 text-ink/40" />
                 </div>
