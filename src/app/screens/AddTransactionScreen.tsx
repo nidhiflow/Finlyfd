@@ -585,6 +585,7 @@ export function AddTransactionScreen() {
   const [saved, setSaved] = useState(false);
   const [ACCOUNTS, setACCOUNTS] = useState<Acc[]>([]);
   const [recentNotes, setRecentNotes] = useState<string[]>([]);
+  const [notesFetched, setNotesFetched] = useState(false);
   const [showNoteSuggestions, setShowNoteSuggestions] = useState(false);
 
   // Modal states
@@ -629,16 +630,6 @@ export function AddTransactionScreen() {
         toast.error("Failed to load transaction details");
       });
   }, [id]);
-
-  // ─── Fetch unique past notes for autocomplete ─────────────────────────────────
-  useEffect(() => {
-    transactionsAPI.getAll({}).then((txs: any[]) => {
-      if (!txs) return;
-      const notes = txs.map((t: any) => t.note || t.description).filter(Boolean);
-      const unique = Array.from(new Set(notes));
-      setRecentNotes(unique as string[]);
-    }).catch(console.error);
-  }, []);
 
   // ─── Derive live category list from context ─────────────────────────────────
   const { getCatsByType } = useCategoryContext();
@@ -915,7 +906,7 @@ export function AddTransactionScreen() {
              <input
                 value={note}
                 onChange={e => { setNote(e.target.value); setShowNoteSuggestions(true); }}
-                onFocus={() => setShowNoteSuggestions(true)}
+                onFocus={() => { setShowNoteSuggestions(true); if (!notesFetched) { setNotesFetched(true); transactionsAPI.getAll({}).then((txs) => { if (!txs) return; const notes = txs.map((t) => t.note || t.description).filter(Boolean); setRecentNotes(Array.from(new Set(notes))); }).catch(console.error); } }}
                 onBlur={() => setTimeout(() => setShowNoteSuggestions(false), 200)}
                 placeholder="What was this for?"
                 className="flex-1 bg-transparent border-none text-[var(--ink)] font-inter text-[13.5px] outline-none placeholder:text-[var(--ink-faint)]"
