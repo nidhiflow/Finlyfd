@@ -623,6 +623,56 @@ function SuccessOverlay({ txType, onDone }: { txType: TxType; onDone: () => void
   );
 }
 
+export const REPEAT_OPTIONS = [
+  { id: 'none', label: 'Nothing' },
+  { id: 'daily', label: 'Every Day' },
+  { id: 'weekdays', label: 'Weekdays' },
+  { id: 'weekend', label: 'Weekend' },
+  { id: 'weekly', label: 'Every Week' },
+  { id: 'biweekly', label: 'Every 2 weeks' },
+  { id: 'four_weeks', label: 'Every 4 weeks' },
+  { id: 'monthly', label: 'Every Month' },
+  { id: 'end_of_month', label: 'The end of the month' },
+  { id: 'bimonthly', label: 'Every 2 Month' },
+  { id: 'quarterly', label: 'Every 3 Month' },
+  { id: 'four_months', label: 'Every 4 Month' },
+  { id: 'six_months', label: 'Every 6 Month' },
+  { id: 'yearly', label: 'Annually' },
+];
+
+function RepeatSelectionModal({ selected, onSelect, onClose }: { selected: string, onSelect: (val: string) => void, onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      className="fixed inset-0 z-[100] flex flex-col justify-end"
+      style={{ background: "rgba(0,0,0,0.4)" }}
+    >
+      <div className="flex-1" onClick={onClose} />
+      <div className="rounded-t-3xl overflow-hidden flex flex-col max-h-[80vh] shadow-2xl" style={{ background: "var(--bg)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="flex items-center px-6 h-16 shrink-0 border-b border-white/5 relative">
+          <span className="font-semibold text-lg text-ink">Repeat</span>
+          <button onClick={onClose} className="absolute right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-ink/5">
+            <X className="w-5 h-5 text-ink" />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-4 py-2 space-y-1">
+          {REPEAT_OPTIONS.map(opt => (
+            <div key={opt.id}
+                 onClick={() => { onSelect(opt.id); onClose(); }}
+                 className="py-4 px-2 cursor-pointer flex items-center justify-between rounded-xl hover:bg-ink/5">
+              <span className="text-[16px] font-medium" style={{ color: selected === opt.id ? "var(--accent, #4895EF)" : "var(--ink)" }}>
+                {opt.label}
+              </span>
+              {selected === opt.id && <Check className="w-5 h-5" style={{ color: "var(--accent, #4895EF)" }} />}
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Main Screen ───────────────────────────────────────────────────────────────
 export function AddTransactionScreen() {
   const navigate = useNavigate();
@@ -636,7 +686,7 @@ export function AddTransactionScreen() {
   const [date, setDate] = useState(new Date());
   const [note, setNote] = useState("");
   const [recurring, setRecurring] = useState(false);
-  const [recurFreq, setRecurFreq] = useState<"daily" | "weekly" | "monthly" | "quarterly" | "half-yearly" | "yearly">("monthly");
+  const [recurFreq, setRecurFreq] = useState<string>("monthly");
   const [recurEndType, setRecurEndType] = useState<"never" | "date" | "count">("never");
   const [recurEndDate, setRecurEndDate] = useState(new Date(new Date().setFullYear(new Date().getFullYear() + 1)));
   const [recurEndCount, setRecurEndCount] = useState(12);
@@ -657,6 +707,7 @@ export function AddTransactionScreen() {
   const [showDate, setShowDate] = useState(false);
   const [showRecurEndDate, setShowRecurEndDate] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [showRepeatSheet, setShowRepeatSheet] = useState(false);
 
   // ─── Load accounts from API ─────────────────────────────────────────────────
   useEffect(() => {
@@ -685,7 +736,12 @@ export function AddTransactionScreen() {
         if (tx.to_account_id) setToAccId(tx.to_account_id);
         if (tx.date) setDate(new Date(tx.date));
         if (tx.note) setNote(tx.note);
-        if (tx.repeat_group_id || tx.is_recurring) setRecurring(true);
+        if (tx.repeat_group_id || tx.is_recurring) {
+          setRecurring(true);
+          if ((tx as any).repeat_frequency) {
+            setRecurFreq((tx as any).repeat_frequency);
+          }
+        }
       })
       .catch((err) => {
         console.error("Failed to load transaction:", err);
@@ -785,19 +841,14 @@ export function AddTransactionScreen() {
         to_account_id: txType === "transfer" ? toAccId : null,
         date: date.toISOString(),
         note,
+        is_recurring: recurring,
+        repeat_frequency: recurring ? recurFreq : null
       };
 
       if (id) {
         await transactionsAPI.update(id, payload);
       } else {
-        if (recurring) {
-          await transactionsAPI.create({
-            ...payload,
-            repeat_months: recurFreq === "daily" ? 1 : recurFreq === "weekly" ? 1 : recurFreq === "monthly" ? 1 : recurFreq === "quarterly" ? 3 : recurFreq === "half-yearly" ? 6 : 12,
-          });
-        } else {
-          await transactionsAPI.create(payload);
-        }
+        await transactionsAPI.create(payload);
       }
       setSaved(true);
     } catch (error) {
@@ -1198,19 +1249,11 @@ export function AddTransactionScreen() {
               <div className="p-3.5 rounded-[14px]" style={{ background: "var(--surface)", border: `1px solid ${typeAccent}30` }}>
                 <p className="text-ink/60 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>RECURRING SETTINGS</p>
                 <div className="flex flex-col gap-2.5">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowRepeatSheet(true)}>
                     <span className="text-ink" style={{ fontSize: 13 }}>Frequency</span>
-                    <select
-                      value={recurFreq} onChange={e => setRecurFreq(e.target.value as any)}
-                      className="bg-transparent text-right font-semibold focus:outline-none"
-                      style={{ fontSize: 13, color: typeAccent }}>
-                      <option value="daily">Daily</option>
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
-                      <option value="quarterly">Quarterly</option>
-                      <option value="half-yearly">Half-yearly</option>
-                      <option value="yearly">Yearly</option>
-                    </select>
+                    <span className="font-semibold" style={{ fontSize: 13, color: typeAccent }}>
+                      {REPEAT_OPTIONS.find(o => o.id === recurFreq)?.label || "Every Month"}
+                    </span>
                   </div>
                   <div className="h-px bg-ink/5" />
                   <div className="flex items-center justify-between">
@@ -1252,6 +1295,24 @@ export function AddTransactionScreen() {
       {/* ── Modals / Overlays ── */}
       <AnimatePresence>
         {showCalc && <CalcModal key="calc" value={amount} onChange={setAmount} onClose={() => setShowCalc(false)} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showRepeatSheet && (
+          <RepeatSelectionModal
+            key="repeat"
+            selected={recurFreq}
+            onSelect={(val) => {
+              if (val === 'none') {
+                setRecurring(false);
+                setRecurFreq('monthly');
+              } else {
+                setRecurring(true);
+                setRecurFreq(val);
+              }
+            }}
+            onClose={() => setShowRepeatSheet(false)}
+          />
+        )}
       </AnimatePresence>
       <AnimatePresence>
         {showSubSheet && selectedCat && (
