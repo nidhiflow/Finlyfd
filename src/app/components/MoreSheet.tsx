@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { X, Target, Calendar, Bot, PiggyBank, Wallet, Grid3x3, Settings, Moon, Sun, Search, Repeat } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface MoreSheetProps {
   isOpen: boolean;
@@ -9,7 +9,26 @@ interface MoreSheetProps {
 
 export function MoreSheet({ isOpen, onClose }: MoreSheetProps) {
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("finly-theme") !== "light";
+  });
+
+  const handleThemeToggle = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    
+    const theme = newMode ? "dark" : "light";
+    localStorage.setItem("finly-theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
+    
+    if (newMode) {
+      document.documentElement.classList.remove("light-mode");
+      document.documentElement.classList.add("dark-mode");
+    } else {
+      document.documentElement.classList.remove("dark-mode");
+      document.documentElement.classList.add("light-mode");
+    }
+  };
 
   const menuItems = [
     { icon: Repeat, label: "Recurring", path: "/dashboard/recurring" },
@@ -21,6 +40,12 @@ export function MoreSheet({ isOpen, onClose }: MoreSheetProps) {
     { icon: Grid3x3, label: "Categories", path: "/dashboard/categories" },
     { icon: Settings, label: "Settings", path: "/dashboard/settings" },
   ];
+
+  useEffect(() => {
+    if (isOpen) {
+      setDarkMode(localStorage.getItem("finly-theme") !== "light");
+    }
+  }, [isOpen]);
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -95,7 +120,7 @@ export function MoreSheet({ isOpen, onClose }: MoreSheetProps) {
           {/* Theme Toggle */}
           <div className="px-6 py-4 border-t border-[var(--divider)]">
             <button
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={handleThemeToggle}
               className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-[var(--bg-deep)] border border-[var(--divider)]"
             >
               <span className="text-ink font-medium">Dark Mode</span>
