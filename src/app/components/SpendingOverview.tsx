@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { PieChart as PieIcon } from "lucide-react";
+import { PieChart as PieIcon, Utensils, Car, Lightbulb, Clapperboard } from "lucide-react";
+import { useCategoryContext } from "../context/CategoryContext";
 import { statsAPI } from "../services/api";
 
 interface SpendingProps {
@@ -45,13 +46,14 @@ function buildSegments(data: any[]): SegInfo[] {
 
 // ─── Category placeholders to show when there's no transaction data ─────────────
 const PLACEHOLDER_CATS = [
-  { name: "Food & Dining",   color: "#FF6B35", emoji: "🍽️" },
-  { name: "Transport",       color: "#4895EF", emoji: "🚗" },
-  { name: "Bills",           color: "#FFB703", emoji: "💡" },
-  { name: "Entertainment",   color: "#F72585", emoji: "🎬" },
+  { name: "Food & Dining",   color: "#FF6B35", emoji: "🍽️", icon: Utensils },
+  { name: "Transport",       color: "#4895EF", emoji: "🚗", icon: Car },
+  { name: "Bills",           color: "#FFB703", emoji: "💡", icon: Lightbulb },
+  { name: "Entertainment",   color: "#F72585", emoji: "🎬", icon: Clapperboard },
 ];
 
 export function SpendingOverview({ month }: SpendingProps) {
+  const { getCatById } = useCategoryContext();
   const [categories, setCategories] = useState<any[]>([]);
   const [totalExpense, setTotalExpense] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -61,14 +63,18 @@ export function SpendingOverview({ month }: SpendingProps) {
       const expenses = (data || []).filter((c: any) => c.type === 'expense');
       const total = expenses.reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
       setTotalExpense(total);
-      setCategories(expenses.map((c: any) => ({
+      setCategories(expenses.map((c: any) => {
+        const catData = getCatById(c.category_id || c.category_name);
+        const IconComponent = catData?.icon || PieIcon;
+        return {
         id: c.category_id || c.category_name || 'Unknown',
         name: c.category_name || c.name || 'Unknown',
         value: parseFloat(c.total || 0),
         color: c.color || '#D4A24C',
         emoji: c.icon || '📦',
+        icon: IconComponent,
         percentage: total > 0 ? ((parseFloat(c.total || 0) / total) * 100) : 0,
-      })));
+      }}));
     }).catch(console.error);
   }, [month]);
 
@@ -97,13 +103,13 @@ export function SpendingOverview({ month }: SpendingProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(124,92,255,0.18)" }}>
+            style={{ background: "rgba(212,162,76,0.18)" }}>
             <PieIcon className="w-3.5 h-3.5 text-[#D4A24C]" />
           </div>
           <h3 className="text-white font-bold" style={{ fontSize: 15 }}>Spending Overview</h3>
         </div>
         <span className="px-2.5 py-1 rounded-xl font-semibold"
-          style={{ fontSize: 11, background: hasData ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.06)", color: hasData ? "#D4A24C" : "rgba(255,255,255,0.30)" }}>
+          style={{ fontSize: 11, background: hasData ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.06)", color: hasData ? "#D4A24C" : "rgba(255,255,255,0.30)" }}>
           {hasData ? `₹${totalExpense.toLocaleString("en-IN")}` : "No data"}
         </span>
       </div>
@@ -162,10 +168,14 @@ export function SpendingOverview({ month }: SpendingProps) {
                     />
                     <circle cx={connStart.x} cy={connStart.y} r="1.5" fill={cat.color} fillOpacity="0.8" />
                     {/* Category Label */}
-                    <text x={labelX} y={labelPt.y - 3} textAnchor={anchor}
-                      fill="rgba(255,255,255,0.85)" fontSize="9" fontFamily="Inter, sans-serif" fontWeight="600">
-                      {cat.emoji} {cat.name.length > 8 ? cat.name.slice(0, 7) + '..' : cat.name}
-                    </text>
+                    <foreignObject x={isRight ? labelX : labelX - 80} y={labelPt.y - 10} width={80} height={20}>
+                      <div className={`flex items-center gap-1 w-full ${isRight ? 'justify-start' : 'justify-end'}`}>
+                        {cat.icon && <cat.icon className="w-[11px] h-[11px] text-white/85" strokeWidth={2} />}
+                        <span className="text-[9px] font-semibold text-white/85 leading-none truncate">
+                          {cat.name.length > 8 ? cat.name.slice(0, 7) + '..' : cat.name}
+                        </span>
+                      </div>
+                    </foreignObject>
                     {/* Percentage Label */}
                     <text x={labelX} y={labelPt.y + 6} textAnchor={anchor}
                       fill="rgba(255,255,255,0.4)" fontSize="8.5" fontFamily="Inter, sans-serif" fontWeight="500">
@@ -240,9 +250,10 @@ export function SpendingOverview({ month }: SpendingProps) {
               }}>
               <div className="flex items-center gap-1.5 min-w-0">
                 <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: cat.color, opacity: hasData ? 1 : 0.25 }} />
-                <span className="truncate text-white font-semibold leading-none" style={{ fontSize: 11, opacity: hasData ? 0.95 : 0.35 }}>
-                  {cat.emoji} {cat.name}
-                </span>
+                <div className="flex items-center gap-1.5 truncate text-white font-semibold leading-none" style={{ fontSize: 11, opacity: hasData ? 0.95 : 0.35 }}>
+                  {cat.icon && <cat.icon className="w-3.5 h-3.5" strokeWidth={1.75} />}
+                  <span>{cat.name}</span>
+                </div>
               </div>
               <div className="text-right flex-shrink-0 ml-1.5">
                 <p className="font-bold leading-none" style={{ fontSize: 11, color: hasData ? (isSel ? "white" : cat.color) : "rgba(255,255,255,0.18)" }}>
@@ -267,4 +278,5 @@ export function SpendingOverview({ month }: SpendingProps) {
     </div>
   );
 }
+
 

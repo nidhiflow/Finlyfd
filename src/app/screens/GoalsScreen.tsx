@@ -148,9 +148,9 @@ function GoalFormModal({ goal, onSave, onClose }: {
                 <button key={t} onClick={() => setType(t)}
                   className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all capitalize"
                   style={{
-                    background: type === t ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
+                    background: type === t ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.04)",
                     color: type === t ? "#D4A24C" : "rgba(255,255,255,0.4)",
-                    border: type === t ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
+                    border: type === t ? "1px solid rgba(212,162,76,0.3)" : "1px solid rgba(255,255,255,0.07)",
                   }}>
                   {t.replace("-", " ")}
                 </button>
@@ -166,9 +166,9 @@ function GoalFormModal({ goal, onSave, onClose }: {
                 <button key={m} onClick={() => setTrackingMode(m)}
                   className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all"
                   style={{
-                    background: trackingMode === m ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
+                    background: trackingMode === m ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.04)",
                     color: trackingMode === m ? "#D4A24C" : "rgba(255,255,255,0.4)",
-                    border: trackingMode === m ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
+                    border: trackingMode === m ? "1px solid rgba(212,162,76,0.3)" : "1px solid rgba(255,255,255,0.07)",
                   }}>
                   {m}
                 </button>
@@ -327,11 +327,11 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
         <div className="flex items-end justify-between mb-3">
           <div>
             <p className="text-white/40 text-xs">Saved</p>
-            <p className="text-white font-bold text-2xl">{fmtINR(goal.saved)}</p>
+            <p className="font-fraunces tabular-nums text-white font-bold text-2xl">{fmtINR(goal.saved)}</p>
           </div>
           <div className="text-right">
             <p className="text-white/40 text-xs">Target</p>
-            <p className="text-white/70 font-semibold">{fmtINR(goal.target)}</p>
+            <p className="font-fraunces tabular-nums text-white/70 font-semibold">{fmtINR(goal.target)}</p>
           </div>
         </div>
 
@@ -354,7 +354,7 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
       <div className="flex gap-2 mb-4">
         <motion.button whileTap={{scale:0.95}} onClick={onRecordSavings}
           className="flex-1 py-3 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2"
-          style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(124,92,255,0.3)" }}>
+          style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(212,162,76,0.3)" }}>
           <Plus className="w-4 h-4" /> Record Savings
         </motion.button>
         <motion.button whileTap={{scale:0.95}} onClick={onDelete}
@@ -395,7 +395,7 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
                   <p className="text-white/70 text-xs font-medium">{c.note || "Savings"}</p>
                   <p className="text-white/30 text-[10px]">{c.date} · {c.fromAccount}</p>
                 </div>
-                <p className="text-sm font-semibold" style={{ color: "#22C55E" }}>+{fmtINR(c.amount)}</p>
+                <p className="font-fraunces tabular-nums text-sm font-semibold" style={{ color: "var(--income)" }}>+{fmtINR(c.amount)}</p>
               </div>
             ))}
           </div>
@@ -429,8 +429,8 @@ function GoalCard({ goal, onClick }: { goal: Goal; onClick: () => void }) {
       </div>
 
       <div className="flex items-end justify-between mb-2">
-        <p className="text-sm font-bold" style={{ color: goal.color }}>{fmtINR(goal.saved)}</p>
-        <p className="text-white/30 text-xs">{fmtINR(goal.target)}</p>
+        <p className="font-fraunces tabular-nums text-sm font-bold" style={{ color: goal.color }}>{fmtINR(goal.saved)}</p>
+        <p className="font-fraunces tabular-nums text-white/30 text-xs">{fmtINR(goal.target)}</p>
       </div>
 
       <div className="h-2 rounded-full overflow-hidden bg-white/10">
@@ -608,8 +608,8 @@ export function GoalsScreen() {
       {activeGoals.length > 0 && (
         <div className="rounded-2xl p-5 mb-5 relative overflow-hidden"
           style={{
-            background: "linear-gradient(135deg,rgba(124,92,255,0.12) 0%,rgba(76,201,240,0.06) 100%)",
-            border: "1px solid rgba(124,92,255,0.2)",
+            background: "linear-gradient(135deg,rgba(212,162,76,0.12) 0%,rgba(212,162,76,0.06) 100%)",
+            border: "1px solid rgba(212,162,76,0.2)",
           }}>
           <div className="grid grid-cols-3 gap-3 text-center">
             {[
@@ -619,7 +619,7 @@ export function GoalsScreen() {
             ].map(s => (
               <div key={s.label}>
                 <p className="text-white/35 text-[10px] uppercase mb-1">{s.label}</p>
-                <p className="font-bold text-sm" style={{ color: s.color }}>{s.value}</p>
+                <p className="font-fraunces tabular-nums font-bold text-sm" style={{ color: s.color }}>{s.value}</p>
               </div>
             ))}
           </div>
@@ -652,9 +652,9 @@ export function GoalsScreen() {
           <button key={t} onClick={() => setTab(t)}
             className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all capitalize"
             style={{
-              background: tab === t ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
+              background: tab === t ? "rgba(212,162,76,0.15)" : "rgba(255,255,255,0.04)",
               color: tab === t ? "#D4A24C" : "rgba(255,255,255,0.35)",
-              border: tab === t ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.06)",
+              border: tab === t ? "1px solid rgba(212,162,76,0.3)" : "1px solid rgba(255,255,255,0.06)",
             }}>
             {t} ({t === "active" ? activeGoals.length : completedGoals.length})
           </button>
@@ -689,7 +689,7 @@ export function GoalsScreen() {
         className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40"
         style={{
           background: "linear-gradient(135deg,#D4A24C,#D4A24C)",
-          boxShadow: "0 6px 24px rgba(124,92,255,0.45), 0 0 40px rgba(124,92,255,0.15)",
+          boxShadow: "0 6px 24px rgba(212,162,76,0.45), 0 0 40px rgba(212,162,76,0.15)",
         }}>
         <Plus className="w-6 h-6 text-white" />
       </motion.button>
@@ -714,4 +714,5 @@ export function GoalsScreen() {
     </div>
   );
 }
+
 

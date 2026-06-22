@@ -293,7 +293,7 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
   return (
     <div className="mx-4 mb-3 rounded-2xl p-4 relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(76,201,240,0.06) 100%)",
+        background: "linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(212,162,76,0.06) 100%)",
         border: "1px solid rgba(34,197,94,0.22)",
       }}>
       {/* Glow */}
@@ -308,9 +308,9 @@ function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set
               MONTHLY INCOME ESTIMATE
             </span>
           </div>
-          <p className="text-white font-bold" style={{ fontSize: 22 }}>
+          <p className="font-fraunces font-bold tabular-nums text-white" style={{ fontSize: 22 }}>
             {total > 0 ? formatted : "—"}
-            <span className="text-white/35 font-normal" style={{ fontSize: 13 }}> / month</span>
+            <span className="font-inter text-white/35 font-normal" style={{ fontSize: 13 }}> / month</span>
           </p>
           <p style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", marginTop: 2 }}>
             from {primaryIds.size} primary {primaryIds.size === 1 ? "source" : "sources"}
@@ -382,7 +382,7 @@ function CategoryCard({
       {/* PRIMARY crown glow chip */}
       {isPrimary && (
         <div className="absolute top-2.5 right-12 flex items-center gap-1 px-2 py-0.5 rounded-full"
-          style={{ background: "linear-gradient(135deg,rgba(34,197,94,0.25),rgba(76,201,240,0.15))", border: "1px solid rgba(34,197,94,0.35)" }}>
+          style={{ background: "linear-gradient(135deg,rgba(34,197,94,0.25),rgba(212,162,76,0.12))", border: "1px solid rgba(34,197,94,0.35)" }}>
           <Crown className="w-2.5 h-2.5" style={{ color: "#22C55E" }} />
           <span style={{ fontSize: 9, fontWeight: 800, color: "#4ADE80", letterSpacing: "0.5px" }}>PRIMARY</span>
         </div>
@@ -600,8 +600,8 @@ function CategoryModal({
         className="w-full max-w-md mx-auto rounded-t-3xl"
         style={{
           background: isIncome
-            ? "linear-gradient(180deg, #102218 0%, #0B1A10 50%, #0E1424 100%)"
-            : "linear-gradient(180deg, #16203A 0%, #0E1424 100%)",
+            ? "linear-gradient(180deg, #102218 0%, #0B1A10 50%, var(--bg-deep) 100%)"
+            : "linear-gradient(180deg, var(--surface) 0%, var(--bg-deep) 100%)",
           border: `1px solid ${isIncome ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.09)"}`,
           borderBottom: "none",
           maxHeight: "90vh", overflowY: "auto",
@@ -642,9 +642,9 @@ function CategoryModal({
                 className="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all"
                 style={{
                   background: showAI
-                    ? isIncome ? "linear-gradient(135deg,rgba(34,197,94,0.15),rgba(76,201,240,0.08))" : "linear-gradient(135deg,rgba(124,92,255,0.18),rgba(76,201,240,0.10))"
+                    ? isIncome ? "linear-gradient(135deg,rgba(34,197,94,0.15),rgba(212,162,76,0.12))" : "linear-gradient(135deg,rgba(212,162,76,0.18),rgba(212,162,76,0.12))"
                     : "rgba(255,255,255,0.05)",
-                  border: `1px solid ${showAI ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(124,92,255,0.4)") : "rgba(255,255,255,0.09)"}`,
+                  border: `1px solid ${showAI ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(212,162,76,0.4)") : "rgba(255,255,255,0.09)"}`,
                 }}>
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg flex items-center justify-center"
@@ -801,7 +801,7 @@ function DeleteModal({ target, onClose, onConfirm }: { target: DelTarget; onClos
         exit={{ scale: 0.86, opacity: 0 }} transition={{ duration: 0.22, ease: [0.4,0,0.2,1] }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-sm rounded-3xl p-6"
-        style={{ background: "linear-gradient(135deg,#1C2440 0%,#131926 100%)", border: "1px solid rgba(255,255,255,0.10)" }}
+        style={{ background: "linear-gradient(135deg,#212C30 0%,#10171A 100%)", border: "1px solid rgba(255,255,255,0.10)" }}
       >
         <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
           style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.25)" }}>
@@ -909,7 +909,7 @@ export function CategoriesScreen() {
     : "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)";
   const fabShadow = isIncome
     ? "0 8px 32px rgba(34,197,94,0.58)"
-    : "0 8px 32px rgba(124,92,255,0.58)";
+    : "0 8px 32px rgba(212,162,76,0.58)";
 
   return (
     <div className="relative pb-32"
@@ -919,7 +919,7 @@ export function CategoriesScreen() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-28 pointer-events-none"
         style={{ background: isIncome
           ? "radial-gradient(ellipse at 50% 0%, rgba(34,197,94,0.10) 0%, transparent 70%)"
-          : "radial-gradient(ellipse at 50% 0%, rgba(124,92,255,0.11) 0%, transparent 70%)" }} />
+          : "radial-gradient(ellipse at 50% 0%, rgba(212,162,76,0.11) 0%, transparent 70%)" }} />
 
       {/* ── Search bar ── */}
       <AnimatePresence>
@@ -934,7 +934,7 @@ export function CategoriesScreen() {
                 className="w-full pl-10 pr-9 py-3 rounded-2xl text-white placeholder:text-white/25 focus:outline-none"
                 style={{
                   background: "rgba(255,255,255,0.07)",
-                  border: `1px solid ${isIncome ? "rgba(34,197,94,0.28)" : "rgba(124,92,255,0.28)"}`,
+                  border: `1px solid ${isIncome ? "rgba(34,197,94,0.28)" : "rgba(212,162,76,0.28)"}`,
                   fontSize: 13,
                 }}
               />
@@ -991,8 +991,8 @@ export function CategoriesScreen() {
         <button onClick={() => { setShowSearch(v => !v); if (showSearch) setSearch(""); }}
           className="w-7 h-7 rounded-xl flex items-center justify-center transition-all"
           style={{
-            background: showSearch ? (isIncome ? "rgba(34,197,94,0.2)" : "rgba(124,92,255,0.22)") : "rgba(255,255,255,0.06)",
-            border: `1px solid ${showSearch ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(124,92,255,0.4)") : "rgba(255,255,255,0.08)"}`,
+            background: showSearch ? (isIncome ? "rgba(34,197,94,0.2)" : "rgba(212,162,76,0.22)") : "rgba(255,255,255,0.06)",
+            border: `1px solid ${showSearch ? (isIncome ? "rgba(34,197,94,0.4)" : "rgba(212,162,76,0.4)") : "rgba(255,255,255,0.08)"}`,
           }}>
           <Search className="w-3.5 h-3.5" style={{ color: showSearch ? (isIncome ? "#4ADE80" : "#D4A24C") : "rgba(255,255,255,0.38)" }} />
         </button>
@@ -1113,10 +1113,13 @@ export function CategoriesScreen() {
       <style>{`
         @keyframes catFabBreathe {
           0%,100% { box-shadow: ${fabShadow}; transform: scale(1); }
-          50%      { box-shadow: ${isIncome ? "0 8px 48px rgba(34,197,94,0.88), 0 0 0 10px rgba(34,197,94,0.10)" : "0 8px 48px rgba(124,92,255,0.88), 0 0 0 10px rgba(124,92,255,0.10)"}; transform: scale(1.055); }
+          50%      { box-shadow: ${isIncome ? "0 8px 48px rgba(34,197,94,0.88), 0 0 0 10px rgba(34,197,94,0.10)" : "0 8px 48px rgba(212,162,76,0.88), 0 0 0 10px rgba(212,162,76,0.10)"}; transform: scale(1.055); }
         }
       `}</style>
     </div>
   );
 }
+
+
+
 

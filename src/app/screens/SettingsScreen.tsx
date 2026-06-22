@@ -169,7 +169,7 @@ export function SettingsScreen() {
                         background: item.value
                           ? "linear-gradient(135deg,#D4A24C,#D4A24C)"
                           : "rgba(255,255,255,0.15)",
-                        boxShadow: item.value ? "0 2px 10px rgba(124,92,255,0.4)" : "none",
+                        boxShadow: item.value ? "0 2px 10px rgba(212,162,76,0.4)" : "none",
                       }}
                     >
                       <motion.div
@@ -303,8 +303,8 @@ export function SettingsScreen() {
                   <button key={c} onClick={() => { setCurrency(code); setShowCurrencyModal(false); toast.success(`Currency set to ${code}`); }}
                     className="w-full text-left px-4 py-3 rounded-xl transition-colors hover:bg-white/5"
                     style={{
-                      background: currency === code ? "rgba(124,92,255,0.15)" : "transparent",
-                      border: currency === code ? "1px solid rgba(124,92,255,0.4)" : "1px solid transparent",
+                      background: currency === code ? "rgba(212,162,76,0.15)" : "transparent",
+                      border: currency === code ? "1px solid rgba(212,162,76,0.4)" : "1px solid transparent",
                       color: "white",
                     }}>
                     {c}
@@ -332,8 +332,8 @@ export function SettingsScreen() {
                 <button key={day} onClick={() => { setWeekStart(day); setShowWeekModal(false); toast.success(`Week starts on ${day}`); }}
                   className="w-full text-left px-4 py-3 rounded-xl transition-colors hover:bg-white/5"
                   style={{
-                    background: weekStart === day ? "rgba(124,92,255,0.15)" : "transparent",
-                    border: weekStart === day ? "1px solid rgba(124,92,255,0.4)" : "1px solid transparent",
+                    background: weekStart === day ? "rgba(212,162,76,0.15)" : "transparent",
+                    border: weekStart === day ? "1px solid rgba(212,162,76,0.4)" : "1px solid transparent",
                     color: "white",
                   }}>
                   {day}
@@ -351,3 +351,4 @@ export function SettingsScreen() {
     </div>
   );
 }
+

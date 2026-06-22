@@ -137,16 +137,29 @@
     --ink: #EDEEE9;
     --ink-muted: #8B9A98;
     --ink-faint: #5E6B69;
+    --divider: rgba(255,255,255,0.07);
+
+    /* Semantic category colors */
+    --income: #6FBE9B;
+    --income-chip: #2E4A3E;
+    --expense: #E2725B;
+    --expense-chip: #4A2E27;
+    --savings: #D4A24C;
+    --savings-chip: #7A5E2E;
+    --neutral-chip: #212C30;
+    --neutral-icon: #8B9A98;
+
+    /* Back-compat aliases (legacy names still referenced in code being migrated) */
     --gold: #D4A24C;
     --gold-dim: #7A5E2E;
-    --mint: #22C55E;
-    --coral: #EF4444;
-    --orange: #F97316;
-    --divider: rgba(255,255,255,0.07);
+    --mint: #6FBE9B;
+    --coral: #E2725B;
+    --orange: #D4A24C;
   }
 
   .font-fraunces { font-family: 'Fraunces', serif; }
   .font-inter { font-family: 'Inter', sans-serif; }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
 
 
   /**
@@ -266,17 +279,17 @@
 }
 
 /* Preserve gradient text in hero cards — don't override */
-.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white,
-.light-mode .bg-gradient-to-r.from-\[\#7C5CFF\] .text-white,
-.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white,
-.light-mode [style*="background:linear-gradient(135deg,#7C5CFF"] .text-white {
+.light-mode .bg-gradient-to-br.from-\[\#D4A24C\] .text-white,
+.light-mode .bg-gradient-to-r.from-\[\#D4A24C\] .text-white,
+.light-mode [style*="background: linear-gradient(135deg,#D4A24C"] .text-white,
+.light-mode [style*="background:linear-gradient(135deg,#D4A24C"] .text-white {
   color: white !important;
 }
 
-.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white\/80,
-.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white\/70,
-.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white\/80,
-.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white\/70 {
+.light-mode .bg-gradient-to-br.from-\[\#D4A24C\] .text-white\/80,
+.light-mode .bg-gradient-to-br.from-\[\#D4A24C\] .text-white\/70,
+.light-mode [style*="background: linear-gradient(135deg,#D4A24C"] .text-white\/80,
+.light-mode [style*="background: linear-gradient(135deg,#D4A24C"] .text-white\/70 {
   color: rgba(255,255,255,0.8) !important;
 }
 

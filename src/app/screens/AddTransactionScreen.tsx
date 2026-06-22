@@ -8,6 +8,7 @@ import {
   Repeat, ChevronDown, ChevronLeft, ChevronRight,
   Plus, Pencil, Trash2, Check, X, Bell,
   Calculator, Calendar, Zap, Sparkles, Clock,
+  ArrowDownCircle, ArrowUpCircle, RefreshCw, CalendarClock, Hourglass,
 } from "lucide-react";
 
 // ─── Single Source of Truth ────────────────────────────────────────────────────
@@ -96,8 +97,8 @@ function CalcModal({ value, onChange, onClose }: {
         initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-md mx-auto rounded-t-3xl p-5"
-        style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid rgba(255,255,255,0.1)", borderBottom: "none" }}>
+        className="w-full max-w-md mx-auto rounded-t-[18px] p-5"
+        style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none" }}>
 
         <div className="flex justify-center mb-3">
           <div className="w-9 h-1 rounded-full bg-white/15" />
@@ -126,11 +127,11 @@ function CalcModal({ value, onChange, onClose }: {
                   background: k === "✓" ? "linear-gradient(135deg,#D4A24C,#D4A24C)"
                     : k === "C" ? "rgba(239,68,68,0.15)"
                       : k === "⌫" ? "rgba(255,183,3,0.12)"
-                        : isOp(k) || k === "=" ? "rgba(124,92,255,0.15)"
+                        : isOp(k) || k === "=" ? "rgba(212,162,76,0.15)"
                           : "rgba(255,255,255,0.07)",
                   color: k === "✓" ? "white" : k === "C" ? "#F87171" : k === "⌫" ? "#FFB703"
                     : isOp(k) || k === "=" ? "#D4A24C" : "white",
-                  boxShadow: k === "✓" ? "0 4px 16px rgba(124,92,255,0.4)" : "none",
+                  boxShadow: k === "✓" ? "0 4px 16px rgba(212,162,76,0.4)" : "none",
                 }}>
                 {k}
               </motion.button>
@@ -175,8 +176,8 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
         initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-md mx-auto rounded-t-3xl"
-        style={{ background: "linear-gradient(180deg,#16203A 0%,#0E1424 100%)", border: "1px solid rgba(255,255,255,0.09)", borderBottom: "none", maxHeight: "80vh", overflowY: "auto" }}>
+        className="w-full max-w-md mx-auto rounded-t-[18px]"
+        style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "80vh", overflowY: "auto" }}>
 
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-9 h-1 rounded-full bg-white/15" />
@@ -297,8 +298,8 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
         initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
         transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-md mx-auto rounded-t-3xl p-5"
-        style={{ background: "linear-gradient(180deg,#16203A 0%,#0E1424 100%)", border: "1px solid rgba(255,255,255,0.09)", borderBottom: "none" }}>
+        className="w-full max-w-md mx-auto rounded-t-[18px] p-5"
+        style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none" }}>
         <div className="flex justify-center mb-4">
           <div className="w-9 h-1 rounded-full bg-white/15" />
         </div>
@@ -310,7 +311,7 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
               <motion.button whileTap={{ scale: 0.97 }}
                 onClick={() => { onClose(); window.location.href = '/dashboard/accounts'; }}
                 className="mx-auto flex items-center gap-2 px-5 py-3 rounded-2xl text-white font-semibold text-sm"
-                style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(124,92,255,0.4)" }}>
+                style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(212,162,76,0.4)" }}>
                 <Plus className="w-4 h-4" />
                 Add Bank / Account
               </motion.button>
@@ -334,10 +335,10 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
                   <p className="text-white/38" style={{ fontSize: 11 }}>{acc.type}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold" style={{ fontSize: 14, color: acc.balance < 0 ? "#F87171" : "#4ADE80" }}>
+                  <p className="font-bold tabular-nums" style={{ fontSize: 14, color: acc.balance < 0 ? "var(--ink-faint)" : "var(--ink)" }}>
                     {acc.balance < 0 ? "-" : ""} ₹{Math.abs(acc.balance).toLocaleString("en-IN")}
                   </p>
-                  {isSel && <Check className="w-4 h-4 ml-auto mt-0.5" style={{ color: acc.color }} />}
+                  {isSel && <Check className="w-4 h-4 ml-auto mt-0.5" strokeWidth={1.75} style={{ color: acc.color }} />}
                 </div>
               </motion.button>
             );
@@ -396,8 +397,8 @@ function DatePickerModal({ date, onSelect, onClose }: {
         initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
         transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-md mx-auto rounded-t-3xl p-5"
-        style={{ background: "linear-gradient(180deg,#16203A 0%,#0E1424 100%)", border: "1px solid rgba(255,255,255,0.09)", borderBottom: "none" }}>
+        className="w-full max-w-md mx-auto rounded-t-[18px] p-5"
+        style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderBottom: "none" }}>
         <div className="flex justify-center mb-3">
           <div className="w-9 h-1 rounded-full bg-white/15" />
         </div>
@@ -406,7 +407,7 @@ function DatePickerModal({ date, onSelect, onClose }: {
 
         {/* Selected preview */}
         <div className="mb-4 py-2.5 px-4 rounded-xl text-center"
-          style={{ background: "rgba(124,92,255,0.12)", border: "1px solid rgba(124,92,255,0.25)" }}>
+          style={{ background: "rgba(212,162,76,0.12)", border: "1px solid rgba(212,162,76,0.25)" }}>
           <p className="text-white font-semibold" style={{ fontSize: 14 }}>{previewStr}</p>
         </div>
 
@@ -440,8 +441,8 @@ function DatePickerModal({ date, onSelect, onClose }: {
                 onClick={() => handleDayTap(day)}
                 className="aspect-square rounded-full flex items-center justify-center"
                 style={{
-                  background: isSel ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : isToday ? "rgba(124,92,255,0.18)" : "transparent",
-                  boxShadow: isSel ? "0 4px 12px rgba(124,92,255,0.45)" : "none",
+                  background: isSel ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : isToday ? "rgba(212,162,76,0.18)" : "transparent",
+                  boxShadow: isSel ? "0 4px 12px rgba(212,162,76,0.45)" : "none",
                 }}>
                 <span style={{
                   fontSize: 13, fontWeight: isSel || isToday ? 700 : 400,
@@ -480,7 +481,7 @@ function DatePickerModal({ date, onSelect, onClose }: {
             <button
               onClick={() => { const now = new Date(); setHours(now.getHours()); setMinutes(now.getMinutes()); }}
               className="px-3 py-2.5 rounded-xl active:scale-95 transition-transform"
-              style={{ background: "rgba(124,92,255,0.18)", border: "1px solid rgba(124,92,255,0.3)", fontSize: 12, color: "#D4A24C", fontWeight: 600 }}>
+              style={{ background: "rgba(212,162,76,0.18)", border: "1px solid rgba(212,162,76,0.3)", fontSize: 12, color: "#D4A24C", fontWeight: 600 }}>
               Now
             </button>
           </div>
@@ -506,7 +507,7 @@ function DatePickerModal({ date, onSelect, onClose }: {
           </motion.button>
           <motion.button whileTap={{ scale: 0.95 }} onClick={handleConfirm}
             className="flex-1 py-3.5 rounded-2xl text-center font-bold"
-            style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(124,92,255,0.4)", fontSize: 14, color: "white" }}>
+            style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(212,162,76,0.4)", fontSize: 14, color: "white" }}>
             Save
           </motion.button>
         </div>
@@ -517,25 +518,25 @@ function DatePickerModal({ date, onSelect, onClose }: {
 
 // ─── Success Overlay ───────────────────────────────────────────────────────────
 function SuccessOverlay({ txType, onDone }: { txType: TxType; onDone: () => void }) {
-  const icon = txType === "income" ? "💰" : txType === "transfer" ? "🔄" : "💸";
-  const color = txType === "income" ? "#22C55E" : txType === "transfer" ? "#D4A24C" : "#D4A24C";
+  const Icon = txType === "income" ? ArrowDownCircle : txType === "transfer" ? RefreshCw : ArrowUpCircle;
+  const color = txType === "income" ? "var(--income)" : txType === "transfer" ? "var(--gold)" : "var(--expense)";
   useEffect(() => { const t = setTimeout(onDone, 1800); return () => clearTimeout(t); }, []);
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      style={{ background: "rgba(11,15,26,0.94)", backdropFilter: "blur(20px)" }}>
+      style={{ background: "rgba(16,23,26,0.94)", backdropFilter: "blur(20px)" }}>
       <motion.div
         initial={{ scale: 0 }} animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.1 }}>
-        <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-5xl mb-6"
+        <div className="w-24 h-24 rounded-[18px] flex items-center justify-center mb-6"
           style={{ background: `linear-gradient(135deg,${color}30,${color}18)`, border: `2px solid ${color}50`, boxShadow: `0 0 40px ${color}40` }}>
-          {icon}
+          <Icon className="w-11 h-11" strokeWidth={1.75} style={{ color }} />
         </div>
       </motion.div>
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-        <p className="text-white font-bold text-center" style={{ fontSize: 22 }}>Transaction Saved!</p>
-        <p className="text-white/38 text-center mt-1" style={{ fontSize: 14 }}>Successfully recorded ✅</p>
+        <p className="font-bold text-center" style={{ fontSize: 22, color: "var(--ink)" }}>Transaction Saved!</p>
+        <p className="text-center mt-1" style={{ fontSize: 14, color: "var(--ink-faint)" }}>Successfully recorded</p>
       </motion.div>
       <motion.div
         className="absolute bottom-0 left-0 h-1 rounded-full"
@@ -623,14 +624,11 @@ export function AddTransactionScreen() {
   const recentIds = txType === "income" ? RECENT_INCOME_IDS : RECENT_IDS;
   const recentCats = cats.filter(c => recentIds.includes(c.id));
 
-  // ── Type-specific colors & gradients ──
-  // Expense: Purple/Pink | Income: Green/Cyan | Transfer: Cyan/Purple
-  const typeAccent = txType === "income" ? "#22C55E" : txType === "transfer" ? "#D4A24C" : "#D4A24C";
-  const typeBg = txType === "income"
-    ? "linear-gradient(135deg,#22C55E 0%,#D4A24C 100%)"
-    : txType === "transfer"
-      ? "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)"
-      : "linear-gradient(135deg,#D4A24C 0%,#F72585 100%)";
+  // ── Type-specific colors ── Income: green | Expense: red | Transfer: neutral gold accent
+  // Hex literals (not CSS vars) here because this screen relies on the `${typeAccent}NN` hex-alpha
+  // suffix trick throughout for translucent fills/borders, which only works with raw hex.
+  const typeAccent = txType === "income" ? "#6FBE9B" : txType === "transfer" ? "#D4A24C" : "#E2725B";
+  const typeBg = typeAccent;
 
   // ── Format date with time ──
   const fmtDate = (d: Date) => {
@@ -796,7 +794,7 @@ export function AddTransactionScreen() {
   };
 
   return (
-    <div className="relative" style={{ background: "linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight: "100vh" }}>
+    <div className="relative" style={{ background: "var(--bg-deep)", minHeight: "100vh" }}>
       {/* Top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-24 pointer-events-none"
         style={{ background: `radial-gradient(ellipse at 50% 0%,${typeAccent}14 0%,transparent 70%)`, transition: "background 0.4s" }} />
@@ -832,20 +830,21 @@ export function AddTransactionScreen() {
               transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
               style={{ background: typeBg, boxShadow: `0 4px 16px ${typeAccent}35` }} />
             {([
-              { id: "expense" as TxType, label: "💸 Expense" },
-              { id: "income" as TxType, label: "💰 Income" },
-              { id: "transfer" as TxType, label: "🔄 Transfer" },
-            ] as { id: TxType; label: string }[]).map(t => (
+              { id: "expense" as TxType, label: "Expense", icon: ArrowUpCircle },
+              { id: "income" as TxType, label: "Income", icon: ArrowDownCircle },
+              { id: "transfer" as TxType, label: "Transfer", icon: RefreshCw },
+            ] as { id: TxType; label: string; icon: typeof ArrowUpCircle }[]).map(t => (
               <motion.button
                 key={t.id}
                 onClick={() => switchType(t.id)}
                 whileTap={{ scale: 0.97 }}
-                className="relative flex-1 py-3 rounded-xl z-10 text-center transition-colors"
+                className="relative flex-1 py-3 rounded-[14px] z-10 flex items-center justify-center gap-1.5 transition-colors"
                 style={{
                   fontSize: 12,
                   fontWeight: 700,
-                  color: txType === t.id ? "white" : "rgba(255,255,255,0.38)",
+                  color: txType === t.id ? "#10171A" : "rgba(255,255,255,0.38)",
                 }}>
+                <t.icon className="w-3.5 h-3.5" strokeWidth={1.75} />
                 {t.label}
               </motion.button>
             ))}
@@ -853,10 +852,10 @@ export function AddTransactionScreen() {
         </div>
 
         {/* ── Amount Card ── */}
-        <div className="mx-4 mb-4 rounded-3xl overflow-hidden relative"
+        <div className="mx-4 mb-4 rounded-[18px] overflow-hidden relative"
           style={{
             background: "linear-gradient(135deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.02) 100%)",
-            border: `1px solid ${errors.amount ? "#EF4444" : `${typeAccent}30`}`,
+            border: `1px solid ${errors.amount ? "#E2725B" : `${typeAccent}30`}`,
             boxShadow: `0 8px 32px ${typeAccent}12`,
           }}>
           <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full pointer-events-none"
@@ -882,7 +881,7 @@ export function AddTransactionScreen() {
                   if ((v.match(/\./g) || []).length <= 1) setAmount(v);
                 }}
                 placeholder="0"
-                className="flex-1 bg-transparent font-bold text-white focus:outline-none placeholder:text-white/18"
+                className="flex-1 bg-transparent font-bold text-white focus:outline-none placeholder:text-white/18 tabular-nums"
                 style={{ fontSize: 44, letterSpacing: "-1px" }}
               />
             </div>
@@ -1045,10 +1044,10 @@ export function AddTransactionScreen() {
               <p className="text-white/38" style={{ fontSize: 11 }}>{selectedAcc.type}</p>
             </div>
             <div className="text-right">
-              <p className="font-bold" style={{ fontSize: 14, color: selectedAcc.balance < 0 ? "#F87171" : "#4ADE80" }}>
+              <p className="font-bold tabular-nums" style={{ fontSize: 14, color: selectedAcc.balance < 0 ? "var(--ink-faint)" : "var(--ink)" }}>
                 ₹{Math.abs(selectedAcc.balance).toLocaleString("en-IN")}
               </p>
-              <ChevronDown className="w-4 h-4 text-white/30 ml-auto mt-0.5" />
+              <ChevronDown className="w-4 h-4 text-white/30 ml-auto mt-0.5" strokeWidth={1.75} />
             </div>
           </motion.button>
         </div>
@@ -1098,11 +1097,11 @@ export function AddTransactionScreen() {
             style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)" }}>
             <div className="flex gap-1.5">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: "rgba(124,92,255,0.18)" }}>
+                style={{ background: "rgba(212,162,76,0.18)" }}>
                 <Calendar className="w-4 h-4 text-[#D4A24C]" />
               </div>
               <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: "rgba(76,201,240,0.18)" }}>
+                style={{ background: "rgba(212,162,76,0.18)" }}>
                 <Clock className="w-4 h-4 text-[#D4A24C]" />
               </div>
             </div>
@@ -1130,8 +1129,8 @@ export function AddTransactionScreen() {
           <p className="text-white/38 font-semibold mb-2.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>ATTACHMENTS</p>
           <div className="grid grid-cols-2 gap-2.5">
             {[
-              { icon: <Camera className="w-5 h-5" />, label: "Camera", bg: "rgba(124,92,255,0.12)" },
-              { icon: <ImageIcon className="w-5 h-5" />, label: "Gallery", bg: "rgba(76,201,240,0.12)" },
+              { icon: <Camera className="w-5 h-5" />, label: "Camera", bg: "rgba(212,162,76,0.12)" },
+              { icon: <ImageIcon className="w-5 h-5" />, label: "Gallery", bg: "rgba(212,162,76,0.12)" },
             ].map(b => (
               <motion.button key={b.label} whileTap={{ scale: 0.96 }}
                 className="flex items-center justify-center gap-2.5 py-3.5 rounded-2xl"
@@ -1152,7 +1151,7 @@ export function AddTransactionScreen() {
             className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl relative overflow-hidden"
             style={{
               background: "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)",
-              boxShadow: "0 8px 28px rgba(124,92,255,0.42)",
+              boxShadow: "0 8px 28px rgba(212,162,76,0.42)",
               animation: aiScanning ? "none" : "aiGlow 2.5s ease-in-out infinite",
             }}>
             {aiScanning ? (
@@ -1176,13 +1175,13 @@ export function AddTransactionScreen() {
         <div className="px-4 mb-6">
           <div className="px-4 py-3.5 rounded-2xl"
             style={{
-              background: recurring ? "rgba(124,92,255,0.10)" : "rgba(255,255,255,0.04)",
-              border: recurring ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
+              background: recurring ? "rgba(212,162,76,0.10)" : "rgba(255,255,255,0.04)",
+              border: recurring ? "1px solid rgba(212,162,76,0.3)" : "1px solid rgba(255,255,255,0.07)",
             }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                  style={{ background: recurring ? "rgba(124,92,255,0.22)" : "rgba(255,255,255,0.07)" }}>
+                  style={{ background: recurring ? "rgba(212,162,76,0.22)" : "rgba(255,255,255,0.07)" }}>
                   <Repeat className="w-4 h-4" style={{ color: recurring ? "#D4A24C" : "rgba(255,255,255,0.35)" }} />
                 </div>
                 <div>
@@ -1213,15 +1212,17 @@ export function AddTransactionScreen() {
 
                   {/* Frequency Selector */}
                   <div className="mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-                    <p className="text-white/45 mb-2" style={{ fontSize: 11, fontWeight: 600 }}>📅 FREQUENCY</p>
+                    <p className="text-white/45 mb-2 flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 600 }}>
+                      <CalendarClock className="w-3 h-3" strokeWidth={1.75} /> FREQUENCY
+                    </p>
                     <div className="grid grid-cols-3 gap-2">
                       {(["daily", "weekly", "monthly", "quarterly", "half-yearly", "yearly"] as const).map(f => (
                         <motion.button key={f} whileTap={{ scale: 0.92 }}
                           onClick={() => setRecurFreq(f)}
                           className="py-2 rounded-xl capitalize"
                           style={{
-                            background: recurFreq === f ? "rgba(124,92,255,0.3)" : "rgba(255,255,255,0.06)",
-                            border: recurFreq === f ? "1px solid rgba(124,92,255,0.5)" : "1px solid transparent",
+                            background: recurFreq === f ? "rgba(212,162,76,0.3)" : "rgba(255,255,255,0.06)",
+                            border: recurFreq === f ? "1px solid rgba(212,162,76,0.5)" : "1px solid transparent",
                             fontSize: 10.5, fontWeight: 700,
                             color: recurFreq === f ? "#D4A24C" : "rgba(255,255,255,0.38)",
                           }}>
@@ -1233,15 +1234,17 @@ export function AddTransactionScreen() {
 
                   {/* End Condition */}
                   <div className="mt-3">
-                    <p className="text-white/45 mb-2" style={{ fontSize: 11, fontWeight: 600 }}>⏳ END CONDITION</p>
+                    <p className="text-white/45 mb-2 flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 600 }}>
+                      <Hourglass className="w-3 h-3" strokeWidth={1.75} /> END CONDITION
+                    </p>
                     <div className="space-y-2">
                       {(["never", "date", "count"] as const).map(type => (
                         <motion.button key={type} whileTap={{ scale: 0.98 }}
                           onClick={() => setRecurEndType(type)}
                           className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl"
                           style={{
-                            background: recurEndType === type ? "rgba(124,92,255,0.18)" : "rgba(255,255,255,0.04)",
-                            border: recurEndType === type ? "1px solid rgba(124,92,255,0.4)" : "1px solid rgba(255,255,255,0.07)",
+                            background: recurEndType === type ? "rgba(212,162,76,0.18)" : "rgba(255,255,255,0.04)",
+                            border: recurEndType === type ? "1px solid rgba(212,162,76,0.4)" : "1px solid rgba(255,255,255,0.07)",
                           }}>
                           <div className="w-4 h-4 rounded-full flex items-center justify-center"
                             style={{
@@ -1264,7 +1267,7 @@ export function AddTransactionScreen() {
                       <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-2">
                         <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowRecurEndDate(true)}
                           className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl"
-                          style={{ background: "rgba(124,92,255,0.12)", border: "1px solid rgba(124,92,255,0.3)" }}>
+                          style={{ background: "rgba(212,162,76,0.12)", border: "1px solid rgba(212,162,76,0.3)" }}>
                           <Calendar className="w-4 h-4 text-[#D4A24C]" />
                           <span className="flex-1 text-left text-white" style={{ fontSize: 13, fontWeight: 600 }}>
                             {fmtDate(recurEndDate).split(',')[0]}
@@ -1291,7 +1294,7 @@ export function AddTransactionScreen() {
                   </div>
 
                   {/* Preview Line */}
-                  <div className="mt-3 p-3 rounded-xl" style={{ background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.2)" }}>
+                  <div className="mt-3 p-3 rounded-xl" style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.2)" }}>
                     <p className="text-white/45 mb-1" style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.5px" }}>PREVIEW</p>
                     <p className="text-white/75" style={{ fontSize: 12, lineHeight: 1.5 }}>
                       {selectedCat?.name || "Transaction"} ₹{amount || "0"} will repeat{" "}
@@ -1390,10 +1393,12 @@ export function AddTransactionScreen() {
 
       <style>{`
         @keyframes aiGlow {
-          0%,100% { box-shadow: 0 8px 28px rgba(124,92,255,0.42); }
-          50%      { box-shadow: 0 8px 48px rgba(124,92,255,0.72), 0 0 0 8px rgba(124,92,255,0.10); }
+          0%,100% { box-shadow: 0 8px 28px rgba(212,162,76,0.42); }
+          50%      { box-shadow: 0 8px 48px rgba(212,162,76,0.72), 0 0 0 8px rgba(212,162,76,0.10); }
         }
       `}</style>
     </div>
   );
 }
+
+

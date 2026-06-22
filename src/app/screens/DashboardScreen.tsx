@@ -4,7 +4,9 @@ import { useNavigate } from "react-router";
 import {
   ChevronLeft, ChevronRight, Calendar, Award,
   ArrowUpDown, Repeat, Sparkles, Plus, TrendingUp,
-  Wallet, PieChart as PieIcon, Zap, BarChart2, HelpCircle
+  Wallet, PieChart as PieIcon, Zap, BarChart2, HelpCircle,
+  Lightbulb, Target, AlertTriangle, Rocket, Brain, Receipt,
+  Landmark, ArrowDownCircle, ArrowUpCircle, RefreshCw,
 } from "lucide-react";
 import { BalanceCard } from "../components/BalanceCard";
 import { SpendingOverview } from "../components/SpendingOverview";
@@ -23,9 +25,10 @@ const MONTHS = [
 
 // ─── Empty State Reusable Component ────────────────────────────────────────────
 function EmptyState({
-  emoji, title, subtitle, ctaLabel, onCta, compact = false,
+  icon: Icon, title, subtitle, ctaLabel, onCta, compact = false,
 }: {
-  emoji: string; title: string; subtitle?: string;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  title: string; subtitle?: string;
   ctaLabel?: string; onCta?: () => void; compact?: boolean;
 }) {
   return (
@@ -34,31 +37,31 @@ function EmptyState({
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-        className={`${compact ? "w-12 h-12 text-2xl" : "w-16 h-16 text-3xl"} rounded-2xl flex items-center justify-center`}
+        className={`${compact ? "w-12 h-12" : "w-16 h-16"} rounded-[14px] flex items-center justify-center`}
         style={{
-          background: "rgba(255,255,255,0.05)",
-          border: "1.5px dashed rgba(255,255,255,0.15)",
+          background: "var(--surface-raised)",
+          border: "1.5px dashed var(--divider)",
+          color: "var(--ink-faint)",
         }}>
-        {emoji}
+        <Icon className={compact ? "w-5 h-5" : "w-6 h-6"} strokeWidth={1.75} />
       </motion.div>
       <div>
-        <p className="text-white/55 font-semibold" style={{ fontSize: compact ? 13 : 14 }}>{title}</p>
+        <p className="font-semibold" style={{ fontSize: compact ? 13 : 14, color: "var(--ink-muted)" }}>{title}</p>
         {subtitle && (
-          <p className="text-white/30 mt-0.5" style={{ fontSize: 12 }}>{subtitle}</p>
+          <p className="mt-0.5" style={{ fontSize: 12, color: "var(--ink-faint)" }}>{subtitle}</p>
         )}
       </div>
       {ctaLabel && onCta && (
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={onCta}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-[14px] font-semibold"
           style={{
-            background: "linear-gradient(135deg,#D4A24C,#D4A24C)",
-            boxShadow: "0 4px 16px rgba(124,92,255,0.38)",
+            background: "var(--gold)",
             fontSize: 12,
-            color: "white",
+            color: "#241B0A",
           }}>
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-3.5 h-3.5" strokeWidth={1.75} />
           {ctaLabel}
         </motion.button>
       )}
@@ -103,9 +106,9 @@ function SectionHeader({ title, actionLabel, onAction }: {
 }) {
   return (
     <div className="flex items-center justify-between mb-3">
-      <h3 className="text-white font-bold" style={{ fontSize: 16 }}>{title}</h3>
+      <h3 className="font-bold" style={{ fontSize: 16, color: "var(--ink)" }}>{title}</h3>
       {actionLabel && (
-        <button onClick={onAction} style={{ fontSize: 13, fontWeight: 600, color: "#D4A24C" }}>
+        <button onClick={onAction} style={{ fontSize: 13, fontWeight: 600, color: "var(--gold)" }}>
           {actionLabel}
         </button>
       )}
@@ -199,7 +202,7 @@ export function DashboardScreen() {
 
       {/* Top ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 0%,rgba(124,92,255,0.11) 0%,transparent 70%)" }} />
+        style={{ background: "radial-gradient(ellipse at 50% 0%,rgba(212,162,76,0.11) 0%,transparent 70%)" }} />
 
       <div className="relative z-10 px-4 pt-5 space-y-5">
 
@@ -347,13 +350,13 @@ export function DashboardScreen() {
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-[var(--surface)] rounded-[14px] px-4 py-3.5">
             <p className="text-[12px] text-[var(--ink-muted)] mb-1.5">Finly score</p>
-            <p className="text-[19px] font-semibold text-[var(--ink)] m-0" style={{ fontVariantNumeric: "tabular-nums" }}>
-              {finlyScore} <span className="text-[11px] font-medium text-[var(--mint)]">· {finlyScore >= 80 ? "Excellent" : "Good"}</span>
+            <p className="text-[19px] font-semibold text-[var(--ink)] m-0 tabular-nums">
+              {finlyScore} <span className="text-[11px] font-medium text-[var(--ink-muted)]">· {finlyScore >= 80 ? "Excellent" : "Good"}</span>
             </p>
           </div>
           <div className="bg-[var(--surface)] rounded-[14px] px-4 py-3.5">
             <p className="text-[12px] text-[var(--ink-muted)] mb-1.5">Saved this month</p>
-            <p className="text-[19px] font-semibold text-[var(--mint)] m-0" style={{ fontVariantNumeric: "tabular-nums" }}>
+            <p className="text-[19px] font-semibold m-0 tabular-nums" style={{ color: "var(--savings)" }}>
               ₹{stats.savings.toLocaleString("en-IN")}
             </p>
           </div>
@@ -370,26 +373,26 @@ export function DashboardScreen() {
           <SectionHeader title="Insights" />
           <div className="space-y-3">
             {stats.expense > 0 && stats.income > 0 && (
-              <div className="rounded-2xl p-4" style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.045) 0%,rgba(255,255,255,0.018) 100%)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="rounded-[18px] p-4" style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
                 <div className="flex items-center gap-3">
-                  <span style={{ fontSize: 22 }}>💡</span>
-                  <p className="text-white/70" style={{ fontSize: 13 }}>You spent <span className="text-[#F72585] font-semibold">{Math.round((stats.expense / stats.income) * 100)}%</span> of your income this month</p>
+                  <Lightbulb className="w-5 h-5 flex-shrink-0" strokeWidth={1.75} style={{ color: "var(--gold)" }} />
+                  <p style={{ fontSize: 13, color: "var(--ink-muted)" }}>You spent <span className="font-semibold tabular-nums" style={{ color: "var(--expense)" }}>{Math.round((stats.expense / stats.income) * 100)}%</span> of your income this month</p>
                 </div>
               </div>
             )}
             {stats.savings > 0 && (
-              <div className="rounded-2xl p-4" style={{ background: "linear-gradient(135deg,rgba(34,197,94,0.08) 0%,rgba(34,197,94,0.03) 100%)", border: "1px solid rgba(34,197,94,0.18)" }}>
+              <div className="rounded-[18px] p-4" style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.18)" }}>
                 <div className="flex items-center gap-3">
-                  <span style={{ fontSize: 22 }}>🎯</span>
-                  <p className="text-white/70" style={{ fontSize: 13 }}>Great! You saved <span className="text-[#22C55E] font-semibold">₹{stats.savings.toLocaleString('en-IN')}</span> this month</p>
+                  <Target className="w-5 h-5 flex-shrink-0" strokeWidth={1.75} style={{ color: "var(--savings)" }} />
+                  <p style={{ fontSize: 13, color: "var(--ink-muted)" }}>Great! You saved <span className="font-semibold tabular-nums" style={{ color: "var(--savings)" }}>₹{stats.savings.toLocaleString('en-IN')}</span> this month</p>
                 </div>
               </div>
             )}
             {stats.expense > stats.income && stats.income > 0 && (
-              <div className="rounded-2xl p-4" style={{ background: "linear-gradient(135deg,rgba(239,68,68,0.08) 0%,rgba(239,68,68,0.03) 100%)", border: "1px solid rgba(239,68,68,0.18)" }}>
+              <div className="rounded-[18px] p-4" style={{ background: "rgba(226,114,91,0.08)", border: "1px solid rgba(226,114,91,0.18)" }}>
                 <div className="flex items-center gap-3">
-                  <span style={{ fontSize: 22 }}>⚠️</span>
-                  <p className="text-white/70" style={{ fontSize: 13 }}>You're spending more than you earn. Consider reviewing your expenses.</p>
+                  <AlertTriangle className="w-5 h-5 flex-shrink-0" strokeWidth={1.75} style={{ color: "var(--expense)" }} />
+                  <p style={{ fontSize: 13, color: "var(--ink-muted)" }}>You're spending more than you earn. Consider reviewing your expenses.</p>
                 </div>
               </div>
             )}
@@ -398,13 +401,10 @@ export function DashboardScreen() {
         ) : (
         <div>
           <SectionHeader title="Insights" />
-          <div className="rounded-2xl overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg,rgba(255,255,255,0.045) 0%,rgba(255,255,255,0.018) 100%)",
-              border: "1px solid rgba(255,255,255,0.07)",
-            }}>
+          <div className="rounded-[18px] overflow-hidden"
+            style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
             <EmptyState
-              emoji="🧠"
+              icon={Brain}
               title="No insights yet"
               subtitle="Start adding transactions to unlock AI-powered insights"
               ctaLabel="Add Transaction"
@@ -421,11 +421,11 @@ export function DashboardScreen() {
             <span className="text-[12px] text-[var(--gold)] font-medium cursor-pointer" onClick={() => navigate("/dashboard/transactions")}>View all</span>
           </div>
           
-          <div className="bg-[var(--surface)] rounded-[20px] px-4 py-1">
+          <div className="bg-[var(--surface)] rounded-[18px] px-4 py-1">
           {recentTransactions.length === 0 ? (
             <div className="py-4">
               <EmptyState
-                emoji="🧾"
+                icon={Receipt}
                 title="No transactions yet"
                 subtitle="Your recent income & expenses will appear here"
                 compact
@@ -434,18 +434,25 @@ export function DashboardScreen() {
           ) : (
             recentTransactions.map((tx: any) => {
               const cat = tx.categoryId || tx.category_id ? getCatById(tx.categoryId || tx.category_id) : null;
-              const typeColor = tx.type === "income" ? "var(--mint)" : tx.type === "transfer" ? "#D4A24C" : tx.type === "savings" ? "var(--orange)" : "var(--coral)";
+              const typeColor = tx.type === "income" ? "var(--income)" : tx.type === "transfer" ? "var(--ink-muted)" : tx.type === "savings" ? "var(--savings)" : "var(--expense)";
+              const TypeIcon = tx.type === "income" ? ArrowDownCircle : tx.type === "transfer" ? RefreshCw : ArrowUpCircle;
               const isExpense = tx.type === "expense";
               return (
                 <div key={tx.id} className="flex items-center gap-3 py-3 border-b border-[var(--divider)] last:border-b-0 cursor-pointer" onClick={() => navigate("/dashboard/transactions")}>
-                  <div className="w-9 h-9 rounded-full bg-[var(--surface-raised)] flex items-center justify-center text-[14px] text-[var(--ink-muted)] flex-shrink-0">
-                    {cat?.emoji || (tx.type === "income" ? "💰" : tx.type === "transfer" ? "🔄" : "💸")}
+                  <div className="w-9 h-9 rounded-full bg-[var(--surface-raised)] flex items-center justify-center flex-shrink-0">
+                    {cat?.icon ? (
+                      <cat.icon className="w-4 h-4" strokeWidth={1.75} style={{ color: "var(--ink-muted)" }} />
+                    ) : cat?.emoji ? (
+                      <span className="text-[14px] text-[var(--ink-muted)]">{cat.emoji}</span>
+                    ) : (
+                      <TypeIcon className="w-4 h-4" strokeWidth={1.75} style={{ color: typeColor }} />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[13.5px] m-0 text-[var(--ink)] truncate">{tx.note || cat?.name || "Transaction"}</p>
                     <p className="text-[11.5px] mt-0.5 mb-0 text-[var(--ink-faint)]">{tx.date ? new Date(tx.date).toLocaleDateString("en-IN", {month:"short", day:"numeric"}) : "Unknown"}</p>
                   </div>
-                  <span className="text-[13.5px] font-medium" style={{ fontVariantNumeric: "tabular-nums", color: typeColor }}>
+                  <span className="text-[13.5px] font-medium tabular-nums" style={{ color: typeColor }}>
                     {isExpense ? "-" : tx.type === "income" ? "+" : ""}₹{parseFloat(tx.amount).toLocaleString("en-IN")}
                   </span>
                 </div>
@@ -463,13 +470,10 @@ export function DashboardScreen() {
             onAction={recurringList.length > 0 ? () => navigate("/dashboard/recurring") : undefined}
           />
           {recurringList.length === 0 ? (
-            <div className="rounded-2xl overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg,rgba(255,255,255,0.045) 0%,rgba(255,255,255,0.018) 100%)",
-                border: "1px solid rgba(255,255,255,0.07)",
-              }}>
+            <div className="rounded-[18px] overflow-hidden"
+              style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
               <EmptyState
-                emoji="🔁"
+                icon={Repeat}
                 title="No recurring transactions set"
                 subtitle="Set up recurring entries when adding a transaction"
                 compact
@@ -479,7 +483,9 @@ export function DashboardScreen() {
             <div className="space-y-2">
               {recurringList.map((rec: any) => {
                 const cat = rec.categoryId ? getCatById(rec.categoryId) : null;
-                const typeColor = rec.type === "income" ? "#22C55E" : rec.type === "transfer" ? "#D4A24C" : "#EF4444";
+                const typeColor = rec.type === "income" ? "var(--income)" : rec.type === "transfer" ? "var(--ink-muted)" : "var(--expense)";
+                const chipBg = rec.type === "income" ? "var(--income-chip)" : rec.type === "transfer" ? "var(--neutral-chip)" : "var(--expense-chip)";
+                const TypeIcon = rec.type === "income" ? ArrowDownCircle : rec.type === "transfer" ? RefreshCw : ArrowUpCircle;
                 const start = new Date(rec.startDate);
                 const day = start.getDate();
                 const freq = rec.frequency === "monthly" ? `${day}${day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th"}` :
@@ -490,27 +496,30 @@ export function DashboardScreen() {
                   <motion.div key={rec.id}
                     whileTap={{scale:0.98}}
                     onClick={() => navigate("/dashboard/recurring")}
-                    className="flex items-center gap-3 p-3 rounded-2xl cursor-pointer"
-                    style={{
-                      background: `linear-gradient(135deg,${typeColor}08 0%,rgba(255,255,255,0.02) 100%)`,
-                      border: `1px solid ${typeColor}20`,
-                    }}>
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-                      style={{background:`${cat?.color || typeColor}18`, border:`1px solid ${cat?.color || typeColor}30`}}>
-                      {cat?.emoji || (rec.type === "income" ? "💰" : rec.type === "transfer" ? "🔄" : "💸")}
+                    className="flex items-center gap-3 p-3 rounded-[14px] cursor-pointer"
+                    style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0"
+                      style={{ background: cat ? "var(--neutral-chip)" : chipBg }}>
+                      {cat?.icon ? (
+                        <cat.icon className="w-4 h-4 text-[var(--ink)]" strokeWidth={1.75} />
+                      ) : cat?.emoji ? (
+                        <span>{cat.emoji}</span>
+                      ) : (
+                        <TypeIcon className="w-4.5 h-4.5" strokeWidth={1.75} style={{ color: cat ? "var(--neutral-icon)" : typeColor }} />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold truncate" style={{fontSize:13}}>
+                      <p className="font-semibold truncate" style={{fontSize:13, color: "var(--ink)"}}>
                         {cat?.name || rec.note || "Transaction"}
                       </p>
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <Repeat className="w-3 h-3" style={{color:typeColor}} />
-                        <span style={{fontSize:11, color:"rgba(255,255,255,0.55)"}}>
+                        <Repeat className="w-3 h-3" strokeWidth={1.75} style={{color:"var(--ink-faint)"}} />
+                        <span style={{fontSize:11, color:"var(--ink-faint)"}}>
                           {freq} • {rec.frequency}
                         </span>
                       </div>
                     </div>
-                    <p className="font-bold flex-shrink-0" style={{fontSize:14, color:typeColor}}>
+                    <p className="font-bold flex-shrink-0 tabular-nums" style={{fontSize:14, color:typeColor}}>
                       ₹{rec.amount.toLocaleString("en-IN")}
                     </p>
                   </motion.div>
@@ -527,24 +536,16 @@ export function DashboardScreen() {
             actionLabel="View All"
             onAction={() => navigate("/dashboard/accounts")}
           />
-          <div className="rounded-2xl p-5"
-            style={{
-              background: "linear-gradient(135deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%)",
-              border: "1px solid rgba(255,255,255,0.07)",
-            }}>
-            {/* Net worth row */}
+          <div className="rounded-[18px] p-5"
+            style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
+            {/* Accounts count row */}
             <div className="flex items-center justify-between mb-4 pb-4"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-              <div>
-                <p className="text-white/40" style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.4px" }}>NET WORTH</p>
-                <p className="font-bold mt-0.5" style={{ fontSize: 26, color: stats.balance > 0 ? "white" : "rgba(255,255,255,0.22)" }}>
-                  ₹{stats.balance.toLocaleString("en-IN")}
-                </p>
-              </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <Wallet className="w-3.5 h-3.5 text-white/30" />
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.30)", fontWeight: 600 }}>
+              style={{ borderBottom: "1px solid var(--divider)" }}>
+              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.4px", color: "var(--ink-faint)" }}>YOUR ACCOUNTS</p>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-[14px]"
+                style={{ background: "var(--surface-raised)" }}>
+                <Wallet className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />
+                <span style={{ fontSize: 11, color: "var(--ink-faint)", fontWeight: 600 }}>
                   {accountsList.length > 0 ? `${accountsList.length} Accounts` : "No accounts"}
                 </span>
               </div>
@@ -555,7 +556,7 @@ export function DashboardScreen() {
               {accountsList.length === 0 ? (
                 <div className="py-6">
                   <EmptyState
-                    emoji="🏦"
+                    icon={Landmark}
                     title="No accounts yet"
                     subtitle="Connect your accounts to start tracking balances"
                     compact
@@ -564,14 +565,14 @@ export function DashboardScreen() {
               ) : (
                 accountsList.slice(0, 4).map(acc => (
                   <div key={acc.id} className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
-                      style={{ background: `${acc.color || '#4895EF'}18`, border: `1px solid ${acc.color || '#4895EF'}28` }}>
-                      {acc.icon || acc.emoji || "🏦"}
+                    <div className="w-9 h-9 rounded-[14px] flex items-center justify-center text-base flex-shrink-0"
+                      style={{ background: "var(--neutral-chip)" }}>
+                      {acc.icon || acc.emoji || <Landmark className="w-4 h-4" strokeWidth={1.75} style={{ color: "var(--neutral-icon)" }} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white/60 font-semibold truncate" style={{ fontSize: 13 }}>{acc.name}</p>
+                      <p className="font-semibold truncate" style={{ fontSize: 13, color: "var(--ink-muted)" }}>{acc.name}</p>
                     </div>
-                    <p className="font-bold" style={{ fontSize: 13, color: acc.balance > 0 ? "white" : "rgba(255,255,255,0.25)" }}>
+                    <p className="font-bold tabular-nums" style={{ fontSize: 13, color: acc.balance > 0 ? "var(--ink)" : "var(--ink-faint)" }}>
                       ₹{parseFloat(acc.balance || 0).toLocaleString("en-IN")}
                     </p>
                   </div>
@@ -583,13 +584,13 @@ export function DashboardScreen() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate("/dashboard/accounts")}
-              className="w-full mt-4 py-3 rounded-2xl flex items-center justify-center gap-2 font-semibold"
+              className="w-full mt-4 py-3 rounded-[14px] flex items-center justify-center gap-2 font-semibold"
               style={{
-                background: "rgba(124,92,255,0.10)",
-                border: "1px dashed rgba(124,92,255,0.30)",
-                fontSize: 13, color: "#D4A24C",
+                background: "rgba(212,162,76,0.10)",
+                border: "1px dashed rgba(212,162,76,0.30)",
+                fontSize: 13, color: "var(--gold)",
               }}>
-              <Zap className="w-4 h-4" />
+              <Zap className="w-4 h-4" strokeWidth={1.75} />
               Connect your accounts
             </motion.button>
           </div>
@@ -601,31 +602,30 @@ export function DashboardScreen() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="rounded-3xl p-5 text-center relative overflow-hidden"
+          className="rounded-[18px] p-5 text-center relative overflow-hidden"
           style={{
-            background: "linear-gradient(135deg,rgba(124,92,255,0.12) 0%,rgba(76,201,240,0.08) 100%)",
-            border: "1px solid rgba(124,92,255,0.22)",
+            background: "rgba(212,162,76,0.10)",
+            border: "1px solid rgba(212,162,76,0.22)",
           }}>
           <div className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(circle at 50% 0%,rgba(124,92,255,0.10) 0%,transparent 60%)" }} />
+            style={{ background: "radial-gradient(circle at 50% 0%,rgba(212,162,76,0.10) 0%,transparent 60%)" }} />
           <div className="relative z-10">
-            <p className="text-3xl mb-2">🚀</p>
-            <p className="text-white font-bold mb-1" style={{ fontSize: 16 }}>
+            <Rocket className="w-7 h-7 mx-auto mb-2" strokeWidth={1.75} style={{ color: "var(--gold)" }} />
+            <p className="font-bold mb-1" style={{ fontSize: 16, color: "var(--ink)" }}>
               Your financial journey starts here
             </p>
-            <p className="text-white/40 mb-4" style={{ fontSize: 13 }}>
+            <p className="mb-4" style={{ fontSize: 13, color: "var(--ink-faint)" }}>
               Add your first income or expense to see<br />your personalized financial overview
             </p>
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate("/dashboard/add-transaction")}
-              className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold mx-auto"
+              className="flex items-center gap-2 px-6 py-3 rounded-[14px] font-bold mx-auto"
               style={{
-                background: "linear-gradient(135deg,#D4A24C,#D4A24C)",
-                boxShadow: "0 6px 20px rgba(124,92,255,0.42)",
-                fontSize: 14, color: "white",
+                background: "var(--gold)",
+                fontSize: 14, color: "#241B0A",
               }}>
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4" strokeWidth={1.75} />
               Start Adding Transactions
             </motion.button>
           </div>
@@ -669,14 +669,14 @@ export function DashboardScreen() {
               onClick={e => e.stopPropagation()}
               className="w-full max-w-sm rounded-3xl p-6 relative overflow-hidden text-left"
               style={{
-                background: "linear-gradient(135deg, #1C2440, #131926)",
+                background: "linear-gradient(135deg, #212C30, #10171A)",
                 border: "1px solid rgba(255,255,255,0.1)",
                 boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
               }}
             >
               {/* Top glow */}
               <div className="absolute -top-12 -left-12 w-32 h-32 rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle, rgba(124,92,255,0.15) 0%, transparent 70%)" }} />
+                style={{ background: "radial-gradient(circle, rgba(212,162,76,0.15) 0%, transparent 70%)" }} />
 
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#D4A24C]/15 border border-[#D4A24C]/25">
@@ -729,3 +729,5 @@ export function DashboardScreen() {
     </div>
   );
 }
+
+

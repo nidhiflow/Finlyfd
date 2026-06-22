@@ -4,8 +4,7 @@ import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Star, Trash2, Plus, FileText, ChevronLeft, ChevronRight, ChevronDown,
-  Utensils, Car, Zap, Coffee, ShoppingBag, Edit3,
-  ArrowDownLeft, Wallet, Calendar, X, Search, SlidersHorizontal
+  ShoppingBag, Edit3, Search, SlidersHorizontal, Inbox,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useCategoryContext } from "../context/CategoryContext";
@@ -13,7 +12,7 @@ import { useCategoryContext } from "../context/CategoryContext";
 // ─── Types ──────────────────────────────────────────────────────────────────────
 interface Transaction {
   id: number;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }>;
   name: string;
   note: string;
   account: string;
@@ -116,27 +115,27 @@ function groupByMonth(txs: Transaction[]): MonthGroup[] {
 }
 
 // ─── Color constants ────────────────────────────────────────────────────────────
-const C_INCOME = "#22C55E"; // Green
-const C_EXPENSE = "#EF4444"; // Red
-const C_SAVINGS = "#FFB703"; // Amber
-const C_BALANCE = "#FFFFFF"; // White
-const C_ACCENT = "#D4A24C"; // Brand Accent Color (Purple)
+const C_INCOME = "var(--income)";
+const C_EXPENSE = "var(--expense)";
+const C_SAVINGS = "var(--savings)";
+const C_BALANCE = "var(--ink)";
+const C_ACCENT = "var(--gold)";
 
 // ─── Summary Card (reused for all period headers) ───────────────────────────────
 function SummaryCard({ income, expense, savings, balance }: { income: number; expense: number; savings: number; balance: number }) {
-  const totalExpense = expense + savings;
-  const netTotal = income - totalExpense;
+  const netTotal = income - expense - savings;
   return (
-    <div className="bg-[var(--surface)]/60 rounded-lg p-2.5 border border-white/[0.05]">
-      <div className="grid grid-cols-3 gap-2">
+    <div className="bg-[var(--surface)] rounded-[14px] p-2.5 border border-[var(--divider)]">
+      <div className="grid grid-cols-4 gap-2">
         {[
           { l: "Income", v: income, c: C_INCOME, p: "+" },
-          { l: "Expense", v: totalExpense, c: C_EXPENSE, p: "-" },
+          { l: "Expense", v: expense, c: C_EXPENSE, p: "-" },
+          { l: "Savings", v: savings, c: C_SAVINGS, p: "-" },
           { l: "Total", v: netTotal, c: C_BALANCE, p: netTotal >= 0 ? "+" : "-" },
         ].map(s => (
           <div key={s.l} className="text-center">
-            <p className="text-[9px] text-white/30">{s.l}</p>
-            <p className="text-[11px] font-semibold tabular-nums" style={{ color: s.c }}>{s.p}₹{formatINR(s.v)}</p>
+            <p className="text-[9px] text-[var(--ink-faint)]">{s.l}</p>
+            <p className="text-[11px] font-fraunces font-semibold tabular-nums" style={{ color: s.c }}>{s.p}₹{formatINR(s.v)}</p>
           </div>
         ))}
       </div>
@@ -148,49 +147,59 @@ function SummaryCard({ income, expense, savings, balance }: { income: number; ex
 function TransactionRow({ transaction, onLongPress }: {
   transaction: Transaction; onLongPress: (tx: Transaction) => void;
 }) {
-  const { getCatById, getSubById } = useCategoryContext();
+  const { categories, getCatById, getSubById } = useCategoryContext();
 
   const isSavings = transaction.type === "savings";
   const isIncome = transaction.type === "income";
   const isExpense = transaction.type === "expense";
-  const amountColor = isIncome ? C_INCOME : isSavings ? C_SAVINGS : isExpense ? C_EXPENSE : "rgba(255,255,255,0.85)";
+  const amountColor = isIncome ? C_INCOME : isSavings ? C_SAVINGS : isExpense ? C_EXPENSE : "var(--ink-muted)";
+  const colorBg = isIncome ? "var(--income-chip)" : isSavings ? "var(--savings-chip)" : "var(--expense-chip)";
+  const colorIcon = isIncome ? C_INCOME : isSavings ? C_SAVINGS : C_EXPENSE;
 
   const cat = transaction.category_id ? getCatById(transaction.category_id) : null;
-  const sub = (transaction.category_id && transaction.subcategory_id)
-    ? getSubById(transaction.category_id, transaction.subcategory_id)
+  const sub = transaction.subcategory_id
+    ? (transaction.category_id
+        ? getSubById(transaction.category_id, transaction.subcategory_id) 
+          ?? (categories.flatMap(c => c.subs).find(s => s.id === transaction.subcategory_id))
+        : categories.flatMap(c => c.subs).find(s => s.id === transaction.subcategory_id))
     : null;
+
 
   return (
     <motion.div
       onClick={() => onLongPress(transaction)}
-      className="flex items-center gap-3 py-3 px-2 rounded-xl transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] cursor-pointer"
+      className="flex items-center gap-3 py-3 px-2 rounded-[14px] transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] cursor-pointer"
       style={{ userSelect: "none" }}
     >
       {/* Column 1: Category & Subcategory */}
       <div className="w-[130px] flex-shrink-0 min-w-0 pr-2">
-        <p className="text-[12px] font-semibold text-white/90 truncate flex items-center gap-1">
-          <span className="text-sm flex-shrink-0">{cat?.emoji || "🛍️"}</span>
+        <p className="text-[12px] font-semibold text-[var(--ink)] truncate flex items-center gap-1">
+          <span className="text-sm flex-shrink-0">
+            {cat?.icon ? <cat.icon className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: "var(--neutral-icon)" }} /> : cat?.emoji || <ShoppingBag className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: "var(--neutral-icon)" }} />}
+          </span>
           <span className="truncate">{cat?.name || transaction.category}</span>
         </p>
         {sub ? (
-          <p className="text-[10px] text-white/45 truncate flex items-center gap-1 mt-0.5">
-            <span className="text-xs flex-shrink-0">{sub.emoji}</span>
+          <p className="text-[10px] text-[var(--ink-faint)] truncate flex items-center gap-1 mt-0.5">
+            <span className="text-xs flex-shrink-0">
+              {sub?.icon ? <sub.icon className="w-3 h-3" strokeWidth={1.75} /> : sub.emoji}
+            </span>
             <span className="truncate">{sub.name}</span>
           </p>
         ) : (
-          <p className="text-[10px] text-white/20 truncate mt-0.5">—</p>
+          <p className="text-[10px] text-[var(--ink-faint)] truncate mt-0.5">—</p>
         )}
       </div>
 
       {/* Column 2: Note/Name & Account */}
       <div className="flex-1 min-w-0 pr-2">
-        <p className="text-[12px] text-white/90 font-medium truncate">{transaction.note || transaction.name || "—"}</p>
-        <p className="text-[10px] text-white/30 truncate mt-0.5">{transaction.account}</p>
+        <p className="text-[12px] text-[var(--ink)] font-medium truncate">{transaction.note || transaction.name || "—"}</p>
+        <p className="text-[10px] text-[var(--ink-faint)] truncate mt-0.5">{transaction.account}</p>
       </div>
 
       {/* Column 3: Amount */}
       <div className="w-[95px] flex-shrink-0 text-right">
-        <p className="text-[12px] font-bold tabular-nums" style={{ color: amountColor }}>
+        <p className="text-[12px] font-fraunces font-bold tabular-nums" style={{ color: amountColor }}>
           {isIncome ? "+" : isExpense ? "-" : ""}₹ {formatINR(transaction.amount)}
         </p>
       </div>
@@ -202,36 +211,41 @@ function TransactionRow({ transaction, onLongPress }: {
 function ActionSheet({ transaction, onDelete, onEdit, onClose }: {
   transaction: Transaction; onDelete: () => void; onEdit: () => void; onClose: () => void;
 }) {
+  const typeColor = transaction.type === "income" ? C_INCOME : transaction.type === "savings" ? C_SAVINGS : transaction.type === "expense" ? C_EXPENSE : "var(--ink-muted)";
+  const chipBg = transaction.type === "income" ? "var(--income-chip)" : transaction.type === "savings" ? "var(--savings-chip)" : transaction.type === "expense" ? "var(--expense-chip)" : "var(--neutral-chip)";
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }} onClick={onClose}>
       <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }} onClick={e => e.stopPropagation()}
-        className="w-full max-w-md mx-auto rounded-t-2xl border-t border-white/10 p-5"
-        style={{ background: "linear-gradient(180deg,#1A2238 0%,#131825 100%)" }}>
-        <div className="flex justify-center mb-4"><div className="w-8 h-1 rounded-full bg-white/15" /></div>
+        className="w-full max-w-md mx-auto rounded-t-[18px] border-t border-[var(--divider)] p-5"
+        style={{ background: "var(--surface)" }}>
+        <div className="flex justify-center mb-4"><div className="w-8 h-1 rounded-full bg-[var(--divider)]" /></div>
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-[#D4A24C]/15 flex items-center justify-center">
-            <transaction.icon className="w-5 h-5 text-[#D4A24C]" />
+          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: chipBg }}>
+            <transaction.icon className="w-5 h-5" strokeWidth={1.75} style={{ color: typeColor }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-white font-medium text-sm">{transaction.name}</p>
-            <p className="text-white/40 text-xs">{transaction.note} · {transaction.account}</p>
+            <p className="font-medium text-sm" style={{ color: "var(--ink)" }}>{transaction.name}</p>
+            <p className="text-xs" style={{ color: "var(--ink-faint)" }}>{transaction.note} · {transaction.account}</p>
           </div>
-          <p className="text-white font-semibold text-sm">₹{formatINR(transaction.amount)}</p>
+          <p className="font-fraunces font-semibold text-sm tabular-nums" style={{ color: typeColor }}>₹{formatINR(transaction.amount)}</p>
         </div>
         <div className="space-y-1.5">
           <motion.button whileTap={{ scale: 0.97 }} onClick={onEdit}
-            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-white/5 border border-white/5 text-white text-sm active:bg-white/10 transition-colors">
-            <Edit3 className="w-4 h-4 text-white/50" /> Edit Transaction
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-sm active:bg-white/10 transition-colors"
+            style={{ background: "var(--surface-raised)", color: "var(--ink)" }}>
+            <Edit3 className="w-4 h-4" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} /> Edit Transaction
           </motion.button>
           <motion.button whileTap={{ scale: 0.97 }} onClick={onDelete}
-            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-[#EF4444]/8 border border-[#EF4444]/10 text-red-400 text-sm active:bg-[#EF4444]/15 transition-colors">
-            <Trash2 className="w-4 h-4" /> Delete Transaction
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-sm transition-colors"
+            style={{ background: "var(--expense-chip)", color: "var(--expense)" }}>
+            <Trash2 className="w-4 h-4" strokeWidth={1.75} /> Delete Transaction
           </motion.button>
         </div>
         <motion.button whileTap={{ scale: 0.97 }} onClick={onClose}
-          className="w-full mt-3 py-3 rounded-xl bg-white/5 text-white/50 text-sm font-medium">Cancel</motion.button>
+          className="w-full mt-3 py-3 rounded-[14px] text-sm font-medium"
+          style={{ background: "var(--surface-raised)", color: "var(--ink-faint)" }}>Cancel</motion.button>
       </motion.div>
     </motion.div>
   );
@@ -246,23 +260,25 @@ function DeleteModal({ transaction, onConfirm, onClose }: {
       className="fixed inset-0 z-[60] flex items-center justify-center px-5"
       style={{ background: "rgba(0,0,0,0.85)" }} onClick={onClose}>
       <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} onClick={e => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl p-6 border border-red-500/20"
-        style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)" }}>
-        <div className="w-12 h-12 rounded-xl bg-[#EF4444]/15 flex items-center justify-center mx-auto mb-4">
-          <Trash2 className="w-6 h-6 text-[#EF4444]" />
+        className="w-full max-w-sm rounded-[18px] p-6"
+        style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
+        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "var(--expense-chip)" }}>
+          <Trash2 className="w-6 h-6" strokeWidth={1.75} style={{ color: "var(--expense)" }} />
         </div>
-        <h2 className="text-white font-bold text-center mb-2" style={{ fontSize: 18 }}>Delete Transaction?</h2>
-        <div className="rounded-xl p-3 mb-4 bg-white/[0.03] border border-white/[0.07]">
-          <p className="text-white font-semibold text-sm">{transaction.name}</p>
-          <p className="text-white/40 text-xs">{transaction.note} · {transaction.account} · {transaction.dateLabel}</p>
-          <p className="font-bold mt-1 text-base text-[#EF4444]">₹{formatINR(transaction.amount)}</p>
+        <h2 className="font-bold text-center mb-2" style={{ fontSize: 18, color: "var(--ink)" }}>Delete Transaction?</h2>
+        <div className="rounded-[14px] p-3 mb-4" style={{ background: "var(--surface-raised)" }}>
+          <p className="font-semibold text-sm" style={{ color: "var(--ink)" }}>{transaction.name}</p>
+          <p className="text-xs" style={{ color: "var(--ink-faint)" }}>{transaction.note} · {transaction.account} · {transaction.dateLabel}</p>
+          <p className="font-fraunces font-bold mt-1 text-base tabular-nums" style={{ color: "var(--expense)" }}>₹{formatINR(transaction.amount)}</p>
         </div>
-        <p className="text-white/40 text-center mb-5 text-xs">This action can be undone within 5 seconds.</p>
+        <p className="text-center mb-5 text-xs" style={{ color: "var(--ink-faint)" }}>This action can be undone within 5 seconds.</p>
         <div className="flex gap-3">
           <motion.button whileTap={{ scale: 0.95 }} onClick={onClose}
-            className="flex-1 py-3 rounded-xl font-semibold bg-white/[0.07] border border-white/10 text-white/60 text-sm">Cancel</motion.button>
+            className="flex-1 py-3 rounded-[14px] font-semibold text-sm"
+            style={{ background: "var(--surface-raised)", color: "var(--ink-muted)" }}>Cancel</motion.button>
           <motion.button whileTap={{ scale: 0.95 }} onClick={onConfirm}
-            className="flex-1 py-3 rounded-xl font-bold bg-[#EF4444] text-white text-sm shadow-lg shadow-[#EF4444]/20">Delete</motion.button>
+            className="flex-1 py-3 rounded-[14px] font-bold text-sm"
+            style={{ background: "var(--expense)", color: "var(--ink)" }}>Delete</motion.button>
         </div>
       </motion.div>
     </motion.div>
@@ -416,7 +432,7 @@ export function TransactionsScreen() {
       const income = dayTxs.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
       const expense = dayTxs.filter(t => t.type === "expense").reduce((s, t) => s + Math.abs(t.amount), 0);
       const savings = dayTxs.filter(t => t.type === "savings").reduce((s, t) => s + Math.abs(t.amount), 0);
-      return { day, income, expense: expense + savings, transactions: dayTxs };
+      return { day, income, expense, savings, transactions: dayTxs };
     });
   }, [daysInMonth, getTransactionsForDay]);
 
@@ -427,47 +443,49 @@ export function TransactionsScreen() {
   }, [dayStats, selectedDay, daysInMonth]);
 
   return (
-    <div className="pb-24 relative" style={{ background: "linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight: "100vh" }}>
+    <div className="pb-24 relative" style={{ background: "var(--bg-deep)", minHeight: "100vh" }}>
       {/* Top ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 0%,rgba(124,92,255,0.11) 0%,transparent 70%)" }} />
+        style={{ background: "radial-gradient(ellipse at 50% 0%,rgba(212,162,76,0.11) 0%,transparent 70%)" }} />
 
       {/* ─── Period Navigation ──────────────────────────────────────── */}
-      <div className="sticky top-[57px] z-30 bg-[#0B0F1A]/95 backdrop-blur-xl border-b border-white/[0.06]">
+      <div className="sticky top-[57px] z-30 backdrop-blur-xl border-b border-[var(--divider)]" style={{ background: "rgba(16,23,26,0.95)" }}>
         <div className="flex items-center justify-between px-4 py-3">
           {/* Left section: Month navigation */}
           <div className="flex items-center gap-1.5">
-            <motion.button whileTap={{ scale: 0.85 }} 
+            <motion.button whileTap={{ scale: 0.85 }}
               onClick={() => shiftPeriod(-1)}
               disabled={period === "Total"}
-              className={`p-1 text-white/70 active:text-white transition-colors ${period === "Total" ? "opacity-30 cursor-not-allowed" : ""}`}>
-              <ChevronLeft className="w-5 h-5" />
+              className={`p-1 transition-colors ${period === "Total" ? "opacity-30 cursor-not-allowed" : ""}`}
+              style={{ color: "var(--ink-muted)" }}>
+              <ChevronLeft className="w-5 h-5" strokeWidth={1.75} />
             </motion.button>
-            <span className="text-white font-semibold text-[15px] min-w-[70px] text-center">{periodLabel}</span>
-            <motion.button whileTap={{ scale: 0.85 }} 
+            <span className="font-semibold text-[15px] min-w-[70px] text-center" style={{ color: "var(--ink)" }}>{periodLabel}</span>
+            <motion.button whileTap={{ scale: 0.85 }}
               onClick={() => shiftPeriod(1)}
               disabled={period === "Total"}
-              className={`p-1 text-white/70 active:text-white transition-colors ${period === "Total" ? "opacity-30 cursor-not-allowed" : ""}`}>
-              <ChevronRight className="w-5 h-5" />
+              className={`p-1 transition-colors ${period === "Total" ? "opacity-30 cursor-not-allowed" : ""}`}
+              style={{ color: "var(--ink-muted)" }}>
+              <ChevronRight className="w-5 h-5" strokeWidth={1.75} />
             </motion.button>
           </div>
 
           {/* Right section: Action Icons */}
-          <div className="flex items-center gap-4">
-            <motion.button whileTap={{ scale: 0.85 }} className="text-white/75 hover:text-white transition-colors">
-              <Star className="w-[18px] h-[18px]" />
+          <div className="flex items-center gap-4" style={{ color: "var(--ink-muted)" }}>
+            <motion.button whileTap={{ scale: 0.85 }} className="transition-colors">
+              <Star className="w-[18px] h-[18px]" strokeWidth={1.75} />
             </motion.button>
-            <motion.button whileTap={{ scale: 0.85 }} className="text-white/75 hover:text-white transition-colors">
-              <Search className="w-[18px] h-[18px]" />
+            <motion.button whileTap={{ scale: 0.85 }} className="transition-colors">
+              <Search className="w-[18px] h-[18px]" strokeWidth={1.75} />
             </motion.button>
-            <motion.button whileTap={{ scale: 0.85 }} className="text-white/75 hover:text-white transition-colors">
-              <SlidersHorizontal className="w-[18px] h-[18px]" />
+            <motion.button whileTap={{ scale: 0.85 }} className="transition-colors">
+              <SlidersHorizontal className="w-[18px] h-[18px]" strokeWidth={1.75} />
             </motion.button>
           </div>
         </div>
 
         {/* Period Tabs */}
-        <div className="flex px-4 pb-2.5 gap-1 border-b border-white/[0.04]">
+        <div className="flex px-4 pb-2.5 gap-1 border-b border-[var(--divider)]">
           {(["Daily", "Calendar", "Monthly", "Total", "Note"] as PeriodTab[]).map(tab => {
             const isSel = period === tab;
             return (
@@ -475,11 +493,11 @@ export function TransactionsScreen() {
                 onClick={() => handlePeriodChange(tab)}
                 className="flex-1 py-1.5 text-[13px] font-semibold transition-all relative text-center"
                 style={{
-                  color: isSel ? "#FFFFFF" : "rgba(255,255,255,0.45)",
+                  color: isSel ? "var(--ink)" : "var(--ink-faint)",
                 }}>
                 {tab}
                 {isSel && (
-                  <motion.div layoutId="tabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#D4A24C]" />
+                  <motion.div layoutId="tabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ background: "var(--gold)" }} />
                 )}
               </motion.button>
             );
@@ -489,27 +507,30 @@ export function TransactionsScreen() {
 
       {/* ─── Summary Strip ──────────────────────────────────────────── */}
       <div className="px-5 py-3">
-        <div className="rounded-2xl p-4 border border-white/7"
-          style={{
-            background: "linear-gradient(135deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%)",
-          }}>
-          <div className="grid grid-cols-3 text-center">
+        <div className="rounded-[18px] p-4" style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
+          <div className="grid grid-cols-4 text-center">
             <div>
-              <p className="text-[11px] text-white/40 mb-1 uppercase tracking-wider font-semibold">Income</p>
-              <p className="text-[14px] font-bold tabular-nums" style={{ color: C_INCOME }}>
+              <p className="text-[10px] mb-1 uppercase tracking-wider font-semibold" style={{ color: "var(--ink-faint)" }}>Income</p>
+              <p className="font-fraunces text-[13px] font-bold tabular-nums" style={{ color: C_INCOME }}>
                 ₹ {formatINR(summary.income)}
               </p>
             </div>
             <div>
-              <p className="text-[11px] text-white/40 mb-1 uppercase tracking-wider font-semibold">Expenses</p>
-              <p className="text-[14px] font-bold tabular-nums" style={{ color: C_EXPENSE }}>
-                ₹ {formatINR(summary.expense + summary.savings)}
+              <p className="text-[10px] mb-1 uppercase tracking-wider font-semibold" style={{ color: "var(--ink-faint)" }}>Expense</p>
+              <p className="font-fraunces text-[13px] font-bold tabular-nums" style={{ color: C_EXPENSE }}>
+                ₹ {formatINR(summary.expense)}
               </p>
             </div>
             <div>
-              <p className="text-[11px] text-white/40 mb-1 uppercase tracking-wider font-semibold">Total</p>
-              <p className="text-[14px] font-bold tabular-nums" style={{ color: C_BALANCE }}>
-                ₹ {formatINR(summary.income - (summary.expense + summary.savings))}
+              <p className="text-[10px] mb-1 uppercase tracking-wider font-semibold" style={{ color: "var(--ink-faint)" }}>Savings</p>
+              <p className="font-fraunces text-[13px] font-bold tabular-nums" style={{ color: C_SAVINGS }}>
+                ₹ {formatINR(summary.savings)}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] mb-1 uppercase tracking-wider font-semibold" style={{ color: "var(--ink-faint)" }}>Total</p>
+              <p className="font-fraunces text-[13px] font-bold tabular-nums" style={{ color: C_BALANCE }}>
+                ₹ {formatINR(summary.income - summary.expense - summary.savings)}
               </p>
             </div>
           </div>
@@ -520,41 +541,42 @@ export function TransactionsScreen() {
       <div className="px-4 relative z-10">
         {filtered.length === 0 && period !== "Calendar" ? (
           <div className="flex flex-col items-center py-20">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1.5px dashed rgba(255,255,255,0.1)" }}>
-              <FileText className="w-7 h-7 text-white/15" />
+            <div className="w-16 h-16 rounded-[14px] flex items-center justify-center mb-4"
+              style={{ background: "var(--surface-raised)", border: "1.5px dashed var(--divider)" }}>
+              <FileText className="w-7 h-7" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />
             </div>
-            <p className="text-white/40 font-semibold text-sm">No transactions</p>
-            <p className="text-white/20 mt-1 text-xs">Tap + to add your first transaction</p>
+            <p className="font-semibold text-sm" style={{ color: "var(--ink-muted)" }}>No transactions</p>
+            <p className="mt-1 text-xs" style={{ color: "var(--ink-faint)" }}>Tap + to add your first transaction</p>
           </div>
         ) : period === "Daily" || period === "Note" ? (
           /* ── Daily / Note View ──────────────────────────── */
-          dateGroups.map((group, gi) => {
+          dateGroups.map((group) => {
             const isOpen = expandedGroups.has(group.dateKey);
             return (
-              <div key={group.dateKey} className="border-b border-white/[0.04] pb-1">
+              <div key={group.dateKey} className="border-b border-[var(--divider)] pb-1">
                 <motion.button
-                  className="w-full pt-4 pb-2 cursor-pointer active:bg-white/[0.02] rounded-xl transition-colors flex items-center justify-between text-left"
+                  className="w-full pt-4 pb-2 cursor-pointer active:bg-white/[0.02] rounded-[14px] transition-colors flex items-center justify-between text-left"
                   onClick={() => toggleGroup(group.dateKey)}
                   whileTap={{ scale: 0.99 }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-xl font-bold text-white">{group.dayNum}</span>
-                    <span className="text-[10px] font-bold text-white/70 px-1.5 py-0.5 rounded bg-white/10 uppercase leading-none">{group.dayName}</span>
-                    <span className="text-[11px] text-white/30">{group.monthYear}</span>
+                    <span className="text-xl font-bold" style={{ color: "var(--ink)" }}>{group.dayNum}</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase leading-none" style={{ color: "var(--ink-muted)", background: "var(--surface-raised)" }}>{group.dayName}</span>
+                    <span className="text-[11px]" style={{ color: "var(--ink-faint)" }}>{group.monthYear}</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-3 text-[12px] font-bold tabular-nums">
-                      <span style={{ color: C_INCOME }}>₹ {formatINR(group.income)}</span>
-                      <span style={{ color: C_EXPENSE }}>₹ {formatINR(group.expense + group.savings)}</span>
+                    <div className="font-fraunces flex items-center gap-2.5 text-[11px] font-bold tabular-nums">
+                      {group.income > 0 && <span style={{ color: C_INCOME }}>₹ {formatINR(group.income)}</span>}
+                      {group.expense > 0 && <span style={{ color: C_EXPENSE }}>₹ {formatINR(group.expense)}</span>}
+                      {group.savings > 0 && <span style={{ color: C_SAVINGS }}>₹ {formatINR(group.savings)}</span>}
                     </div>
                     <motion.div
                       animate={{ rotate: isOpen ? 180 : 0 }}
                       transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                       className="flex items-center"
                     >
-                      <ChevronDown className="w-3.5 h-3.5 text-white/30" />
+                      <ChevronDown className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />
                     </motion.div>
                   </div>
                 </motion.button>
@@ -567,7 +589,7 @@ export function TransactionsScreen() {
                       transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="border-l border-white/[0.05] ml-4 pl-2">
+                      <div className="border-l border-[var(--divider)] ml-4 pl-2">
                         {group.transactions.map(tx => (
                           <TransactionRow key={tx.id} transaction={tx} onLongPress={setActionTx} />
                         ))}
@@ -582,11 +604,11 @@ export function TransactionsScreen() {
           /* ── Calendar View ───────────────────────────────── */
           <div className="space-y-4 pt-4">
             {/* Calendar Grid Container */}
-            <div className="bg-[var(--surface)]/30 rounded-2xl p-4 border border-white/[0.05]">
+            <div className="rounded-[18px] p-4" style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
               {/* Weekday Headers */}
               <div className="grid grid-cols-7 gap-2 mb-3">
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                  <div key={day} className="text-center text-xs text-white/40 font-semibold uppercase tracking-wider">
+                  <div key={day} className="text-center text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--ink-faint)" }}>
                     {day}
                   </div>
                 ))}
@@ -603,25 +625,28 @@ export function TransactionsScreen() {
                 {dayStats.map((stat) => {
                   const hasIncome = stat.income > 0;
                   const hasExpense = stat.expense > 0;
+                  const hasSavings = stat.savings > 0;
                   const isSelected = selectedDay !== null && Math.min(selectedDay, daysInMonth) === stat.day;
 
                   return (
                     <button
                       key={stat.day}
                       onClick={() => setSelectedDay(stat.day)}
-                      className={`relative aspect-square rounded-xl flex flex-col items-center justify-center transition-colors ${
-                        isSelected
-                          ? "bg-[#D4A24C] text-white"
-                          : "bg-white/[0.03] text-white/70 hover:bg-white/[0.07]"
-                      }`}
+                      className="relative aspect-square rounded-[14px] flex flex-col items-center justify-center transition-colors"
+                      style={isSelected
+                        ? { background: "var(--gold)", color: "#241B0A" }
+                        : { background: "var(--surface-raised)", color: "var(--ink-muted)" }}
                     >
                       <span className="text-sm font-semibold">{stat.day}</span>
                       <div className="flex gap-1 mt-1.5">
                         {hasIncome && (
-                          <div className={`w-1 h-1 rounded-full ${isSelected ? "bg-white" : "bg-[#22C55E]"}`} />
+                          <div className="w-1 h-1 rounded-full" style={{ background: isSelected ? "#241B0A" : "var(--income)" }} />
                         )}
                         {hasExpense && (
-                          <div className={`w-1 h-1 rounded-full ${isSelected ? "bg-white" : "bg-[#EF4444]"}`} />
+                          <div className="w-1 h-1 rounded-full" style={{ background: isSelected ? "#241B0A" : "var(--expense)" }} />
+                        )}
+                        {hasSavings && (
+                          <div className="w-1 h-1 rounded-full" style={{ background: isSelected ? "#241B0A" : "var(--savings)" }} />
                         )}
                       </div>
                     </button>
@@ -633,14 +658,14 @@ export function TransactionsScreen() {
             {/* Selected Day Details */}
             {selectedDay !== null && (
               <div>
-                <h3 className="text-sm font-bold text-white/50 mb-3 uppercase tracking-wider">
+                <h3 className="text-sm font-bold mb-3 uppercase tracking-wider" style={{ color: "var(--ink-faint)" }}>
                   Transactions on {MONTHS[currentMonth]} {Math.min(selectedDay, daysInMonth)}, {currentYear}
                 </h3>
 
                 {!selectedDayData || selectedDayData.transactions.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 text-center bg-[var(--surface)]/10 rounded-2xl border border-white/[0.03]">
-                    <p className="text-2xl mb-1">📭</p>
-                    <p className="text-white/40 text-xs">No transactions on this day</p>
+                  <div className="flex flex-col items-center justify-center py-10 text-center rounded-[18px]" style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
+                    <Inbox className="w-6 h-6 mb-1.5" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />
+                    <p className="text-xs" style={{ color: "var(--ink-faint)" }}>No transactions on this day</p>
                   </div>
                 ) : (
                   <div className="space-y-1.5 border-l border-white/[0.05] ml-2 pl-2">
@@ -659,26 +684,28 @@ export function TransactionsScreen() {
               const aKey = `a-${group.key}`;
               const isOpen = expandedGroups.has(aKey);
               return (
-                <div key={group.key} className="mb-3 border-b border-white/[0.04] pb-2">
+                <div key={group.key} className="mb-3 border-b border-[var(--divider)] pb-2">
                   <motion.button
-                    className="w-full flex items-center justify-between bg-white/[0.02] rounded-xl px-4 py-3.5 border border-white/[0.04] cursor-pointer active:bg-white/[0.06] transition-colors"
+                    className="w-full flex items-center justify-between rounded-[14px] px-4 py-3.5 cursor-pointer active:bg-white/[0.06] transition-colors"
+                    style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}
                     onClick={() => toggleGroup(aKey)}
                     whileTap={{ scale: 0.99 }}
                   >
-                    <p className="text-sm font-semibold text-white/80">{group.monthLabel} {group.year}</p>
+                    <p className="text-sm font-semibold" style={{ color: "var(--ink-muted)" }}>{group.monthLabel} {group.year}</p>
                     <div className="flex items-center gap-2">
-                      <div className="flex gap-3 text-[11px] tabular-nums font-bold">
-                        <span style={{ color: C_INCOME }}>₹ {formatINR(group.income)}</span>
-                        <span style={{ color: C_EXPENSE }}>₹ {formatINR(group.expense + group.savings)}</span>
+                      <div className="font-fraunces flex gap-2.5 text-[11px] tabular-nums font-bold">
+                        {group.income > 0 && <span style={{ color: C_INCOME }}>₹ {formatINR(group.income)}</span>}
+                        {group.expense > 0 && <span style={{ color: C_EXPENSE }}>₹ {formatINR(group.expense)}</span>}
+                        {group.savings > 0 && <span style={{ color: C_SAVINGS }}>₹ {formatINR(group.savings)}</span>}
                         <span className="font-semibold" style={{ color: C_BALANCE }}>
-                          ₹ {formatINR(group.income - (group.expense + group.savings))}
+                          ₹ {formatINR(group.income - group.expense - group.savings)}
                         </span>
                       </div>
                       <motion.div
                         animate={{ rotate: isOpen ? 180 : 0 }}
                         transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                       >
-                        <ChevronDown className="w-3.5 h-3.5 text-white/25" />
+                        <ChevronDown className="w-3.5 h-3.5" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />
                       </motion.div>
                     </div>
                   </motion.button>
@@ -691,7 +718,7 @@ export function TransactionsScreen() {
                         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                         className="overflow-hidden"
                       >
-                        <div className="border-l border-white/[0.05] ml-4 pl-2 mt-1">
+                        <div className="border-l border-[var(--divider)] ml-4 pl-2 mt-1">
                           {group.transactions.map(tx => (
                             <TransactionRow key={tx.id} transaction={tx} onLongPress={setActionTx} />
                           ))}
@@ -711,10 +738,10 @@ export function TransactionsScreen() {
         onClick={() => navigate("/dashboard/add-transaction")}
         className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40"
         style={{
-          background: "linear-gradient(135deg,#D4A24C,#D4A24C)",
-          boxShadow: "0 6px 24px rgba(124,92,255,0.45), 0 0 40px rgba(124,92,255,0.15)",
+          background: "var(--gold)",
+          boxShadow: "0 6px 24px rgba(212,162,76,0.45)",
         }}>
-        <Plus className="w-6 h-6 text-white" />
+        <Plus className="w-6 h-6" strokeWidth={1.75} style={{ color: "#241B0A" }} />
       </motion.button>
 
       {/* ─── Modals ─────────────────────────────────────────────────── */}
@@ -734,3 +761,5 @@ export function TransactionsScreen() {
     </div>
   );
 }
+
+

@@ -111,7 +111,7 @@ export function BudgetScreen() {
       {/* Budget Summary */}
       <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
         <h3 className="text-white/80 text-sm mb-2">Budget Remaining</h3>
-        <p className="text-4xl font-bold text-white mb-4">₹{budgetLeft.toLocaleString()}</p>
+        <p className="font-fraunces tabular-nums text-4xl font-bold text-white mb-4">₹{budgetLeft.toLocaleString()}</p>
         <div className="bg-white/10 backdrop-blur-sm rounded-full h-3 overflow-hidden mb-3">
           <div className="h-full bg-white rounded-full transition-all" style={{ width: `${Math.min(percentUsed, 100)}%` }} />
         </div>
@@ -209,8 +209,8 @@ export function BudgetScreen() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="text-right mr-2">
-                      <p className="text-white font-semibold">₹{budget.spent.toLocaleString()}</p>
-                      <p className="text-xs text-white/50">of ₹{budget.budgeted.toLocaleString()}</p>
+                      <p className="font-fraunces tabular-nums text-white font-semibold">₹{budget.spent.toLocaleString()}</p>
+                      <p className="font-fraunces tabular-nums text-xs text-white/50">of ₹{budget.budgeted.toLocaleString()}</p>
                     </div>
                     <button onClick={() => { setEditBudget(budget); setShowModal(true); }}
                       className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors">
@@ -274,7 +274,7 @@ export function BudgetScreen() {
               exit={{ scale: 0.86, opacity: 0 }}
               onClick={e => e.stopPropagation()}
               className="w-full max-w-sm rounded-3xl p-6"
-              style={{ background: "linear-gradient(135deg,#1C2440,#131926)", border: "1px solid rgba(255,255,255,0.10)" }}
+              style={{ background: "linear-gradient(135deg,#212C30,#10171A)", border: "1px solid rgba(255,255,255,0.10)" }}
             >
               <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
                 style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.25)" }}>
@@ -356,7 +356,7 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
         onClick={e => e.stopPropagation()}
         className="w-full max-w-md mx-auto rounded-t-3xl"
         style={{
-          background: "linear-gradient(180deg,#16203A 0%,#0E1424 100%)",
+          background: "linear-gradient(180deg,#192225 0%,#10171A 100%)",
           border: "1px solid rgba(255,255,255,0.09)", borderBottom: "none",
           maxHeight: "85vh", overflowY: "auto",
         }}
@@ -438,7 +438,7 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
               style={{
                 fontSize: 14,
                 background: "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)",
-                boxShadow: "0 6px 22px rgba(124,92,255,0.48)",
+                boxShadow: "0 6px 22px rgba(212,162,76,0.48)",
                 opacity: saving ? 0.6 : 1,
               }}>
               {saving ? "Saving..." : isEdit ? "Save Changes" : "✦ Add Budget"}
@@ -449,3 +449,5 @@ function BudgetModal({ budget, month, categories, existingCategoryIds, onClose, 
     </motion.div>
   );
 }
+
+

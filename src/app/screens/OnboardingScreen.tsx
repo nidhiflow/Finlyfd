@@ -295,7 +295,7 @@ function SavingsGoalsAnim() {
       <div className="relative flex-shrink-0">
         {/* Outer ambient glow */}
         <div className="absolute inset-0 rounded-full blur-2xl"
-          style={{ background: "radial-gradient(circle, rgba(124,92,255,0.25) 0%, transparent 70%)", transform: "scale(1.4)" }} />
+          style={{ background: "radial-gradient(circle, rgba(212,162,76,0.25) 0%, transparent 70%)", transform: "scale(1.4)" }} />
 
         <svg width="170" height="170" viewBox="0 0 170 170">
           <defs>
@@ -441,7 +441,7 @@ function AIInsightsAnim() {
         style={{ background: "linear-gradient(135deg, #0F1623 0%, #111827 100%)" }}>
         {/* Subtle grid */}
         <div className="absolute inset-0 opacity-40" style={{
-          backgroundImage: "linear-gradient(to right,rgba(124,92,255,0.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(124,92,255,0.06) 1px,transparent 1px)",
+          backgroundImage: "linear-gradient(to right,rgba(212,162,76,0.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(212,162,76,0.06) 1px,transparent 1px)",
           backgroundSize: "44px 22px",
         }} />
 
@@ -805,7 +805,7 @@ export function OnboardingScreen() {
                   className="w-full py-4 rounded-2xl text-white font-bold active:scale-[0.97] transition-transform flex items-center justify-center gap-2"
                   style={{
                     background: "linear-gradient(135deg, #D4A24C 0%, #D4A24C 100%)",
-                    boxShadow: "0 10px 28px rgba(124,92,255,0.42)",
+                    boxShadow: "0 10px 28px rgba(212,162,76,0.42)",
                     fontSize: 16,
                   }}
                 >
@@ -835,4 +835,5 @@ export function OnboardingScreen() {
     </div>
   );
 }
+
 

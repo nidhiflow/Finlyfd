@@ -203,7 +203,8 @@ export function RecurringTransactionsScreen() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case "income": return "#22C55E";
-      case "expense": return "#F72585";
+      case "savings": return "#F97316";
+      case "expense": return "#EF4444";
       case "transfer": return "#D4A24C";
       default: return "#D4A24C";
     }
@@ -213,7 +214,7 @@ export function RecurringTransactionsScreen() {
     <div className="relative pb-24" style={{background:"linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight:"100vh"}}>
       {/* Top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-28 pointer-events-none"
-        style={{background:"radial-gradient(ellipse at 50% 0%,rgba(124,92,255,0.12) 0%,transparent 70%)"}} />
+        style={{background:"radial-gradient(ellipse at 50% 0%,rgba(212,162,76,0.12) 0%,transparent 70%)"}} />
 
       <div className="relative z-10">
         {/* Header */}
@@ -227,8 +228,8 @@ export function RecurringTransactionsScreen() {
           <motion.button whileTap={{scale:0.88}} onClick={() => setShowFilters(v => !v)}
             className="w-9 h-9 rounded-2xl flex items-center justify-center"
             style={{
-              background: showFilters ? "rgba(124,92,255,0.22)" : "rgba(255,255,255,0.07)",
-              border: `1px solid ${showFilters ? "rgba(124,92,255,0.4)" : "rgba(255,255,255,0.1)"}`,
+              background: showFilters ? "rgba(212,162,76,0.22)" : "rgba(255,255,255,0.07)",
+              border: `1px solid ${showFilters ? "rgba(212,162,76,0.4)" : "rgba(255,255,255,0.1)"}`,
             }}>
             <Filter className="w-4.5 h-4.5" style={{color: showFilters ? "#D4A24C" : "rgba(255,255,255,0.55)"}} />
           </motion.button>
@@ -252,7 +253,7 @@ export function RecurringTransactionsScreen() {
               </p>
             </div>
             <div className="rounded-2xl px-3 py-3 relative overflow-hidden"
-              style={{background:"linear-gradient(135deg,rgba(124,92,255,0.14),rgba(124,92,255,0.06))", border:"1px solid rgba(124,92,255,0.25)"}}>
+              style={{background:"linear-gradient(135deg,rgba(212,162,76,0.14),rgba(212,162,76,0.06))", border:"1px solid rgba(212,162,76,0.25)"}}>
               <p style={{fontSize:10, fontWeight:700, color:"rgba(255,255,255,0.38)", letterSpacing:"0.6px"}}>TOTAL</p>
               <p className="font-bold mt-0.5" style={{fontSize:18, color:"#D4A24C"}}>
                 {recurring.length}
@@ -276,8 +277,8 @@ export function RecurringTransactionsScreen() {
                       onClick={() => setFilterType(type)}
                       className="py-2 rounded-xl capitalize"
                       style={{
-                        background: filterType === type ? "rgba(124,92,255,0.25)" : "rgba(255,255,255,0.06)",
-                        border: filterType === type ? "1px solid rgba(124,92,255,0.5)" : "1px solid transparent",
+                        background: filterType === type ? "rgba(212,162,76,0.25)" : "rgba(255,255,255,0.06)",
+                        border: filterType === type ? "1px solid rgba(212,162,76,0.5)" : "1px solid transparent",
                         fontSize:11, fontWeight:700,
                         color: filterType === type ? "#D4A24C" : "rgba(255,255,255,0.45)",
                       }}>
@@ -292,8 +293,8 @@ export function RecurringTransactionsScreen() {
                       onClick={() => setFilterStatus(status)}
                       className="py-2 rounded-xl capitalize"
                       style={{
-                        background: filterStatus === status ? "rgba(124,92,255,0.25)" : "rgba(255,255,255,0.06)",
-                        border: filterStatus === status ? "1px solid rgba(124,92,255,0.5)" : "1px solid transparent",
+                        background: filterStatus === status ? "rgba(212,162,76,0.25)" : "rgba(255,255,255,0.06)",
+                        border: filterStatus === status ? "1px solid rgba(212,162,76,0.5)" : "1px solid transparent",
                         fontSize:11, fontWeight:700,
                         color: filterStatus === status ? "#D4A24C" : "rgba(255,255,255,0.45)",
                       }}>
@@ -311,7 +312,7 @@ export function RecurringTransactionsScreen() {
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
               <div className="w-20 h-20 rounded-3xl flex items-center justify-center text-4xl"
-                style={{background:"rgba(124,92,255,0.1)", border:"1px solid rgba(124,92,255,0.2)"}}>
+                style={{background:"rgba(212,162,76,0.1)", border:"1px solid rgba(212,162,76,0.2)"}}>
                 🔁
               </div>
               <p className="text-white font-bold" style={{fontSize:16}}>No recurring transactions</p>
@@ -429,4 +430,7 @@ export function RecurringTransactionsScreen() {
     </div>
   );
 }
+
+
+
 

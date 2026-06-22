@@ -55,7 +55,7 @@ export function MainLayout() {
   const showAddButton = ["/dashboard", "/dashboard/transactions"].includes(location.pathname);
 
   return (
-    <div className="min-h-screen bg-[#0D0F14] pb-20">
+    <div className="min-h-screen bg-[var(--bg-deep)] pb-20">
       <CategoryProvider>
       <div className="max-w-md mx-auto">
         {/* Top Bar */}

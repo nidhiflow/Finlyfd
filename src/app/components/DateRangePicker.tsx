@@ -79,7 +79,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
         transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-md mx-auto rounded-t-3xl p-5"
-        style={{ background: "linear-gradient(180deg,#16203A 0%,#0E1424 100%)", border: "1px solid rgba(255,255,255,0.09)", borderBottom: "none" }}>
+        style={{ background: "linear-gradient(180deg,#192225 0%,#10171A 100%)", border: "1px solid rgba(255,255,255,0.09)", borderBottom: "none" }}>
         <div className="flex justify-center mb-3">
           <div className="w-9 h-1 rounded-full bg-white/15" />
         </div>
@@ -95,7 +95,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
 
         {/* Selected range preview */}
         <div className="mb-4 py-2.5 px-4 rounded-xl flex items-center justify-center gap-3"
-          style={{ background: "rgba(124,92,255,0.12)", border: "1px solid rgba(124,92,255,0.25)" }}>
+          style={{ background: "rgba(212,162,76,0.12)", border: "1px solid rgba(212,162,76,0.25)" }}>
           <span className="text-white font-semibold" style={{ fontSize: 13 }}>{formatDate(start)}</span>
           <span className="text-white/30" style={{ fontSize: 12 }}>→</span>
           <span className="text-white font-semibold" style={{ fontSize: 13 }}>{formatDate(end)}</span>
@@ -155,10 +155,10 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
                 className="aspect-square rounded-full flex items-center justify-center relative"
                 style={{
                   background: sel ? "linear-gradient(135deg,#D4A24C,#D4A24C)"
-                    : inRange ? "rgba(124,92,255,0.18)"
-                    : isToday ? "rgba(124,92,255,0.10)"
+                    : inRange ? "rgba(212,162,76,0.18)"
+                    : isToday ? "rgba(212,162,76,0.10)"
                     : "transparent",
-                  boxShadow: sel ? "0 4px 12px rgba(124,92,255,0.45)" : "none",
+                  boxShadow: sel ? "0 4px 12px rgba(212,162,76,0.45)" : "none",
                 }}>
                 <span style={{
                   fontSize: 13,
@@ -185,7 +185,7 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
             style={{
               fontSize: 14,
               background: start && end ? "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)" : "rgba(255,255,255,0.1)",
-              boxShadow: start && end ? "0 6px 22px rgba(124,92,255,0.48)" : "none",
+              boxShadow: start && end ? "0 6px 22px rgba(212,162,76,0.48)" : "none",
               opacity: start && end ? 1 : 0.5,
             }}>
             Apply Range
@@ -195,4 +195,6 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
     </motion.div>
   );
 }
+
+
 

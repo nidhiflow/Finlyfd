@@ -112,7 +112,7 @@ function PieChartSVG({
   const total = data.reduce((s, d) => s + d.amount, 0);
   const selected = data.find(d => d.id === selectedId);
   const selectedSegInfo = segments.find(s => s.cat.id === selectedId);
-  const accentColor = chartType === "income" ? "#22C55E" : "#EF4444";
+  const accentColor = chartType === "income" ? "var(--income)" : "var(--expense)";
 
   // Labels: only for segments above threshold
   const labeledSegs = segments.filter(s => s.cat.percentage >= LABEL_THRESHOLD);
@@ -224,7 +224,7 @@ function PieChartSVG({
           fill="rgba(255,255,255,0.38)" fontSize="9" fontFamily="Inter,sans-serif" fontWeight="600"
           letterSpacing="0.6">{chartType === "expense" ? "TOTAL SPENT" : "TOTAL EARNED"}</text>
         <text x={CX} y={CY + 8} textAnchor="middle"
-          fill="white" fontSize="18" fontFamily="Inter,sans-serif" fontWeight="800" className="tabular-nums">
+          fill="white" fontSize="18" fontFamily="Fraunces,serif" fontWeight="800" className="tabular-nums">
           {fmtFull(total)}
         </text>
         <text x={CX} y={CY + 23} textAnchor="middle"
@@ -305,8 +305,8 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
       <motion.button whileTap={{ scale: 0.94 }} onClick={() => setOpen(v => !v)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-2xl transition-all"
         style={{
-          background: open ? "rgba(124,92,255,0.2)" : "rgba(255,255,255,0.07)",
-          border: `1px solid ${open ? "rgba(124,92,255,0.4)" : "rgba(255,255,255,0.1)"}`,
+          background: open ? "rgba(212,162,76,0.2)" : "rgba(255,255,255,0.07)",
+          border: `1px solid ${open ? "rgba(212,162,76,0.4)" : "rgba(255,255,255,0.1)"}`,
         }}>
         <span style={{ fontSize: 13 }}>{cur.emoji}</span>
         <span className="text-white font-semibold" style={{ fontSize: 12 }}>{cur.label}</span>
@@ -324,7 +324,7 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
             transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
             className="absolute right-0 top-full mt-2 rounded-2xl py-1.5 z-50 min-w-[170px]"
             style={{
-              background: "linear-gradient(180deg,#1C2440 0%,#141C30 100%)",
+              background: "linear-gradient(180deg,#212C30 0%,#10171A 100%)",
               border: "1px solid rgba(255,255,255,0.12)",
               boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
             }}>
@@ -358,11 +358,11 @@ function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartT
   return (
     <div className="mx-4 mb-3 rounded-2xl px-4 py-3.5 relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg,rgba(124,92,255,0.14) 0%,rgba(76,201,240,0.07) 100%)",
-        border: "1px solid rgba(124,92,255,0.25)",
+        background: "linear-gradient(135deg,rgba(212,162,76,0.14) 0%,rgba(212,162,76,0.07) 100%)",
+        border: "1px solid rgba(212,162,76,0.25)",
       }}>
       <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle,rgba(124,92,255,0.22) 0%,transparent 70%)" }} />
+        style={{ background: "radial-gradient(circle,rgba(212,162,76,0.22) 0%,transparent 70%)" }} />
       <div className="flex items-start gap-3 relative z-10">
         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
@@ -423,7 +423,7 @@ function CategoryRow({
 
       {/* Amount */}
       <div className="text-right flex-shrink-0">
-        <p className="font-bold text-white text-[13px] tabular-nums">{fmtFull(cat.amount)}</p>
+        <p className="font-fraunces font-bold text-white text-[13px] tabular-nums">{fmtFull(cat.amount)}</p>
       </div>
     </motion.button>
   );
@@ -537,8 +537,8 @@ export function ReportsScreen() {
     period === "daily"   ? `${MONTHS[month]} 15, ${year}` :
     "Custom Period";
 
-  const accentIncome  = "#22C55E";
-  const accentExpense = "#F72585";
+  const accentIncome  = "var(--income)";
+  const accentExpense = "var(--expense)";
   const pieAccent     = chartType === "income" ? accentIncome : accentExpense;
 
   // Empty state (future: no data)
@@ -590,13 +590,13 @@ export function ReportsScreen() {
             className="flex-1 pb-3 text-center relative focus:outline-none cursor-pointer"
           >
             <span className="block text-white/50 text-[10px] mb-1 font-bold tracking-wider">INCOME</span>
-            <span className={`text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "income" ? "text-[#4ADE80]" : "text-white/60"}`}>
+            <span className={`font-fraunces text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "income" ? "text-[var(--income)]" : "text-white/60"}`}>
               {fmtFull(totalIncome)}
             </span>
             {chartType === "income" && (
               <motion.div
                 layoutId="activeTabUnderline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#22C55E]"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--income)]"
                 transition={{ duration: 0.2 }}
               />
             )}
@@ -606,13 +606,13 @@ export function ReportsScreen() {
             className="flex-1 pb-3 text-center relative focus:outline-none cursor-pointer"
           >
             <span className="block text-white/50 text-[10px] mb-1 font-bold tracking-wider">EXPENSES</span>
-            <span className={`text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "expense" ? "text-[#F87171]" : "text-white/60"}`}>
+            <span className={`font-fraunces text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "expense" ? "text-[var(--expense)]" : "text-white/60"}`}>
               {fmtFull(totalExpense)}
             </span>
             {chartType === "expense" && (
               <motion.div
                 layoutId="activeTabUnderline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#EF4444]"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--expense)]"
                 transition={{ duration: 0.2 }}
               />
             )}
@@ -661,7 +661,7 @@ export function ReportsScreen() {
         // Empty state
         <div className="flex flex-col items-center justify-center py-20 gap-4 mx-4">
           <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-5xl"
-            style={{ background: "linear-gradient(135deg,rgba(124,92,255,0.1),rgba(76,201,240,0.05))", border: "1px solid rgba(124,92,255,0.2)" }}>
+            style={{ background: "linear-gradient(135deg,rgba(212,162,76,0.1),rgba(212,162,76,0.05))", border: "1px solid rgba(212,162,76,0.2)" }}>
             📊
           </div>
           <div className="text-center">
@@ -682,7 +682,7 @@ export function ReportsScreen() {
       {!drillCat && hasTransactions && (
         <div className="px-4 mb-3">
           <div className="flex items-center justify-between py-3 px-4 rounded-2xl"
-            style={{ background: compareMode ? "linear-gradient(135deg,rgba(124,92,255,0.12),rgba(76,201,240,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(124,92,255,0.25)" : "1px solid rgba(255,255,255,0.07)", transition: "all 0.3s" }}>
+            style={{ background: compareMode ? "linear-gradient(135deg,rgba(212,162,76,0.12),rgba(212,162,76,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(212,162,76,0.25)" : "1px solid rgba(255,255,255,0.07)", transition: "all 0.3s" }}>
             <div className="flex items-center gap-2.5">
               <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#D4A24C" : "rgba(255,255,255,0.45)" }} />
               <p className="font-medium" style={{ fontSize: 13, color: compareMode ? "white" : "rgba(255,255,255,0.65)" }}>Compare with last month</p>
@@ -712,7 +712,7 @@ export function ReportsScreen() {
           >
             {/* Summary insight cards */}
             <div className="grid grid-cols-2 gap-2.5 mb-3">
-              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.2)" }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.2)" }}>
                 <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "0.5px" }}>THIS MONTH</p>
                 <p className="font-bold mt-1" style={{ fontSize: 17, color: "#D4A24C" }}>
                   {fmtFull(mainData.reduce((s, c) => s + c.amount, 0))}
@@ -894,3 +894,4 @@ export function ReportsScreen() {
     </>
   );
 }
+

@@ -610,12 +610,14 @@ export function QuickAuthSetupScreen() {
         .animate-shake { animation: shake 0.5s ease-in-out; }
         
         @keyframes pulse-slow {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(124,92,255,0.4); }
-          50% { box-shadow: 0 0 0 20px rgba(124,92,255,0); }
+          0%, 100% { box-shadow: 0 0 0 0 rgba(212,162,76,0.4); }
+          50% { box-shadow: 0 0 0 20px rgba(212,162,76,0); }
         }
         .animate-pulse-slow { animation: pulse-slow 2s ease-in-out infinite; }
       `}</style>
     </div>
   );
 }
+
+
 
