@@ -287,7 +287,7 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
                     border: isSel ? `1.5px solid ${cat.color}50` : "1px solid var(--divider)",
                     boxShadow: isSel ? `0 4px 16px ${cat.color}18` : "none",
                   }}
-                  onClick={() => onSelect(sub)}>
+                  onClick={() => { onSelect(sub); onClose(); }}>
                   <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center"
                     style={{ background: `${cat.color}18`, border: `1px solid ${cat.color}25` }}>
                     {sub.icon ? <sub.icon className="w-4.5 h-4.5" style={{ color: cat.color }} /> : <span className="text-lg">{sub.emoji}</span>}
