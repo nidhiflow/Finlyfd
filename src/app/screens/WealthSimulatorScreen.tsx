@@ -19,11 +19,17 @@ export function WealthSimulatorScreen() {
   const [mode, setMode] = useState<"time" | "amount">("time");
 
   // Inputs
-  const [targetAmount, setTargetAmount] = useState<number>(10000000); // 1 Crore default
-  const [startingAmount, setStartingAmount] = useState<number>(50000); // 50k default
-  const [monthlyContrib, setMonthlyContrib] = useState<number>(25000); // 25k default
-  const [targetYears, setTargetYears] = useState<number>(10);
-  const [expectedReturn, setExpectedReturn] = useState<number>(12); // 12% default
+  const [targetAmountRaw, setTargetAmountRaw] = useState<number | "">(""); 
+  const [startingAmountRaw, setStartingAmountRaw] = useState<number | "">("");
+  const [monthlyContribRaw, setMonthlyContribRaw] = useState<number | "">(""); 
+  const [targetYearsRaw, setTargetYearsRaw] = useState<number | "">("");
+  const [expectedReturnRaw, setExpectedReturnRaw] = useState<number | "">(12);
+
+  const targetAmount = Number(targetAmountRaw) || 0;
+  const startingAmount = Number(startingAmountRaw) || 0;
+  const monthlyContrib = Number(monthlyContribRaw) || 0;
+  const targetYears = Number(targetYearsRaw) || 0;
+  const expectedReturn = Number(expectedReturnRaw) || 0;
 
   // ─── Math Logic ─────────────────────────────────────────────────────────────
   // Monthly rate
@@ -113,10 +119,7 @@ export function WealthSimulatorScreen() {
   return (
     <div className="min-h-screen bg-[var(--bg-deep)] pb-10">
       {/* Header */}
-      <div className="sticky top-0 z-30 pt-12 pb-4 px-5 bg-[var(--bg-deep)]/90 backdrop-blur-md border-b border-ink/5">
-        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-ink/5 flex items-center justify-center mb-4 transition-colors hover:bg-ink/10">
-          <ArrowLeft className="w-5 h-5 text-ink/70" />
-        </button>
+      <div className="sticky top-0 z-30 pt-4 pb-4 px-5 bg-[var(--bg-deep)]/90 backdrop-blur-md border-b border-ink/5">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[linear-gradient(135deg,rgba(212,162,76,0.2),rgba(212,162,76,0.05))] border border-[#D4A24C]/30 flex items-center justify-center">
             <Rocket className="w-5 h-5 text-[#D4A24C]" />
@@ -133,11 +136,11 @@ export function WealthSimulatorScreen() {
         {/* Mode Toggle */}
         <div className="flex p-1 rounded-2xl bg-ink/5 border border-ink/5">
           <button onClick={() => setMode("time")}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${mode === "time" ? "bg-[var(--surface)] text-ink shadow-sm border border-ink/10" : "text-ink/40"}`}>
+            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all border ${mode === "time" ? "bg-[var(--surface)] text-ink shadow-sm border-ink/10" : "text-ink/40 border-transparent"}`}>
             <Clock className="w-4 h-4" /> When will I reach it?
           </button>
           <button onClick={() => setMode("amount")}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${mode === "amount" ? "bg-[var(--surface)] text-ink shadow-sm border border-ink/10" : "text-ink/40"}`}>
+            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all border ${mode === "amount" ? "bg-[var(--surface)] text-ink shadow-sm border-ink/10" : "text-ink/40 border-transparent"}`}>
             <Target className="w-4 h-4" /> How much to save?
           </button>
         </div>
@@ -196,14 +199,14 @@ export function WealthSimulatorScreen() {
               <label className={labelCls}>Target Goal</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/30 font-fraunces text-lg">₹</span>
-                <input type="number" className={`${inputCls} pl-8`} value={targetAmount || ""} onChange={e => setTargetAmount(Number(e.target.value))} />
+                <input type="number" className={`${inputCls} pl-8`} value={targetAmountRaw} onChange={e => setTargetAmountRaw(e.target.value === "" ? "" : Number(e.target.value))} />
               </div>
             </div>
             <div>
               <label className={labelCls}>Already Saved</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/30 font-fraunces text-lg">₹</span>
-                <input type="number" className={`${inputCls} pl-8`} value={startingAmount || ""} onChange={e => setStartingAmount(Number(e.target.value))} />
+                <input type="number" className={`${inputCls} pl-8`} value={startingAmountRaw} onChange={e => setStartingAmountRaw(e.target.value === "" ? "" : Number(e.target.value))} />
               </div>
             </div>
           </div>
@@ -213,14 +216,14 @@ export function WealthSimulatorScreen() {
               <label className={labelCls}>Monthly Savings</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/30 font-fraunces text-lg">₹</span>
-                <input type="number" className={`${inputCls} pl-8`} value={monthlyContrib || ""} onChange={e => setMonthlyContrib(Number(e.target.value))} />
+                <input type="number" className={`${inputCls} pl-8`} value={monthlyContribRaw} onChange={e => setMonthlyContribRaw(e.target.value === "" ? "" : Number(e.target.value))} />
               </div>
             </div>
           ) : (
             <div>
               <label className={labelCls}>Target Time (Years)</label>
               <div className="relative">
-                <input type="number" className={inputCls} value={targetYears || ""} onChange={e => setTargetYears(Number(e.target.value))} />
+                <input type="number" className={inputCls} value={targetYearsRaw} onChange={e => setTargetYearsRaw(e.target.value === "" ? "" : Number(e.target.value))} />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-ink/30 font-semibold text-sm">years</span>
               </div>
             </div>
@@ -234,7 +237,7 @@ export function WealthSimulatorScreen() {
             <input 
               type="range" min="0" max="25" step="0.5" 
               value={expectedReturn} 
-              onChange={e => setExpectedReturn(Number(e.target.value))}
+              onChange={e => setExpectedReturnRaw(Number(e.target.value))}
               className="w-full h-2 bg-ink/10 rounded-lg appearance-none cursor-pointer accent-[#D4A24C]"
             />
             <div className="flex justify-between mt-2 text-ink/30 text-[10px] font-semibold">
