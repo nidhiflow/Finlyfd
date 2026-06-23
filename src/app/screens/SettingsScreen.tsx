@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router";
-import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight } from "lucide-react";
+import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI, transactionsAPI } from "../services/api";
 
@@ -92,6 +92,7 @@ export function SettingsScreen() {
       title: "Profile",
       items: [
         { icon: User, label: "Edit Profile", value: user?.name || "User", action: () => toast.info("Profile editing coming soon") },
+        { icon: Crown, label: "Upgrade Plan", value: null, action: () => navigate("/dashboard/subscriptions") },
       ],
     },
     {

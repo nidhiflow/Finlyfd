@@ -28,6 +28,7 @@ import { BudgetScreen } from "./screens/BudgetScreen";
 import { GoalsScreen } from "./screens/GoalsScreen";
 import { AIAgentScreen } from "./screens/AIAgentScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
+import { SubscriptionsScreen } from "./screens/SubscriptionsScreen";
 
 export const router = createBrowserRouter([
   // ── Root: evaluates state and redirects to the right screen ──
@@ -87,6 +88,7 @@ export const router = createBrowserRouter([
       { path: "goals", Component: GoalsScreen },
       { path: "ai-agent", Component: AIAgentScreen },
       { path: "settings", Component: SettingsScreen },
+      { path: "subscriptions", Component: SubscriptionsScreen },
     ],
   },
 
