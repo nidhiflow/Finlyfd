@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Plus, Target, Calendar, ArrowLeft, X, Check,
   Pause, Play, Trash2, Edit3, Archive, ChevronRight,
-  TrendingUp, Award, Search, Filter, Home, Car, Laptop, Plane, Briefcase, GraduationCap, Heart, Book, Coffee, Shield
+  TrendingUp, Award, Search, Filter, Home, Car, Laptop, Plane, Briefcase, GraduationCap, Heart, Book, Coffee, Shield, Sparkles
 } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 interface Goal {
@@ -487,6 +488,7 @@ export function GoalsScreen() {
   const [savingsGoal, setSavingsGoal] = useState<Goal | null>(null);
   const [deleteGoal, setDeleteGoal] = useState<Goal | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const loadGoals = async () => {
     setIsLoading(true);
@@ -663,6 +665,25 @@ export function GoalsScreen() {
           <p className="text-right text-[10px] text-[#D4A24C] font-semibold mt-1">{overallProgress}% overall</p>
         </div>
       )}
+
+      {/* Wealth Simulator Banner */}
+      <motion.div whileTap={{scale:0.98}} onClick={() => navigate("/dashboard/wealth-simulator")}
+        className="rounded-2xl p-4 mb-5 flex items-center justify-between cursor-pointer"
+        style={{
+          background: "linear-gradient(135deg, rgba(212,162,76,0.1) 0%, rgba(212,162,76,0.02) 100%)",
+          border: "1px solid rgba(212,162,76,0.2)"
+        }}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#D4A24C]/10 flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-[#D4A24C]" />
+          </div>
+          <div>
+            <h3 className="text-ink font-bold text-sm">Wealth Simulator</h3>
+            <p className="text-ink/50 text-[10px] font-medium uppercase tracking-wider">Predict your future</p>
+          </div>
+        </div>
+        <ChevronRight className="w-5 h-5 text-[#D4A24C]/50" />
+      </motion.div>
 
       {/* Search */}
       <div className="relative mb-4">
