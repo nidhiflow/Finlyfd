@@ -431,5 +431,14 @@ export const bookmarksAPI = {
   delete: async (transactionId: string) => apiCall<{ message: string }>(`/api/bookmarks/${transactionId}`, { method: "DELETE" }),
 };
 
+// ─── ADMIN API ───────────────────────────────────────────────────────────────
+export const adminAPI = {
+  getStats: async () => apiCall<any>("/api/admin/stats", { method: "GET" }),
+  updateUserTier: async (userId: string, tier: string) => apiCall<any>(`/api/admin/users/${userId}/tier`, {
+    method: "PUT",
+    body: JSON.stringify({ tier })
+  }),
+};
+
 // Export the base URL for other uses
 export { API_BASE_URL };

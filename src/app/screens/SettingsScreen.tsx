@@ -93,6 +93,9 @@ export function SettingsScreen() {
       items: [
         { icon: User, label: "Edit Profile", value: user?.name || "User", action: () => toast.info("Profile editing coming soon") },
         { icon: Crown, label: "Upgrade Plan", value: null, action: () => navigate("/dashboard/subscriptions") },
+        ...(user?.email === "admin_finly" ? [
+          { icon: Shield, label: "Admin Dashboard", value: null, action: () => navigate("/dashboard/admin") }
+        ] : []),
       ],
     },
     {

@@ -43,6 +43,12 @@ export function LoginScreen() {
         localAuthService.saveSessionEmail(email);
         localAuthService.updateLastActivity();
 
+        // Check if user is admin
+        if (response.user.email === "admin_finly") {
+          navigate("/dashboard/admin");
+          return;
+        }
+
         // If quick auth is already configured, go to quick-login (it will redirect to dashboard)
         if (localAuthService.isQuickAuthEnabled()) {
           navigate("/quick-login");
