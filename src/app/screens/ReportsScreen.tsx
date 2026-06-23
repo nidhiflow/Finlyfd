@@ -97,7 +97,7 @@ const fmtINR = (n: number) => {
   return `₹${Math.round(n)}`;
 };
 
-const fmtFull = (n: number) => `₹${Math.abs(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const fmtFull = (n: number) => `₹${Math.round(Math.abs(n)).toLocaleString("en-IN")}`;
 
 // ─── Pie SVG ───────────────────────────────────────────────────────────────────
 function PieChartSVG({
@@ -230,20 +230,7 @@ function PieChartSVG({
         })}
       </AnimatePresence>
 
-      {/* Center info */}
-      <g style={{ transformOrigin: `${CX}px ${CY}px` }}>
-        <text x={CX} y={CY - 14} textAnchor="middle"
-          fill="color-mix(in srgb, var(--ink) 38%, transparent)" fontSize="9" fontFamily="Inter,sans-serif" fontWeight="600"
-          letterSpacing="0.6">{chartType === "expense" ? "TOTAL SPENT" : "TOTAL EARNED"}</text>
-        <text x={CX} y={CY + 8} textAnchor="middle"
-          fill="white" fontSize="18" fontFamily="Fraunces,serif" fontWeight="800" className="tabular-nums">
-          {fmtFull(total)}
-        </text>
-        <text x={CX} y={CY + 23} textAnchor="middle"
-          fill="color-mix(in srgb, var(--ink) 35%, transparent)" fontSize="9" fontFamily="Inter,sans-serif">
-          {data.length} categories
-        </text>
-      </g>
+      {/* Center info moved below chart */}
 
       {/* Floating Tooltip Card */}
       <AnimatePresence>
@@ -684,6 +671,12 @@ export function ReportsScreen() {
               onSelect={handleSegClick}
               chartType={chartType}
             />
+            {/* Total display below pie chart */}
+            <div className="flex flex-col items-center justify-center -mt-10 mb-6">
+               <p className="text-ink/50 font-bold tracking-wider" style={{fontSize:11}}>{chartType === "expense" ? "TOTAL SPENT" : "TOTAL EARNED"}</p>
+               <p className="font-fraunces font-bold text-[32px] tabular-nums mt-1 text-ink">{fmtFull(displayData.reduce((s, d) => s + d.amount, 0))}</p>
+               <p className="text-ink/40 mt-1" style={{fontSize:13}}>{displayData.length} categories</p>
+            </div>
           </motion.div>
         </AnimatePresence>
       ) : (

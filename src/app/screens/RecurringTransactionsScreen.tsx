@@ -63,7 +63,7 @@ export function RecurringTransactionsScreen() {
         accountId: t.account_id,
         toAccountId: null,
         note: t.note || "Recurring Transaction",
-        frequency: rToFreq(t.repeat_months),
+        frequency: t.repeat_frequency || "monthly",
         startDate: t.date,
         endType: "never",
         endDate: null,
@@ -364,7 +364,7 @@ export function RecurringTransactionsScreen() {
                         </div>
                         <div className="text-right flex-shrink-0">
                           <p className="font-bold" style={{fontSize:16, color:typeColor}}>
-                            ₹{rec.amount.toLocaleString("en-IN")}
+                            ₹{rec.amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                           </p>
                           <div className="flex items-center gap-1 justify-end mt-0.5">
                             <div className="w-2 h-2 rounded-full" style={{background:statusColor}} />

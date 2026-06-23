@@ -172,7 +172,13 @@ export function DashboardScreen() {
       setFinlyLabel(scoreData?.label || '');
       setAccountsList(accountsData || []);
       setRecentTransactions((txData || []).slice(0, 3));
-      setRecurringList(recurringData?.filter((r: any) => r.status === "active").slice(0, 3) || []);
+      setRecurringList((recurringData || []).slice(0, 3).map((t: any) => ({
+        ...t,
+        categoryId: t.category_id,
+        startDate: t.date,
+        frequency: t.repeat_frequency || "monthly",
+        status: "active"
+      })));
     } catch (error) {
       console.error("Failed to load dashboard data:", error);
     } finally {
@@ -244,7 +250,7 @@ export function DashboardScreen() {
             
             <p className="text-[13px] text-[var(--ink-muted)] mb-1.5">Total balance</p>
             <p className="font-fraunces text-[var(--ink)] font-medium text-[42px] mb-5 tracking-[-0.01em]" style={{ fontVariantNumeric: "tabular-nums", lineHeight: "1.1" }}>
-              <sup className="text-[22px] font-normal text-[var(--ink-muted)] relative" style={{ top: "-0.5em" }}>₹</sup>{stats.balance.toLocaleString("en-IN")}
+              <sup className="text-[22px] font-normal text-[var(--ink-muted)] relative" style={{ top: "-0.5em" }}>₹</sup>{stats.balance.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
             </p>
 
             <div className="grid grid-cols-[1fr_1px_1fr] gap-[18px]">
@@ -253,7 +259,7 @@ export function DashboardScreen() {
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--mint)]"></span>Income
                 </p>
                 <p className="text-[18px] font-semibold text-[var(--ink)] m-0" style={{ fontVariantNumeric: "tabular-nums" }}>
-                  ₹{stats.income.toLocaleString("en-IN")}
+                  ₹{stats.income.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                 </p>
               </div>
               
@@ -264,7 +270,7 @@ export function DashboardScreen() {
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--coral)]"></span>Expense
                 </p>
                 <p className="text-[18px] font-semibold text-[var(--ink)] m-0" style={{ fontVariantNumeric: "tabular-nums" }}>
-                  ₹{stats.expense.toLocaleString("en-IN")}
+                  ₹{stats.expense.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                 </p>
               </div>
             </div>
@@ -357,7 +363,7 @@ export function DashboardScreen() {
           <div className="bg-[var(--surface)] rounded-[14px] px-4 py-3.5">
             <p className="text-[12px] text-[var(--ink-muted)] mb-1.5">Saved this month</p>
             <p className="text-[19px] font-semibold m-0 tabular-nums" style={{ color: "var(--savings)" }}>
-              ₹{stats.savings.toLocaleString("en-IN")}
+              ₹{stats.savings.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
             </p>
           </div>
         </div>
@@ -384,7 +390,7 @@ export function DashboardScreen() {
               <div className="rounded-[18px] p-4" style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.18)" }}>
                 <div className="flex items-center gap-3">
                   <Target className="w-5 h-5 flex-shrink-0" strokeWidth={1.75} style={{ color: "var(--savings)" }} />
-                  <p style={{ fontSize: 13, color: "var(--ink-muted)" }}>Great! You saved <span className="font-semibold tabular-nums" style={{ color: "var(--savings)" }}>₹{stats.savings.toLocaleString('en-IN')}</span> this month</p>
+                  <p style={{ fontSize: 13, color: "var(--ink-muted)" }}>Great! You saved <span className="font-semibold tabular-nums" style={{ color: "var(--savings)" }}>₹{stats.savings.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</span> this month</p>
                 </div>
               </div>
             )}
@@ -453,7 +459,7 @@ export function DashboardScreen() {
                     <p className="text-[11.5px] mt-0.5 mb-0 text-[var(--ink-faint)]">{tx.date ? new Date(tx.date).toLocaleDateString("en-IN", {month:"short", day:"numeric"}) : "Unknown"}</p>
                   </div>
                   <span className="text-[13.5px] font-medium tabular-nums" style={{ color: typeColor }}>
-                    {isExpense ? "-" : tx.type === "income" ? "+" : ""}₹{parseFloat(tx.amount).toLocaleString("en-IN")}
+                    {isExpense ? "-" : tx.type === "income" ? "+" : ""}₹{parseFloat(tx.amount).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                   </span>
                 </div>
               );
@@ -520,7 +526,7 @@ export function DashboardScreen() {
                       </div>
                     </div>
                     <p className="font-bold flex-shrink-0 tabular-nums" style={{fontSize:14, color:typeColor}}>
-                      ₹{rec.amount.toLocaleString("en-IN")}
+                      ₹{rec.amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                     </p>
                   </motion.div>
                 );
@@ -573,7 +579,7 @@ export function DashboardScreen() {
                       <p className="font-semibold truncate" style={{ fontSize: 13, color: "var(--ink-muted)" }}>{acc.name}</p>
                     </div>
                     <p className="font-bold tabular-nums" style={{ fontSize: 13, color: acc.balance > 0 ? "var(--ink)" : "var(--ink-faint)" }}>
-                      ₹{parseFloat(acc.balance || 0).toLocaleString("en-IN")}
+                      ₹{parseFloat(acc.balance || 0).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                     </p>
                   </div>
                 ))

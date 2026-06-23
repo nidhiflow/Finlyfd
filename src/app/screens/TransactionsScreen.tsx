@@ -36,7 +36,7 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const MONTHS_FULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 function formatINR(n: number) {
-  return Math.abs(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return Math.round(Math.abs(n)).toLocaleString("en-IN", { maximumFractionDigits: 0 });
 }
 
 function parseDateStr(d: string) {
@@ -509,28 +509,28 @@ export function TransactionsScreen() {
       <div className="px-5 py-3">
         <div className="rounded-[18px] p-4" style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}>
           <div className="grid grid-cols-4 text-center">
-            <div>
-              <p className="text-[10px] mb-1 uppercase tracking-wider font-semibold" style={{ color: "var(--ink-faint)" }}>Income</p>
-              <p className="font-fraunces text-[13px] font-bold tabular-nums" style={{ color: C_INCOME }}>
-                ₹ {formatINR(summary.income)}
+            <div className="min-w-0">
+              <p className="text-[9px] mb-0.5 uppercase tracking-wider font-semibold truncate" style={{ color: "var(--ink-faint)" }}>Income</p>
+              <p className="font-fraunces text-[11px] font-bold tabular-nums truncate" style={{ color: C_INCOME }}>
+                ₹{formatINR(summary.income)}
               </p>
             </div>
-            <div>
-              <p className="text-[10px] mb-1 uppercase tracking-wider font-semibold" style={{ color: "var(--ink-faint)" }}>Expense</p>
-              <p className="font-fraunces text-[13px] font-bold tabular-nums" style={{ color: C_EXPENSE }}>
-                ₹ {formatINR(summary.expense)}
+            <div className="min-w-0">
+              <p className="text-[9px] mb-0.5 uppercase tracking-wider font-semibold truncate" style={{ color: "var(--ink-faint)" }}>Expense</p>
+              <p className="font-fraunces text-[11px] font-bold tabular-nums truncate" style={{ color: C_EXPENSE }}>
+                ₹{formatINR(summary.expense)}
               </p>
             </div>
-            <div>
-              <p className="text-[10px] mb-1 uppercase tracking-wider font-semibold" style={{ color: "var(--ink-faint)" }}>Savings</p>
-              <p className="font-fraunces text-[13px] font-bold tabular-nums" style={{ color: C_SAVINGS }}>
-                ₹ {formatINR(summary.savings)}
+            <div className="min-w-0">
+              <p className="text-[9px] mb-0.5 uppercase tracking-wider font-semibold truncate" style={{ color: "var(--ink-faint)" }}>Savings</p>
+              <p className="font-fraunces text-[11px] font-bold tabular-nums truncate" style={{ color: C_SAVINGS }}>
+                ₹{formatINR(summary.savings)}
               </p>
             </div>
-            <div>
-              <p className="text-[10px] mb-1 uppercase tracking-wider font-semibold" style={{ color: "var(--ink-faint)" }}>Total</p>
-              <p className="font-fraunces text-[13px] font-bold tabular-nums" style={{ color: C_BALANCE }}>
-                ₹ {formatINR(summary.income - summary.expense - summary.savings)}
+            <div className="min-w-0">
+              <p className="text-[9px] mb-0.5 uppercase tracking-wider font-semibold truncate" style={{ color: "var(--ink-faint)" }}>Total</p>
+              <p className="font-fraunces text-[11px] font-bold tabular-nums truncate" style={{ color: C_BALANCE }}>
+                ₹{formatINR(summary.income - summary.expense - summary.savings)}
               </p>
             </div>
           </div>
@@ -567,9 +567,9 @@ export function TransactionsScreen() {
 
                   <div className="flex items-center gap-3">
                     <div className="font-fraunces flex items-center gap-2.5 text-[11px] font-bold tabular-nums">
-                      {group.income > 0 && <span style={{ color: C_INCOME }}>₹ {formatINR(group.income)}</span>}
-                      {group.expense > 0 && <span style={{ color: C_EXPENSE }}>₹ {formatINR(group.expense)}</span>}
-                      {group.savings > 0 && <span style={{ color: C_SAVINGS }}>₹ {formatINR(group.savings)}</span>}
+                      {group.income > 0 && <span style={{ color: C_INCOME }}>₹{formatINR(group.income)}</span>}
+                      {group.expense > 0 && <span style={{ color: C_EXPENSE }}>₹{formatINR(group.expense)}</span>}
+                      {group.savings > 0 && <span style={{ color: C_SAVINGS }}>₹{formatINR(group.savings)}</span>}
                     </div>
                     <motion.div
                       animate={{ rotate: isOpen ? 180 : 0 }}
@@ -694,11 +694,11 @@ export function TransactionsScreen() {
                     <p className="text-sm font-semibold" style={{ color: "var(--ink-muted)" }}>{group.monthLabel} {group.year}</p>
                     <div className="flex items-center gap-2">
                       <div className="font-fraunces flex gap-2.5 text-[11px] tabular-nums font-bold">
-                        {group.income > 0 && <span style={{ color: C_INCOME }}>₹ {formatINR(group.income)}</span>}
-                        {group.expense > 0 && <span style={{ color: C_EXPENSE }}>₹ {formatINR(group.expense)}</span>}
-                        {group.savings > 0 && <span style={{ color: C_SAVINGS }}>₹ {formatINR(group.savings)}</span>}
+                        {group.income > 0 && <span style={{ color: C_INCOME }}>₹{formatINR(group.income)}</span>}
+                        {group.expense > 0 && <span style={{ color: C_EXPENSE }}>₹{formatINR(group.expense)}</span>}
+                        {group.savings > 0 && <span style={{ color: C_SAVINGS }}>₹{formatINR(group.savings)}</span>}
                         <span className="font-semibold" style={{ color: C_BALANCE }}>
-                          ₹ {formatINR(group.income - group.expense - group.savings)}
+                          ₹{formatINR(group.income - group.expense - group.savings)}
                         </span>
                       </div>
                       <motion.div
