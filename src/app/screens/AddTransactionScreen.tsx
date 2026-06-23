@@ -687,9 +687,14 @@ export function AddTransactionScreen() {
   const [note, setNote] = useState("");
   const [recurring, setRecurring] = useState(false);
   const [recurFreq, setRecurFreq] = useState<string>("monthly");
-  const [recurEndType, setRecurEndType] = useState<"never" | "date" | "count">("never");
-  const [recurEndDate, setRecurEndDate] = useState(new Date(new Date().setFullYear(new Date().getFullYear() + 1)));
-  const [recurEndCount, setRecurEndCount] = useState(12);
+  const [recurInterval, setRecurInterval] = useState<number>(1);
+  const [recurDayOfMonth, setRecurDayOfMonth] = useState<number | null>(null);
+  const [recurEndType, setRecurEndType] = useState<string>("never");
+  const [recurEndDate, setRecurEndDate] = useState<Date | null>(null);
+  const [recurOccurrences, setRecurOccurrences] = useState<string>("");
+  const [recurAutoCreate, setRecurAutoCreate] = useState<boolean>(true);
+  const [recurReminder, setRecurReminder] = useState<number>(0);
+
   const [aiScanning, setAiScan] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
@@ -740,6 +745,12 @@ export function AddTransactionScreen() {
           setRecurring(true);
           if ((tx as any).repeat_frequency) {
             setRecurFreq((tx as any).repeat_frequency);
+            if ((tx as any).repeat_interval) setRecurInterval((tx as any).repeat_interval);
+            if ((tx as any).repeat_day_of_month) setRecurDayOfMonth((tx as any).repeat_day_of_month);
+            if ((tx as any).repeat_end_type) setRecurEndType((tx as any).repeat_end_type);
+            if ((tx as any).repeat_occurrences_total) setRecurOccurrences(String((tx as any).repeat_occurrences_total));
+            if ((tx as any).auto_create !== undefined) setRecurAutoCreate((tx as any).auto_create);
+            if ((tx as any).reminder_days_before) setRecurReminder((tx as any).reminder_days_before);
           }
         }
       })
@@ -842,7 +853,13 @@ export function AddTransactionScreen() {
         date: date.toISOString(),
         note,
         is_recurring: recurring,
-        repeat_frequency: recurring ? recurFreq : null
+        repeat_frequency: recurring ? recurFreq : null,
+        repeat_interval: recurring ? recurInterval : null,
+        repeat_day_of_month: recurring ? recurDayOfMonth : null,
+        repeat_end_type: recurring ? recurEndType : null,
+        repeat_occurrences_total: recurring && recurEndType === 'after_n' ? parseInt(recurOccurrences) || null : null,
+        auto_create: recurring ? recurAutoCreate : true,
+        reminder_days_before: recurring ? recurReminder : null
       };
 
       if (id) {

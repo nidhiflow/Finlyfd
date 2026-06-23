@@ -20,9 +20,11 @@ interface RecurringTransaction {
   accountId: string;
   toAccountId: string | null;
   note: string;
-  frequency: "daily" | "weekly" | "monthly" | "quarterly" | "half-yearly" | "yearly";
+  frequency: string;
+  interval?: number;
   startDate: string;
-  endType: "never" | "date" | "count";
+  nextDueDate: string | null;
+  endType: string;
   endDate: string | null;
   endCount: number | null;
   occurrenceCount: number;
@@ -64,11 +66,13 @@ export function RecurringTransactionsScreen() {
         toAccountId: null,
         note: t.note || "Recurring Transaction",
         frequency: t.repeat_frequency || "monthly",
+        interval: t.repeat_interval || 1,
         startDate: t.date,
-        endType: "never",
-        endDate: null,
-        endCount: null,
-        occurrenceCount: 0,
+        nextDueDate: t.next_due_date || t.date,
+        endType: t.repeat_end_type || "never",
+        endDate: t.repeat_end_date || null,
+        endCount: t.repeat_occurrences_total || null,
+        occurrenceCount: t.repeat_occurrences_current || 0,
         status: "active",
         createdAt: t.date,
       })));
@@ -153,37 +157,45 @@ export function RecurringTransactionsScreen() {
     return next;
   };
 
-  const formatFrequency = (freq: string) => {
-    if (freq === "half-yearly") return "Half-Yearly";
-    if (freq === "quarterly") return "Quarterly";
+  const formatFrequency = (freq: string, interval: number = 1) => {
+    if (interval > 1) return `Every ${interval} ${freq.replace('ly', '')}s`;
+    if (freq === 'half-yearly') return 'Half-Yearly';
+    if (freq === 'quarterly') return 'Quarterly';
+    if (freq === 'days') return 'Daily';
+    if (freq === 'weeks') return 'Weekly';
+    if (freq === 'months') return 'Monthly';
+    if (freq === 'years') return 'Yearly';
     return freq.charAt(0).toUpperCase() + freq.slice(1);
   };
 
   const getRepeatText = (rec: RecurringTransaction) => {
     const start = new Date(rec.startDate);
     const day = start.getDate();
-    const dayOfWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][start.getDay()];
+    const dayOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][start.getDay()];
+    const int = rec.interval || 1;
 
-    if (rec.frequency === "daily") return "Every day";
-    if (rec.frequency === "weekly") return `Every ${dayOfWeek}`;
-    if (rec.frequency === "monthly") return `${day}${day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th"} of every month`;
-    if (rec.frequency === "quarterly") return `${day}${day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th"} every 3 months`;
-    if (rec.frequency === "half-yearly") return `${day}${day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th"} every 6 months`;
-    if (rec.frequency === "yearly") return `${day} ${MONTHS_SHORT[start.getMonth()]} every year`;
-    return "";
+    if (rec.frequency === 'daily' || rec.frequency === 'days') return int > 1 ? `Every ${int} days` : 'Every day';
+    if (rec.frequency === 'weekly' || rec.frequency === 'weeks') return int > 1 ? `Every ${int} weeks on ${dayOfWeek}` : `Every ${dayOfWeek}`;
+    if (rec.frequency === 'monthly' || rec.frequency === 'months') return int > 1 ? `Every ${int} months on ${day}${day === 1 ? 'st' : day === 2 ? 'nd' : day === 3 ? 'rd' : 'th'}` : `${day}${day === 1 ? 'st' : day === 2 ? 'nd' : day === 3 ? 'rd' : 'th'} of every month`;
+    if (rec.frequency === 'quarterly') return `${day}${day === 1 ? 'st' : day === 2 ? 'nd' : day === 3 ? 'rd' : 'th'} every 3 months`;
+    if (rec.frequency === 'half-yearly') return `${day}${day === 1 ? 'st' : day === 2 ? 'nd' : day === 3 ? 'rd' : 'th'} every 6 months`;
+    if (rec.frequency === 'yearly' || rec.frequency === 'years') return int > 1 ? `Every ${int} years on ${day} ${MONTHS_SHORT[start.getMonth()]}` : `${day} ${MONTHS_SHORT[start.getMonth()]} every year`;
+    return 'Custom schedule';
   };
 
   const getEndText = (rec: RecurringTransaction) => {
-    if (rec.endType === "never") return "No end date";
-    if (rec.endType === "date" && rec.endDate) {
+    if (rec.endType === 'never') return 'No end date';
+    if (rec.endType === 'on_date' && rec.endDate) {
       const end = new Date(rec.endDate);
       return `Until ${MONTHS_SHORT[end.getMonth()]} ${end.getFullYear()}`;
     }
-    if (rec.endType === "count") {
+    if (rec.endType === 'after_n') {
       return `${rec.occurrenceCount}/${rec.endCount} times`;
     }
-    return "";
+    return '';
   };
+
+
 
   const filtered = recurring.filter(r => {
     if (filterType !== "all" && r.type !== filterType) return false;
