@@ -717,6 +717,7 @@ export function AddTransactionScreen() {
   const [date, setDate] = useState(new Date());
   const [note, setNote] = useState("");
   const [recurring, setRecurring] = useState(false);
+  const [title, setTitle] = useState("");
   const [recurFreq, setRecurFreq] = useState<string>("monthly");
   const [recurInterval, setRecurInterval] = useState<number>(1);
   const [recurDayOfMonth, setRecurDayOfMonth] = useState<number | null>(null);
@@ -782,6 +783,7 @@ export function AddTransactionScreen() {
             if ((tx as any).repeat_occurrences_total) setRecurOccurrences(String((tx as any).repeat_occurrences_total));
             if ((tx as any).auto_create !== undefined) setRecurAutoCreate((tx as any).auto_create);
             if ((tx as any).reminder_days_before) setRecurReminder((tx as any).reminder_days_before);
+            if ((tx as any).title) setTitle((tx as any).title);
           }
         }
       })
@@ -881,6 +883,7 @@ export function AddTransactionScreen() {
         subcategoryId: subId,
         account_id: accId,
         to_account_id: txType === "transfer" ? toAccId : null,
+        title: recurring ? title : null,
         date: date.toISOString(),
         note,
         is_recurring: recurring,
@@ -1065,6 +1068,21 @@ export function AddTransactionScreen() {
             <p className="text-rose-400 mt-1" style={{ fontSize: 11 }}>{errors.amount}</p>
           )}
         </div>
+
+        {/* ── Title (for recurring) ── */}
+        {recurring && (
+          <div className="mx-4 mb-3 bg-[var(--surface)] rounded-[14px] px-4 py-3.5 relative z-40">
+             <div className="flex items-center gap-2">
+               <p className="text-[11px] tracking-[0.07em] uppercase text-[var(--ink-muted)] m-0 w-[45px]">Title</p>
+               <input
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  placeholder="e.g. Netflix Subscription"
+                  className="flex-1 bg-transparent border-none text-[var(--ink)] font-inter text-[13.5px] outline-none placeholder:text-[var(--ink-faint)]"
+               />
+             </div>
+          </div>
+        )}
 
         {/* ── Note ── */}
         <div className="mx-4 mb-4 bg-[var(--surface)] rounded-[14px] px-4 py-3.5 relative z-40">

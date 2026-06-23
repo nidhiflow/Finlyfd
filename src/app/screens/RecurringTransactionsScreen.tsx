@@ -20,6 +20,7 @@ interface RecurringTransaction {
   accountId: string;
   toAccountId: string | null;
   note: string;
+  title: string | null;
   frequency: string;
   interval?: number;
   startDate: string;
@@ -64,7 +65,8 @@ export function RecurringTransactionsScreen() {
         subcategoryId: null,
         accountId: t.account_id,
         toAccountId: null,
-        note: t.note || "Recurring Transaction",
+        note: t.note || "",
+        title: t.title || null,
         frequency: t.repeat_frequency || "monthly",
         interval: t.repeat_interval || 1,
         startDate: t.date,
@@ -370,9 +372,9 @@ export function RecurringTransactionsScreen() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-ink font-bold truncate" style={{fontSize:14}}>
-                            {cat?.name || rec.note || "Transaction"}
+                            {rec.title || cat?.name || "Transaction"}
                           </p>
-                          <p className="text-ink/55" style={{fontSize:11}}>{rec.note}</p>
+                          <p className="text-ink/55" style={{fontSize:11}}>{rec.note || "Recurring Transaction"}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
                           <p className="font-bold" style={{fontSize:16, color:typeColor}}>
