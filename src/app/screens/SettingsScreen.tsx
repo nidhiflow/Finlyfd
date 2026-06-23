@@ -40,7 +40,7 @@ export function SettingsScreen() {
 
   const handleLogout = () => {
     authAPI.logout();
-    navigate("/auth/login");
+    navigate("/login");
     toast.success("Logged out successfully");
   };
 
@@ -282,7 +282,7 @@ export function SettingsScreen() {
                 onClick={() => {
                   authAPI.deleteAccount?.();
                   authAPI.logout();
-                  navigate("/auth/login");
+                  navigate("/login");
                   toast.success("Account deleted");
                 }}
                 className="flex-1 py-3 bg-[#EF4444] rounded-xl text-white font-semibold"
