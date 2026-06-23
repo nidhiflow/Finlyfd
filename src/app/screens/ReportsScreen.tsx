@@ -43,7 +43,7 @@ const PERIOD_OPTIONS: {id: PeriodType; label: string; emoji: string}[] = [
 
 // ─── SVG Geometry ──────────────────────────────────────────────────────────────
 const CX = 180, CY = 155;
-const OUTER_R = 82, INNER_R = 48, LABEL_R = 116;
+const OUTER_R = 82, INNER_R = 0, LABEL_R = 116;
 const LABEL_THRESHOLD = 5.5; // only label segments >= this %
 
 function p2c(cx: number, cy: number, r: number, angle: number) {
@@ -52,11 +52,14 @@ function p2c(cx: number, cy: number, r: number, angle: number) {
 }
 
 function arcPath(cx: number, cy: number, oR: number, iR: number, sA: number, eA: number) {
-  const gap = 1.2;
+  const gap = 0;
   const s = sA + gap / 2, e = eA - gap / 2;
   if (e <= s) return "";
   const large = e - s > 180 ? 1 : 0;
   const os = p2c(cx, cy, oR, s), oe = p2c(cx, cy, oR, e);
+  if (iR === 0) {
+    return `M${cx} ${cy} L${os.x} ${os.y} A${oR} ${oR} 0 ${large} 1 ${oe.x} ${oe.y} Z`;
+  }
   const is = p2c(cx, cy, iR, e), ie = p2c(cx, cy, iR, s);
   return `M${os.x} ${os.y} A${oR} ${oR} 0 ${large} 1 ${oe.x} ${oe.y} L${is.x} ${is.y} A${iR} ${iR} 0 ${large} 0 ${ie.x} ${ie.y}Z`;
 }
@@ -121,13 +124,6 @@ function PieChartSVG({
   return (
     <svg width="360" height="310" viewBox="0 0 360 310" style={{ overflow: "visible" }}>
       <defs>
-        {/* Radial gradients per segment */}
-        {segments.map(({ cat }) => (
-          <radialGradient key={cat.id} id={`grad-${cat.id}`} cx="35%" cy="35%" r="75%">
-            <stop offset="0%" stopColor={cat.color} stopOpacity="1" />
-            <stop offset="100%" stopColor={cat.color} stopOpacity="0.75" />
-          </radialGradient>
-        ))}
         {/* Glow filter */}
         <filter id="seg-glow" x="-30%" y="-30%" width="160%" height="160%">
           <feGaussianBlur stdDeviation="5" result="blur" />
@@ -166,17 +162,13 @@ function PieChartSVG({
             const d = arcPath(CX, CY, OUTER_R, INNER_R, startAngle, endAngle);
             return (
               <g key={cat.id} transform={`translate(${tx},${ty})`}>
-                {isSelected && (
-                  <path d={arcPath(CX - tx, CY - ty, OUTER_R + 4, INNER_R - 4, startAngle, endAngle)}
-                    fill={cat.color} fillOpacity="0.18" />
-                )}
                 <path
                   d={d}
-                  fill={`url(#grad-${cat.id})`}
+                  fill={cat.color}
+                  stroke="var(--bg-deep)"
+                  strokeWidth="1.5"
                   filter={isSelected ? "url(#seg-glow)" : "none"}
-                  strokeWidth={isSelected ? "0" : "0.5"}
-                  stroke="rgba(11,15,26,0.5)"
-                  style={{ cursor: "pointer", transition: "filter 0.2s" }}
+                  style={{ cursor: "pointer", transition: "all 0.2s" }}
                   onClick={() => onSelect(cat.id)}
                 />
               </g>
@@ -206,24 +198,13 @@ function PieChartSVG({
               />
               <circle cx={connStart.x} cy={connStart.y} r="2" fill={cat.color} fillOpacity="0.7" />
               {/* Label bubble */}
-              {cat.icon ? (
-                <foreignObject x={isRight ? labelX : labelX - 120} y={labelPt.y - 12} width="120" height="20">
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: isRight ? "flex-start" : "flex-end", gap: "4px" }}>
-                    <cat.icon className="w-3 h-3 text-ink/85" />
-                    <span style={{ color: "color-mix(in srgb, var(--ink) 85%, transparent)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
-                      {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
-                    </span>
-                  </div>
-                </foreignObject>
-              ) : (
-                <text x={labelX} y={labelPt.y - 4} textAnchor={anchor}
-                  fill="color-mix(in srgb, var(--ink) 85%, transparent)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="600">
-                  {cat.emoji} {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
-                </text>
-              )}
-              <text x={labelX} y={labelPt.y + 7} textAnchor={anchor}
+              <text x={labelX} y={labelPt.y - 4} textAnchor={anchor}
+                fill="color-mix(in srgb, var(--ink) 85%, transparent)" fontSize="11" fontFamily="Inter,sans-serif" fontWeight="700">
+                {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
+              </text>
+              <text x={labelX} y={labelPt.y + 10} textAnchor={anchor}
                 fill="color-mix(in srgb, var(--ink) 50%, transparent)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="500">
-                {cat.percentage.toFixed(1)}%
+                {cat.percentage.toFixed(1)} %
               </text>
             </motion.g>
           );
@@ -244,7 +225,7 @@ function PieChartSVG({
           >
             {(() => {
               const isRight = selectedSegInfo.midAngle < 180;
-              const rectWidth = 125;
+              const rectWidth = 110;
               const rectHeight = 44;
               const tooltipPt = p2c(CX, CY, OUTER_R + 15, selectedSegInfo.midAngle);
               const rx = isRight ? tooltipPt.x + 5 : tooltipPt.x - rectWidth - 5;
@@ -257,42 +238,31 @@ function PieChartSVG({
                     y={ry}
                     width={rectWidth}
                     height={rectHeight}
-                    rx="8"
-                    fill="rgba(19, 24, 38, 0.96)"
+                    rx="4"
+                    fill="var(--surface)"
                     stroke={selected.color}
-                    strokeWidth="1.5"
+                    strokeWidth="2"
                     style={{ filter: "drop-shadow(0px 4px 12px rgba(0,0,0,0.5))" }}
                   />
                   {/* Category Name */}
-                  {selected.icon ? (
-                    <foreignObject x={rx + 10} y={ry + 8} width="105" height="15">
-                      <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <selected.icon className="w-3.5 h-3.5 text-ink/70" />
-                        <span style={{ color: "color-mix(in srgb, var(--ink) 70%, transparent)", fontSize: 10, fontFamily: "Inter,sans-serif", fontWeight: 600 }}>
-                          {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
-                        </span>
-                      </div>
-                    </foreignObject>
-                  ) : (
-                    <text
-                      x={rx + 10}
-                      y={ry + 17}
-                      fill="color-mix(in srgb, var(--ink) 70%, transparent)"
-                      fontSize="10"
-                      fontFamily="Inter,sans-serif"
-                      fontWeight="600"
-                    >
-                      {selected.emoji} {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
-                    </text>
-                  )}
+                  <text
+                    x={rx + 10}
+                    y={ry + 16}
+                    fill="color-mix(in srgb, var(--ink) 60%, transparent)"
+                    fontSize="10"
+                    fontFamily="Inter,sans-serif"
+                    fontWeight="500"
+                  >
+                    {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
+                  </text>
                   {/* Amount */}
                   <text
                     x={rx + 10}
                     y={ry + 32}
-                    fill="white"
-                    fontSize="11"
+                    fill="var(--ink)"
+                    fontSize="13"
                     fontFamily="Inter,sans-serif"
-                    fontWeight="800"
+                    fontWeight="700"
                   >
                     {fmtFull(selected.amount)}
                   </text>
