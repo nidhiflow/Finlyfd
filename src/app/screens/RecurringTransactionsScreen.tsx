@@ -312,9 +312,9 @@ export function RecurringTransactionsScreen() {
         <div className="px-4">
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="w-20 h-20 rounded-3xl flex items-center justify-center text-4xl"
+              <div className="w-20 h-20 rounded-3xl flex items-center justify-center"
                 style={{background:"rgba(212,162,76,0.1)", border:"1px solid rgba(212,162,76,0.2)"}}>
-                🔁
+                <Repeat className="w-10 h-10" style={{color: "#D4A24C"}} />
               </div>
               <p className="text-ink font-bold" style={{fontSize:16}}>No recurring transactions</p>
               <p className="text-ink/45 text-center" style={{fontSize:13}}>
