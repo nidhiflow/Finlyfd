@@ -330,7 +330,10 @@ function AccountModal({ editAccount, onClose, onSave }: {
     bankName: editAccount.bankName ?? "",
     paymentModes: editAccount.paymentModes,
     trackBalance: editAccount.trackBalance,
-    openingBalance: editAccount.trackBalance ? String(Math.abs(editAccount.balance)) : "",
+    // Do NOT pre-fill openingBalance with the live balance — that would
+    // overwrite the DB opening balance and cause double-counting when
+    // transactions are applied on top again.
+    openingBalance: "",
     color: editAccount.color,
     isPrimary: editAccount.isPrimary,
     upiId: editAccount.upiId ?? "",
@@ -663,22 +666,23 @@ export function AccountsScreen() {
 
   // ── CRUD ─────────────────────────────────────────────────────────────────────
   const saveAccount = async (form: FormState) => {
-    const balance = form.trackBalance && form.openingBalance
-      ? parseFloat(form.openingBalance) || 0 : 0;
-
     try {
       if (modal === "edit" && editTarget) {
-        // Update via API
+        // Update name/type/color only — never touch the DB balance during an edit.
+        // Writing the live balance back would cause double-counting because
+        // getAccountsWithBalances() adds transaction deltas on top of the stored balance.
         await accountsAPI.update(editTarget.id, {
           name: form.name,
           type: form.type,
-          balance: balance,
           color: form.color,
-          icon: "🏦"
+          icon: "🏦",
+          // balance intentionally omitted — keep the original opening balance
         });
         toast.success("Account updated");
       } else {
-        // Create via API
+        // Create: opening balance is set once and never changed by edits
+        const balance = form.trackBalance && form.openingBalance
+          ? parseFloat(form.openingBalance) || 0 : 0;
         await accountsAPI.create({
           name: form.name,
           type: form.type,

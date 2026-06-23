@@ -434,10 +434,18 @@ export const bookmarksAPI = {
 // ─── ADMIN API ───────────────────────────────────────────────────────────────
 export const adminAPI = {
   getStats: async () => apiCall<any>("/api/admin/stats", { method: "GET" }),
+  getAnalytics: async () => apiCall<any>("/api/admin/analytics", { method: "GET" }),
   updateUserTier: async (userId: string, tier: string) => apiCall<any>(`/api/admin/users/${userId}/tier`, {
     method: "PUT",
     body: JSON.stringify({ tier })
   }),
+  trackPage: async (page: string) => {
+    try {
+      await apiCall<any>("/api/admin/track", { method: "POST", body: JSON.stringify({ page }) });
+    } catch {
+      // Fire-and-forget — swallow errors silently
+    }
+  },
 };
 
 // Export the base URL for other uses

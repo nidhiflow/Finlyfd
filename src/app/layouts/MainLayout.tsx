@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { MoreSheet } from "../components/MoreSheet";
 import { CategoryProvider } from "../context/CategoryContext";
-import { statsAPI } from "../services/api";
+import { statsAPI, adminAPI } from "../services/api";
 
 export function MainLayout() {
   const location = useLocation();
@@ -16,12 +16,32 @@ export function MainLayout() {
   const [notifRead, setNotifRead] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to top on route change
+  // Scroll to top + track page visit on route change
   useEffect(() => {
     window.scrollTo(0, 0);
     if (contentRef.current) {
       contentRef.current.scrollTop = 0;
     }
+    // Map pathname to a human-readable page name for analytics
+    const pathToPage: Record<string, string> = {
+      "/dashboard": "dashboard",
+      "/dashboard/transactions": "transactions",
+      "/dashboard/reports": "reports",
+      "/dashboard/accounts": "accounts",
+      "/dashboard/budget": "budget",
+      "/dashboard/goals": "goals",
+      "/dashboard/calendar": "calendar",
+      "/dashboard/recurring": "recurring",
+      "/dashboard/categories": "categories",
+      "/dashboard/settings": "settings",
+      "/dashboard/ai-agent": "ai-agent",
+      "/dashboard/subscriptions": "subscriptions",
+      "/dashboard/admin": "admin",
+      "/dashboard/add-transaction": "add-transaction",
+    };
+    const page = pathToPage[location.pathname]
+      ?? (location.pathname.startsWith("/dashboard/edit-transaction") ? "edit-transaction" : null);
+    if (page) adminAPI.trackPage(page);
   }, [location.pathname]);
 
   // Fetch notifications
