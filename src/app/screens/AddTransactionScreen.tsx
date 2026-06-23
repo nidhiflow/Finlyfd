@@ -1335,7 +1335,7 @@ export function AddTransactionScreen() {
                   {recurEndType === "date" && (
                     <button onClick={() => setShowRecurEndDate(true)}
                       className="w-full text-right mt-1" style={{ fontSize: 12, color: "var(--ink-muted)" }}>
-                      Selected: {fmtDate(recurEndDate)}
+                      Selected: {recurEndDate ? fmtDate(recurEndDate) : "Not Set"}
                     </button>
                   )}
                 </div>
@@ -1420,7 +1420,7 @@ export function AddTransactionScreen() {
       </AnimatePresence>
       <AnimatePresence>
         {showRecurEndDate && (
-          <DatePickerModal key="recur-end-date" date={recurEndDate} onSelect={setRecurEndDate} onClose={() => setShowRecurEndDate(false)} />
+          <DatePickerModal key="recur-end-date" date={recurEndDate || new Date()} onSelect={setRecurEndDate as any} onClose={() => setShowRecurEndDate(false)} />
         )}
       </AnimatePresence>
       <AnimatePresence>
