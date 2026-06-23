@@ -64,7 +64,7 @@ function calcSummary(txs: Transaction[]) {
   const income = txs.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
   const expense = txs.filter(t => t.type === "expense").reduce((s, t) => s + Math.abs(t.amount), 0);
   const savings = txs.filter(t => t.type === "savings").reduce((s, t) => s + Math.abs(t.amount), 0);
-  return { income, expense, savings, balance: income - expense - savings };
+  return { income, expense, savings, balance: income - expense };
 }
 
 // ─── Mock Data ──────────────────────────────────────────────────────────────────
@@ -123,7 +123,7 @@ const C_ACCENT = "var(--gold)";
 
 // ─── Summary Card (reused for all period headers) ───────────────────────────────
 function SummaryCard({ income, expense, savings, balance }: { income: number; expense: number; savings: number; balance: number }) {
-  const netTotal = income - expense - savings;
+  const netTotal = income - expense;
   return (
     <div className="bg-[var(--surface)] rounded-[14px] p-2.5 border border-[var(--divider)]">
       <div className="grid grid-cols-4 gap-2">
@@ -530,7 +530,7 @@ export function TransactionsScreen() {
             <div className="min-w-0">
               <p className="text-[9px] mb-0.5 uppercase tracking-wider font-semibold truncate" style={{ color: "var(--ink-faint)" }}>Total</p>
               <p className="font-fraunces text-[11px] font-bold tabular-nums truncate" style={{ color: C_BALANCE }}>
-                ₹{formatINR(summary.income - summary.expense - summary.savings)}
+                ₹{formatINR(summary.income - summary.expense)}
               </p>
             </div>
           </div>
@@ -698,7 +698,7 @@ export function TransactionsScreen() {
                         {group.expense > 0 && <span style={{ color: C_EXPENSE }}>₹{formatINR(group.expense)}</span>}
                         {group.savings > 0 && <span style={{ color: C_SAVINGS }}>₹{formatINR(group.savings)}</span>}
                         <span className="font-semibold" style={{ color: C_BALANCE }}>
-                          ₹{formatINR(group.income - group.expense - group.savings)}
+                          ₹{formatINR(group.income - group.expense)}
                         </span>
                       </div>
                       <motion.div
