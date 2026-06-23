@@ -240,15 +240,17 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
 
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newEmoji, setNewEmoji] = useState("📌");
+  const [newEmoji, setNewEmoji] = useState("🏷️");
+  const [newIcon, setNewIcon] = useState<any>(null);
+  const [showIconPicker, setShowIconPicker] = useState(false);
 
   // Use cat.subs directly — they're already live from context via the parent
   const subs = cat.subs;
 
   const addSub = () => {
     if (!newName.trim()) return;
-    addSubcategory(cat.id, { name: newName.trim(), emoji: newEmoji });
-    setNewName(""); setNewEmoji("📌"); setAdding(false);
+    addSubcategory(cat.id, { name: newName.trim(), emoji: newEmoji, icon: newIcon });
+    setNewName(""); setNewEmoji("🏷️"); setNewIcon(null); setAdding(false);
   };
 
   return (
