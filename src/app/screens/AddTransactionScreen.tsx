@@ -335,22 +335,24 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22 }}
                 className="mt-3 p-4 rounded-2xl" style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1px solid var(--divider)" }}>
-                <div className="flex gap-2 mb-2">
-                  {showIconPicker ? (
-                    <div className="absolute z-10 bg-white shadow-xl rounded-xl p-2 flex flex-wrap gap-2 w-48 border" style={{ borderColor: 'var(--divider)' }}>
-                      {AVAILABLE_ICONS.map(ic => (
-                        <button key={ic.id} onClick={() => { setNewIcon(() => ic.icon); setShowIconPicker(false); }} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-ink/5">
-                          <ic.icon className="w-4 h-4 text-ink" />
+                <div className="flex gap-2 mb-2 relative">
+                  <div className="relative">
+                    {showIconPicker ? (
+                      <div className="absolute top-12 left-0 z-50 shadow-xl rounded-xl p-2 flex flex-wrap gap-2 w-48 border" style={{ background: 'var(--bg)', borderColor: 'var(--divider)' }}>
+                        {AVAILABLE_ICONS.map(ic => (
+                          <button key={ic.id} onClick={() => { setNewIcon(() => ic.icon); setShowIconPicker(false); }} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-ink/5">
+                            <ic.icon className="w-4 h-4 text-ink" />
+                          </button>
+                        ))}
+                        <button onClick={() => { setNewIcon(null); setShowIconPicker(false); }} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-ink/5 text-xs">
+                          🏷️
                         </button>
-                      ))}
-                      <button onClick={() => { setNewIcon(null); setShowIconPicker(false); }} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-ink/5 text-xs">
-                        🏷️
-                      </button>
-                    </div>
-                  ) : null}
-                  <button onClick={() => setShowIconPicker(!showIconPicker)} className="w-12 flex items-center justify-center rounded-xl bg-ink/7 focus:outline-none relative">
-                    {newIcon ? (() => { const Icon = newIcon; return <Icon className="w-5 h-5 text-ink" />; })() : <span style={{ fontSize: 20 }}>{newEmoji}</span>}
-                  </button>
+                      </div>
+                    ) : null}
+                    <button onClick={() => setShowIconPicker(!showIconPicker)} className="w-12 h-full flex items-center justify-center rounded-xl bg-ink/7 focus:outline-none">
+                      {newIcon ? (() => { const Icon = newIcon; return <Icon className="w-5 h-5 text-ink" />; })() : <span style={{ fontSize: 20 }}>{newEmoji}</span>}
+                    </button>
+                  </div>
                   <input value={newName} onChange={e => setNewName(e.target.value)}
                     placeholder="Subcategory name…" autoFocus
                     onKeyDown={e => e.key === "Enter" && addSub()}
