@@ -167,20 +167,20 @@ export function SpendingOverview({ month }: SpendingProps) {
                       strokeOpacity="0.5"
                     />
                     <circle cx={connStart.x} cy={connStart.y} r="1.5" fill={cat.color} fillOpacity="0.8" />
-                    {/* Category Label */}
-                    <foreignObject x={isRight ? labelX : labelX - 80} y={labelPt.y - 10} width={80} height={20}>
-                      <div className={`flex items-center gap-1 w-full ${isRight ? 'justify-start' : 'justify-end'}`}>
-                        {cat.icon && <cat.icon className="w-[11px] h-[11px] text-ink/85" strokeWidth={2} />}
-                        <span className="text-[9px] font-semibold text-ink/85 leading-none truncate">
-                          {cat.name.length > 8 ? cat.name.slice(0, 7) + '..' : cat.name}
+                    {/* Category & Percentage Labels */}
+                    <foreignObject x={isRight ? labelX : labelX - 80} y={labelPt.y - 13} width={80} height={28}>
+                      <div className={`flex flex-col w-full ${isRight ? 'items-start text-left' : 'items-end text-right'}`}>
+                        <div className="flex items-center gap-1 max-w-full">
+                          {cat.icon && <cat.icon className="w-[11px] h-[11px] text-ink/85 shrink-0" strokeWidth={2} />}
+                          <span className="text-[9.5px] font-semibold text-ink/85 leading-none truncate">
+                            {cat.name.length > 8 ? cat.name.slice(0, 7) + '..' : cat.name}
+                          </span>
+                        </div>
+                        <span className="text-[8.5px] font-medium mt-0.5" style={{ color: "color-mix(in srgb, var(--ink) 45%, transparent)" }}>
+                          {cat.percentage.toFixed(0)}%
                         </span>
                       </div>
                     </foreignObject>
-                    {/* Percentage Label */}
-                    <text x={labelX} y={labelPt.y + 6} textAnchor={anchor}
-                      fill="color-mix(in srgb, var(--ink) 40%, transparent)" fontSize="8.5" fontFamily="Inter, sans-serif" fontWeight="500">
-                      {cat.percentage.toFixed(0)}%
-                    </text>
                   </g>
                 );
               })}
