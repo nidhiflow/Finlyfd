@@ -631,6 +631,7 @@ export function AccountsScreen() {
   const [delTarget, setDelTarget] = useState<Account | null>(null);
   const [showFilter, setShowFilter] = useState(false);
   const [filter, setFilter] = useState<AccountType | "all">("all");
+  const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showBal, setShowBal] = useState(true);
   const [isLoading, setIsLoading] = useState(true);

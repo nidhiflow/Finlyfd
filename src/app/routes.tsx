@@ -18,7 +18,7 @@ import { QuickLoginScreen } from "./screens/auth/QuickLoginScreen";
 // Main screens
 import { DashboardScreen } from "./screens/DashboardScreen";
 
-import { WealthSimulatorScreen } from "./screens/WealthSimulatorScreen";
+import { TimeMachineScreen } from "./screens/TimeMachineScreen";
 import { TransactionsScreen } from "./screens/TransactionsScreen";
 import { AddTransactionScreen } from "./screens/AddTransactionScreen";
 import { RecurringTransactionsScreen } from "./screens/RecurringTransactionsScreen";
@@ -80,7 +80,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: DashboardScreen },
 
-      { path: "wealth-simulator", Component: WealthSimulatorScreen },
+      { path: "time-machine", Component: TimeMachineScreen },
       { path: "transactions", Component: TransactionsScreen },
       { path: "add-transaction", Component: AddTransactionScreen },
       { path: "edit-transaction/:id", Component: AddTransactionScreen },

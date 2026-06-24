@@ -15,7 +15,7 @@ const fmtINR = (n: number, compact = false) => {
   return `₹${Math.round(n).toLocaleString("en-IN")}`;
 };
 
-export function WealthSimulatorScreen() {
+export function TimeMachineScreen() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"time" | "amount">("time");
 
@@ -119,7 +119,7 @@ export function WealthSimulatorScreen() {
 
   return (
     <PremiumFeatureGate
-      featureName="Wealth Simulator"
+      featureName="Time Machine"
       requiredTier="Pro"
       benefits={[
         "Calculate timeline projections to hit your target goals",
@@ -136,8 +136,8 @@ export function WealthSimulatorScreen() {
               <Rocket className="w-5 h-5 text-[#D4A24C]" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-ink tracking-tight">Wealth Simulator</h1>
-              <p className="text-ink/40 text-xs">Project your financial future</p>
+              <h1 className="text-xl font-bold text-ink tracking-tight">Time Machine</h1>
+              <p className="text-ink/40 text-xs">Travel to your financial future</p>
             </div>
           </div>
         </div>

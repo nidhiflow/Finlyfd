@@ -666,8 +666,8 @@ export function GoalsScreen() {
         </div>
       )}
 
-      {/* Wealth Simulator Banner */}
-      <motion.div whileTap={{scale:0.98}} onClick={() => navigate("/dashboard/wealth-simulator")}
+      {/* Time Machine Banner */}
+      <motion.div whileTap={{scale:0.98}} onClick={() => navigate("/dashboard/time-machine")}
         className="rounded-2xl p-4 mb-5 flex items-center justify-between cursor-pointer"
         style={{
           background: "linear-gradient(135deg, rgba(212,162,76,0.1) 0%, rgba(212,162,76,0.02) 100%)",
@@ -678,8 +678,8 @@ export function GoalsScreen() {
             <Sparkles className="w-5 h-5 text-[#D4A24C]" />
           </div>
           <div>
-            <h3 className="text-ink font-bold text-sm">Wealth Simulator</h3>
-            <p className="text-ink/50 text-[10px] font-medium uppercase tracking-wider">Predict your future</p>
+            <h3 className="text-ink font-bold text-sm">Time Machine</h3>
+            <p className="text-ink/50 text-[10px] font-medium uppercase tracking-wider">Travel to your financial future</p>
           </div>
         </div>
         <ChevronRight className="w-5 h-5 text-[#D4A24C]/50" />
