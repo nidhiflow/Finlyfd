@@ -8,6 +8,7 @@ export interface User {
   email: string;
   name: string;
   phone?: string;
+  photo?: string;
   createdAt?: string;
 }
 
@@ -283,7 +284,7 @@ export const authAPI = {
   },
 
   // Update profile
-  updateProfile: async (data: { name: string; email?: string; phone?: string }) => {
+  updateProfile: async (data: { name: string; email?: string; phone?: string; photo?: string }) => {
     const res = await apiCall<{ message: string; user: User }>("/api/auth/profile", {
       method: "PUT",
       body: JSON.stringify(data),

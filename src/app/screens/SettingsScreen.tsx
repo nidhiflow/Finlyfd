@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router";
-import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown } from "lucide-react";
+import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI, transactionsAPI } from "../services/api";
 
@@ -21,13 +21,31 @@ export function SettingsScreen() {
   const [profileName, setProfileName] = useState("");
   const [profileEmail, setProfileEmail] = useState("");
   const [profilePhone, setProfilePhone] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleOpenProfileModal = () => {
     setProfileName(currentUser?.name || "");
     setProfileEmail(currentUser?.email || "");
     setProfilePhone(currentUser?.phone || "");
+    setProfilePhoto(currentUser?.photo || "");
     setShowProfileModal(true);
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image size must be less than 2MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePhoto(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveProfile = async () => {
@@ -43,6 +61,7 @@ export function SettingsScreen() {
         name: profileName,
         email: profileEmail || undefined,
         phone: profilePhone || undefined,
+        photo: profilePhoto || undefined,
       });
       toast.dismiss();
       if (res && res.message) {
@@ -175,8 +194,12 @@ export function SettingsScreen() {
       {/* Profile Card */}
       <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-ink/20 backdrop-blur-sm flex items-center justify-center">
-            <User className="w-8 h-8 text-ink" />
+          <div className="w-16 h-16 rounded-2xl bg-ink/20 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+            {currentUser?.photo ? (
+              <img src={currentUser.photo} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <User className="w-8 h-8 text-ink" />
+            )}
           </div>
           <div>
             <h2 className="text-xl font-bold text-ink">{currentUser?.name || "User"}</h2>
@@ -401,6 +424,37 @@ export function SettingsScreen() {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowProfileModal(false)} />
           <div className="relative max-w-md w-full bg-[var(--surface)] rounded-2xl p-6 border border-[var(--divider)] shadow-2xl">
             <h2 className="text-xl font-bold text-ink mb-4">Edit Profile</h2>
+
+            {/* Avatar Upload / Edit */}
+            <div className="flex flex-col items-center mb-6">
+              <div className="relative group cursor-pointer" onClick={() => document.getElementById("avatar-upload")?.click()}>
+                <div className="w-24 h-24 rounded-full bg-[var(--bg-deep)] border-2 border-[#D4A24C] flex items-center justify-center overflow-hidden relative">
+                  {profilePhoto ? (
+                    <img src={profilePhoto} alt="Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-10 h-10 text-ink/40" />
+                  )}
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <Camera className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                {/* Floating camera icon */}
+                <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#D4A24C] flex items-center justify-center shadow-lg border border-[var(--surface)]">
+                  <Camera className="w-4 h-4 text-black" />
+                </div>
+              </div>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handlePhotoChange}
+                disabled={isUpdating}
+              />
+              <p className="text-xs text-ink/40 mt-2">Click to upload photo</p>
+            </div>
+
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-ink/50 uppercase tracking-wider mb-1.5">Name</label>
