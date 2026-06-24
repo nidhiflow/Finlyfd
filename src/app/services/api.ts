@@ -283,11 +283,15 @@ export const authAPI = {
   },
 
   // Update profile
-  updateProfile: async (data: Partial<User>) => {
-    return apiCall<User>("/api/auth/profile", {
+  updateProfile: async (data: { name: string; email?: string; phone?: string }) => {
+    const res = await apiCall<{ message: string; user: User }>("/api/auth/profile", {
       method: "PUT",
       body: JSON.stringify(data),
     });
+    if (res && res.user) {
+      localStorage.setItem("user", JSON.stringify(res.user));
+    }
+    return res;
   },
 
   // Update password

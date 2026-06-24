@@ -14,6 +14,69 @@ export function AIAgentScreen() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        toast.success("Listening...");
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setMessage(prev => (prev ? `${prev} ${transcript}` : transcript));
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error", event);
+        if (event.error !== "no-speech") {
+          toast.error(`Speech recognition error: ${event.error}`);
+        }
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+    };
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      toast.error("Speech recognition is not supported in this browser.");
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      try {
+        recognitionRef.current.start();
+      } catch (err) {
+        console.error("Start recognition failed", err);
+      }
+    }
+  };
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -147,8 +210,19 @@ export function AIAgentScreen() {
           <button onClick={() => toast.info("Receipt scanning coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-ink/10 rounded-lg text-sm text-ink hover:border-[#D4A24C]/30 active:scale-95 transition-all">
             <Image className="w-4 h-4" /><span>Scan Receipt</span>
           </button>
-          <button onClick={() => toast.info("Voice input coming soon!")} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-ink/10 rounded-lg text-sm text-ink hover:border-[#D4A24C]/30 active:scale-95 transition-all">
-            <Mic className="w-4 h-4" /><span>Voice</span>
+          <button
+            onClick={toggleListening}
+            className={`flex items-center gap-2 px-3 py-2 border rounded-lg text-sm active:scale-95 transition-all relative overflow-hidden ${
+              isListening
+                ? "bg-red-500/20 border-red-500 text-red-400 font-semibold shadow-[0_0_12px_rgba(239,68,68,0.2)]"
+                : "bg-[var(--surface)] border-ink/10 text-ink hover:border-[#D4A24C]/30"
+            }`}
+          >
+            {isListening && (
+              <span className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none" />
+            )}
+            <Mic className={`w-4 h-4 ${isListening ? "animate-bounce text-red-500" : ""}`} />
+            <span>{isListening ? "Listening..." : "Voice"}</span>
           </button>
           <button onClick={handleClear} className="flex items-center gap-2 px-3 py-2 bg-[var(--surface)] border border-ink/10 rounded-lg text-sm text-ink hover:border-[#EF4444]/30 active:scale-95 transition-all">
             <Trash2 className="w-4 h-4" /><span>Clear</span>

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ComponentType } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ChevronLeft, ChevronRight, ChevronDown,
   Sparkles, TrendingUp, TrendingDown, ArrowLeft, BarChart2, X,
+  Calendar, CalendarDays, CalendarClock
 } from "lucide-react";
 import { statsAPI } from "../services/api";
 import { DateRangePicker } from "../components/DateRangePicker";
@@ -33,12 +34,12 @@ const EXPENSE_MAR: CatData[] = [];
 const INCOME_MAR: CatData[] = [];
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const PERIOD_OPTIONS: {id: PeriodType; label: string; emoji: string}[] = [
-  {id:"daily",   label:"Daily",         emoji:"📅"},
-  {id:"weekly",  label:"Weekly",        emoji:"📊"},
-  {id:"monthly", label:"Monthly",       emoji:"📆"},
-  {id:"annual",  label:"Annually",      emoji:"📈"},
-  {id:"custom",  label:"Custom Period", emoji:"⏳"},
+const PERIOD_OPTIONS: {id: PeriodType; label: string; icon: ComponentType<any>}[] = [
+  {id:"daily",   label:"Daily",         icon: Calendar},
+  {id:"weekly",  label:"Weekly",        icon: BarChart2},
+  {id:"monthly", label:"Monthly",       icon: CalendarDays},
+  {id:"annual",  label:"Annually",      icon: TrendingUp},
+  {id:"custom",  label:"Custom Period", icon: CalendarClock},
 ];
 
 // ─── SVG Geometry ──────────────────────────────────────────────────────────────
@@ -288,7 +289,7 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
           background: open ? "rgba(212,162,76,0.2)" : "var(--divider)",
           border: `1px solid ${open ? "rgba(212,162,76,0.4)" : "var(--divider)"}`,
         }}>
-        <span style={{ fontSize: 13 }}>{cur.emoji}</span>
+        <cur.icon className="w-3.5 h-3.5 text-ink/75" />
         <span className="text-ink font-semibold" style={{ fontSize: 12 }}>{cur.label}</span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown className="w-3.5 h-3.5 text-ink/45" />
@@ -313,7 +314,7 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
                 onClick={() => { onChange(opt.id); setOpen(false); }}
                 className="w-full flex items-center gap-2.5 px-4 py-2.5 transition-colors hover:bg-ink/5"
                 style={{ fontSize: 13 }}>
-                <span>{opt.emoji}</span>
+                <opt.icon className="w-3.5 h-3.5" style={{ color: period === opt.id ? "#D4A24C" : "color-mix(in srgb, var(--ink) 54%, transparent)" }} />
                 <span style={{ color: period === opt.id ? "#D4A24C" : "color-mix(in srgb, var(--ink) 72%, transparent)", fontWeight: period === opt.id ? 700 : 400 }}>
                   {opt.label}
                 </span>
@@ -652,9 +653,9 @@ export function ReportsScreen() {
       ) : (
         // Empty state
         <div className="flex flex-col items-center justify-center py-20 gap-4 mx-4">
-          <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-5xl"
+          <div className="w-24 h-24 rounded-3xl flex items-center justify-center"
             style={{ background: "linear-gradient(135deg,rgba(212,162,76,0.1),rgba(212,162,76,0.05))", border: "1px solid rgba(212,162,76,0.2)" }}>
-            📊
+            <BarChart2 className="w-10 h-10 text-[#D4A24C]" />
           </div>
           <div className="text-center">
             <p className="text-ink font-bold mb-1" style={{ fontSize: 17 }}>No data available</p>

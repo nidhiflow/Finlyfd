@@ -16,7 +16,49 @@ export function SettingsScreen() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [showWeekModal, setShowWeekModal] = useState(false);
-  const user = authAPI.getCurrentUser();
+  const [currentUser, setCurrentUser] = useState(() => authAPI.getCurrentUser());
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileName, setProfileName] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleOpenProfileModal = () => {
+    setProfileName(currentUser?.name || "");
+    setProfileEmail(currentUser?.email || "");
+    setProfilePhone(currentUser?.phone || "");
+    setShowProfileModal(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!profileName.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+
+    try {
+      setIsUpdating(true);
+      toast.loading("Updating profile...");
+      const res = await authAPI.updateProfile({
+        name: profileName,
+        email: profileEmail || undefined,
+        phone: profilePhone || undefined,
+      });
+      toast.dismiss();
+      if (res && res.message) {
+        toast.success(res.message);
+        setCurrentUser(authAPI.getCurrentUser());
+        setShowProfileModal(false);
+      } else {
+        toast.error("Profile update failed");
+      }
+    } catch (e: any) {
+      toast.dismiss();
+      toast.error(e?.message || "Failed to update profile");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   // Apply theme on mount and change
   useEffect(() => {
@@ -91,9 +133,9 @@ export function SettingsScreen() {
     {
       title: "Profile",
       items: [
-        { icon: User, label: "Edit Profile", value: user?.name || "User", action: () => toast.info("Profile editing coming soon") },
+        { icon: User, label: "Edit Profile", value: currentUser?.name || "User", action: handleOpenProfileModal },
         { icon: Crown, label: "Upgrade Plan", value: null, action: () => navigate("/dashboard/subscriptions") },
-        ...(user?.email === "admin_finly" ? [
+        ...(currentUser?.email === "admin_finly" ? [
           { icon: Shield, label: "Admin Dashboard", value: null, action: () => navigate("/dashboard/admin") }
         ] : []),
       ],
@@ -137,8 +179,8 @@ export function SettingsScreen() {
             <User className="w-8 h-8 text-ink" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-ink">{user?.name || "User"}</h2>
-            <p className="text-ink/80 text-sm">{user?.email || "user@example.com"}</p>
+            <h2 className="text-xl font-bold text-ink">{currentUser?.name || "User"}</h2>
+            <p className="text-ink/80 text-sm">{currentUser?.email || "user@example.com"}</p>
           </div>
         </div>
       </div>
@@ -349,6 +391,68 @@ export function SettingsScreen() {
               style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowProfileModal(false)} />
+          <div className="relative max-w-md w-full bg-[var(--surface)] rounded-2xl p-6 border border-[var(--divider)] shadow-2xl">
+            <h2 className="text-xl font-bold text-ink mb-4">Edit Profile</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-ink/50 uppercase tracking-wider mb-1.5">Name</label>
+                <input
+                  type="text"
+                  value={profileName}
+                  onChange={e => setProfileName(e.target.value)}
+                  placeholder="Your Name"
+                  className="w-full px-4 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                  disabled={isUpdating}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-ink/50 uppercase tracking-wider mb-1.5">Email Address</label>
+                <input
+                  type="email"
+                  value={profileEmail}
+                  onChange={e => setProfileEmail(e.target.value)}
+                  placeholder="yourname@example.com"
+                  className="w-full px-4 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                  disabled={isUpdating}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-ink/50 uppercase tracking-wider mb-1.5">Phone Number</label>
+                <input
+                  type="tel"
+                  value={profilePhone}
+                  onChange={e => setProfilePhone(e.target.value)}
+                  placeholder="Phone number"
+                  className="w-full px-4 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                  disabled={isUpdating}
+                />
+              </div>
+            </div>
+            
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowProfileModal(false)}
+                className="flex-1 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink font-medium hover:bg-ink/5 active:scale-95 transition-all"
+                disabled={isUpdating}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveProfile}
+                className="flex-1 py-3 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-ink font-semibold shadow-lg shadow-[#D4A24C]/25 active:scale-95 transition-all disabled:opacity-50"
+                disabled={isUpdating || !profileName.trim()}
+              >
+                {isUpdating ? "Saving..." : "Save"}
+              </button>
+            </div>
           </div>
         </div>
       )}
