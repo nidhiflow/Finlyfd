@@ -26,12 +26,10 @@ export function SettingsScreen() {
 
   // Google Drive state variables
   const [isGDriveConnected, setIsGDriveConnected] = useState(() => {
-    return !!localStorage.getItem("google_access_token") || localStorage.getItem("gdrive_mode") === "demo";
+    return !!localStorage.getItem("google_access_token");
   });
   const [showGDriveModal, setShowGDriveModal] = useState(false);
   const [gdriveClientId, setGdriveClientId] = useState(() => localStorage.getItem("finly-google-client-id") || "");
-  const [gdriveMode, setGdriveMode] = useState(() => localStorage.getItem("gdrive_mode") || "");
-  const [gdriveUser, setGdriveUser] = useState(() => localStorage.getItem("gdrive_user") || "");
   const [backupFiles, setBackupFiles] = useState<any[]>([]);
   const [isBackingUp, setIsBackingUp] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
@@ -50,15 +48,6 @@ export function SettingsScreen() {
 
   const fetchBackups = async () => {
     try {
-      const mode = localStorage.getItem("gdrive_mode");
-      if (mode === "demo") {
-        setBackupFiles([
-          { id: "mock-1", name: "finly-backup-demo-recent.json", createdTime: new Date().toISOString() },
-          { id: "mock-2", name: "finly-backup-demo-yesterday.json", createdTime: new Date(Date.now() - 86400000).toISOString() },
-        ]);
-        return;
-      }
-
       const token = localStorage.getItem("google_access_token");
       if (!token) return;
 
@@ -85,7 +74,6 @@ export function SettingsScreen() {
 
     try {
       localStorage.setItem("finly-google-client-id", gdriveClientId);
-      localStorage.setItem("gdrive_mode", "real");
 
       const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
         client_id: gdriveClientId,
@@ -94,7 +82,6 @@ export function SettingsScreen() {
           if (resp.access_token) {
             localStorage.setItem("google_access_token", resp.access_token);
             setIsGDriveConnected(true);
-            setGdriveMode("real");
             toast.success("Successfully connected to Google Drive!");
             fetchBackups();
           } else {
@@ -113,27 +100,12 @@ export function SettingsScreen() {
     }
   };
 
-  const handleConnectDemo = () => {
-    localStorage.setItem("gdrive_mode", "demo");
-    localStorage.setItem("gdrive_user", "sandbox-user@finly.app");
-    setIsGDriveConnected(true);
-    setGdriveMode("demo");
-    setGdriveUser("sandbox-user@finly.app");
-    toast.success("Connected in Demo Mode!");
-    setBackupFiles([
-      { id: "mock-1", name: "finly-backup-demo-recent.json", createdTime: new Date().toISOString() },
-      { id: "mock-2", name: "finly-backup-demo-yesterday.json", createdTime: new Date(Date.now() - 86400000).toISOString() },
-    ]);
-  };
-
   const handleDisconnectGDrive = () => {
     localStorage.removeItem("google_access_token");
     localStorage.removeItem("finly-google-client-id");
     localStorage.removeItem("gdrive_mode");
     localStorage.removeItem("gdrive_user");
     setIsGDriveConnected(false);
-    setGdriveMode("");
-    setGdriveUser("");
     setBackupFiles([]);
     toast.success("Disconnected Google Drive");
   };
@@ -163,21 +135,6 @@ export function SettingsScreen() {
 
       toast.loading("Uploading backup to Google Drive...");
 
-      if (gdriveMode === "demo") {
-        await new Promise(r => setTimeout(r, 1200));
-        toast.dismiss();
-        toast.success("Backup successfully uploaded (Simulated)!");
-        
-        const newMock = {
-          id: `mock-${Date.now()}`,
-          name: `finly-backup-demo-${new Date().toISOString().split("T")[0]}.json`,
-          createdTime: new Date().toISOString()
-        };
-        setBackupFiles(prev => [newMock, ...prev]);
-        setIsBackingUp(false);
-        return;
-      }
-
       const token = localStorage.getItem("google_access_token");
       if (!token) throw new Error("Google session expired. Please reconnect.");
 
@@ -204,26 +161,9 @@ export function SettingsScreen() {
 
       let backupData: any = null;
 
-      if (gdriveMode === "demo") {
-        await new Promise(r => setTimeout(r, 1000));
-        backupData = {
-          categories: [
-            { id: "cat-demo-1", name: "Food", type: "expense", icon: "Utensils", color: "#FF6B35" }
-          ],
-          accounts: [
-            { id: "acc-demo-1", name: "Main Bank", type: "bank", balance: 50000, icon: "Wallet", color: "#4895EF" }
-          ],
-          transactions: [
-            { id: "tx-demo-1", type: "expense", amount: 1500, category_id: "cat-demo-1", account_id: "acc-demo-1", date: new Date().toISOString().split("T")[0], note: "Restored Demo Lunch" }
-          ],
-          budgets: [],
-          goals: []
-        };
-      } else {
-        const token = localStorage.getItem("google_access_token");
-        if (!token) throw new Error("Google session expired. Please reconnect.");
-        backupData = await downloadBackupFromDrive(token, fileId);
-      }
+      const token = localStorage.getItem("google_access_token");
+      if (!token) throw new Error("Google session expired. Please reconnect.");
+      backupData = await downloadBackupFromDrive(token, fileId);
 
       toast.loading("Restoring financial databases...");
       const res = await settingsAPI.restore(backupData);
@@ -746,7 +686,7 @@ export function SettingsScreen() {
                   Backup your transactions, accounts, and budgets securely to your personal Google Drive account.
                 </p>
                 <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-[#4285F4]">
-                  💡 <strong>Developer Note:</strong> Enter your Google Client ID below to connect your real Google Drive. Or use Demo Mode for testing.
+                  💡 <strong>Developer Note:</strong> Enter your Google Client ID below to connect your Google Drive.
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-ink/50 uppercase tracking-wider mb-1.5">Google OAuth Client ID</label>
@@ -760,14 +700,8 @@ export function SettingsScreen() {
                 </div>
                 <div className="flex gap-3 pt-2">
                   <button
-                    onClick={handleConnectDemo}
-                    className="flex-1 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink text-sm font-medium hover:bg-ink/5 active:scale-95 transition-all"
-                  >
-                    Demo Sandbox
-                  </button>
-                  <button
                     onClick={handleConnectGDrive}
-                    className="flex-1 py-3 bg-[#4285F4] rounded-xl text-white text-sm font-semibold active:scale-95 transition-all disabled:opacity-50"
+                    className="w-full py-3 bg-[#4285F4] rounded-xl text-white text-sm font-semibold active:scale-95 transition-all disabled:opacity-50"
                     disabled={!gdriveClientId.trim()}
                   >
                     Connect GDrive
@@ -779,9 +713,7 @@ export function SettingsScreen() {
                 <div className="flex items-center justify-between p-3.5 bg-green-500/10 border border-green-500/20 rounded-xl">
                   <div>
                     <p className="text-xs text-green-400 font-semibold uppercase tracking-wider">Status</p>
-                    <p className="text-sm text-ink font-medium mt-0.5">
-                      {gdriveMode === "demo" ? "Sandbox Connected" : "Linked to Google Cloud"}
-                    </p>
+                    <p className="text-sm text-ink font-medium mt-0.5">Linked to Google Cloud</p>
                   </div>
                   <button
                     onClick={handleDisconnectGDrive}

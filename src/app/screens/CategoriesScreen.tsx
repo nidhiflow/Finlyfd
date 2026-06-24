@@ -9,6 +9,8 @@ import {
 // This screen reads from and writes to that shared context so that
 // AddTransactionScreen (and every other consumer) stays perfectly in sync.
 import { useCategoryContext, Cat, Sub } from "../context/CategoryContext";
+import { authAPI } from "../services/api";
+import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
 
 // ─── Types local to this screen ───────────────────────────────────────────────
 type ModalMode =
@@ -850,6 +852,27 @@ export function CategoriesScreen() {
   const [modal, setModal]           = useState<ModalMode | null>(null);
   const [delTarget, setDelTarget]   = useState<DelTarget | null>(null);
   const searchRef                   = useRef<HTMLInputElement>(null);
+  const [showUpgradeGate, setShowUpgradeGate] = useState(false);
+
+  const handleAddCategoryClick = () => {
+    const user = authAPI.getCurrentUser();
+    const isFree = !user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free";
+    if (isFree) {
+      setShowUpgradeGate(true);
+    } else {
+      setModal({ kind: "add-cat", activeType });
+    }
+  };
+
+  const handleAddSubcategoryClick = (parentId: string) => {
+    const user = authAPI.getCurrentUser();
+    const isFree = !user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free";
+    if (isFree) {
+      setShowUpgradeGate(true);
+    } else {
+      setModal({ kind: "add-sub", parentId });
+    }
+  };
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
   const toggle = (id: string) => setExpanded(e => { const n = new Set(e); n.has(id) ? n.delete(id) : n.add(id); return n; });
@@ -1043,7 +1066,7 @@ export function CategoriesScreen() {
               {search ? `No results for "${search}"` : isIncome ? "No income categories yet" : "No categories yet"}
             </p>
             {!search && (
-              <motion.button whileTap={{ scale:0.96 }} onClick={() => setModal({ kind:"add-cat", activeType })}
+              <motion.button whileTap={{ scale:0.96 }} onClick={handleAddCategoryClick}
                 className="flex items-center gap-2 px-5 py-3 rounded-2xl"
                 style={{ background: fabGrad, boxShadow: fabShadow }}>
                 <Plus className="w-4 h-4 text-ink" />
@@ -1074,7 +1097,7 @@ export function CategoriesScreen() {
                 onTogglePrimary={() => togglePrimary(cat.id)}
                 onEdit={() => setModal({ kind:"edit-cat", cat })}
                 onDelete={() => setDelTarget({ kind:"cat", id:cat.id, name:cat.name })}
-                onAddSub={() => setModal({ kind:"add-sub", parentId:cat.id })}
+                onAddSub={() => handleAddSubcategoryClick(cat.id)}
                 onEditSub={sub => setModal({ kind:"edit-sub", parentId:cat.id, sub })}
                 onDeleteSub={sub => setDelTarget({ kind:"sub", id:sub.id, name:sub.name, parentId:cat.id })}
               />
@@ -1086,7 +1109,7 @@ export function CategoriesScreen() {
       {/* ── FAB ── */}
       <motion.button
         whileTap={{ scale:0.88 }}
-        onClick={() => setModal({ kind:"add-cat", activeType })}
+        onClick={handleAddCategoryClick}
         className="fixed z-40 flex items-center justify-center rounded-2xl"
         style={{
           bottom:90, right:20, width:56, height:56,
@@ -1107,6 +1130,28 @@ export function CategoriesScreen() {
       <AnimatePresence>
         {delTarget && (
           <DeleteModal key="del" target={delTarget} onClose={() => setDelTarget(null)} onConfirm={confirmDelete} />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showUpgradeGate && (
+          <div className="fixed inset-0 z-55 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm shadow-2xl" onClick={() => setShowUpgradeGate(false)} />
+            <div className="relative max-w-sm w-full">
+              <PremiumFeatureGate
+                featureName="Custom Categories"
+                requiredTier="Pro"
+                benefits={[
+                  "Create unlimited custom categories & subcategories",
+                  "Choose from a rich palette of 20+ accent colors",
+                  "Personalize with 50+ custom emoji tags",
+                  "Organize transactions exactly how you want"
+                ]}
+                onUnlock={() => setShowUpgradeGate(false)}
+              >
+                <div className="hidden" />
+              </PremiumFeatureGate>
+            </div>
+          </div>
         )}
       </AnimatePresence>
 

@@ -10,6 +10,7 @@ export interface User {
   phone?: string;
   photo?: string;
   createdAt?: string;
+  subscription_tier?: "Free" | "Pro" | "Premium";
 }
 
 export interface AuthResponse {
@@ -308,6 +309,18 @@ export const authAPI = {
     return apiCall<{ message: string }>("/api/auth/account", {
       method: "DELETE",
     });
+  },
+
+  // Upgrade subscription
+  upgradeSubscription: async (tier: "Pro" | "Premium") => {
+    const res = await apiCall<{ message: string; user: User }>("/api/auth/upgrade-subscription", {
+      method: "POST",
+      body: JSON.stringify({ tier }),
+    });
+    if (res && res.user) {
+      localStorage.setItem("user", JSON.stringify(res.user));
+    }
+    return res;
   },
 
   // Logout

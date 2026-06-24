@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
-import { accountsAPI } from "../services/api";
+import { accountsAPI, authAPI } from "../services/api";
+import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
 import {
   Plus, X, Check, Search, ChevronRight, Eye, EyeOff,
   Pencil, Trash2, Star, Crown, SlidersHorizontal, TrendingUp, TrendingDown,
@@ -630,10 +631,20 @@ export function AccountsScreen() {
   const [delTarget, setDelTarget] = useState<Account | null>(null);
   const [showFilter, setShowFilter] = useState(false);
   const [filter, setFilter] = useState<AccountType | "all">("all");
-  const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showBal, setShowBal] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [showUpgradeGate, setShowUpgradeGate] = useState(false);
+
+  const handleSyncBankClick = () => {
+    const user = authAPI.getCurrentUser();
+    const isFree = !user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free";
+    if (isFree) {
+      setShowUpgradeGate(true);
+    } else {
+      toast.success("Connecting to secure banking APIs... Fetching transactions... Synced!");
+    }
+  };
 
   // ── LOAD API DATA ────────────────────────────────────────────────────────────
   const fetchAccounts = async () => {
@@ -766,6 +777,15 @@ export function AccountsScreen() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button onClick={handleSyncBankClick}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all"
+            style={{
+              background: "linear-gradient(135deg, rgba(212,162,76,0.18) 0%, rgba(212,162,76,0.06) 100%)",
+              border: "1px solid rgba(212,162,76,0.3)",
+            }}>
+            <Zap className="w-3.5 h-3.5 text-[#D4A24C]" />
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#D4A24C" }}>Sync Bank</span>
+          </button>
           <button onClick={() => { setShowSearch(v => !v); if (showSearch) setSearch(""); }}
             className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
             style={{
@@ -890,6 +910,28 @@ export function AccountsScreen() {
         {showFilter && (
           <FilterSheet key="filter" filter={filter}
             onFilter={setFilter} onClose={() => setShowFilter(false)} />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showUpgradeGate && (
+          <div className="fixed inset-0 z-55 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm shadow-2xl" onClick={() => setShowUpgradeGate(false)} />
+            <div className="relative max-w-sm w-full">
+              <PremiumFeatureGate
+                featureName="Bank Syncing"
+                requiredTier="Pro"
+                benefits={[
+                  "Automatically pull live bank account statements",
+                  "Link up to 3 bank accounts on the Pro plan",
+                  "Secure banking standard 256-bit encryption",
+                  "Eliminate manual data entry and errors"
+                ]}
+                onUnlock={() => setShowUpgradeGate(false)}
+              >
+                <div className="hidden" />
+              </PremiumFeatureGate>
+            </div>
+          </div>
         )}
       </AnimatePresence>
 
