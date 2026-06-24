@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { useNavigate } from "react-router";
 import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown, Camera } from "lucide-react";
 import { toast } from "sonner";
-import { authAPI, transactionsAPI } from "../services/api";
+import { authAPI, transactionsAPI, accountsAPI, categoriesAPI, budgetsAPI, savingsGoalsAPI, settingsAPI } from "../services/api";
 
 export function SettingsScreen() {
   const navigate = useNavigate();
@@ -23,6 +23,225 @@ export function SettingsScreen() {
   const [profilePhone, setProfilePhone] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // Google Drive state variables
+  const [isGDriveConnected, setIsGDriveConnected] = useState(() => {
+    return !!localStorage.getItem("google_access_token") || localStorage.getItem("gdrive_mode") === "demo";
+  });
+  const [showGDriveModal, setShowGDriveModal] = useState(false);
+  const [gdriveClientId, setGdriveClientId] = useState(() => localStorage.getItem("finly-google-client-id") || "");
+  const [gdriveMode, setGdriveMode] = useState(() => localStorage.getItem("gdrive_mode") || "");
+  const [gdriveUser, setGdriveUser] = useState(() => localStorage.getItem("gdrive_user") || "");
+  const [backupFiles, setBackupFiles] = useState<any[]>([]);
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
+
+  useEffect(() => {
+    // Inject Google Identity Services client script dynamically
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const fetchBackups = async () => {
+    try {
+      const mode = localStorage.getItem("gdrive_mode");
+      if (mode === "demo") {
+        setBackupFiles([
+          { id: "mock-1", name: "finly-backup-demo-recent.json", createdTime: new Date().toISOString() },
+          { id: "mock-2", name: "finly-backup-demo-yesterday.json", createdTime: new Date(Date.now() - 86400000).toISOString() },
+        ]);
+        return;
+      }
+
+      const token = localStorage.getItem("google_access_token");
+      if (!token) return;
+
+      const files = await listBackupsFromDrive(token);
+      setBackupFiles(files);
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Failed to retrieve Google Drive backups");
+    }
+  };
+
+  const handleOpenGDriveModal = async () => {
+    setShowGDriveModal(true);
+    if (isGDriveConnected) {
+      fetchBackups();
+    }
+  };
+
+  const handleConnectGDrive = () => {
+    if (!gdriveClientId.trim()) {
+      toast.error("Please enter a valid Google Client ID");
+      return;
+    }
+
+    try {
+      localStorage.setItem("finly-google-client-id", gdriveClientId);
+      localStorage.setItem("gdrive_mode", "real");
+
+      const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
+        client_id: gdriveClientId,
+        scope: "https://www.googleapis.com/auth/drive.file",
+        callback: (resp: any) => {
+          if (resp.access_token) {
+            localStorage.setItem("google_access_token", resp.access_token);
+            setIsGDriveConnected(true);
+            setGdriveMode("real");
+            toast.success("Successfully connected to Google Drive!");
+            fetchBackups();
+          } else {
+            toast.error("Authentication failed: Access token missing");
+          }
+        },
+        error_callback: (err: any) => {
+          console.error(err);
+          toast.error("OAuth authorization failed");
+        }
+      });
+      tokenClient.requestAccessToken();
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Failed to initialize Google login. Ensure Client ID is valid.");
+    }
+  };
+
+  const handleConnectDemo = () => {
+    localStorage.setItem("gdrive_mode", "demo");
+    localStorage.setItem("gdrive_user", "sandbox-user@finly.app");
+    setIsGDriveConnected(true);
+    setGdriveMode("demo");
+    setGdriveUser("sandbox-user@finly.app");
+    toast.success("Connected in Demo Mode!");
+    setBackupFiles([
+      { id: "mock-1", name: "finly-backup-demo-recent.json", createdTime: new Date().toISOString() },
+      { id: "mock-2", name: "finly-backup-demo-yesterday.json", createdTime: new Date(Date.now() - 86400000).toISOString() },
+    ]);
+  };
+
+  const handleDisconnectGDrive = () => {
+    localStorage.removeItem("google_access_token");
+    localStorage.removeItem("finly-google-client-id");
+    localStorage.removeItem("gdrive_mode");
+    localStorage.removeItem("gdrive_user");
+    setIsGDriveConnected(false);
+    setGdriveMode("");
+    setGdriveUser("");
+    setBackupFiles([]);
+    toast.success("Disconnected Google Drive");
+  };
+
+  const handleBackupNow = async () => {
+    try {
+      setIsBackingUp(true);
+      toast.loading("Preparing backup data...");
+
+      const [transactions, accounts, categories, budgets, goals] = await Promise.all([
+        transactionsAPI.getAll({}),
+        accountsAPI.getAll(),
+        categoriesAPI.getAll(),
+        budgetsAPI.get(),
+        savingsGoalsAPI.getAll()
+      ]);
+
+      const backupData = {
+        version: "1.0.0",
+        timestamp: new Date().toISOString(),
+        transactions,
+        accounts,
+        categories,
+        budgets,
+        goals
+      };
+
+      toast.loading("Uploading backup to Google Drive...");
+
+      if (gdriveMode === "demo") {
+        await new Promise(r => setTimeout(r, 1200));
+        toast.dismiss();
+        toast.success("Backup successfully uploaded (Simulated)!");
+        
+        const newMock = {
+          id: `mock-${Date.now()}`,
+          name: `finly-backup-demo-${new Date().toISOString().split("T")[0]}.json`,
+          createdTime: new Date().toISOString()
+        };
+        setBackupFiles(prev => [newMock, ...prev]);
+        setIsBackingUp(false);
+        return;
+      }
+
+      const token = localStorage.getItem("google_access_token");
+      if (!token) throw new Error("Google session expired. Please reconnect.");
+
+      await uploadBackupToDrive(token, backupData);
+      toast.dismiss();
+      toast.success("Backup uploaded to Google Drive successfully!");
+      fetchBackups();
+    } catch (e: any) {
+      toast.dismiss();
+      toast.error(e?.message || "Failed to complete backup");
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
+  const handleRestoreBackup = async (fileId: string) => {
+    if (!window.confirm("Restoring this backup will replace ALL your current categories, accounts, transactions, budgets, and goals. Do you want to proceed?")) {
+      return;
+    }
+
+    try {
+      setIsRestoring(true);
+      toast.loading("Downloading backup...");
+
+      let backupData: any = null;
+
+      if (gdriveMode === "demo") {
+        await new Promise(r => setTimeout(r, 1000));
+        backupData = {
+          categories: [
+            { id: "cat-demo-1", name: "Food", type: "expense", icon: "Utensils", color: "#FF6B35" }
+          ],
+          accounts: [
+            { id: "acc-demo-1", name: "Main Bank", type: "bank", balance: 50000, icon: "Wallet", color: "#4895EF" }
+          ],
+          transactions: [
+            { id: "tx-demo-1", type: "expense", amount: 1500, category_id: "cat-demo-1", account_id: "acc-demo-1", date: new Date().toISOString().split("T")[0], note: "Restored Demo Lunch" }
+          ],
+          budgets: [],
+          goals: []
+        };
+      } else {
+        const token = localStorage.getItem("google_access_token");
+        if (!token) throw new Error("Google session expired. Please reconnect.");
+        backupData = await downloadBackupFromDrive(token, fileId);
+      }
+
+      toast.loading("Restoring financial databases...");
+      const res = await settingsAPI.restore(backupData);
+      toast.dismiss();
+      if (res && res.message) {
+        toast.success("Database restored successfully!");
+        setShowGDriveModal(false);
+        window.location.reload();
+      } else {
+        toast.error("Restore failed");
+      }
+    } catch (e: any) {
+      toast.dismiss();
+      toast.error(e?.message || "Failed to restore backup");
+    } finally {
+      setIsRestoring(false);
+    }
+  };
 
   const handleOpenProfileModal = () => {
     setProfileName(currentUser?.name || "");
@@ -176,7 +395,7 @@ export function SettingsScreen() {
     {
       title: "Backup & Sync",
       items: [
-        { icon: Cloud, label: "Google Drive Backup", value: "Not Connected", action: () => toast.info("Google Drive backup coming soon") },
+        { icon: Cloud, label: "Google Drive Backup", value: isGDriveConnected ? "Connected" : "Not Connected", action: handleOpenGDriveModal },
         { icon: Download, label: "Local Backup", value: null, action: handleExportCSV },
         { icon: Download, label: "Restore from Backup", value: null, action: () => toast.info("Restore coming soon") },
       ],
@@ -510,7 +729,160 @@ export function SettingsScreen() {
           </div>
         </div>
       )}
+
+      {/* Google Drive Backup Modal */}
+      {showGDriveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowGDriveModal(false)} />
+          <div className="relative max-w-md w-full bg-[var(--surface)] rounded-2xl p-6 border border-[var(--divider)] shadow-2xl">
+            <h2 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+              <Cloud className="w-5 h-5 text-[#4285F4]" />
+              <span>Google Drive Backup</span>
+            </h2>
+
+            {!isGDriveConnected ? (
+              <div className="space-y-4">
+                <p className="text-sm text-ink/60 leading-relaxed">
+                  Backup your transactions, accounts, and budgets securely to your personal Google Drive account.
+                </p>
+                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-[#4285F4]">
+                  💡 <strong>Developer Note:</strong> Enter your Google Client ID below to connect your real Google Drive. Or use Demo Mode for testing.
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-ink/50 uppercase tracking-wider mb-1.5">Google OAuth Client ID</label>
+                  <input
+                    type="text"
+                    value={gdriveClientId}
+                    onChange={e => setGdriveClientId(e.target.value)}
+                    placeholder="xxxxxx-xxxxxxxx.apps.googleusercontent.com"
+                    className="w-full px-4 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none text-xs"
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={handleConnectDemo}
+                    className="flex-1 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink text-sm font-medium hover:bg-ink/5 active:scale-95 transition-all"
+                  >
+                    Demo Sandbox
+                  </button>
+                  <button
+                    onClick={handleConnectGDrive}
+                    className="flex-1 py-3 bg-[#4285F4] rounded-xl text-white text-sm font-semibold active:scale-95 transition-all disabled:opacity-50"
+                    disabled={!gdriveClientId.trim()}
+                  >
+                    Connect GDrive
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                <div className="flex items-center justify-between p-3.5 bg-green-500/10 border border-green-500/20 rounded-xl">
+                  <div>
+                    <p className="text-xs text-green-400 font-semibold uppercase tracking-wider">Status</p>
+                    <p className="text-sm text-ink font-medium mt-0.5">
+                      {gdriveMode === "demo" ? "Sandbox Connected" : "Linked to Google Cloud"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleDisconnectGDrive}
+                    className="px-3 py-1.5 bg-[var(--bg-deep)] border border-[#EF4444]/30 text-[#EF4444] rounded-lg text-xs font-medium hover:bg-[#EF4444]/10 active:scale-95 transition-all"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+
+                <button
+                  onClick={handleBackupNow}
+                  disabled={isBackingUp}
+                  className="w-full py-3.5 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-ink font-semibold shadow-lg shadow-[#D4A24C]/25 active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  <Cloud className="w-4 h-4 text-black animate-pulse" />
+                  <span>{isBackingUp ? "Backing up..." : "Backup Data Now"}</span>
+                </button>
+
+                <div>
+                  <h3 className="text-xs font-semibold text-ink/50 uppercase tracking-wider mb-2.5 px-1">Available Backups</h3>
+                  {backupFiles.length === 0 ? (
+                    <div className="text-center py-6 border border-dashed border-[var(--divider)] rounded-xl">
+                      <p className="text-xs text-ink/30">No backups found on Google Drive</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                      {backupFiles.map(file => (
+                        <div key={file.id} className="flex items-center justify-between p-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl">
+                          <div className="min-w-0 flex-1 pr-3">
+                            <p className="text-xs font-semibold text-ink truncate">{file.name}</p>
+                            <p className="text-[10px] text-ink/40 mt-0.5">
+                              {new Date(file.createdTime).toLocaleString()}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => handleRestoreBackup(file.id)}
+                            disabled={isRestoring}
+                            className="px-3 py-1.5 bg-[#D4A24C]/10 border border-[#D4A24C]/30 text-[#D4A24C] rounded-lg text-xs font-semibold hover:bg-[#D4A24C]/20 active:scale-95 transition-all flex-shrink-0"
+                          >
+                            Restore
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowGDriveModal(false)}
+              className="w-full mt-4 py-3 rounded-xl text-ink/40 text-sm font-medium hover:bg-ink/5"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+// ─── Google Drive API Helpers ──────────────────────────────────────────────────
+const listBackupsFromDrive = async (accessToken: string) => {
+  const response = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=name+contains+'finly-backup-'+and+mimeType='application/json'&orderBy=createdTime+desc&fields=files(id,name,createdTime)`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }
+  );
+  if (!response.ok) throw new Error("Failed to list backups");
+  const data = await response.json();
+  return data.files || [];
+};
+
+const uploadBackupToDrive = async (accessToken: string, backupData: any) => {
+  const metadata = {
+    name: `finly-backup-${new Date().toISOString().split("T")[0]}.json`,
+    mimeType: "application/json",
+  };
+  const file = new Blob([JSON.stringify(backupData)], { type: "application/json" });
+  const form = new FormData();
+  form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+  form.append("file", file);
+
+  const response = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  });
+  if (!response.ok) throw new Error("Failed to upload backup");
+  return response.json();
+};
+
+const downloadBackupFromDrive = async (accessToken: string, fileId: string) => {
+  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!response.ok) throw new Error("Failed to download file");
+  return response.json();
+};
 

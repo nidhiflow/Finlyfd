@@ -418,6 +418,7 @@ export const statsAPI = {
 export const settingsAPI = {
   getAll: async () => apiCall<any>("/api/settings", { method: "GET" }),
   update: async (data: any) => apiCall<any>("/api/settings", { method: "POST", body: JSON.stringify(data) }),
+  restore: async (data: any) => apiCall<any>("/api/settings/restore", { method: "POST", body: JSON.stringify(data) }),
 };
 
 // ─── AI API ───────────────────────────────────────────────────────────────────
