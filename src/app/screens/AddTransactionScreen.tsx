@@ -866,9 +866,20 @@ export function AddTransactionScreen() {
                         boxShadow: isSel ? `0 4px 14px ${c.color}25` : "none",
                       }}>
                       <span style={{fontSize:18}}>{c.emoji}</span>
-                      <span style={{fontSize:9.5, fontWeight:700, textAlign:"center", lineHeight:1.2,
-                        color: isSel ? c.color : "rgba(255,255,255,0.45)"}}>
-                        {c.name.replace(" &","").replace(" and","").replace("& ","").slice(0,10)}
+                      <span style={{
+                        fontSize: 9.5,
+                        fontWeight: 700,
+                        textAlign: "center",
+                        lineHeight: 1.1,
+                        color: isSel ? c.color : "rgba(255,255,255,0.45)",
+                        wordBreak: "break-word",
+                        padding: "0 4px",
+                        height: "21px", // fixed height to ensure perfect row alignment in grid
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                      }}>
+                        {c.name}
                       </span>
                       {isSel && (
                         <div className="absolute top-1 right-1 w-3 h-3 rounded-full flex items-center justify-center"

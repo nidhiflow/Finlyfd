@@ -348,17 +348,31 @@ function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartT
 
 // ─── Category Row ──────────────────────────────────────────────────────────────
 function CategoryRow({
-  cat, rank, isSelected, compareAmt, showCompare, onTap,
+  cat, rank, isSelected, compareAmt, showCompare, isIncome, onTap,
 }: {
   cat: CatData | SubData;
   rank: number;
   isSelected: boolean;
   compareAmt?: number;
   showCompare: boolean;
+  isIncome: boolean;
   onTap: () => void;
 }) {
-  const trend = (cat as CatData).trend ?? 0;
   const hasSubs = (cat as CatData).subs?.length > 0;
+
+  // Calculate trend dynamically by comparing current amount and compareAmt (previous amount)
+  const trendVal = compareAmt !== undefined && compareAmt > 0
+    ? parseFloat((((cat.amount - compareAmt) / compareAmt) * 100).toFixed(1))
+    : 0;
+  const displayTrend = showCompare ? trendVal : 0;
+  const isTrendUp = displayTrend > 0;
+  const trend = Math.abs(displayTrend);
+
+  // Styling for trend text/arrows based on whether it is income or expense:
+  // For Income: increase is good (green), decrease is bad (red).
+  // For Expense: increase is bad (red), decrease is good (green).
+  const isGood = isIncome ? isTrendUp : !isTrendUp;
+  const trendColor = isGood ? "#4ADE80" : "#F87171";
 
   return (
     <motion.button
@@ -392,36 +406,28 @@ function CategoryRow({
             </span>
           )}
         </div>
-        {showCompare && compareAmt !== undefined && (
-          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 1 }}>
-            Last month: {fmtINR(compareAmt)}
-            <span className="ml-1.5" style={{ color: cat.amount > compareAmt ? "#F87171" : "#4ADE80" }}>
-              {cat.amount > compareAmt ? "↑" : "↓"} {Math.abs(Math.round((cat.amount - compareAmt) / compareAmt * 100))}%
-            </span>
-          </p>
-        )}
       </div>
 
       {/* Right side */}
       <div className="flex flex-col items-end gap-1 flex-shrink-0">
         <p className="font-bold" style={{ fontSize: 14, color: cat.color }}>{fmtINR(cat.amount)}</p>
-        <div className="flex items-center gap-1.5">
-          {/* % pill */}
-          <span className="px-2 py-0.5 rounded-full"
-            style={{ fontSize: 10, fontWeight: 800, background: `${cat.color}22`, color: cat.color }}>
-            {cat.percentage.toFixed(0)}%
-          </span>
-          {/* Trend */}
-          {trend !== 0 && (
+        <div className="flex items-center gap-1.5 justify-end w-full">
+          {/* Trend arrow and text is placed on the left side of the % pill for clean vertical alignment */}
+          {displayTrend !== 0 && (
             <div className="flex items-center gap-0.5">
-              {trend > 0
-                ? <TrendingUp className="w-2.5 h-2.5 text-rose-400" />
-                : <TrendingDown className="w-2.5 h-2.5 text-emerald-400" />}
-              <span style={{ fontSize: 9, color: trend > 0 ? "#F87171" : "#4ADE80" }}>
-                {Math.abs(trend)}%
+              {isTrendUp
+                ? <TrendingUp className="w-2.5 h-2.5" style={{ color: trendColor }} />
+                : <TrendingDown className="w-2.5 h-2.5" style={{ color: trendColor }} />}
+              <span style={{ fontSize: 9, color: trendColor }}>
+                {trend}%
               </span>
             </div>
           )}
+          {/* % pill is always on the right side of the card, flush with the amount above it */}
+          <span className="px-2 py-0.5 rounded-full text-right"
+            style={{ fontSize: 10, fontWeight: 800, background: `${cat.color}22`, color: cat.color }}>
+            {cat.percentage.toFixed(1)}%
+          </span>
         </div>
       </div>
     </motion.button>
@@ -883,6 +889,7 @@ export function ReportsScreen() {
                     isSelected={selectedSeg === cat.id}
                     compareAmt={compareCat?.amount}
                     showCompare={compareMode && !drillCat}
+                    isIncome={chartType === "income"}
                     onTap={() => {
                       handleSegClick(cat.id);
                       if ((cat as CatData).subs?.length) handleDrilldown(cat.id);
