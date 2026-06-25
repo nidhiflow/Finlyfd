@@ -79,26 +79,26 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
         transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-md mx-auto rounded-t-3xl p-5"
-        style={{ background: "linear-gradient(180deg,#16203A 0%,#0E1424 100%)", border: "1px solid rgba(255,255,255,0.09)", borderBottom: "none" }}>
+        style={{ background: "var(--bg-deep)", border: "1px solid var(--divider)", borderBottom: "none" }}>
         <div className="flex justify-center mb-3">
-          <div className="w-9 h-1 rounded-full bg-white/15" />
+          <div className="w-9 h-1 rounded-full bg-ink/15" />
         </div>
 
         <div className="flex items-center justify-between mb-3">
-          <p className="text-white font-bold" style={{ fontSize: 17 }}>Select Date Range</p>
+          <p className="text-ink font-bold" style={{ fontSize: 17 }}>Select Date Range</p>
           <button onClick={onClose}
             className="w-8 h-8 rounded-2xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.07)" }}>
-            <X className="w-4 h-4 text-white/50" />
+            style={{ background: "var(--divider)" }}>
+            <X className="w-4 h-4 text-ink/50" />
           </button>
         </div>
 
         {/* Selected range preview */}
         <div className="mb-4 py-2.5 px-4 rounded-xl flex items-center justify-center gap-3"
-          style={{ background: "rgba(124,92,255,0.12)", border: "1px solid rgba(124,92,255,0.25)" }}>
-          <span className="text-white font-semibold" style={{ fontSize: 13 }}>{formatDate(start)}</span>
-          <span className="text-white/30" style={{ fontSize: 12 }}>→</span>
-          <span className="text-white font-semibold" style={{ fontSize: 13 }}>{formatDate(end)}</span>
+          style={{ background: "rgba(212,162,76,0.12)", border: "1px solid rgba(212,162,76,0.25)" }}>
+          <span className="text-ink font-semibold" style={{ fontSize: 13 }}>{formatDate(start)}</span>
+          <span className="text-ink/30" style={{ fontSize: 12 }}>→</span>
+          <span className="text-ink font-semibold" style={{ fontSize: 13 }}>{formatDate(end)}</span>
         </div>
 
         {/* Quick selects */}
@@ -111,9 +111,9 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
             <button key={q.label} onClick={() => handleQuickSelect(q.days, q.label)}
               className="flex-1 py-2 rounded-xl text-center active:scale-95 transition-transform"
               style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.55)",
+                background: "color-mix(in srgb, var(--ink) 6%, transparent)",
+                border: "1px solid var(--divider)",
+                fontSize: 11, fontWeight: 600, color: "color-mix(in srgb, var(--ink) 55%, transparent)",
               }}>
               {q.label}
             </button>
@@ -123,22 +123,22 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
         {/* Month nav */}
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => setView(v => new Date(v.getFullYear(), v.getMonth() - 1, 1))}
-            className="w-8 h-8 rounded-xl flex items-center justify-center bg-white/7 active:scale-90 transition-transform">
-            <ChevronLeft className="w-4 h-4 text-white/55" />
+            className="w-8 h-8 rounded-xl flex items-center justify-center bg-ink/7 active:scale-90 transition-transform">
+            <ChevronLeft className="w-4 h-4 text-ink/55" />
           </button>
-          <p className="text-white font-bold" style={{ fontSize: 16 }}>
+          <p className="text-ink font-bold" style={{ fontSize: 16 }}>
             {MONTHS_SHORT[view.getMonth()]} {view.getFullYear()}
           </p>
           <button onClick={() => setView(v => new Date(v.getFullYear(), v.getMonth() + 1, 1))}
-            className="w-8 h-8 rounded-xl flex items-center justify-center bg-white/7 active:scale-90 transition-transform">
-            <ChevronRight className="w-4 h-4 text-white/55" />
+            className="w-8 h-8 rounded-xl flex items-center justify-center bg-ink/7 active:scale-90 transition-transform">
+            <ChevronRight className="w-4 h-4 text-ink/55" />
           </button>
         </div>
 
         {/* Day headers */}
         <div className="grid grid-cols-7 mb-2">
           {DAYS.map(d => (
-            <p key={d} className="text-center text-white/30 font-semibold" style={{ fontSize: 11 }}>{d}</p>
+            <p key={d} className="text-center text-ink/30 font-semibold" style={{ fontSize: 11 }}>{d}</p>
           ))}
         </div>
 
@@ -154,16 +154,16 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
                 onClick={() => handleDayTap(day)}
                 className="aspect-square rounded-full flex items-center justify-center relative"
                 style={{
-                  background: sel ? "linear-gradient(135deg,#7C5CFF,#4CC9F0)"
-                    : inRange ? "rgba(124,92,255,0.18)"
-                    : isToday ? "rgba(124,92,255,0.10)"
+                  background: sel ? "linear-gradient(135deg,#D4A24C,#D4A24C)"
+                    : inRange ? "rgba(212,162,76,0.18)"
+                    : isToday ? "rgba(212,162,76,0.10)"
                     : "transparent",
-                  boxShadow: sel ? "0 4px 12px rgba(124,92,255,0.45)" : "none",
+                  boxShadow: sel ? "0 4px 12px rgba(212,162,76,0.45)" : "none",
                 }}>
                 <span style={{
                   fontSize: 13,
                   fontWeight: sel || isToday ? 700 : 400,
-                  color: sel ? "white" : inRange ? "#9D7EFF" : isToday ? "#9D7EFF" : "rgba(255,255,255,0.65)",
+                  color: sel ? "white" : inRange ? "#D4A24C" : isToday ? "#D4A24C" : "color-mix(in srgb, var(--ink) 65%, transparent)",
                 }}>
                   {day}
                 </span>
@@ -175,17 +175,17 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
         {/* Action buttons */}
         <div className="flex gap-3">
           <button onClick={onClose}
-            className="flex-1 py-3.5 rounded-2xl font-semibold text-white/50"
-            style={{ background: "rgba(255,255,255,0.055)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 14 }}>
+            className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
+            style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)", fontSize: 14 }}>
             Cancel
           </button>
           <motion.button whileTap={{ scale: 0.97 }} onClick={handleConfirm}
             disabled={!start || !end}
-            className="flex-1 py-3.5 rounded-2xl text-white font-bold"
+            className="flex-1 py-3.5 rounded-2xl text-ink font-bold"
             style={{
               fontSize: 14,
-              background: start && end ? "linear-gradient(135deg,#7C5CFF 0%,#4CC9F0 100%)" : "rgba(255,255,255,0.1)",
-              boxShadow: start && end ? "0 6px 22px rgba(124,92,255,0.48)" : "none",
+              background: start && end ? "linear-gradient(135deg,#D4A24C 0%,#D4A24C 100%)" : "var(--divider)",
+              boxShadow: start && end ? "0 6px 22px rgba(212,162,76,0.48)" : "none",
               opacity: start && end ? 1 : 0.5,
             }}>
             Apply Range
@@ -195,3 +195,6 @@ export function DateRangePicker({ startDate, endDate, onSelect, onClose }: DateR
     </motion.div>
   );
 }
+
+
+

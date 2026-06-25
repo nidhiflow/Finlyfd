@@ -122,11 +122,11 @@ export function SignupScreen() {
   return (
     <div className="flex flex-col min-h-screen px-6">
       <div className="pt-16 pb-8">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center mb-6 shadow-lg shadow-[#7C5CFF]/50">
-          <span className="text-2xl font-bold text-white">F</span>
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center mb-6 shadow-lg shadow-[#D4A24C]/50">
+          <span className="text-2xl font-bold text-ink">F</span>
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2">Create account</h1>
-        <p className="text-white/50">Start managing your finances smarter</p>
+        <h1 className="text-3xl font-bold text-ink mb-2">Create account</h1>
+        <p className="text-ink/50">Start managing your finances smarter</p>
       </div>
 
       {!showOTP ? (
@@ -147,32 +147,32 @@ export function SignupScreen() {
             )}
 
             <div>
-              <label className="text-sm text-white/70 mb-2 block">Full Name</label>
+              <label className="text-sm text-ink/70 mb-2 block">Full Name</label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/40" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                  className="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-sm text-white/70 mb-2 block">Email</label>
+              <label className="text-sm text-ink/70 mb-2 block">Email</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/40" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@gmail.com"
-                  className={`w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border rounded-xl text-white placeholder:text-white/30 focus:outline-none transition-colors ${
+                  className={`w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border rounded-xl text-ink placeholder:text-ink/30 focus:outline-none transition-colors ${
                     email && !isOfficialEmail(email)
                       ? "border-red-500/50 focus:border-red-500"
-                      : "border-white/10 focus:border-[#7C5CFF]"
+                      : "border-ink/10 focus:border-[#D4A24C]"
                   }`}
                 />
               </div>
@@ -184,29 +184,29 @@ export function SignupScreen() {
             </div>
 
             <div>
-              <label className="text-sm text-white/70 mb-2 block">Phone</label>
+              <label className="text-sm text-ink/70 mb-2 block">Phone</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/40" />
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="123-456-7890"
-                  className="w-full pl-12 pr-4 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                  className="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-sm text-white/70 mb-2 block">Password</label>
+              <label className="text-sm text-ink/70 mb-2 block">Password</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/40" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a password"
-                  className="w-full pl-12 pr-12 py-3.5 bg-[#1B2130] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-[#7C5CFF] focus:outline-none"
+                  className="w-full pl-12 pr-12 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -214,9 +214,9 @@ export function SignupScreen() {
                   className="absolute right-4 top-1/2 -translate-y-1/2"
                 >
                   {showPassword ? (
-                    <EyeOff className="w-5 h-5 text-white/40" />
+                    <EyeOff className="w-5 h-5 text-ink/40" />
                   ) : (
-                    <Eye className="w-5 h-5 text-white/40" />
+                    <Eye className="w-5 h-5 text-ink/40" />
                   )}
                 </button>
               </div>
@@ -225,21 +225,21 @@ export function SignupScreen() {
             <button
               onClick={handleSignup}
               disabled={loading}
-              className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 hover:shadow-[#7C5CFF]/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-ink font-semibold shadow-lg shadow-[#D4A24C]/30 hover:shadow-[#D4A24C]/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Creating Account..." : "Create Account"}
             </button>
 
-            <p className="text-xs text-white/40 text-center px-4">
+            <p className="text-xs text-ink/40 text-center px-4">
               By signing up, you agree to our Terms of Service and Privacy Policy
             </p>
           </div>
 
           <div className="py-6 text-center">
-            <span className="text-white/50">Already have an account? </span>
+            <span className="text-ink/50">Already have an account? </span>
             <button
               onClick={() => navigate("/login")}
-              className="text-[#7C5CFF] font-semibold hover:text-[#9D7EFF]"
+              className="text-[#D4A24C] font-semibold hover:text-[#D4A24C]"
             >
               Sign In
             </button>
@@ -254,9 +254,9 @@ export function SignupScreen() {
               </div>
             )}
             
-            <div className="bg-[#1B2130] border border-white/10 rounded-2xl p-6 mb-6">
-              <h2 className="text-xl font-semibold text-white mb-2">Verify Your Email</h2>
-              <p className="text-sm text-white/50 mb-2">
+            <div className="bg-[var(--surface)] border border-ink/10 rounded-2xl p-6 mb-6">
+              <h2 className="text-xl font-semibold text-ink mb-2">Verify Your Email</h2>
+              <p className="text-sm text-ink/50 mb-2">
                 Enter the 6-digit code sent to {email}
               </p>
               <p className="text-xs text-blue-400/70 mb-6">
@@ -273,7 +273,7 @@ export function SignupScreen() {
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOTPChange(index, e.target.value)}
-                    className="w-12 h-14 bg-[#0D0F14] border border-white/10 rounded-xl text-white text-center text-xl font-semibold focus:border-[#7C5CFF] focus:outline-none"
+                    className="w-12 h-14 bg-[var(--bg-deep)] border border-ink/10 rounded-xl text-ink text-center text-xl font-semibold focus:border-[#D4A24C] focus:outline-none"
                   />
                 ))}
               </div>
@@ -281,7 +281,7 @@ export function SignupScreen() {
               <button
                 onClick={handleResendOTP}
                 disabled={loading}
-                className="w-full text-sm text-[#7C5CFF] hover:text-[#9D7EFF] mb-4 disabled:opacity-50"
+                className="w-full text-sm text-[#D4A24C] hover:text-[#D4A24C] mb-4 disabled:opacity-50"
               >
                 {loading ? "Sending..." : "Resend Code"}
               </button>
@@ -289,7 +289,7 @@ export function SignupScreen() {
               <button
                 onClick={handleOTPVerify}
                 disabled={loading}
-                className="w-full py-4 bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] rounded-xl text-white font-semibold shadow-lg shadow-[#7C5CFF]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-ink font-semibold shadow-lg shadow-[#D4A24C]/30 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Verifying..." : "Verify & Get Started"}
               </button>
@@ -297,7 +297,7 @@ export function SignupScreen() {
 
             <button
               onClick={() => setShowOTP(false)}
-              className="w-full py-4 bg-[#1B2130] border border-white/10 rounded-xl text-white font-semibold"
+              className="w-full py-4 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink font-semibold"
             >
               Back
             </button>

@@ -52,19 +52,19 @@ export function RootRedirect() {
 
   // Brief animated splash while evaluating
   return (
-    <div className="min-h-screen bg-[#0D0F14] flex items-center justify-center">
+    <div className="min-h-screen bg-[var(--bg-deep)] flex items-center justify-center">
       <div className="flex flex-col items-center gap-5">
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center shadow-2xl shadow-[#7C5CFF]/40">
-            <span className="text-white font-black text-2xl">F</span>
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-2xl shadow-[#D4A24C]/40">
+            <span className="text-ink font-black text-2xl">F</span>
           </div>
-          <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-[#7C5CFF]/30 to-[#4CC9F0]/30 blur-lg -z-10 animate-pulse" />
+          <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-[#D4A24C]/30 to-[#D4A24C]/30 blur-lg -z-10 animate-pulse" />
         </div>
         <div className="flex gap-1.5">
           {[0, 200, 400].map((delay, i) => (
             <div
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-[#7C5CFF]/60"
+              className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]/60"
               style={{
                 animation: `dotBounce 0.9s ${delay}ms infinite`,
               }}

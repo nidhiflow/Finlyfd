@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronRight, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ChevronRight, ArrowUpRight, ArrowDownRight, Pizza, Home, Plane, Clapperboard } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════
 // SLIDE 1 ── Cash Flow Visualization
@@ -60,7 +60,7 @@ function CashFlowAnim() {
           strokeDasharray="5,4" fill="none" />
         {/* Balance → Travel (right) */}
         <path d="M 177,166 C 205,188 232,205 250,218"
-          stroke="#4CC9F0" strokeWidth="1.5" strokeOpacity="0.28"
+          stroke="#D4A24C" strokeWidth="1.5" strokeOpacity="0.28"
           strokeDasharray="5,4" fill="none" />
 
         {/* ── Income Particles (3 staggered) ── */}
@@ -83,7 +83,7 @@ function CashFlowAnim() {
             path="M 160,170 L 160,215" />
           <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" begin="0.9s" repeatCount="indefinite" />
         </circle>
-        <circle r="4.5" fill="#4CC9F0" filter="url(#cf-glow)">
+        <circle r="4.5" fill="#D4A24C" filter="url(#cf-glow)">
           <animateMotion dur="1.5s" begin="1.5s" repeatCount="indefinite"
             path="M 177,166 C 205,188 232,205 250,218" />
           <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" begin="1.5s" repeatCount="indefinite" />
@@ -96,35 +96,41 @@ function CashFlowAnim() {
 
         {/* ── Balance Node (center, pulsing ring) ── */}
         {/* Outer pulse ring */}
-        <circle cx="160" cy="144" r="46" fill="none" stroke="#7C5CFF" strokeWidth="1">
+        <circle cx="160" cy="144" r="46" fill="none" stroke="#D4A24C" strokeWidth="1">
           <animate attributeName="r" values="46;58;46" dur="2.8s" repeatCount="indefinite" />
           <animate attributeName="stroke-opacity" values="0.35;0;0.35" dur="2.8s" repeatCount="indefinite" />
         </circle>
         {/* Second pulse ring (offset) */}
-        <circle cx="160" cy="144" r="46" fill="none" stroke="#7C5CFF" strokeWidth="0.8">
+        <circle cx="160" cy="144" r="46" fill="none" stroke="#D4A24C" strokeWidth="0.8">
           <animate attributeName="r" values="46;62;46" dur="2.8s" begin="0.7s" repeatCount="indefinite" />
           <animate attributeName="stroke-opacity" values="0.2;0;0.2" dur="2.8s" begin="0.7s" repeatCount="indefinite" />
         </circle>
         {/* Main node */}
-        <circle cx="160" cy="144" r="44" fill="url(#balanceNodeGrad)" stroke="#7C5CFF" strokeWidth="2" filter="url(#cf-glow-lg)" />
+        <circle cx="160" cy="144" r="44" fill="url(#balanceNodeGrad)" stroke="#D4A24C" strokeWidth="2" filter="url(#cf-glow-lg)" />
         <text x="160" y="138" textAnchor="middle" fill="white" fontSize="15" fontWeight="800" fontFamily="system-ui,sans-serif">₹12,450</text>
-        <text x="160" y="155" textAnchor="middle" fill="#9D7EFF" fontSize="8.5" fontFamily="system-ui,sans-serif">Balance</text>
+        <text x="160" y="155" textAnchor="middle" fill="#D4A24C" fontSize="8.5" fontFamily="system-ui,sans-serif">Balance</text>
 
         {/* ── Expense Nodes ── */}
         {/* Food */}
         <circle cx="58" cy="234" r="24" fill="#200A16" stroke="#F72585" strokeWidth="1.5" />
-        <text x="58" y="230" textAnchor="middle" fontSize="15" fontFamily="sans-serif">🍕</text>
-        <text x="58" y="244" textAnchor="middle" fill="#F92A8B" fontSize="8" fontFamily="system-ui,sans-serif">₹850</text>
+        <foreignObject x="46" y="218" width="24" height="24">
+          <Pizza className="w-6 h-6 text-ink/80" />
+        </foreignObject>
+        <text x="58" y="250" textAnchor="middle" fill="#F92A8B" fontSize="8" fontFamily="system-ui,sans-serif">₹850</text>
 
         {/* Bills */}
         <circle cx="160" cy="237" r="24" fill="#1C1306" stroke="#FF8C00" strokeWidth="1.5" />
-        <text x="160" y="233" textAnchor="middle" fontSize="15" fontFamily="sans-serif">🏠</text>
-        <text x="160" y="247" textAnchor="middle" fill="#FF8C00" fontSize="8" fontFamily="system-ui,sans-serif">₹1,200</text>
+        <foreignObject x="148" y="221" width="24" height="24">
+          <Home className="w-6 h-6 text-ink/80" />
+        </foreignObject>
+        <text x="160" y="253" textAnchor="middle" fill="#FF8C00" fontSize="8" fontFamily="system-ui,sans-serif">₹1,200</text>
 
         {/* Travel */}
-        <circle cx="262" cy="234" r="24" fill="#081420" stroke="#4CC9F0" strokeWidth="1.5" />
-        <text x="262" y="230" textAnchor="middle" fontSize="15" fontFamily="sans-serif">✈️</text>
-        <text x="262" y="244" textAnchor="middle" fill="#4CC9F0" fontSize="8" fontFamily="system-ui,sans-serif">₹450</text>
+        <circle cx="262" cy="234" r="24" fill="#081420" stroke="#D4A24C" strokeWidth="1.5" />
+        <foreignObject x="250" y="218" width="24" height="24">
+          <Plane className="w-6 h-6 text-ink/80" />
+        </foreignObject>
+        <text x="262" y="250" textAnchor="middle" fill="#D4A24C" fontSize="8" fontFamily="system-ui,sans-serif">₹450</text>
 
         {/* ── Floating ₹ particles (ambient) ── */}
         {[
@@ -132,7 +138,7 @@ function CashFlowAnim() {
           { x: 220, begin: "1s", dur: "3.5s", dx: 18 },
           { x: 155, begin: "2s", dur: "3.2s", dx: 0 },
         ].map((p, i) => (
-          <text key={i} fontSize="10" fill="#7C5CFF" fontFamily="system-ui,sans-serif"
+          <text key={i} fontSize="10" fill="#D4A24C" fontFamily="system-ui,sans-serif"
             opacity="0" fontWeight="700" textAnchor="middle">
             <animateMotion dur={p.dur} begin={p.begin} repeatCount="indefinite"
               path={`M ${p.x},180 C ${p.x + p.dx},160 ${p.x + p.dx * 2},140 ${p.x + p.dx * 1.5},100`} />
@@ -150,10 +156,10 @@ function CashFlowAnim() {
 // Staggered category cards with animated progress bars
 // ═══════════════════════════════════════════════════════════════════
 const EXPENSE_CATEGORIES = [
-  { emoji: "🍕", name: "Food & Dining", amount: "₹850", pct: 34, color: "#F72585", gradFrom: "#F72585" },
-  { emoji: "✈️", name: "Travel", amount: "₹450", pct: 18, color: "#4CC9F0", gradFrom: "#4CC9F0" },
-  { emoji: "🏠", name: "Housing", amount: "₹700", pct: 28, color: "#7C5CFF", gradFrom: "#7C5CFF" },
-  { emoji: "🎬", name: "Entertainment", amount: "₹320", pct: 13, color: "#FF8C00", gradFrom: "#FF8C00" },
+  { icon: Pizza, name: "Food & Dining", amount: "₹850", pct: 34, color: "#F72585", gradFrom: "#F72585" },
+  { icon: Plane, name: "Travel", amount: "₹450", pct: 18, color: "#D4A24C", gradFrom: "#D4A24C" },
+  { icon: Home, name: "Housing", amount: "₹700", pct: 28, color: "#D4A24C", gradFrom: "#D4A24C" },
+  { icon: Clapperboard, name: "Entertainment", amount: "₹320", pct: 13, color: "#FF8C00", gradFrom: "#FF8C00" },
 ];
 
 function ExpenseTrackingAnim() {
@@ -171,11 +177,11 @@ function ExpenseTrackingAnim() {
         initial={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center justify-between bg-white/4 border border-white/8 rounded-xl px-4 py-2.5"
+        className="flex items-center justify-between bg-ink/4 border border-ink/8 rounded-xl px-4 py-2.5"
       >
         <div>
-          <p className="text-white/40" style={{ fontSize: 10, lineHeight: 1.2 }}>TOTAL TRACKED</p>
-          <p className="text-white font-bold" style={{ fontSize: 15, lineHeight: 1.3 }}>₹2,320 / month</p>
+          <p className="text-ink/40" style={{ fontSize: 10, lineHeight: 1.2 }}>TOTAL TRACKED</p>
+          <p className="text-ink font-bold" style={{ fontSize: 15, lineHeight: 1.3 }}>₹2,320 / month</p>
         </div>
         <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/25 rounded-full px-2.5 py-1">
           <ArrowDownRight className="w-3 h-3 text-emerald-400" />
@@ -198,14 +204,14 @@ function ExpenseTrackingAnim() {
             }}
           >
             <div className="flex items-start justify-between mb-2">
-              <span style={{ fontSize: 22, lineHeight: 1 }}>{cat.emoji}</span>
+              <cat.icon className="w-6 h-6 text-ink/80" />
               <span style={{ color: cat.color, fontSize: 11, fontWeight: 700 }}>{cat.pct}%</span>
             </div>
             <div>
-              <p className="text-white font-semibold" style={{ fontSize: 12 }}>{cat.name}</p>
-              <p className="text-white/50" style={{ fontSize: 11 }}>{cat.amount}</p>
+              <p className="text-ink font-semibold" style={{ fontSize: 12 }}>{cat.name}</p>
+              <p className="text-ink/50" style={{ fontSize: 11 }}>{cat.amount}</p>
               {/* Animated bar */}
-              <div className="h-1.5 rounded-full mt-2 overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+              <div className="h-1.5 rounded-full mt-2 overflow-hidden" style={{ background: "var(--divider)" }}>
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
@@ -227,10 +233,10 @@ function ExpenseTrackingAnim() {
         initial={{ y: 12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.4 }}
-        className="bg-white/4 border border-white/8 rounded-xl px-4 py-2 flex items-center gap-3"
+        className="bg-ink/4 border border-ink/8 rounded-xl px-4 py-2 flex items-center gap-3"
       >
-        <span className="text-white/40" style={{ fontSize: 10 }}>TOTAL BREAKDOWN</span>
-        <div className="flex-1 h-1.5 rounded-full overflow-hidden flex gap-0.5" style={{ background: "rgba(255,255,255,0.06)" }}>
+        <span className="text-ink/40" style={{ fontSize: 10 }}>TOTAL BREAKDOWN</span>
+        <div className="flex-1 h-1.5 rounded-full overflow-hidden flex gap-0.5" style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)" }}>
           {EXPENSE_CATEGORIES.map((cat) => (
             <div
               key={cat.name}
@@ -258,8 +264,8 @@ const RING_RADIUS = 70;
 const RING_CIRCUM = 2 * Math.PI * RING_RADIUS;
 
 const GOALS = [
-  { name: "Vacation 🏖️", pct: 55, current: "₹2,750", target: "₹5,000", color: "#4CC9F0" },
-  { name: "New Laptop 💻", pct: 38, current: "₹760", target: "₹2,000", color: "#F72585" },
+  { name: "Vacation", pct: 55, current: "₹2,750", target: "₹5,000", color: "#D4A24C" },
+  { name: "New Laptop", pct: 38, current: "₹760", target: "₹2,000", color: "#F72585" },
 ];
 
 function SavingsGoalsAnim() {
@@ -295,14 +301,14 @@ function SavingsGoalsAnim() {
       <div className="relative flex-shrink-0">
         {/* Outer ambient glow */}
         <div className="absolute inset-0 rounded-full blur-2xl"
-          style={{ background: "radial-gradient(circle, rgba(124,92,255,0.25) 0%, transparent 70%)", transform: "scale(1.4)" }} />
+          style={{ background: "radial-gradient(circle, rgba(212,162,76,0.25) 0%, transparent 70%)", transform: "scale(1.4)" }} />
 
         <svg width="170" height="170" viewBox="0 0 170 170">
           <defs>
             <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#7C5CFF" />
-              <stop offset="60%" stopColor="#9D7EFF" />
-              <stop offset="100%" stopColor="#4CC9F0" />
+              <stop offset="0%" stopColor="#D4A24C" />
+              <stop offset="60%" stopColor="#D4A24C" />
+              <stop offset="100%" stopColor="#D4A24C" />
             </linearGradient>
             <filter id="ring-glow">
               <feGaussianBlur stdDeviation="4" result="blur" />
@@ -311,10 +317,10 @@ function SavingsGoalsAnim() {
           </defs>
 
           {/* Track */}
-          <circle cx="85" cy="85" r={RING_RADIUS} fill="none" stroke="#1B2130" strokeWidth="14" />
+          <circle cx="85" cy="85" r={RING_RADIUS} fill="none" stroke="var(--surface)" strokeWidth="14" />
           {/* Glow layer */}
           <circle cx="85" cy="85" r={RING_RADIUS}
-            fill="none" stroke="#7C5CFF" strokeWidth="8"
+            fill="none" stroke="#D4A24C" strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray={RING_CIRCUM}
             strokeDashoffset={dashoffset}
@@ -344,18 +350,18 @@ function SavingsGoalsAnim() {
             const ty = 85 + RING_RADIUS * Math.sin(angle);
             return (
               <g>
-                <circle cx={tx} cy={ty} r={8} fill="#9D7EFF" opacity={0.3} filter="url(#ring-glow)">
+                <circle cx={tx} cy={ty} r={8} fill="#D4A24C" opacity={0.3} filter="url(#ring-glow)">
                   <animate attributeName="r" values="8;13;8" dur="2s" repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
                 </circle>
-                <circle cx={tx} cy={ty} r={5} fill="#9D7EFF" filter="url(#ring-glow)" />
+                <circle cx={tx} cy={ty} r={5} fill="#D4A24C" filter="url(#ring-glow)" />
               </g>
             );
           })()}
 
           {/* Coin particles animating into ring */}
           {[0, 0.8, 1.6].map((begin, i) => (
-            <circle key={i} r={4 - i * 0.8} fill="#4CC9F0" opacity={0.7 - i * 0.15}>
+            <circle key={i} r={4 - i * 0.8} fill="#D4A24C" opacity={0.7 - i * 0.15}>
               <animateMotion dur="2.2s" begin={`${begin}s`} repeatCount="indefinite"
                 path="M 50,20 C 65,50 75,65 85,72" />
               <animate attributeName="opacity" values="0;0.7;0.5;0" dur="2.2s" begin={`${begin}s`} repeatCount="indefinite" />
@@ -365,9 +371,9 @@ function SavingsGoalsAnim() {
 
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className="text-white font-black" style={{ fontSize: 30, lineHeight: 1 }}>{countUp}%</p>
-          <p className="text-white/45" style={{ fontSize: 10, lineHeight: 1.4, marginTop: 2 }}>Emergency Fund</p>
-          <p style={{ color: "#9D7EFF", fontSize: 11, fontWeight: 700, marginTop: 2 }}>₹14,400 / ₹20K</p>
+          <p className="text-ink font-black" style={{ fontSize: 30, lineHeight: 1 }}>{countUp}%</p>
+          <p className="text-ink/45" style={{ fontSize: 10, lineHeight: 1.4, marginTop: 2 }}>Emergency Fund</p>
+          <p style={{ color: "#D4A24C", fontSize: 11, fontWeight: 700, marginTop: 2 }}>₹14,400 / ₹20K</p>
         </div>
       </div>
 
@@ -381,10 +387,10 @@ function SavingsGoalsAnim() {
             transition={{ delay: 0.5 + i * 0.15, duration: 0.4 }}
           >
             <div className="flex justify-between items-center mb-1.5">
-              <span className="text-white font-medium" style={{ fontSize: 13 }}>{goal.name}</span>
+              <span className="text-ink font-medium" style={{ fontSize: 13 }}>{goal.name}</span>
               <span style={{ color: goal.color, fontSize: 11, fontWeight: 700 }}>{goal.pct}%</span>
             </div>
-            <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+            <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--divider)" }}>
               <div className="h-full rounded-full transition-all"
                 style={{
                   width: barsOn ? `${goal.pct}%` : "0%",
@@ -396,8 +402,8 @@ function SavingsGoalsAnim() {
               />
             </div>
             <div className="flex justify-between mt-1">
-              <span className="text-white/35" style={{ fontSize: 10 }}>{goal.current}</span>
-              <span className="text-white/35" style={{ fontSize: 10 }}>of {goal.target}</span>
+              <span className="text-ink/35" style={{ fontSize: 10 }}>{goal.current}</span>
+              <span className="text-ink/35" style={{ fontSize: 10 }}>of {goal.target}</span>
             </div>
           </motion.div>
         ))}
@@ -416,8 +422,8 @@ const PATH_LEN = 360;
 
 const AI_INSIGHTS = [
   { icon: "📉", text: "Spending down 12% vs last month", color: "#10B981", label: "Positive" },
-  { icon: "💡", text: "Save ₹245 more by reducing dining", color: "#7C5CFF", label: "Tip" },
-  { icon: "🎯", text: "Vacation goal on track for July", color: "#4CC9F0", label: "On track" },
+  { icon: "💡", text: "Save ₹245 more by reducing dining", color: "#D4A24C", label: "Tip" },
+  { icon: "🎯", text: "Vacation goal on track for July", color: "#D4A24C", label: "On track" },
 ];
 
 const WEEK_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -437,24 +443,24 @@ function AIInsightsAnim() {
   return (
     <div className="w-full h-full px-4 flex flex-col gap-3 py-2">
       {/* Sparkline chart */}
-      <div className="relative rounded-2xl border border-white/8 overflow-hidden flex-shrink-0"
-        style={{ background: "linear-gradient(135deg, #0F1623 0%, #111827 100%)" }}>
+      <div className="relative rounded-2xl border border-ink/8 overflow-hidden flex-shrink-0"
+        style={{ background: "var(--bg-deep)" }}>
         {/* Subtle grid */}
         <div className="absolute inset-0 opacity-40" style={{
-          backgroundImage: "linear-gradient(to right,rgba(124,92,255,0.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(124,92,255,0.06) 1px,transparent 1px)",
+          backgroundImage: "linear-gradient(to right,rgba(212,162,76,0.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(212,162,76,0.06) 1px,transparent 1px)",
           backgroundSize: "44px 22px",
         }} />
 
         <svg width="100%" viewBox="0 0 314 98" preserveAspectRatio="none" style={{ display: "block", height: 90 }}>
           <defs>
             <linearGradient id="ai-line-grad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#7C5CFF" />
-              <stop offset="50%" stopColor="#4CC9F0" />
+              <stop offset="0%" stopColor="#D4A24C" />
+              <stop offset="50%" stopColor="#D4A24C" />
               <stop offset="100%" stopColor="#10B981" />
             </linearGradient>
             <linearGradient id="ai-fill-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#7C5CFF" stopOpacity="0.28" />
-              <stop offset="100%" stopColor="#7C5CFF" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#D4A24C" stopOpacity="0.28" />
+              <stop offset="100%" stopColor="#D4A24C" stopOpacity="0.0" />
             </linearGradient>
             <filter id="ai-glow-line">
               <feGaussianBlur stdDeviation="2.5" result="blur" />
@@ -464,7 +470,7 @@ function AIInsightsAnim() {
           {/* Area fill */}
           <path d={FILL_PATH} fill="url(#ai-fill-grad)" />
           {/* Glow line */}
-          <path d={LINE_PATH} stroke="#7C5CFF" strokeWidth="5" fill="none"
+          <path d={LINE_PATH} stroke="#D4A24C" strokeWidth="5" fill="none"
             strokeOpacity="0.45" filter="url(#ai-glow-line)"
             strokeDasharray={PATH_LEN}
             strokeDashoffset={drawn ? 0 : PATH_LEN}
@@ -492,7 +498,7 @@ function AIInsightsAnim() {
         {/* Week labels */}
         <div className="flex justify-between px-2 pb-2 -mt-1">
           {WEEK_LABELS.map((d) => (
-            <span key={d} className="text-white/25" style={{ fontSize: 9 }}>{d}</span>
+            <span key={d} className="text-ink/25" style={{ fontSize: 9 }}>{d}</span>
           ))}
         </div>
 
@@ -500,16 +506,16 @@ function AIInsightsAnim() {
         <div className="absolute top-2.5 left-3 flex items-center gap-1.5">
           <div className="flex gap-0.5">
             {[0, 0.3, 0.6].map((d, i) => (
-              <div key={i} className="w-1 h-1 rounded-full bg-[#7C5CFF]"
+              <div key={i} className="w-1 h-1 rounded-full bg-[#D4A24C]"
                 style={{ animation: `pulse 1.5s ${d}s infinite` }} />
             ))}
           </div>
-          <span className="text-white/50" style={{ fontSize: 9, letterSpacing: "0.5px", fontWeight: 600 }}>AI ANALYSIS</span>
+          <span className="text-ink/50" style={{ fontSize: 9, letterSpacing: "0.5px", fontWeight: 600 }}>AI ANALYSIS</span>
         </div>
 
         {/* Current value badge */}
-        <div className="absolute top-2 right-3 bg-[#7C5CFF]/15 border border-[#7C5CFF]/25 rounded-lg px-2 py-1">
-          <span style={{ color: "#9D7EFF", fontSize: 11, fontWeight: 700 }}>₹1,234 this week</span>
+        <div className="absolute top-2 right-3 bg-[#D4A24C]/15 border border-[#D4A24C]/25 rounded-lg px-2 py-1">
+          <span style={{ color: "#D4A24C", fontSize: 11, fontWeight: 700 }}>₹1,234 this week</span>
         </div>
       </div>
 
@@ -524,11 +530,11 @@ function AIInsightsAnim() {
               : { x: 32, opacity: 0 }
             }
             transition={{ duration: 0.38, ease: [0.4, 0, 0.2, 1] }}
-            className="flex items-center gap-3 rounded-xl border border-white/8 px-3.5 py-2.5"
+            className="flex items-center gap-3 rounded-xl border border-ink/8 px-3.5 py-2.5"
             style={{ background: `linear-gradient(135deg, ${insight.color}10 0%, rgba(27,33,48,0.8) 100%)` }}
           >
             <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0 }}>{insight.icon}</span>
-            <p className="text-white/80 flex-1" style={{ fontSize: 12, lineHeight: 1.4 }}>{insight.text}</p>
+            <p className="text-ink/80 flex-1" style={{ fontSize: 12, lineHeight: 1.4 }}>{insight.text}</p>
             <span className="rounded-full px-2 py-0.5 flex-shrink-0"
               style={{ background: `${insight.color}20`, color: insight.color, fontSize: 9, fontWeight: 700 }}>
               {insight.label}
@@ -545,7 +551,7 @@ function AIInsightsAnim() {
           ].map((dot, i) => (
             <div
               key={i}
-              className="absolute rounded-full bg-[#7C5CFF]"
+              className="absolute rounded-full bg-[#D4A24C]"
               style={{
                 left: dot.cx, top: dot.cy,
                 width: dot.r * 2 * 4, height: dot.r * 2 * 4,
@@ -580,9 +586,9 @@ const SLIDES = [
     title: "Track Every\nExpense",
     description:
       "AI automatically categorizes your spending in real-time, giving you instant clarity with zero manual effort.",
-    accent: "#4CC9F0",
-    gradFrom: "#4CC9F0",
-    gradTo: "#7C5CFF",
+    accent: "#D4A24C",
+    gradFrom: "#D4A24C",
+    gradTo: "#D4A24C",
   },
   {
     id: 2,
@@ -590,9 +596,9 @@ const SLIDES = [
     title: "Grow Your\nSavings",
     description:
       "Set meaningful goals and watch your progress build up day by day. Every deposit takes you closer to financial freedom.",
-    accent: "#9D7EFF",
-    gradFrom: "#7C5CFF",
-    gradTo: "#9D7EFF",
+    accent: "#D4A24C",
+    gradFrom: "#D4A24C",
+    gradTo: "#D4A24C",
   },
   {
     id: 3,
@@ -602,7 +608,7 @@ const SLIDES = [
       "Finly learns your habits and delivers smart, personalized recommendations to optimize spending and hit your goals faster.",
     accent: "#F72585",
     gradFrom: "#F72585",
-    gradTo: "#7C5CFF",
+    gradTo: "#D4A24C",
   },
 ];
 
@@ -616,20 +622,20 @@ const slideVariants = {
     x: 0,
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.42, ease: [0.4, 0, 0.2, 1] },
+    transition: { duration: 0.42, ease: [0.4, 0, 0.2, 1] as const },
   },
   exit: (dir: number) => ({
     x: dir > 0 ? "-70%" : "70%",
     opacity: 0,
     scale: 0.93,
-    transition: { duration: 0.38, ease: [0.4, 0, 0.2, 1] },
+    transition: { duration: 0.38, ease: [0.4, 0, 0.2, 1] as const },
   }),
 };
 
 const textVariants = {
   enter: { y: 20, opacity: 0 },
-  center: { y: 0, opacity: 1, transition: { duration: 0.38, ease: "easeOut" } },
-  exit: { y: -20, opacity: 0, transition: { duration: 0.28, ease: "easeIn" } },
+  center: { y: 0, opacity: 1, transition: { duration: 0.38, ease: "easeOut" as const } },
+  exit: { y: -20, opacity: 0, transition: { duration: 0.28, ease: "easeIn" as const } },
 };
 
 export function OnboardingScreen() {
@@ -670,7 +676,7 @@ export function OnboardingScreen() {
 
   return (
     <div
-      className="min-h-screen bg-[#0D0F14] flex flex-col overflow-hidden"
+      className="min-h-screen bg-[var(--bg-deep)] flex flex-col overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -687,15 +693,15 @@ export function OnboardingScreen() {
         {/* ── Top bar ── */}
         <div className="flex items-center justify-between px-6 pt-12 pb-3 flex-shrink-0 relative z-10">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center shadow-lg shadow-[#7C5CFF]/35">
-              <span className="text-white font-black" style={{ fontSize: 15 }}>F</span>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] flex items-center justify-center shadow-lg shadow-[#D4A24C]/35">
+              <span className="text-ink font-black" style={{ fontSize: 15 }}>F</span>
             </div>
-            <span className="text-white font-bold" style={{ fontSize: 17 }}>Finly</span>
+            <span className="text-ink font-bold" style={{ fontSize: 17 }}>Finly</span>
           </div>
 
           <button
             onClick={() => { finishOnboarding(); navigate("/login"); }}
-            className="text-white/40 font-medium hover:text-white/70 transition-colors"
+            className="text-ink/40 font-medium hover:text-ink/70 transition-colors"
             style={{ fontSize: 14 }}
           >
             Skip
@@ -738,12 +744,12 @@ export function OnboardingScreen() {
               </div>
 
               <h1
-                className="text-white font-black mb-3 whitespace-pre-line"
+                className="text-ink font-black mb-3 whitespace-pre-line"
                 style={{ fontSize: 32, lineHeight: 1.15 }}
               >
                 {slide.title}
               </h1>
-              <p className="text-white/55 leading-relaxed" style={{ fontSize: 14 }}>
+              <p className="text-ink/55 leading-relaxed" style={{ fontSize: 14 }}>
                 {slide.description}
               </p>
             </motion.div>
@@ -764,11 +770,11 @@ export function OnboardingScreen() {
                   width: i === current ? 28 : 8,
                   background: i === current
                     ? `linear-gradient(to right, ${slide.gradFrom}, ${slide.gradTo})`
-                    : "rgba(255,255,255,0.18)",
+                    : "color-mix(in srgb, var(--ink) 18%, transparent)",
                 }}
               />
             ))}
-            <span className="ml-auto text-white/30" style={{ fontSize: 12 }}>{current + 1} / {SLIDES.length}</span>
+            <span className="ml-auto text-ink/30" style={{ fontSize: 12 }}>{current + 1} / {SLIDES.length}</span>
           </div>
 
           {/* CTA */}
@@ -781,7 +787,7 @@ export function OnboardingScreen() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
                 onClick={goNext}
-                className="w-full py-4 rounded-2xl text-white font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+                className="w-full py-4 rounded-2xl text-ink font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
                 style={{
                   background: `linear-gradient(135deg, ${slide.gradFrom} 0%, ${slide.gradTo} 100%)`,
                   boxShadow: `0 10px 28px ${slide.accent}40`,
@@ -802,10 +808,10 @@ export function OnboardingScreen() {
               >
                 <button
                   onClick={() => { finishOnboarding(); navigate("/signup"); }}
-                  className="w-full py-4 rounded-2xl text-white font-bold active:scale-[0.97] transition-transform flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-2xl text-ink font-bold active:scale-[0.97] transition-transform flex items-center justify-center gap-2"
                   style={{
-                    background: "linear-gradient(135deg, #7C5CFF 0%, #9D7EFF 100%)",
-                    boxShadow: "0 10px 28px rgba(124,92,255,0.42)",
+                    background: "linear-gradient(135deg, #D4A24C 0%, #D4A24C 100%)",
+                    boxShadow: "0 10px 28px rgba(212,162,76,0.42)",
                     fontSize: 16,
                   }}
                 >
@@ -814,7 +820,7 @@ export function OnboardingScreen() {
                 </button>
                 <button
                   onClick={() => { finishOnboarding(); navigate("/login"); }}
-                  className="w-full py-3.5 rounded-2xl text-white/65 font-medium border border-white/10 hover:border-white/20 transition-colors"
+                  className="w-full py-3.5 rounded-2xl text-ink/65 font-medium border border-ink/10 hover:border-ink/20 transition-colors"
                   style={{ fontSize: 15 }}
                 >
                   I Already Have an Account
@@ -835,3 +841,5 @@ export function OnboardingScreen() {
     </div>
   );
 }
+
+

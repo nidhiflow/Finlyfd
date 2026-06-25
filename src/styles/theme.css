@@ -117,6 +117,15 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Finly Custom Semantic Variables */
+  --color-bg-deep: var(--bg-deep);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-divider: var(--divider);
 }
 
 @layer base {
@@ -126,8 +135,61 @@
 
   body {
     @apply bg-background text-foreground;
-    background-color: #0D0F14;
+    background-color: var(--bg-deep, #10171A);
+    font-family: 'Inter', sans-serif;
   }
+
+  :root, .dark-mode {
+    --bg-deep: #10171A;
+    --surface: #192225;
+    --surface-raised: #212C30;
+    --ink: #EDEEE9;
+    --ink-muted: #8B9A98;
+    --ink-faint: #5E6B69;
+    --divider: rgba(255,255,255,0.07);
+
+    /* Semantic category colors */
+    --income: #6FBE9B;
+    --income-chip: #2E4A3E;
+    --expense: #E2725B;
+    --expense-chip: #4A2E27;
+    --savings: #D4A24C;
+    --savings-chip: #7A5E2E;
+    --neutral-chip: #212C30;
+    --neutral-icon: #8B9A98;
+
+    /* Back-compat aliases (legacy names still referenced in code being migrated) */
+    --gold: #D4A24C;
+    --gold-dim: #7A5E2E;
+    --mint: #6FBE9B;
+    --coral: #E2725B;
+    --orange: #D4A24C;
+  }
+
+  .light-mode {
+    --bg-deep: #F5F7FA;
+    --surface: #FFFFFF;
+    --surface-raised: #F1F3F5;
+    --ink: #111827;
+    --ink-muted: #6B7280;
+    --ink-faint: #9CA3AF;
+    --divider: rgba(0,0,0,0.1);
+
+    /* Light mode semantic category overrides if needed, currently same */
+    --income: #10B981;
+    --income-chip: #D1FAE5;
+    --expense: #EF4444;
+    --expense-chip: #FEE2E2;
+    --savings: #F59E0B;
+    --savings-chip: #FEF3C7;
+    --neutral-chip: #F1F5F9;
+    --neutral-icon: #64748B;
+  }
+
+  .font-fraunces { font-family: 'Fraunces', serif; }
+  .font-inter { font-family: 'Inter', sans-serif; }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+
 
   /**
   * Default typography styles for HTML elements (h1-h4, p, label, button, input).
@@ -246,17 +308,17 @@
 }
 
 /* Preserve gradient text in hero cards — don't override */
-.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white,
-.light-mode .bg-gradient-to-r.from-\[\#7C5CFF\] .text-white,
-.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white,
-.light-mode [style*="background:linear-gradient(135deg,#7C5CFF"] .text-white {
+.light-mode .bg-gradient-to-br.from-\[\#D4A24C\] .text-white,
+.light-mode .bg-gradient-to-r.from-\[\#D4A24C\] .text-white,
+.light-mode [style*="background: linear-gradient(135deg,#D4A24C"] .text-white,
+.light-mode [style*="background:linear-gradient(135deg,#D4A24C"] .text-white {
   color: white !important;
 }
 
-.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white\/80,
-.light-mode .bg-gradient-to-br.from-\[\#7C5CFF\] .text-white\/70,
-.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white\/80,
-.light-mode [style*="background: linear-gradient(135deg,#7C5CFF"] .text-white\/70 {
+.light-mode .bg-gradient-to-br.from-\[\#D4A24C\] .text-white\/80,
+.light-mode .bg-gradient-to-br.from-\[\#D4A24C\] .text-white\/70,
+.light-mode [style*="background: linear-gradient(135deg,#D4A24C"] .text-white\/80,
+.light-mode [style*="background: linear-gradient(135deg,#D4A24C"] .text-white\/70 {
   color: rgba(255,255,255,0.8) !important;
 }
 

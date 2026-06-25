@@ -17,6 +17,8 @@ import { QuickLoginScreen } from "./screens/auth/QuickLoginScreen";
 
 // Main screens
 import { DashboardScreen } from "./screens/DashboardScreen";
+
+import { TimeMachineScreen } from "./screens/TimeMachineScreen";
 import { TransactionsScreen } from "./screens/TransactionsScreen";
 import { AddTransactionScreen } from "./screens/AddTransactionScreen";
 import { RecurringTransactionsScreen } from "./screens/RecurringTransactionsScreen";
@@ -28,6 +30,8 @@ import { BudgetScreen } from "./screens/BudgetScreen";
 import { GoalsScreen } from "./screens/GoalsScreen";
 import { AIAgentScreen } from "./screens/AIAgentScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
+import { SubscriptionsScreen } from "./screens/SubscriptionsScreen";
+import { AdminScreen } from "./screens/AdminScreen";
 
 export const router = createBrowserRouter([
   // ── Root: evaluates state and redirects to the right screen ──
@@ -75,6 +79,8 @@ export const router = createBrowserRouter([
     Component: MainLayout,
     children: [
       { index: true, Component: DashboardScreen },
+
+      { path: "time-machine", Component: TimeMachineScreen },
       { path: "transactions", Component: TransactionsScreen },
       { path: "add-transaction", Component: AddTransactionScreen },
       { path: "edit-transaction/:id", Component: AddTransactionScreen },
@@ -87,6 +93,8 @@ export const router = createBrowserRouter([
       { path: "goals", Component: GoalsScreen },
       { path: "ai-agent", Component: AIAgentScreen },
       { path: "settings", Component: SettingsScreen },
+      { path: "subscriptions", Component: SubscriptionsScreen },
+      { path: "admin", Component: AdminScreen },
     ],
   },
 

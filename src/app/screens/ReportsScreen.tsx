@@ -1,22 +1,24 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ComponentType } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ChevronLeft, ChevronRight, ChevronDown,
   Sparkles, TrendingUp, TrendingDown, ArrowLeft, BarChart2, X,
+  Calendar, CalendarDays, CalendarClock
 } from "lucide-react";
 import { statsAPI } from "../services/api";
 import { DateRangePicker } from "../components/DateRangePicker";
+import { useCategoryContext } from "../context/CategoryContext";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 type PeriodType = "daily" | "weekly" | "monthly" | "annual" | "custom";
 type ChartType  = "expense" | "income";
 
 interface SubData {
-  id: string; name: string; emoji: string;
+  id: string; name: string; emoji: string; icon?: any;
   color: string; amount: number; percentage: number;
 }
 interface CatData {
-  id: string; name: string; emoji: string;
+  id: string; name: string; emoji: string; icon?: any;
   color: string; amount: number; percentage: number;
   trend: number; // % change vs last period
   subs: SubData[];
@@ -32,17 +34,17 @@ const EXPENSE_MAR: CatData[] = [];
 const INCOME_MAR: CatData[] = [];
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const PERIOD_OPTIONS: {id: PeriodType; label: string; emoji: string}[] = [
-  {id:"daily",   label:"Daily",         emoji:"📅"},
-  {id:"weekly",  label:"Weekly",        emoji:"📊"},
-  {id:"monthly", label:"Monthly",       emoji:"📆"},
-  {id:"annual",  label:"Annually",      emoji:"📈"},
-  {id:"custom",  label:"Custom Period", emoji:"⏳"},
+const PERIOD_OPTIONS: {id: PeriodType; label: string; icon: ComponentType<any>}[] = [
+  {id:"daily",   label:"Daily",         icon: Calendar},
+  {id:"weekly",  label:"Weekly",        icon: BarChart2},
+  {id:"monthly", label:"Monthly",       icon: CalendarDays},
+  {id:"annual",  label:"Annually",      icon: TrendingUp},
+  {id:"custom",  label:"Custom Period", icon: CalendarClock},
 ];
 
 // ─── SVG Geometry ──────────────────────────────────────────────────────────────
 const CX = 180, CY = 155;
-const OUTER_R = 82, INNER_R = 48, LABEL_R = 116;
+const OUTER_R = 82, INNER_R = 0, LABEL_R = 116;
 const LABEL_THRESHOLD = 5.5; // only label segments >= this %
 
 function p2c(cx: number, cy: number, r: number, angle: number) {
@@ -51,11 +53,14 @@ function p2c(cx: number, cy: number, r: number, angle: number) {
 }
 
 function arcPath(cx: number, cy: number, oR: number, iR: number, sA: number, eA: number) {
-  const gap = 1.2;
+  const gap = 0;
   const s = sA + gap / 2, e = eA - gap / 2;
   if (e <= s) return "";
   const large = e - s > 180 ? 1 : 0;
   const os = p2c(cx, cy, oR, s), oe = p2c(cx, cy, oR, e);
+  if (iR === 0) {
+    return `M${cx} ${cy} L${os.x} ${os.y} A${oR} ${oR} 0 ${large} 1 ${oe.x} ${oe.y} Z`;
+  }
   const is = p2c(cx, cy, iR, e), ie = p2c(cx, cy, iR, s);
   return `M${os.x} ${os.y} A${oR} ${oR} 0 ${large} 1 ${oe.x} ${oe.y} L${is.x} ${is.y} A${iR} ${iR} 0 ${large} 0 ${ie.x} ${ie.y}Z`;
 }
@@ -84,12 +89,19 @@ function useAnimKey(dep: unknown) {
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
-const fmtINR = (n: number) =>
-  n >= 100000 ? `₹${(n/100000).toFixed(1)}L`
-  : n >= 1000  ? `₹${(n/1000).toFixed(0)}K`
-  : `₹${Math.round(n)}`;
+const fmtINR = (n: number) => {
+  if (n >= 100000) {
+    const val = parseFloat((n / 100000).toFixed(1));
+    return `₹${val}L`;
+  }
+  if (n >= 1000) {
+    const val = parseFloat((n / 1000).toFixed(1));
+    return `₹${val}K`;
+  }
+  return `₹${Math.round(n)}`;
+};
 
-const fmtFull = (n: number) => `₹${Math.abs(n).toLocaleString("en-IN")}`;
+const fmtFull = (n: number) => `₹${Math.round(Math.abs(n)).toLocaleString("en-IN")}`;
 
 // ─── Pie SVG ───────────────────────────────────────────────────────────────────
 function PieChartSVG({
@@ -104,7 +116,8 @@ function PieChartSVG({
   const animKey = useAnimKey(data.map(d => d.id).join(","));
   const total = data.reduce((s, d) => s + d.amount, 0);
   const selected = data.find(d => d.id === selectedId);
-  const accentColor = chartType === "income" ? "#22C55E" : "#7C5CFF";
+  const selectedSegInfo = segments.find(s => s.cat.id === selectedId);
+  const accentColor = chartType === "income" ? "var(--income)" : "var(--expense)";
 
   // Labels: only for segments above threshold
   const labeledSegs = segments.filter(s => s.cat.percentage >= LABEL_THRESHOLD);
@@ -112,13 +125,6 @@ function PieChartSVG({
   return (
     <svg width="360" height="310" viewBox="0 0 360 310" style={{ overflow: "visible" }}>
       <defs>
-        {/* Radial gradients per segment */}
-        {segments.map(({ cat }) => (
-          <radialGradient key={cat.id} id={`grad-${cat.id}`} cx="35%" cy="35%" r="75%">
-            <stop offset="0%" stopColor={cat.color} stopOpacity="1" />
-            <stop offset="100%" stopColor={cat.color} stopOpacity="0.75" />
-          </radialGradient>
-        ))}
         {/* Glow filter */}
         <filter id="seg-glow" x="-30%" y="-30%" width="160%" height="160%">
           <feGaussianBlur stdDeviation="5" result="blur" />
@@ -133,7 +139,7 @@ function PieChartSVG({
       {/* Background ring (track) */}
       <circle cx={CX} cy={CY} r={(OUTER_R + INNER_R) / 2}
         fill="none"
-        stroke="rgba(255,255,255,0.04)"
+        stroke="color-mix(in srgb, var(--ink) 4%, transparent)"
         strokeWidth={OUTER_R - INNER_R}
       />
 
@@ -157,17 +163,13 @@ function PieChartSVG({
             const d = arcPath(CX, CY, OUTER_R, INNER_R, startAngle, endAngle);
             return (
               <g key={cat.id} transform={`translate(${tx},${ty})`}>
-                {isSelected && (
-                  <path d={arcPath(CX - tx, CY - ty, OUTER_R + 4, INNER_R - 4, startAngle, endAngle)}
-                    fill={cat.color} fillOpacity="0.18" />
-                )}
                 <path
                   d={d}
-                  fill={`url(#grad-${cat.id})`}
+                  fill={cat.color}
+                  stroke="var(--bg-deep)"
+                  strokeWidth="1.5"
                   filter={isSelected ? "url(#seg-glow)" : "none"}
-                  strokeWidth={isSelected ? "0" : "0.5"}
-                  stroke="rgba(11,15,26,0.5)"
-                  style={{ cursor: "pointer", transition: "filter 0.2s" }}
+                  style={{ cursor: "pointer", transition: "all 0.2s" }}
                   onClick={() => onSelect(cat.id)}
                 />
               </g>
@@ -197,61 +199,80 @@ function PieChartSVG({
               />
               <circle cx={connStart.x} cy={connStart.y} r="2" fill={cat.color} fillOpacity="0.7" />
               {/* Label bubble */}
-              <text x={labelX} y={labelPt.y - 5} textAnchor={anchor}
-                fill="rgba(255,255,255,0.85)" fontSize="11" fontFamily="Inter,sans-serif" fontWeight="600">
-                {cat.emoji} {cat.percentage.toFixed(0)}%
+              <text x={labelX} y={labelPt.y - 4} textAnchor={anchor}
+                fill="color-mix(in srgb, var(--ink) 85%, transparent)" fontSize="11" fontFamily="Inter,sans-serif" fontWeight="700">
+                {cat.name.length > 12 ? cat.name.slice(0, 10) + '...' : cat.name}
               </text>
-              <text x={labelX} y={labelPt.y + 7} textAnchor={anchor}
-                fill={cat.color} fontSize="10" fontFamily="Inter,sans-serif" fontWeight="500">
-                {fmtINR(cat.amount)}
+              <text x={labelX} y={labelPt.y + 10} textAnchor={anchor}
+                fill="color-mix(in srgb, var(--ink) 50%, transparent)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="500">
+                {cat.percentage.toFixed(1)} %
               </text>
             </motion.g>
           );
         })}
       </AnimatePresence>
 
-      {/* Center info */}
-      <motion.g
-        key={selectedId ?? "total"}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.25 }}
-        style={{ transformOrigin: `${CX}px ${CY}px` }}
-      >
-        {selected ? (
-          <>
-            <text x={CX} y={CY - 14} textAnchor="middle"
-              fill="rgba(255,255,255,0.42)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="600"
-              letterSpacing="0.4">SELECTED</text>
-            <text x={CX} y={CY + 4} textAnchor="middle"
-              fill="white" fontSize="21" fontFamily="Inter,sans-serif" fontWeight="700">
-              {selected.emoji}
-            </text>
-            <text x={CX} y={CY + 20} textAnchor="middle"
-              fill={selected.color} fontSize="13" fontFamily="Inter,sans-serif" fontWeight="700">
-              {selected.percentage.toFixed(0)}%
-            </text>
-            <text x={CX} y={CY + 34} textAnchor="middle"
-              fill="rgba(255,255,255,0.55)" fontSize="10" fontFamily="Inter,sans-serif">
-              {fmtINR(selected.amount)}
-            </text>
-          </>
-        ) : (
-          <>
-            <text x={CX} y={CY - 14} textAnchor="middle"
-              fill="rgba(255,255,255,0.38)" fontSize="10" fontFamily="Inter,sans-serif" fontWeight="600"
-              letterSpacing="0.4">{chartType === "expense" ? "TOTAL SPENT" : "TOTAL EARNED"}</text>
-            <text x={CX} y={CY + 8} textAnchor="middle"
-              fill="white" fontSize="20" fontFamily="Inter,sans-serif" fontWeight="800">
-              {fmtINR(total)}
-            </text>
-            <text x={CX} y={CY + 24} textAnchor="middle"
-              fill="rgba(255,255,255,0.35)" fontSize="10" fontFamily="Inter,sans-serif">
-              {data.length} categories
-            </text>
-          </>
+      {/* Center info moved below chart */}
+
+      {/* Floating Tooltip Card */}
+      <AnimatePresence>
+        {selectedSegInfo && selected && (
+          <motion.g
+            key={selected.id}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+          >
+            {(() => {
+              const isRight = selectedSegInfo.midAngle < 180;
+              const rectWidth = 110;
+              const rectHeight = 44;
+              const tooltipPt = p2c(CX, CY, OUTER_R + 15, selectedSegInfo.midAngle);
+              const rx = isRight ? tooltipPt.x + 5 : tooltipPt.x - rectWidth - 5;
+              const ry = tooltipPt.y - rectHeight / 2;
+              return (
+                <g>
+                  {/* Tooltip Card Background */}
+                  <rect
+                    x={rx}
+                    y={ry}
+                    width={rectWidth}
+                    height={rectHeight}
+                    rx="4"
+                    fill="var(--surface)"
+                    stroke={selected.color}
+                    strokeWidth="2"
+                    style={{ filter: "drop-shadow(0px 4px 12px rgba(0,0,0,0.5))" }}
+                  />
+                  {/* Category Name */}
+                  <text
+                    x={rx + 10}
+                    y={ry + 16}
+                    fill="color-mix(in srgb, var(--ink) 60%, transparent)"
+                    fontSize="10"
+                    fontFamily="Inter,sans-serif"
+                    fontWeight="500"
+                  >
+                    {selected.name.length > 12 ? selected.name.slice(0, 10) + '...' : selected.name}
+                  </text>
+                  {/* Amount */}
+                  <text
+                    x={rx + 10}
+                    y={ry + 32}
+                    fill="var(--ink)"
+                    fontSize="13"
+                    fontFamily="Inter,sans-serif"
+                    fontWeight="700"
+                  >
+                    {fmtFull(selected.amount)}
+                  </text>
+                </g>
+              );
+            })()}
+          </motion.g>
         )}
-      </motion.g>
+      </AnimatePresence>
     </svg>
   );
 }
@@ -265,13 +286,13 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
       <motion.button whileTap={{ scale: 0.94 }} onClick={() => setOpen(v => !v)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-2xl transition-all"
         style={{
-          background: open ? "rgba(124,92,255,0.2)" : "rgba(255,255,255,0.07)",
-          border: `1px solid ${open ? "rgba(124,92,255,0.4)" : "rgba(255,255,255,0.1)"}`,
+          background: open ? "rgba(212,162,76,0.2)" : "var(--divider)",
+          border: `1px solid ${open ? "rgba(212,162,76,0.4)" : "var(--divider)"}`,
         }}>
-        <span style={{ fontSize: 13 }}>{cur.emoji}</span>
-        <span className="text-white font-semibold" style={{ fontSize: 12 }}>{cur.label}</span>
+        <cur.icon className="w-3.5 h-3.5 text-ink/75" />
+        <span className="text-ink font-semibold" style={{ fontSize: 12 }}>{cur.label}</span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown className="w-3.5 h-3.5 text-white/45" />
+          <ChevronDown className="w-3.5 h-3.5 text-ink/45" />
         </motion.div>
       </motion.button>
 
@@ -284,20 +305,20 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
             transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
             className="absolute right-0 top-full mt-2 rounded-2xl py-1.5 z-50 min-w-[170px]"
             style={{
-              background: "linear-gradient(180deg,#1C2440 0%,#141C30 100%)",
-              border: "1px solid rgba(255,255,255,0.12)",
+              background: "var(--surface)",
+              border: "1px solid var(--divider)",
               boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
             }}>
             {PERIOD_OPTIONS.map(opt => (
               <button key={opt.id}
                 onClick={() => { onChange(opt.id); setOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-4 py-2.5 transition-colors hover:bg-white/5"
+                className="w-full flex items-center gap-2.5 px-4 py-2.5 transition-colors hover:bg-ink/5"
                 style={{ fontSize: 13 }}>
-                <span>{opt.emoji}</span>
-                <span style={{ color: period === opt.id ? "#9D7EFF" : "rgba(255,255,255,0.72)", fontWeight: period === opt.id ? 700 : 400 }}>
+                <opt.icon className="w-3.5 h-3.5" style={{ color: period === opt.id ? "#D4A24C" : "color-mix(in srgb, var(--ink) 54%, transparent)" }} />
+                <span style={{ color: period === opt.id ? "#D4A24C" : "color-mix(in srgb, var(--ink) 72%, transparent)", fontWeight: period === opt.id ? 700 : 400 }}>
                   {opt.label}
                 </span>
-                {period === opt.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#7C5CFF]" />}
+                {period === opt.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />}
               </button>
             ))}
           </motion.div>
@@ -311,25 +332,26 @@ function PeriodDropdown({ period, onChange }: { period: PeriodType; onChange: (p
 function InsightBanner({ data, chartType }: { data: CatData[]; chartType: ChartType }) {
   const top = data[0];
   const biggest = data.reduce((a, b) => b.amount > a.amount ? b : a, data[0]);
+  const InsightIcon = biggest.icon ? () => <biggest.icon className="w-3.5 h-3.5 inline-block -mt-0.5" /> : () => <>{biggest.emoji}</>;
   const text = chartType === "expense"
-    ? `You spent ${Math.round(biggest.percentage)}% on ${biggest.name} this month ${biggest.emoji}`
-    : `${biggest.name} is your top income source at ${Math.round(biggest.percentage)}% ${biggest.emoji}`;
+    ? <p>You spent {Math.round(biggest.percentage)}% on {biggest.name} this month <InsightIcon /></p>
+    : <p>{biggest.name} is your top income source at {Math.round(biggest.percentage)}% <InsightIcon /></p>;
 
   return (
     <div className="mx-4 mb-3 rounded-2xl px-4 py-3.5 relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg,rgba(124,92,255,0.14) 0%,rgba(76,201,240,0.07) 100%)",
-        border: "1px solid rgba(124,92,255,0.25)",
+        background: "linear-gradient(135deg,rgba(212,162,76,0.14) 0%,rgba(212,162,76,0.07) 100%)",
+        border: "1px solid rgba(212,162,76,0.25)",
       }}>
       <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle,rgba(124,92,255,0.22) 0%,transparent 70%)" }} />
+        style={{ background: "radial-gradient(circle,rgba(212,162,76,0.22) 0%,transparent 70%)" }} />
       <div className="flex items-start gap-3 relative z-10">
         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)" }}>
-          <Sparkles className="w-4 h-4 text-white" />
+          style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
+          <Sparkles className="w-4 h-4 text-ink" />
         </div>
         <div>
-          <p className="text-white font-semibold" style={{ fontSize: 12.5, lineHeight: 1.5 }}>{text}</p>
+          <div className="text-ink font-semibold" style={{ fontSize: 12.5, lineHeight: 1.5 }}>{text}</div>
           {top.trend !== 0 && (
             <div className="flex items-center gap-1 mt-1">
               {top.trend > 0
@@ -351,7 +373,7 @@ function CategoryRow({
   cat, rank, isSelected, compareAmt, showCompare, isIncome, onTap,
 }: {
   cat: CatData | SubData;
-  rank: number;
+  rank?: number;
   isSelected: boolean;
   compareAmt?: number;
   showCompare: boolean;
@@ -379,26 +401,27 @@ function CategoryRow({
       layout
       whileTap={{ scale: 0.975 }}
       onClick={onTap}
-      className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all text-left"
+      className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all text-left"
       style={{
         background: isSelected
-          ? `linear-gradient(135deg,${cat.color}18 0%,${cat.color}08 100%)`
-          : "rgba(255,255,255,0.03)",
+          ? `color-mix(in srgb, var(--ink) 5%, transparent)`
+          : "color-mix(in srgb, var(--ink) 2%, transparent)",
         border: isSelected
-          ? `1px solid ${cat.color}40`
-          : "1px solid rgba(255,255,255,0.06)",
+          ? `1px solid ${cat.color}50`
+          : "1px solid color-mix(in srgb, var(--ink) 5%, transparent)",
         marginBottom: 6,
       }}>
-      {/* Rank badge */}
-      <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center"
-        style={{ background: `${cat.color}22`, border: `1px solid ${cat.color}35` }}>
-        <span style={{ fontSize: 16 }}>{cat.emoji}</span>
+      {/* Percentage Badge */}
+      <div className="w-12 py-1 flex items-center justify-center text-[10px] font-extrabold text-ink rounded-lg flex-shrink-0"
+        style={{ background: cat.color }}>
+        {cat.percentage.toFixed(0)}%
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="text-white font-semibold truncate" style={{ fontSize: 13 }}>{cat.name}</p>
+          {cat.icon ? <cat.icon className="w-4 h-4 text-ink/85 flex-shrink-0" /> : <span className="text-base leading-none flex-shrink-0">{cat.emoji}</span>}
+          <p className="text-ink font-semibold truncate" style={{ fontSize: 13 }}>{cat.name}</p>
           {hasSubs && (
             <span className="px-1.5 py-0.5 rounded-full flex-shrink-0"
               style={{ fontSize: 9, fontWeight: 700, background: `${cat.color}22`, color: cat.color }}>
@@ -410,7 +433,7 @@ function CategoryRow({
 
       {/* Right side */}
       <div className="flex flex-col items-end gap-1 flex-shrink-0">
-        <p className="font-bold" style={{ fontSize: 14, color: cat.color }}>{fmtINR(cat.amount)}</p>
+        <p className="font-fraunces font-bold text-ink text-[13px] tabular-nums">{fmtFull(cat.amount)}</p>
         <div className="flex items-center gap-1.5 justify-end w-full">
           {/* Trend arrow and text is placed on the left side of the % pill for clean vertical alignment */}
           {displayTrend !== 0 && (
@@ -424,7 +447,7 @@ function CategoryRow({
             </div>
           )}
           {/* % pill is always on the right side of the card, flush with the amount above it */}
-          <span className="px-2 py-0.5 rounded-full text-right"
+          <span className="px-2 py-0.5 rounded-full text-right font-semibold"
             style={{ fontSize: 10, fontWeight: 800, background: `${cat.color}22`, color: cat.color }}>
             {cat.percentage.toFixed(1)}%
           </span>
@@ -436,6 +459,7 @@ function CategoryRow({
 
 // ─── Main Screen ───────────────────────────────────────────────────────────────
 export function ReportsScreen() {
+  const { categories } = useCategoryContext();
   const [chartType, setChartType] = useState<ChartType>("expense");
   const [period, setPeriod]       = useState<PeriodType>("monthly");
   const [month, setMonth]         = useState(new Date().getMonth()); // current month
@@ -446,6 +470,8 @@ export function ReportsScreen() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [expenseData, setExpenseData] = useState<CatData[]>([]);
   const [incomeData, setIncomeData] = useState<CatData[]>([]);
+  const [compareExpenseData, setCompareExpenseData] = useState<CatData[]>([]);
+  const [compareIncomeData, setCompareIncomeData] = useState<CatData[]>([]);
   const [summaryData, setSummaryData] = useState({ income: 0, expense: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [customStart, setCustomStart] = useState<Date | null>(null);
@@ -455,29 +481,44 @@ export function ReportsScreen() {
   // Load data from API
   useEffect(() => {
     const monthStr = `${year}-${String(month + 1).padStart(2, "0")}`;
+    const prevMonth = month === 0 ? 11 : month - 1;
+    const prevYear = month === 0 ? year - 1 : year;
+    const prevMonthStr = `${prevYear}-${String(prevMonth + 1).padStart(2, "0")}`;
+
     setIsLoading(true);
     Promise.all([
       statsAPI.getCategoryBreakdown(monthStr),
       statsAPI.getSummary(monthStr),
-    ]).then(([breakdown, summary]) => {
+      statsAPI.getCategoryBreakdown(prevMonthStr),
+    ]).then(([breakdown, summary, prevBreakdown]) => {
       // breakdown is array: [{category_id, category_name, icon, color, total, type}]
       const allCats = breakdown || [];
       const totalExpense = allCats.filter((c: any) => c.type === 'expense').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
       const totalIncome = allCats.filter((c: any) => c.type === 'income').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
 
-      const mapCats = (cats: any[], total: number): CatData[] => cats.map((c: any) => ({
-        id: c.category_id || c.id,
-        name: c.category_name || c.name || 'Unknown',
-        emoji: c.icon || '📦',
-        color: c.color || '#7C5CFF',
-        amount: parseFloat(c.total || 0),
-        percentage: total > 0 ? (parseFloat(c.total || 0) / total) * 100 : 0,
-        trend: 0,
-        subs: [],
-      }));
+      const allPrevCats = prevBreakdown || [];
+      const totalPrevExpense = allPrevCats.filter((c: any) => c.type === 'expense').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
+      const totalPrevIncome = allPrevCats.filter((c: any) => c.type === 'income').reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
+
+      const mapCats = (cats: any[], total: number): CatData[] => cats.map((c: any) => {
+        const catObj = categories.find(cat => cat.id === (c.category_id || c.id));
+        return {
+          id: c.category_id || c.id,
+          name: c.category_name || c.name || 'Unknown',
+          emoji: c.icon || '📦',
+          icon: catObj?.icon,
+          color: c.color || '#D4A24C',
+          amount: parseFloat(c.total || 0),
+          percentage: total > 0 ? (parseFloat(c.total || 0) / total) * 100 : 0,
+          trend: 0,
+          subs: [],
+        };
+      });
 
       setExpenseData(mapCats(allCats.filter((c: any) => c.type === 'expense'), totalExpense));
       setIncomeData(mapCats(allCats.filter((c: any) => c.type === 'income'), totalIncome));
+      setCompareExpenseData(mapCats(allPrevCats.filter((c: any) => c.type === 'expense'), totalPrevExpense));
+      setCompareIncomeData(mapCats(allPrevCats.filter((c: any) => c.type === 'income'), totalPrevIncome));
       setSummaryData({ income: summary?.income || 0, expense: summary?.expense || 0 });
     }).catch(console.error).finally(() => setIsLoading(false));
   }, [month, year]);
@@ -486,7 +527,7 @@ export function ReportsScreen() {
 
   // Current data based on type
   const mainData   = chartType === "expense" ? expenseData : incomeData;
-  const compareData: CatData[] = [];
+  const compareData = chartType === "expense" ? compareExpenseData : compareIncomeData;
 
   // Drilldown
   const displayData: (CatData | SubData)[] = drillCat ? drillCat.subs : mainData;
@@ -529,8 +570,8 @@ export function ReportsScreen() {
     period === "daily"   ? `${MONTHS[month]} 15, ${year}` :
     "Custom Period";
 
-  const accentIncome  = "#22C55E";
-  const accentExpense = "#F72585";
+  const accentIncome  = "var(--income)";
+  const accentExpense = "var(--expense)";
   const pieAccent     = chartType === "income" ? accentIncome : accentExpense;
 
   // Empty state (future: no data)
@@ -539,7 +580,7 @@ export function ReportsScreen() {
   return (
     <>
     <div className="relative pb-32"
-      style={{ background: "linear-gradient(180deg,#0B0F1A 0%,#121826 100%)", minHeight: "calc(100vh - 56px)" }}>
+      style={{ background: "var(--bg-deep)", minHeight: "calc(100vh - 56px)" }}>
 
       {/* Top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-28 pointer-events-none"
@@ -551,21 +592,21 @@ export function ReportsScreen() {
         <div className="flex items-center gap-3">
           <motion.button whileTap={{ scale: 0.88 }} onClick={prevPeriod}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-            <ChevronLeft className="w-4 h-4 text-white/55" />
+            style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+            <ChevronLeft className="w-4 h-4 text-ink/55" />
           </motion.button>
           <div className="text-center">
-            <p className="text-white font-bold" style={{ fontSize: 15 }}>{periodLabel}</p>
+            <p className="text-ink font-bold" style={{ fontSize: 15 }}>{periodLabel}</p>
             {drillCat && (
-              <p style={{ fontSize: 11, color: drillCat.color }}>
-                {drillCat.emoji} {drillCat.name}
+              <p className="flex items-center justify-center gap-1.5" style={{ fontSize: 11, color: drillCat.color }}>
+                {drillCat.icon ? <drillCat.icon className="w-3 h-3" /> : drillCat.emoji} {drillCat.name}
               </p>
             )}
           </div>
           <motion.button whileTap={{ scale: 0.88 }} onClick={nextPeriod}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-            <ChevronRight className="w-4 h-4 text-white/55" />
+            style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+            <ChevronRight className="w-4 h-4 text-ink/55" />
           </motion.button>
         </div>
         <PeriodDropdown period={period} onChange={p => {
@@ -574,87 +615,41 @@ export function ReportsScreen() {
         }} />
       </div>
 
-      {/* ── Summary Metrics ── */}
+      {/* ── Income / Expense Toggle Tab Bar ── */}
       {hasTransactions && (
-        <div className="px-4 mb-3">
-          <div className="grid grid-cols-2 gap-2.5">
-            {/* Income card */}
-            <div className="rounded-2xl px-4 py-3.5 relative overflow-hidden"
-              style={{ background: "linear-gradient(135deg,rgba(34,197,94,0.14),rgba(34,197,94,0.06))", border: "1px solid rgba(34,197,94,0.25)" }}>
-              <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle,rgba(34,197,94,0.2) 0%,transparent 70%)" }} />
-              <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.38)", letterSpacing: "0.6px" }}>INCOME</p>
-              <p className="font-bold mt-1" style={{ fontSize: 16, color: "#4ADE80" }}>
-                {fmtFull(totalIncome)}
-              </p>
-              <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="w-3 h-3 text-emerald-400" />
-                <span style={{ fontSize: 10, color: "#4ADE80" }}>{incomeData.length > 0 ? `Top: ${incomeData[0]?.name}` : 'No income data'}</span>
-              </div>
-            </div>
-            {/* Expense card */}
-            <div className="rounded-2xl px-4 py-3.5 relative overflow-hidden"
-              style={{ background: "linear-gradient(135deg,rgba(247,37,133,0.14),rgba(247,37,133,0.06))", border: "1px solid rgba(247,37,133,0.25)" }}>
-              <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle,rgba(247,37,133,0.2) 0%,transparent 70%)" }} />
-              <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.38)", letterSpacing: "0.6px" }}>EXPENSES</p>
-              <p className="font-bold mt-1" style={{ fontSize: 16, color: "#F87171" }}>
-                {fmtFull(totalExpense)}
-              </p>
-              <div className="flex items-center gap-1 mt-1">
-                <TrendingDown className="w-3 h-3 text-rose-400" />
-                <span style={{ fontSize: 10, color: "#F87171" }}>{expenseData.length > 0 ? `Top: ${expenseData[0]?.name}` : 'No expense data'}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Ratio bar */}
-          <div className="mt-2.5">
-            <div className="flex items-center justify-between mb-1.5">
-              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>Expense ratio</span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: ratioPercent > 70 ? "#F87171" : "#4ADE80" }}>
-                {ratioPercent}% of income spent
-              </span>
-            </div>
-            <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="flex border-b border-ink/[0.08] px-4 mb-4 relative">
+          <button
+            onClick={() => { setChartType("income"); setSelectedSeg(null); setDrillCat(null); }}
+            className="flex-1 pb-3 text-center relative focus:outline-none cursor-pointer"
+          >
+            <span className="block text-ink/50 text-[10px] mb-1 font-bold tracking-wider">INCOME</span>
+            <span className={`font-fraunces text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "income" ? "text-[var(--income)]" : "text-ink/60"}`}>
+              {fmtFull(totalIncome)}
+            </span>
+            {chartType === "income" && (
               <motion.div
-                className="h-full rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${ratioPercent}%` }}
-                transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-                style={{ background: `linear-gradient(90deg,#22C55E,${ratioPercent > 70 ? "#F72585" : "#4CC9F0"})` }}
+                layoutId="activeTabUnderline"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--income)]"
+                transition={{ duration: 0.2 }}
               />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Income / Expense Pie Toggle ── */}
-      {hasTransactions && (
-        <div className="px-4 mb-1">
-          <div className="relative flex p-1 rounded-2xl"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <motion.div className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl"
-              animate={{ left: chartType === "expense" ? 4 : "calc(50%)" }}
-              transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
-              style={{
-                background: chartType === "expense"
-                  ? "linear-gradient(135deg,#F72585 0%,#7C5CFF 100%)"
-                  : "linear-gradient(135deg,#22C55E 0%,#4CC9F0 100%)",
-                boxShadow: chartType === "expense"
-                  ? "0 4px 14px rgba(247,37,133,0.3)"
-                  : "0 4px 14px rgba(34,197,94,0.3)",
-              }} />
-            {(["expense","income"] as ChartType[]).map(t => (
-              <button key={t}
-                onClick={() => { setChartType(t); setSelectedSeg(null); setDrillCat(null); }}
-                className="relative flex-1 py-2.5 rounded-xl z-10 flex items-center justify-center gap-2">
-                <span style={{ fontSize: 13, fontWeight: 700, color: chartType === t ? "white" : "rgba(255,255,255,0.35)" }}>
-                  {t === "expense" ? "💸 Expenses" : "💰 Income"}
-                </span>
-              </button>
-            ))}
-          </div>
+            )}
+          </button>
+          <button
+            onClick={() => { setChartType("expense"); setSelectedSeg(null); setDrillCat(null); }}
+            className="flex-1 pb-3 text-center relative focus:outline-none cursor-pointer"
+          >
+            <span className="block text-ink/50 text-[10px] mb-1 font-bold tracking-wider">EXPENSES</span>
+            <span className={`font-fraunces text-[15px] font-bold tabular-nums transition-colors duration-250 ${chartType === "expense" ? "text-[var(--expense)]" : "text-ink/60"}`}>
+              {fmtFull(totalExpense)}
+            </span>
+            {chartType === "expense" && (
+              <motion.div
+                layoutId="activeTabUnderline"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--expense)]"
+                transition={{ duration: 0.2 }}
+              />
+            )}
+          </button>
         </div>
       )}
 
@@ -693,18 +688,24 @@ export function ReportsScreen() {
               onSelect={handleSegClick}
               chartType={chartType}
             />
+            {/* Total display below pie chart */}
+            <div className="flex flex-col items-center justify-center -mt-10 mb-6">
+               <p className="text-ink/50 font-bold tracking-wider" style={{fontSize:11}}>{chartType === "expense" ? "TOTAL SPENT" : "TOTAL EARNED"}</p>
+               <p className="font-fraunces font-bold text-[32px] tabular-nums mt-1 text-ink">{fmtFull(displayData.reduce((s, d) => s + d.amount, 0))}</p>
+               <p className="text-ink/40 mt-1" style={{fontSize:13}}>{displayData.length} categories</p>
+            </div>
           </motion.div>
         </AnimatePresence>
       ) : (
         // Empty state
         <div className="flex flex-col items-center justify-center py-20 gap-4 mx-4">
-          <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-5xl"
-            style={{ background: "linear-gradient(135deg,rgba(124,92,255,0.1),rgba(76,201,240,0.05))", border: "1px solid rgba(124,92,255,0.2)" }}>
-            📊
+          <div className="w-24 h-24 rounded-3xl flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg,rgba(212,162,76,0.1),rgba(212,162,76,0.05))", border: "1px solid rgba(212,162,76,0.2)" }}>
+            <BarChart2 className="w-10 h-10 text-[#D4A24C]" />
           </div>
           <div className="text-center">
-            <p className="text-white font-bold mb-1" style={{ fontSize: 17 }}>No data available</p>
-            <p className="text-white/45" style={{ fontSize: 13, lineHeight: 1.5 }}>
+            <p className="text-ink font-bold mb-1" style={{ fontSize: 17 }}>No data available</p>
+            <p className="text-ink/45" style={{ fontSize: 13, lineHeight: 1.5 }}>
               Start adding income or expenses<br />to see your financial reports
             </p>
           </div>
@@ -720,15 +721,15 @@ export function ReportsScreen() {
       {!drillCat && hasTransactions && (
         <div className="px-4 mb-3">
           <div className="flex items-center justify-between py-3 px-4 rounded-2xl"
-            style={{ background: compareMode ? "linear-gradient(135deg,rgba(124,92,255,0.12),rgba(76,201,240,0.06))" : "rgba(255,255,255,0.04)", border: compareMode ? "1px solid rgba(124,92,255,0.25)" : "1px solid rgba(255,255,255,0.07)", transition: "all 0.3s" }}>
+            style={{ background: compareMode ? "linear-gradient(135deg,rgba(212,162,76,0.12),rgba(212,162,76,0.06))" : "color-mix(in srgb, var(--ink) 4%, transparent)", border: compareMode ? "1px solid rgba(212,162,76,0.25)" : "1px solid var(--divider)", transition: "all 0.3s" }}>
             <div className="flex items-center gap-2.5">
-              <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#7C5CFF" : "rgba(255,255,255,0.45)" }} />
-              <p className="font-medium" style={{ fontSize: 13, color: compareMode ? "white" : "rgba(255,255,255,0.65)" }}>Compare with last month</p>
+              <BarChart2 className="w-4 h-4" style={{ color: compareMode ? "#D4A24C" : "color-mix(in srgb, var(--ink) 45%, transparent)" }} />
+              <p className="font-medium" style={{ fontSize: 13, color: compareMode ? "white" : "color-mix(in srgb, var(--ink) 65%, transparent)" }}>Compare with last month</p>
             </div>
             <motion.button whileTap={{ scale: 0.9 }}
               onClick={() => setCompareMode(v => !v)}
               className="w-11 h-6 rounded-full relative"
-              style={{ background: compareMode ? "linear-gradient(135deg,#7C5CFF,#4CC9F0)" : "rgba(255,255,255,0.12)" }}>
+              style={{ background: compareMode ? "linear-gradient(135deg,#D4A24C,#D4A24C)" : "var(--divider)" }}>
               <motion.div
                 animate={{ x: compareMode ? 23 : 2 }}
                 transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
@@ -750,23 +751,23 @@ export function ReportsScreen() {
           >
             {/* Summary insight cards */}
             <div className="grid grid-cols-2 gap-2.5 mb-3">
-              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.2)" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "0.5px" }}>THIS MONTH</p>
-                <p className="font-bold mt-1" style={{ fontSize: 17, color: "#9D7EFF" }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(212,162,76,0.08)", border: "1px solid rgba(212,162,76,0.2)" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "color-mix(in srgb, var(--ink) 35%, transparent)", letterSpacing: "0.5px" }}>THIS MONTH</p>
+                <p className="font-bold mt-1" style={{ fontSize: 17, color: "#D4A24C" }}>
                   {fmtFull(mainData.reduce((s, c) => s + c.amount, 0))}
                 </p>
               </div>
-              <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "0.5px" }}>LAST MONTH</p>
-                <p className="font-bold mt-1" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)" }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1px solid var(--divider)" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "color-mix(in srgb, var(--ink) 35%, transparent)", letterSpacing: "0.5px" }}>LAST MONTH</p>
+                <p className="font-bold mt-1" style={{ fontSize: 17, color: "color-mix(in srgb, var(--ink) 55%, transparent)" }}>
                   {fmtFull(compareData.reduce((s, c) => s + c.amount, 0))}
                 </p>
               </div>
             </div>
 
             {/* Side-by-side comparison bars */}
-            <div className="rounded-2xl p-4 space-y-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <p className="text-white/40 font-semibold mb-2" style={{ fontSize: 11, letterSpacing: "0.5px" }}>CATEGORY COMPARISON</p>
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1px solid var(--divider)" }}>
+              <p className="text-ink/40 font-semibold mb-2" style={{ fontSize: 11, letterSpacing: "0.5px" }}>CATEGORY COMPARISON</p>
               {mainData.map((cat) => {
                 const prev = compareData.find(c => c.id === cat.id);
                 const prevAmt = prev?.amount || 0;
@@ -777,8 +778,8 @@ export function ReportsScreen() {
                   <div key={cat.id} className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span style={{ fontSize: 14 }}>{cat.emoji}</span>
-                        <span className="text-white/80 font-medium" style={{ fontSize: 12 }}>{cat.name}</span>
+                        {cat.icon ? <cat.icon className="w-3.5 h-3.5 text-ink/85" /> : <span style={{ fontSize: 14 }}>{cat.emoji}</span>}
+                        <span className="text-ink/80 font-medium" style={{ fontSize: 12 }}>{cat.name}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         {change !== 0 && (
@@ -791,25 +792,25 @@ export function ReportsScreen() {
                     </div>
                     {/* Current month bar */}
                     <div className="flex items-center gap-2">
-                      <span className="text-white/30 w-8" style={{ fontSize: 9 }}>Now</span>
-                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+                      <span className="text-ink/30 w-8" style={{ fontSize: 9 }}>Now</span>
+                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
                         <motion.div className="h-full rounded-full" initial={{ width: 0 }}
                           animate={{ width: `${maxAmt > 0 ? (cat.amount / maxAmt) * 100 : 0}%` }}
                           transition={{ duration: 0.6, delay: 0.1 }}
                           style={{ background: cat.color }} />
                       </div>
-                      <span className="text-white/60 w-14 text-right font-semibold" style={{ fontSize: 10 }}>{fmtINR(cat.amount)}</span>
+                      <span className="text-ink/60 w-14 text-right font-semibold" style={{ fontSize: 10 }}>{fmtINR(cat.amount)}</span>
                     </div>
                     {/* Last month bar */}
                     <div className="flex items-center gap-2">
-                      <span className="text-white/20 w-8" style={{ fontSize: 9 }}>Prev</span>
-                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+                      <span className="text-ink/20 w-8" style={{ fontSize: 9 }}>Prev</span>
+                      <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
                         <motion.div className="h-full rounded-full" initial={{ width: 0 }}
                           animate={{ width: `${maxAmt > 0 ? (prevAmt / maxAmt) * 100 : 0}%` }}
                           transition={{ duration: 0.6, delay: 0.15 }}
                           style={{ background: cat.color, opacity: 0.35 }} />
                       </div>
-                      <span className="text-white/35 w-14 text-right" style={{ fontSize: 10 }}>{fmtINR(prevAmt)}</span>
+                      <span className="text-ink/35 w-14 text-right" style={{ fontSize: 10 }}>{fmtINR(prevAmt)}</span>
                     </div>
                   </div>
                 );
@@ -818,14 +819,14 @@ export function ReportsScreen() {
 
             {/* Insight cards */}
             {(() => {
-              let highestIncrease = { name: "", pct: 0, emoji: "" };
-              let highestDecrease = { name: "", pct: 0, emoji: "" };
+              let highestIncrease = { name: "", pct: 0, emoji: "", icon: undefined as any };
+              let highestDecrease = { name: "", pct: 0, emoji: "", icon: undefined as any };
               mainData.forEach(cat => {
                 const prev = compareData.find(c => c.id === cat.id);
                 if (!prev || prev.amount === 0) return;
                 const pct = Math.round(((cat.amount - prev.amount) / prev.amount) * 100);
-                if (pct > highestIncrease.pct) highestIncrease = { name: cat.name, pct, emoji: cat.emoji };
-                if (pct < highestDecrease.pct) highestDecrease = { name: cat.name, pct, emoji: cat.emoji };
+                if (pct > highestIncrease.pct) highestIncrease = { name: cat.name, pct, emoji: cat.emoji, icon: cat.icon };
+                if (pct < highestDecrease.pct) highestDecrease = { name: cat.name, pct, emoji: cat.emoji, icon: cat.icon };
               });
               return (
                 <div className="grid grid-cols-2 gap-2.5 mt-3">
@@ -835,7 +836,9 @@ export function ReportsScreen() {
                         <TrendingUp className="w-3 h-3 text-rose-400" />
                         <span style={{ fontSize: 10, color: "#F87171", fontWeight: 700 }}>MOST INCREASED</span>
                       </div>
-                      <p className="text-white font-semibold" style={{ fontSize: 13 }}>{highestIncrease.emoji} {highestIncrease.name}</p>
+                      <div className="text-ink font-semibold flex items-center gap-1.5" style={{ fontSize: 13 }}>
+                        {highestIncrease.icon ? <highestIncrease.icon className="w-3.5 h-3.5" /> : highestIncrease.emoji} {highestIncrease.name}
+                      </div>
                       <p style={{ fontSize: 11, color: "#F87171" }}>+{highestIncrease.pct}%</p>
                     </div>
                   )}
@@ -845,7 +848,9 @@ export function ReportsScreen() {
                         <TrendingDown className="w-3 h-3 text-emerald-400" />
                         <span style={{ fontSize: 10, color: "#4ADE80", fontWeight: 700 }}>MOST DECREASED</span>
                       </div>
-                      <p className="text-white font-semibold" style={{ fontSize: 13 }}>{highestDecrease.emoji} {highestDecrease.name}</p>
+                      <div className="text-ink font-semibold flex items-center gap-1.5" style={{ fontSize: 13 }}>
+                        {highestDecrease.icon ? <highestDecrease.icon className="w-3.5 h-3.5" /> : highestDecrease.emoji} {highestDecrease.name}
+                      </div>
                       <p style={{ fontSize: 11, color: "#4ADE80" }}>{highestDecrease.pct}%</p>
                     </div>
                   )}
@@ -861,15 +866,15 @@ export function ReportsScreen() {
         <div className="px-4 pb-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: pieAccent }} />
-            <p className="text-white/38 font-semibold" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
+            <p className="text-ink/38 font-semibold flex items-center gap-1.5" style={{ fontSize: 11, letterSpacing: "0.5px" }}>
               {drillCat
-                ? `${drillCat.emoji} ${drillCat.name} BREAKDOWN`
+                ? <>{drillCat.icon ? <drillCat.icon className="w-3 h-3" /> : drillCat.emoji} {drillCat.name} BREAKDOWN</>
                 : `${chartType === "expense" ? "EXPENSE" : "INCOME"} BREAKDOWN`}
             </p>
             {selectedSeg && (
               <button onClick={() => setSelectedSeg(null)}
                 className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-full"
-                style={{ background: "rgba(255,255,255,0.07)", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--divider)", fontSize: 11, color: "color-mix(in srgb, var(--ink) 40%, transparent)" }}>
                 <X className="w-2.5 h-2.5" />
                 Clear
               </button>
@@ -885,7 +890,6 @@ export function ReportsScreen() {
                   exit={{ opacity: 0, y: -5 }} transition={{ delay: i * 0.04, duration: 0.2 }}>
                   <CategoryRow
                     cat={cat}
-                    rank={i + 1}
                     isSelected={selectedSeg === cat.id}
                     compareAmt={compareCat?.amount}
                     showCompare={compareMode && !drillCat}
@@ -907,7 +911,7 @@ export function ReportsScreen() {
               transition={{ delay: displayData.length * 0.04 + 0.1 }}
               className="mt-2 flex items-center justify-between px-4 py-3 rounded-2xl"
               style={{ background: `${pieAccent}10`, border: `1px solid ${pieAccent}25` }}>
-              <p className="text-white/55 font-semibold" style={{ fontSize: 13 }}>
+              <p className="text-ink/55 font-semibold" style={{ fontSize: 13 }}>
                 {drillCat ? "Subtotal" : chartType === "expense" ? "Total Expenses" : "Total Income"}
               </p>
               <p className="font-bold" style={{ fontSize: 15, color: pieAccent }}>
@@ -936,3 +940,4 @@ export function ReportsScreen() {
     </>
   );
 }
+

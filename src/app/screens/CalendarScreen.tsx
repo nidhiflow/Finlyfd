@@ -58,21 +58,21 @@ export function CalendarScreen() {
     <div className="px-5 py-6 space-y-6">
       {/* Month Selector */}
       <div className="flex items-center justify-between">
-        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
-          <ChevronLeft className="w-5 h-5 text-white" />
+        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
+          <ChevronLeft className="w-5 h-5 text-ink" />
         </button>
-        <h2 className="text-xl font-semibold text-white">{monthLabel}</h2>
-        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[#1B2130] flex items-center justify-center">
-          <ChevronRight className="w-5 h-5 text-white" />
+        <h2 className="text-xl font-semibold text-ink">{monthLabel}</h2>
+        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
+          <ChevronRight className="w-5 h-5 text-ink" />
         </button>
       </div>
 
       {/* Calendar Grid */}
-      <div className="bg-[#1B2130] rounded-2xl p-4 border border-white/5">
+      <div className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--divider)]">
         {/* Weekday Headers */}
         <div className="grid grid-cols-7 gap-2 mb-3">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-            <div key={day} className="text-center text-xs text-white/50 font-medium">
+            <div key={day} className="text-center text-xs text-ink/50 font-medium">
               {day}
             </div>
           ))}
@@ -97,8 +97,8 @@ export function CalendarScreen() {
                 onClick={() => setSelectedDate(stat.day)}
                 className={`relative aspect-square rounded-xl flex flex-col items-center justify-center transition-colors ${
                   isSelected
-                    ? "bg-[#7C5CFF] text-white"
-                    : "bg-[#0D0F14] text-white/70 hover:bg-[#0D0F14]/70"
+                    ? "bg-[#D4A24C] text-ink"
+                    : "bg-[var(--bg-deep)] text-ink/70 hover:bg-[var(--bg-deep)]/70"
                 }`}
               >
                 <span className="text-sm font-medium">{stat.day}</span>
@@ -119,29 +119,29 @@ export function CalendarScreen() {
       {/* Selected Day Details */}
       {selectedDate && selectedDayData && (
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">
+          <h3 className="text-lg font-semibold text-ink mb-4">
             {currentDate.toLocaleDateString("en-US", { month: "long" })} {selectedDate}, {year}
           </h3>
 
           {selectedDayData.transactions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <p className="text-2xl mb-2">📭</p>
-              <p className="text-white/50 text-sm">No transactions on this day</p>
+              <p className="text-ink/50 text-sm">No transactions on this day</p>
             </div>
           ) : (
             <div className="space-y-3">
               {selectedDayData.transactions.map((tx: any, i: number) => (
                 <div
                   key={tx.id || i}
-                  className="flex items-center justify-between p-4 bg-[#1B2130] rounded-xl border border-white/5"
+                  className="flex items-center justify-between p-4 bg-[var(--surface)] rounded-xl border border-[var(--divider)]"
                 >
                   <div>
-                    <p className="text-sm font-medium text-white">{tx.note || tx.description || "Transaction"}</p>
-                    <p className="text-xs text-white/50 capitalize">{tx.type}</p>
+                    <p className="text-sm font-medium text-ink">{tx.note || tx.description || "Transaction"}</p>
+                    <p className="text-xs text-ink/50 capitalize">{tx.type}</p>
                   </div>
                   <p
                     className={`text-sm font-semibold ${
-                      tx.type === "income" ? "text-[#22C55E]" : tx.type === "savings" ? "text-[#FFB703]" : "text-white"
+                      tx.type === "income" ? "text-[#22C55E]" : tx.type === "savings" ? "text-[#FFB703]" : "text-ink"
                     }`}
                   >
                     {tx.type === "income" ? "+" : tx.type === "savings" ? "" : "-"}₹{Math.abs(parseFloat(tx.amount || 0)).toLocaleString("en-IN")}
@@ -155,11 +155,11 @@ export function CalendarScreen() {
           {(selectedDayData.income > 0 || selectedDayData.expense > 0) && (
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div className="bg-[#22C55E]/10 border border-[#22C55E]/30 rounded-xl p-4">
-                <p className="text-xs text-white/50 mb-1">Income</p>
+                <p className="text-xs text-ink/50 mb-1">Income</p>
                 <p className="text-xl font-bold text-[#22C55E]">₹{selectedDayData.income.toLocaleString("en-IN")}</p>
               </div>
               <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xl p-4">
-                <p className="text-xs text-white/50 mb-1">Expense</p>
+                <p className="text-xs text-ink/50 mb-1">Expense</p>
                 <p className="text-xl font-bold text-[#EF4444]">₹{selectedDayData.expense.toLocaleString("en-IN")}</p>
               </div>
             </div>
@@ -169,3 +169,4 @@ export function CalendarScreen() {
     </div>
   );
 }
+

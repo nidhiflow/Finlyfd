@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Plus, Target, Calendar, ArrowLeft, X, Check,
   Pause, Play, Trash2, Edit3, Archive, ChevronRight,
-  TrendingUp, Award, Search, Filter,
+  TrendingUp, Award, Search, Filter, Home, Car, Laptop, Plane, Briefcase, GraduationCap, Heart, Book, Coffee, Shield, Sparkles
 } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 interface Goal {
@@ -38,9 +39,23 @@ interface Contribution {
 // ─── Initial Data ───────────────────────────────────────────────────────────────
 const INITIAL_GOALS: Goal[] = [];
 
-const GOAL_EMOJIS = ["🏥","✈️","💻","🚗","🏠","💍","📱","🎓","👶","💰","🏖️","🎯"];
+const GOAL_ICONS = [
+  { id: "target", icon: Target },
+  { id: "home", icon: Home },
+  { id: "car", icon: Car },
+  { id: "laptop", icon: Laptop },
+  { id: "plane", icon: Plane },
+  { id: "briefcase", icon: Briefcase },
+  { id: "grad", icon: GraduationCap },
+  { id: "heart", icon: Heart },
+  { id: "book", icon: Book },
+  { id: "coffee", icon: Coffee },
+  { id: "shield", icon: Shield },
+  { id: "award", icon: Award },
+];
+const getIcon = (id: string) => GOAL_ICONS.find(i => i.id === id)?.icon || Target;
 const ACCOUNTS = ["HDFC Savings","SBI Salary A/C","ICICI Credit Card","Cash Wallet"];
-const GOAL_COLORS = ["#7C5CFF","#4CC9F0","#22C55E","#FFA500","#F72585","#FFB703","#4895EF","#EF4444"];
+const GOAL_COLORS = ["#D4A24C","#D4A24C","#22C55E","#FFA500","#F72585","#FFB703","#4895EF","#EF4444"];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 const fmtINR = (n: number) => `₹${n.toLocaleString("en-IN")}`;
@@ -51,7 +66,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
   goal?: Goal | null; onSave: (g: Partial<Goal>) => void; onClose: () => void;
 }) {
   const [name, setName] = useState(goal?.name || "");
-  const [emoji, setEmoji] = useState(goal?.emoji || "🎯");
+  const [iconId, setIconId] = useState(goal?.emoji || "target");
   const [target, setTarget] = useState(goal?.target?.toString() || "");
   const [saved, setSaved] = useState(goal?.saved?.toString() || "0");
   const [targetDate, setTargetDate] = useState(goal?.targetDate || "Dec 2026");
@@ -61,49 +76,55 @@ function GoalFormModal({ goal, onSave, onClose }: {
   const [carryForward, setCarryForward] = useState(goal?.carryForward ?? false);
   const [notes, setNotes] = useState(goal?.notes || "");
   const [color, setColor] = useState(goal?.color || GOAL_COLORS[0]);
-  const [showEmojis, setShowEmojis] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
 
   const handleSave = () => {
     if (!name.trim() || !target) { toast.error("Name and target amount are required"); return; }
     onSave({
-      name: name.trim(), emoji, target: parseFloat(target), saved: parseFloat(saved || "0"),
+      name: name.trim(), emoji: iconId, target: parseFloat(target), saved: parseFloat(saved || "0"),
       targetDate, type, trackingMode, linkedAccount, carryForward, notes, color,
       startDate: goal?.startDate || new Date().toLocaleDateString("en-IN", { month: "short", year: "numeric" }),
     });
   };
 
-  const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#7C5CFF] transition-colors";
-  const labelCls = "text-white/60 text-xs mb-1.5 block";
+  const inputCls = "w-full bg-ink/5 border border-ink/10 rounded-xl px-4 py-3 text-ink placeholder:text-ink/30 focus:outline-none focus:border-[#D4A24C] transition-colors";
+  const labelCls = "text-ink/60 text-xs mb-1.5 block";
 
   return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
       className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }} onClick={onClose}>
       <motion.div initial={{y:"100%"}} animate={{y:0}} exit={{y:"100%"}}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} onClick={e => e.stopPropagation()}
-        className="w-full max-w-md mx-auto rounded-t-3xl border-t border-white/10 p-5 max-h-[85vh] overflow-y-auto"
-        style={{ background: "linear-gradient(180deg,#1A2238 0%,#131825 100%)" }}>
-        <div className="flex justify-center mb-4"><div className="w-8 h-1 rounded-full bg-white/15" /></div>
-        <h2 className="text-white font-bold text-lg mb-5">{goal ? "Edit Goal" : "Add New Goal"}</h2>
+        className="w-full max-w-md mx-auto rounded-t-3xl border-t border-ink/10 p-5 max-h-[85vh] overflow-y-auto"
+        style={{ background: "var(--bg-deep)" }}>
+        <div className="flex justify-center mb-4"><div className="w-8 h-1 rounded-full bg-ink/15" /></div>
+        <h2 className="text-ink font-bold text-lg mb-5">{goal ? "Edit Goal" : "Add New Goal"}</h2>
 
         <div className="space-y-4">
-          {/* Emoji + Name */}
+          {/* Icon + Name */}
           <div className="flex gap-3">
             <div className="relative">
-              <button onClick={() => setShowEmojis(!showEmojis)}
-                className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl hover:border-[#7C5CFF] transition-colors">
-                {emoji}
+              <button onClick={() => setShowIcons(!showIcons)}
+                className="w-14 h-14 rounded-xl bg-ink/5 border border-ink/10 flex items-center justify-center hover:border-[#D4A24C] transition-colors">
+                {(() => {
+                  const Icon = GOAL_ICONS.find(i => i.id === iconId)?.icon;
+                  return Icon ? <Icon className="w-7 h-7 text-ink/80" /> : <span className="text-2xl">{iconId}</span>;
+                })()}
               </button>
               <AnimatePresence>
-                {showEmojis && (
+                {showIcons && (
                   <motion.div initial={{opacity:0, scale:0.9}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
-                    className="absolute top-16 left-0 z-10 grid grid-cols-4 gap-1.5 p-3 rounded-xl border border-white/10"
+                    className="absolute top-16 left-0 z-10 grid grid-cols-4 gap-1.5 p-3 rounded-xl border border-ink/10"
                     style={{ background: "#1A2238" }}>
-                    {GOAL_EMOJIS.map(e => (
-                      <button key={e} onClick={() => { setEmoji(e); setShowEmojis(false); }}
-                        className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-lg hover:bg-white/10 transition-colors">
-                        {e}
-                      </button>
-                    ))}
+                    {GOAL_ICONS.map(i => {
+                      const Icon = i.icon;
+                      return (
+                        <button key={i.id} onClick={() => { setIconId(i.id); setShowIcons(false); }}
+                          className="w-10 h-10 rounded-lg bg-ink/5 flex items-center justify-center hover:bg-ink/10 transition-colors">
+                          <Icon className="w-5 h-5 text-ink/80" />
+                        </button>
+                      );
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -134,7 +155,7 @@ function GoalFormModal({ goal, onSave, onClose }: {
                 <button key={c} onClick={() => setColor(c)}
                   className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
                   style={{ background: c, border: color === c ? "2px solid white" : "2px solid transparent", transform: color === c ? "scale(1.15)" : "scale(1)" }}>
-                  {color === c && <Check className="w-3.5 h-3.5 text-white" />}
+                  {color === c && <Check className="w-3.5 h-3.5 text-ink" />}
                 </button>
               ))}
             </div>
@@ -148,9 +169,9 @@ function GoalFormModal({ goal, onSave, onClose }: {
                 <button key={t} onClick={() => setType(t)}
                   className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all capitalize"
                   style={{
-                    background: type === t ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
-                    color: type === t ? "#9D7EFF" : "rgba(255,255,255,0.4)",
-                    border: type === t ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
+                    background: type === t ? "rgba(212,162,76,0.15)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
+                    color: type === t ? "#D4A24C" : "color-mix(in srgb, var(--ink) 40%, transparent)",
+                    border: type === t ? "1px solid rgba(212,162,76,0.3)" : "1px solid var(--divider)",
                   }}>
                   {t.replace("-", " ")}
                 </button>
@@ -166,9 +187,9 @@ function GoalFormModal({ goal, onSave, onClose }: {
                 <button key={m} onClick={() => setTrackingMode(m)}
                   className="flex-1 py-2.5 rounded-xl text-xs font-medium transition-all"
                   style={{
-                    background: trackingMode === m ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
-                    color: trackingMode === m ? "#9D7EFF" : "rgba(255,255,255,0.4)",
-                    border: trackingMode === m ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
+                    background: trackingMode === m ? "rgba(212,162,76,0.15)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
+                    color: trackingMode === m ? "#D4A24C" : "color-mix(in srgb, var(--ink) 40%, transparent)",
+                    border: trackingMode === m ? "1px solid rgba(212,162,76,0.3)" : "1px solid var(--divider)",
                   }}>
                   {m}
                 </button>
@@ -194,12 +215,12 @@ function GoalFormModal({ goal, onSave, onClose }: {
           {/* Carry Forward Toggle */}
           <div className="flex items-center justify-between py-2">
             <div>
-              <p className="text-white/70 text-sm font-medium">Carry Forward</p>
-              <p className="text-white/30 text-xs">Roll over unmet savings to next period</p>
+              <p className="text-ink/70 text-sm font-medium">Carry Forward</p>
+              <p className="text-ink/30 text-xs">Roll over unmet savings to next period</p>
             </div>
             <button onClick={() => setCarryForward(!carryForward)}
               className="w-12 h-7 rounded-full flex items-center transition-colors px-0.5"
-              style={{ background: carryForward ? "#7C5CFF" : "rgba(255,255,255,0.1)" }}>
+              style={{ background: carryForward ? "#D4A24C" : "var(--divider)" }}>
               <motion.div animate={{ x: carryForward ? 20 : 0 }}
                 className="w-6 h-6 rounded-full bg-white shadow-md" />
             </button>
@@ -214,10 +235,10 @@ function GoalFormModal({ goal, onSave, onClose }: {
 
         <div className="flex gap-3 mt-6">
           <motion.button whileTap={{scale:0.95}} onClick={onClose}
-            className="flex-1 py-3.5 rounded-xl bg-white/5 text-white/50 text-sm font-medium">Cancel</motion.button>
+            className="flex-1 py-3.5 rounded-xl bg-ink/5 text-ink/50 text-sm font-medium">Cancel</motion.button>
           <motion.button whileTap={{scale:0.95}} onClick={handleSave}
-            className="flex-1 py-3.5 rounded-xl text-white text-sm font-semibold shadow-lg shadow-[#7C5CFF]/30"
-            style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)" }}>
+            className="flex-1 py-3.5 rounded-xl text-ink text-sm font-semibold shadow-lg shadow-[#D4A24C]/30"
+            style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
             {goal ? "Update Goal" : "Create Goal"}
           </motion.button>
         </div>
@@ -234,53 +255,56 @@ function RecordSavingsModal({ goal, onSave, onClose }: {
   const [note, setNote] = useState("");
   const [account, setAccount] = useState(goal.linkedAccount);
 
-  const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#7C5CFF] transition-colors";
+  const inputCls = "w-full bg-ink/5 border border-ink/10 rounded-xl px-4 py-3 text-ink placeholder:text-ink/30 focus:outline-none focus:border-[#D4A24C] transition-colors";
 
   return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
       className="fixed inset-0 z-50 flex items-center justify-center px-5"
       style={{ background: "rgba(0,0,0,0.85)" }} onClick={onClose}>
       <motion.div initial={{scale:0.9}} animate={{scale:1}} onClick={e => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl p-6 border border-white/10"
-        style={{ background: "linear-gradient(180deg,#1A2238 0%,#131825 100%)" }}>
+        className="w-full max-w-sm rounded-2xl p-6 border border-ink/10"
+        style={{ background: "var(--bg-deep)" }}>
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center"
             style={{ background: `${goal.color}18`, border: `1px solid ${goal.color}30` }}>
-            {goal.emoji}
+            {(() => {
+              const Icon = GOAL_ICONS.find(i => i.id === goal.emoji)?.icon;
+              return Icon ? <Icon className="w-6 h-6 text-ink/80" style={{ color: goal.color }} /> : <span className="text-2xl">{goal.emoji}</span>;
+            })()}
           </div>
           <div>
-            <h3 className="text-white font-bold text-sm">{goal.name}</h3>
-            <p className="text-white/40 text-xs">{fmtINR(goal.saved)} of {fmtINR(goal.target)}</p>
+            <h3 className="text-ink font-bold text-sm">{goal.name}</h3>
+            <p className="text-ink/40 text-xs">{fmtINR(goal.saved)} of {fmtINR(goal.target)}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="text-white/60 text-xs mb-1.5 block">Amount</label>
+            <label className="text-ink/60 text-xs mb-1.5 block">Amount</label>
             <input className={inputCls} type="number" placeholder="₹0" value={amount} onChange={e => setAmount(e.target.value)} style={{ fontSize: 14 }} />
           </div>
           <div>
-            <label className="text-white/60 text-xs mb-1.5 block">From Account</label>
+            <label className="text-ink/60 text-xs mb-1.5 block">From Account</label>
             <select className={inputCls} value={account} onChange={e => setAccount(e.target.value)} style={{ fontSize: 14, colorScheme: "dark" }}>
               {ACCOUNTS.map(a => <option key={a} value={a}>{a}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-white/60 text-xs mb-1.5 block">Note (optional)</label>
+            <label className="text-ink/60 text-xs mb-1.5 block">Note (optional)</label>
             <input className={inputCls} placeholder="e.g. Monthly savings" value={note} onChange={e => setNote(e.target.value)} style={{ fontSize: 14 }} />
           </div>
         </div>
 
         <div className="flex gap-3 mt-6">
           <motion.button whileTap={{scale:0.95}} onClick={onClose}
-            className="flex-1 py-3 rounded-xl bg-white/5 text-white/50 text-sm font-medium">Cancel</motion.button>
+            className="flex-1 py-3 rounded-xl bg-ink/5 text-ink/50 text-sm font-medium">Cancel</motion.button>
           <motion.button whileTap={{scale:0.95}}
             onClick={() => {
               if (!amount || parseFloat(amount) <= 0) { toast.error("Enter a valid amount"); return; }
               onSave(parseFloat(amount), note, account);
             }}
-            className="flex-1 py-3 rounded-xl text-white text-sm font-semibold shadow-lg shadow-[#7C5CFF]/30"
-            style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)" }}>
+            className="flex-1 py-3 rounded-xl text-ink text-sm font-semibold shadow-lg shadow-[#D4A24C]/30"
+            style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)" }}>
             Record Savings
           </motion.button>
         </div>
@@ -306,36 +330,39 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
   return (
     <motion.div initial={{opacity:0, x: 40}} animate={{opacity:1, x: 0}} exit={{opacity:0, x: -40}}
       transition={{ duration: 0.25 }}>
-      <button onClick={onBack} className="flex items-center gap-2 text-white/50 text-sm mb-5 hover:text-white/70 transition-colors">
+      <button onClick={onBack} className="flex items-center gap-2 text-ink/50 text-sm mb-5 hover:text-ink/70 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back to Goals
       </button>
 
       {/* Header */}
       <div className="rounded-2xl p-5 mb-4 relative overflow-hidden"
-        style={{ background: `linear-gradient(135deg,${goal.color}15 0%,rgba(255,255,255,0.02) 100%)`, border: `1px solid ${goal.color}25` }}>
+        style={{ background: `linear-gradient(135deg,${goal.color}15 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)`, border: `1px solid ${goal.color}25` }}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl"
+          <div className="w-14 h-14 rounded-xl flex items-center justify-center"
             style={{ background: `${goal.color}18`, border: `1px solid ${goal.color}30` }}>
-            {goal.emoji}
+            {(() => {
+              const Icon = GOAL_ICONS.find(i => i.id === goal.emoji)?.icon;
+              return Icon ? <Icon className="w-7 h-7 text-ink/80" style={{ color: goal.color }} /> : <span className="text-3xl">{goal.emoji}</span>;
+            })()}
           </div>
           <div className="flex-1">
-            <h2 className="text-white font-bold text-lg">{goal.name}</h2>
-            <p className="text-white/40 text-xs">{goal.type.replace("-", " ")} · {goal.trackingMode} · {goal.linkedAccount}</p>
+            <h2 className="text-ink font-bold text-lg">{goal.name}</h2>
+            <p className="text-ink/40 text-xs">{goal.type.replace("-", " ")} · {goal.trackingMode} · {goal.linkedAccount}</p>
           </div>
         </div>
 
         <div className="flex items-end justify-between mb-3">
           <div>
-            <p className="text-white/40 text-xs">Saved</p>
-            <p className="text-white font-bold text-2xl">{fmtINR(goal.saved)}</p>
+            <p className="text-ink/40 text-xs">Saved</p>
+            <p className="font-fraunces tabular-nums text-ink font-bold text-2xl">{fmtINR(goal.saved)}</p>
           </div>
           <div className="text-right">
-            <p className="text-white/40 text-xs">Target</p>
-            <p className="text-white/70 font-semibold">{fmtINR(goal.target)}</p>
+            <p className="text-ink/40 text-xs">Target</p>
+            <p className="font-fraunces tabular-nums text-ink/70 font-semibold">{fmtINR(goal.target)}</p>
           </div>
         </div>
 
-        <div className="h-3 rounded-full overflow-hidden bg-white/10">
+        <div className="h-3 rounded-full overflow-hidden bg-ink/10">
           <motion.div
             className="h-full rounded-full"
             style={{ background: `linear-gradient(90deg,${goal.color},${goal.color}88)` }}
@@ -346,15 +373,15 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
         </div>
         <div className="flex justify-between mt-2">
           <span className="text-xs font-semibold" style={{ color: goal.color }}>{progress}%</span>
-          <span className="text-white/30 text-xs">Remaining: {fmtINR(remaining)}</span>
+          <span className="text-ink/30 text-xs">Remaining: {fmtINR(remaining)}</span>
         </div>
       </div>
 
       {/* Quick Actions */}
       <div className="flex gap-2 mb-4">
         <motion.button whileTap={{scale:0.95}} onClick={onRecordSavings}
-          className="flex-1 py-3 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2"
-          style={{ background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)", boxShadow: "0 4px 16px rgba(124,92,255,0.3)" }}>
+          className="flex-1 py-3 rounded-xl text-ink text-sm font-semibold flex items-center justify-center gap-2"
+          style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(212,162,76,0.3)" }}>
           <Plus className="w-4 h-4" /> Record Savings
         </motion.button>
         <motion.button whileTap={{scale:0.95}} onClick={onDelete}
@@ -364,17 +391,17 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
       </div>
 
       {/* Milestones */}
-      <div className="rounded-2xl p-4 mb-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-        <h3 className="text-white font-semibold text-sm mb-3">Milestones</h3>
+      <div className="rounded-2xl p-4 mb-4" style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1px solid color-mix(in srgb, var(--ink) 6%, transparent)" }}>
+        <h3 className="text-ink font-semibold text-sm mb-3">Milestones</h3>
         <div className="space-y-3">
           {milestones.map(m => (
             <div key={m.pct} className="flex items-center gap-3">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center ${m.reached ? "" : "border border-white/10"}`}
-                style={{ background: m.reached ? goal.color : "rgba(255,255,255,0.04)" }}>
-                {m.reached ? <Check className="w-3.5 h-3.5 text-white" /> : <span className="text-[10px] text-white/30">{m.label}</span>}
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center ${m.reached ? "" : "border border-ink/10"}`}
+                style={{ background: m.reached ? goal.color : "color-mix(in srgb, var(--ink) 4%, transparent)" }}>
+                {m.reached ? <Check className="w-3.5 h-3.5 text-ink" /> : <span className="text-[10px] text-ink/30">{m.label}</span>}
               </div>
               <div className="flex-1">
-                <p className={`text-xs font-medium ${m.reached ? "text-white/80" : "text-white/30"}`}>{m.amount}</p>
+                <p className={`text-xs font-medium ${m.reached ? "text-ink/80" : "text-ink/30"}`}>{m.amount}</p>
               </div>
               {m.reached && <span className="text-[10px] font-semibold" style={{ color: goal.color }}>Reached!</span>}
             </div>
@@ -383,19 +410,19 @@ function GoalDetail({ goal, onBack, onRecordSavings, onDelete }: {
       </div>
 
       {/* Contribution History */}
-      <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-        <h3 className="text-white font-semibold text-sm mb-3">Savings History</h3>
+      <div className="rounded-2xl p-4" style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1px solid color-mix(in srgb, var(--ink) 6%, transparent)" }}>
+        <h3 className="text-ink font-semibold text-sm mb-3">Savings History</h3>
         {goal.contributions.length === 0 ? (
-          <p className="text-white/25 text-xs text-center py-4">No contributions yet</p>
+          <p className="text-ink/25 text-xs text-center py-4">No contributions yet</p>
         ) : (
           <div className="space-y-2">
             {goal.contributions.slice().reverse().map(c => (
-              <div key={c.id} className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
+              <div key={c.id} className="flex items-center justify-between py-2 border-b border-ink/[0.04] last:border-0">
                 <div>
-                  <p className="text-white/70 text-xs font-medium">{c.note || "Savings"}</p>
-                  <p className="text-white/30 text-[10px]">{c.date} · {c.fromAccount}</p>
+                  <p className="text-ink/70 text-xs font-medium">{c.note || "Savings"}</p>
+                  <p className="text-ink/30 text-[10px]">{c.date} · {c.fromAccount}</p>
                 </div>
-                <p className="text-sm font-semibold" style={{ color: "#22C55E" }}>+{fmtINR(c.amount)}</p>
+                <p className="font-fraunces tabular-nums text-sm font-semibold" style={{ color: "var(--income)" }}>+{fmtINR(c.amount)}</p>
               </div>
             ))}
           </div>
@@ -413,27 +440,30 @@ function GoalCard({ goal, onClick }: { goal: Goal; onClick: () => void }) {
     <motion.div whileTap={{scale:0.98}} onClick={onClick}
       className="rounded-2xl p-4 cursor-pointer relative overflow-hidden"
       style={{
-        background: `linear-gradient(135deg,${goal.color}08 0%,rgba(255,255,255,0.02) 100%)`,
+        background: `linear-gradient(135deg,${goal.color}08 0%,color-mix(in srgb, var(--ink) 2%, transparent) 100%)`,
         border: `1px solid ${goal.color}20`,
       }}>
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+        <div className="w-11 h-11 rounded-xl flex items-center justify-center"
           style={{ background: `${goal.color}18`, border: `1px solid ${goal.color}30` }}>
-          {goal.emoji}
+          {(() => {
+            const Icon = GOAL_ICONS.find(i => i.id === goal.emoji)?.icon;
+            return Icon ? <Icon className="w-5 h-5 text-ink/80" style={{ color: goal.color }} /> : <span className="text-xl">{goal.emoji}</span>;
+          })()}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white font-semibold text-sm truncate">{goal.name}</p>
-          <p className="text-white/35 text-[10px]">{goal.type.replace("-", " ")} · {goal.targetDate}</p>
+          <p className="text-ink font-semibold text-sm truncate">{goal.name}</p>
+          <p className="text-ink/35 text-[10px]">{goal.type.replace("-", " ")} · {goal.targetDate}</p>
         </div>
-        <ChevronRight className="w-4 h-4 text-white/20 flex-shrink-0" />
+        <ChevronRight className="w-4 h-4 text-ink/20 flex-shrink-0" />
       </div>
 
       <div className="flex items-end justify-between mb-2">
-        <p className="text-sm font-bold" style={{ color: goal.color }}>{fmtINR(goal.saved)}</p>
-        <p className="text-white/30 text-xs">{fmtINR(goal.target)}</p>
+        <p className="font-fraunces tabular-nums text-sm font-bold" style={{ color: goal.color }}>{fmtINR(goal.saved)}</p>
+        <p className="font-fraunces tabular-nums text-ink/30 text-xs">{fmtINR(goal.target)}</p>
       </div>
 
-      <div className="h-2 rounded-full overflow-hidden bg-white/10">
+      <div className="h-2 rounded-full overflow-hidden bg-ink/10">
         <motion.div
           className="h-full rounded-full"
           style={{ background: `linear-gradient(90deg,${goal.color},${goal.color}88)` }}
@@ -458,6 +488,7 @@ export function GoalsScreen() {
   const [savingsGoal, setSavingsGoal] = useState<Goal | null>(null);
   const [deleteGoal, setDeleteGoal] = useState<Goal | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const loadGoals = async () => {
     setIsLoading(true);
@@ -466,12 +497,12 @@ export function GoalsScreen() {
       const mapped = data.map((g: any) => ({
         id: g.id,
         name: g.name,
-        emoji: g.emoji || "🎯",
+        emoji: g.emoji || "target",
         target: parseFloat(g.target_amount || "0"),
         saved: parseFloat(g.current_amount || "0"),
         targetDate: g.target_date || "Dec 2026",
         startDate: g.start_date || "Apr 2026",
-        color: g.color || "#7C5CFF",
+        color: g.color || "#D4A24C",
         trackingMode: g.tracking_mode || "Manual",
         type: g.type || "one-time",
         linkedAccount: g.linked_account || ACCOUNTS[0],
@@ -546,7 +577,7 @@ export function GoalsScreen() {
 
   const handleRecordSavings = async (goalId: string, amount: number, note: string, account: string) => {
     try {
-      await savingsGoalsAPI.recordSavings(goalId, amount, note, account);
+      await savingsGoalsAPI.recordSavings(goalId, amount);
       toast.success(`${fmtINR(amount)} added to goal!`);
       loadGoals();
     } catch (e) {
@@ -608,38 +639,57 @@ export function GoalsScreen() {
       {activeGoals.length > 0 && (
         <div className="rounded-2xl p-5 mb-5 relative overflow-hidden"
           style={{
-            background: "linear-gradient(135deg,rgba(124,92,255,0.12) 0%,rgba(76,201,240,0.06) 100%)",
-            border: "1px solid rgba(124,92,255,0.2)",
+            background: "linear-gradient(135deg,rgba(212,162,76,0.12) 0%,rgba(212,162,76,0.06) 100%)",
+            border: "1px solid rgba(212,162,76,0.2)",
           }}>
           <div className="grid grid-cols-3 gap-3 text-center">
             {[
-              { label: "Total Target", value: fmtINR(totalTarget), color: "white" },
+              { label: "Total Target", value: fmtINR(totalTarget), color: "var(--ink)" },
               { label: "Total Saved", value: fmtINR(totalSaved), color: "#22C55E" },
-              { label: "Monthly Contribution", value: `${fmtINR(activeGoals.reduce((s,g) => s + (g.contributions.length > 0 ? g.contributions[g.contributions.length-1].amount : 0), 0))}`, color: "white" },
+              { label: "Monthly Contribution", value: `${fmtINR(activeGoals.reduce((s,g) => s + (g.contributions.length > 0 ? g.contributions[g.contributions.length-1].amount : 0), 0))}`, color: "var(--ink)" },
             ].map(s => (
               <div key={s.label}>
-                <p className="text-white/35 text-[10px] uppercase mb-1">{s.label}</p>
-                <p className="font-bold text-sm" style={{ color: s.color }}>{s.value}</p>
+                <p className="text-ink/35 text-[10px] uppercase mb-1">{s.label}</p>
+                <p className="font-fraunces tabular-nums font-bold text-sm" style={{ color: s.color }}>{s.value}</p>
               </div>
             ))}
           </div>
-          <div className="h-2 rounded-full overflow-hidden bg-white/10 mt-4">
+          <div className="h-2 rounded-full overflow-hidden bg-ink/10 mt-4">
             <motion.div className="h-full rounded-full"
-              style={{ background: "linear-gradient(90deg,#7C5CFF,#4CC9F0)" }}
+              style={{ background: "linear-gradient(90deg,#D4A24C,#D4A24C)" }}
               initial={{ width: "0%" }}
               animate={{ width: `${overallProgress}%` }}
               transition={{ duration: 0.8 }}
             />
           </div>
-          <p className="text-right text-[10px] text-[#9D7EFF] font-semibold mt-1">{overallProgress}% overall</p>
+          <p className="text-right text-[10px] text-[#D4A24C] font-semibold mt-1">{overallProgress}% overall</p>
         </div>
       )}
 
+      {/* Time Machine Banner */}
+      <motion.div whileTap={{scale:0.98}} onClick={() => navigate("/dashboard/time-machine")}
+        className="rounded-2xl p-4 mb-5 flex items-center justify-between cursor-pointer"
+        style={{
+          background: "linear-gradient(135deg, rgba(212,162,76,0.1) 0%, rgba(212,162,76,0.02) 100%)",
+          border: "1px solid rgba(212,162,76,0.2)"
+        }}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#D4A24C]/10 flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-[#D4A24C]" />
+          </div>
+          <div>
+            <h3 className="text-ink font-bold text-sm">Time Machine</h3>
+            <p className="text-ink/50 text-[10px] font-medium uppercase tracking-wider">Travel to your financial future</p>
+          </div>
+        </div>
+        <ChevronRight className="w-5 h-5 text-[#D4A24C]/50" />
+      </motion.div>
+
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/25" />
         <input
-          className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#7C5CFF] transition-colors"
+          className="w-full bg-ink/5 border border-ink/10 rounded-xl pl-10 pr-4 py-3 text-ink text-sm placeholder:text-ink/25 focus:outline-none focus:border-[#D4A24C] transition-colors"
           placeholder="Search goals..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
@@ -652,9 +702,9 @@ export function GoalsScreen() {
           <button key={t} onClick={() => setTab(t)}
             className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all capitalize"
             style={{
-              background: tab === t ? "rgba(124,92,255,0.15)" : "rgba(255,255,255,0.04)",
-              color: tab === t ? "#9D7EFF" : "rgba(255,255,255,0.35)",
-              border: tab === t ? "1px solid rgba(124,92,255,0.3)" : "1px solid rgba(255,255,255,0.06)",
+              background: tab === t ? "rgba(212,162,76,0.15)" : "color-mix(in srgb, var(--ink) 4%, transparent)",
+              color: tab === t ? "#D4A24C" : "color-mix(in srgb, var(--ink) 35%, transparent)",
+              border: tab === t ? "1px solid rgba(212,162,76,0.3)" : "1px solid color-mix(in srgb, var(--ink) 6%, transparent)",
             }}>
             {t} ({t === "active" ? activeGoals.length : completedGoals.length})
           </button>
@@ -665,13 +715,13 @@ export function GoalsScreen() {
       {displayedGoals.length === 0 ? (
         <div className="flex flex-col items-center py-16">
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-3xl"
-            style={{ background: "rgba(255,255,255,0.03)", border: "1.5px dashed rgba(255,255,255,0.1)" }}>
+            style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1.5px dashed var(--divider)" }}>
             🎯
           </div>
-          <p className="text-white/40 font-semibold text-sm">
+          <p className="text-ink/40 font-semibold text-sm">
             {tab === "active" ? "No active goals" : "No completed goals"}
           </p>
-          <p className="text-white/20 text-xs mt-1">
+          <p className="text-ink/20 text-xs mt-1">
             {tab === "active" ? "Tap + to set your first financial goal" : "Complete a goal to see it here"}
           </p>
         </div>
@@ -688,10 +738,10 @@ export function GoalsScreen() {
         onClick={() => { setEditGoal(null); setShowForm(true); }}
         className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center z-40"
         style={{
-          background: "linear-gradient(135deg,#7C5CFF,#4CC9F0)",
-          boxShadow: "0 6px 24px rgba(124,92,255,0.45), 0 0 40px rgba(124,92,255,0.15)",
+          background: "linear-gradient(135deg,#D4A24C,#D4A24C)",
+          boxShadow: "0 6px 24px rgba(212,162,76,0.45), 0 0 40px rgba(212,162,76,0.15)",
         }}>
-        <Plus className="w-6 h-6 text-white" />
+        <Plus className="w-6 h-6 text-ink" />
       </motion.button>
 
       {/* Modals */}
@@ -714,3 +764,5 @@ export function GoalsScreen() {
     </div>
   );
 }
+
+

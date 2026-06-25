@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { MoreSheet } from "../components/MoreSheet";
 import { CategoryProvider } from "../context/CategoryContext";
-import { statsAPI } from "../services/api";
+import { statsAPI, adminAPI } from "../services/api";
 
 export function MainLayout() {
   const location = useLocation();
@@ -16,12 +16,32 @@ export function MainLayout() {
   const [notifRead, setNotifRead] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to top on route change
+  // Scroll to top + track page visit on route change
   useEffect(() => {
     window.scrollTo(0, 0);
     if (contentRef.current) {
       contentRef.current.scrollTop = 0;
     }
+    // Map pathname to a human-readable page name for analytics
+    const pathToPage: Record<string, string> = {
+      "/dashboard": "dashboard",
+      "/dashboard/transactions": "transactions",
+      "/dashboard/reports": "reports",
+      "/dashboard/accounts": "accounts",
+      "/dashboard/budget": "budget",
+      "/dashboard/goals": "goals",
+      "/dashboard/calendar": "calendar",
+      "/dashboard/recurring": "recurring",
+      "/dashboard/categories": "categories",
+      "/dashboard/settings": "settings",
+      "/dashboard/ai-agent": "ai-agent",
+      "/dashboard/subscriptions": "subscriptions",
+      "/dashboard/admin": "admin",
+      "/dashboard/add-transaction": "add-transaction",
+    };
+    const page = pathToPage[location.pathname]
+      ?? (location.pathname.startsWith("/dashboard/edit-transaction") ? "edit-transaction" : null);
+    if (page) adminAPI.trackPage(page);
   }, [location.pathname]);
 
   // Fetch notifications
@@ -55,56 +75,56 @@ export function MainLayout() {
   const showAddButton = ["/dashboard", "/dashboard/transactions"].includes(location.pathname);
 
   return (
-    <div className="min-h-screen bg-[#0D0F14] pb-20">
+    <div className="min-h-screen bg-[var(--bg-deep)] pb-20">
       <CategoryProvider>
       <div className="max-w-md mx-auto">
         {/* Top Bar */}
-        <div className="sticky top-0 z-40 bg-[#0D0F14]/95 backdrop-blur-xl border-b border-white/5">
+        <div className="sticky top-0 z-40 bg-[var(--bg-deep)]/95 backdrop-blur-xl border-b border-[var(--divider)]">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
               {showBackButton && (
                 <button
                   onClick={() => navigate(-1)}
-                  className="w-9 h-9 rounded-xl bg-[#1B2130] flex items-center justify-center border border-white/5 active:scale-95 transition-transform"
+                  className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)] active:scale-95 transition-transform"
                 >
-                  <ArrowLeft className="w-5 h-5 text-white" />
+                  <ArrowLeft className="w-5 h-5 text-[var(--ink)]" />
                 </button>
               )}
-              <h1 className="text-lg font-semibold text-white">{getPageTitle()}</h1>
+              <h1 className="text-lg font-semibold text-[var(--ink)] font-inter">{getPageTitle()}</h1>
             </div>
 
             <div className="flex items-center gap-2">
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => navigate("/dashboard/transactions")}
-                className="w-9 h-9 rounded-xl bg-[#1B2130] flex items-center justify-center border border-white/5"
+                className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)]"
               >
-                <Search className="w-4 h-4 text-white/70" />
+                <Search className="w-4 h-4 text-[var(--ink-muted)]" />
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => { setShowNotifications(true); setNotifRead(true); }}
-                className="relative w-9 h-9 rounded-xl bg-[#1B2130] flex items-center justify-center border border-white/5"
+                className="relative w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)]"
               >
-                <Bell className="w-4 h-4 text-white/70" />
+                <Bell className="w-4 h-4 text-[var(--ink-muted)]" />
                 {!notifRead && (
-                  <div className="absolute top-1 right-1 w-2 h-2 bg-[#EF4444] rounded-full"></div>
+                  <div className="absolute top-1 right-1 w-2 h-2 bg-[var(--coral)] rounded-full"></div>
                 )}
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setShowBookmarks(true)}
-                className="w-9 h-9 rounded-xl bg-[#1B2130] flex items-center justify-center border border-white/5"
+                className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)]"
               >
-                <Bookmark className="w-4 h-4 text-white/70" />
+                <Bookmark className="w-4 h-4 text-[var(--ink-muted)]" />
               </motion.button>
               {showAddButton && (
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   onClick={() => navigate("/dashboard/add-transaction")}
-                  className="w-9 h-9 rounded-xl bg-gradient-to-r from-[#7C5CFF] to-[#9D7EFF] flex items-center justify-center shadow-lg shadow-[#7C5CFF]/25"
+                  className="w-9 h-9 rounded-xl bg-[var(--gold)] flex items-center justify-center shadow-lg shadow-[var(--gold)]/20"
                 >
-                  <Plus className="w-4 h-4 text-white" />
+                  <Plus className="w-4 h-4 text-[#241B0A]" />
                 </motion.button>
               )}
             </div>
@@ -130,39 +150,39 @@ export function MainLayout() {
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 onClick={e => e.stopPropagation()}
                 className="w-full max-w-md mx-auto rounded-t-3xl"
-                style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid rgba(255,255,255,0.1)", borderBottom: "none", maxHeight: "70vh" }}
+                style={{ background: "var(--bg-deep)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
               >
                 <div className="flex justify-center pt-3 pb-1">
-                  <div className="w-9 h-1 rounded-full bg-white/15" />
+                  <div className="w-9 h-1 rounded-full bg-ink/15" />
                 </div>
                 <div className="flex items-center justify-between px-5 py-3">
-                  <h2 className="text-white font-bold" style={{ fontSize: 18 }}>Notifications</h2>
-                  <button onClick={() => setShowNotifications(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5">
-                    <X className="w-4 h-4 text-white/50" />
+                  <h2 className="text-ink font-bold" style={{ fontSize: 18 }}>Notifications</h2>
+                  <button onClick={() => setShowNotifications(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-ink/5">
+                    <X className="w-4 h-4 text-ink/50" />
                   </button>
                 </div>
                 <div className="px-5 pb-8 space-y-3">
                   {notifications.length === 0 ? (
                     <div className="flex flex-col items-center py-6">
-                      <p className="text-white/40" style={{ fontSize: 13 }}>No new notifications</p>
+                      <p className="text-ink/40" style={{ fontSize: 13 }}>No new notifications</p>
                     </div>
                   ) : notifications.map((n, i) => (
                     <motion.div key={i} whileTap={{ scale: 0.98 }}
                       className="flex items-start gap-3 p-4 rounded-2xl"
-                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                      style={{ background: "color-mix(in srgb, var(--ink) 4%, transparent)", border: "1px solid var(--divider)" }}>
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{ background: `${n.color}18` }}>
                         <Bell className="w-4 h-4" style={{ color: n.color }} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-semibold" style={{ fontSize: 13 }}>{n.title}</p>
-                        <p className="text-white/50 mt-0.5" style={{ fontSize: 12 }}>{n.desc}</p>
-                        <p className="text-white/25 mt-1" style={{ fontSize: 11 }}>{n.time}</p>
+                        <p className="text-ink font-semibold" style={{ fontSize: 13 }}>{n.title}</p>
+                        <p className="text-ink/50 mt-0.5" style={{ fontSize: 12 }}>{n.desc}</p>
+                        <p className="text-ink/25 mt-1" style={{ fontSize: 11 }}>{n.time}</p>
                       </div>
                     </motion.div>
                   ))}
                   <div className="flex flex-col items-center py-6">
-                    <p className="text-white/30" style={{ fontSize: 13 }}>That's all for now</p>
+                    <p className="text-ink/30" style={{ fontSize: 13 }}>That's all for now</p>
                   </div>
                 </div>
               </motion.div>
@@ -184,25 +204,25 @@ export function MainLayout() {
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 onClick={e => e.stopPropagation()}
                 className="w-full max-w-md mx-auto rounded-t-3xl"
-                style={{ background: "linear-gradient(180deg,#1A2238 0%,#101828 100%)", border: "1px solid rgba(255,255,255,0.1)", borderBottom: "none", maxHeight: "70vh" }}
+                style={{ background: "var(--bg-deep)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
               >
                 <div className="flex justify-center pt-3 pb-1">
-                  <div className="w-9 h-1 rounded-full bg-white/15" />
+                  <div className="w-9 h-1 rounded-full bg-ink/15" />
                 </div>
                 <div className="flex items-center justify-between px-5 py-3">
-                  <h2 className="text-white font-bold" style={{ fontSize: 18 }}>Bookmarked</h2>
-                  <button onClick={() => setShowBookmarks(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5">
-                    <X className="w-4 h-4 text-white/50" />
+                  <h2 className="text-ink font-bold" style={{ fontSize: 18 }}>Bookmarked</h2>
+                  <button onClick={() => setShowBookmarks(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-ink/5">
+                    <X className="w-4 h-4 text-ink/50" />
                   </button>
                 </div>
                 <div className="px-5 pb-8">
                   <div className="flex flex-col items-center py-10">
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1.5px dashed rgba(255,255,255,0.15)" }}>
-                      <Bookmark className="w-6 h-6 text-white/20" />
+                      style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1.5px dashed var(--divider)" }}>
+                      <Bookmark className="w-6 h-6 text-ink/20" />
                     </div>
-                    <p className="text-white/40 font-semibold" style={{ fontSize: 14 }}>No bookmarks yet</p>
-                    <p className="text-white/25 mt-1" style={{ fontSize: 12 }}>Star transactions to save them here</p>
+                    <p className="text-ink/40 font-semibold" style={{ fontSize: 14 }}>No bookmarks yet</p>
+                    <p className="text-ink/25 mt-1" style={{ fontSize: 12 }}>Star transactions to save them here</p>
                   </div>
                 </div>
               </motion.div>
@@ -211,57 +231,57 @@ export function MainLayout() {
         </AnimatePresence>
 
         {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-[#1B2130] border-t border-white/10 backdrop-blur-xl z-40">
+        <div className="fixed bottom-0 left-0 right-0 bg-[var(--surface)] border-t border-[var(--divider)] backdrop-blur-xl z-40">
           <div className="max-w-md mx-auto">
             <div className="flex items-center justify-around px-2 py-2 relative">
               {/* Home */}
               <button
                 onClick={() => navigate("/dashboard")}
                 className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all ${
-                  location.pathname === "/dashboard" ? "text-[#7C5CFF]" : "text-white/40"
+                  location.pathname === "/dashboard" ? "text-[var(--gold)]" : "text-[var(--ink-muted)]"
                 }`}
               >
                 <Home className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Home</span>
+                <span className="text-[10px] font-medium font-inter">Home</span>
               </button>
 
               {/* Ledger */}
               <button
                 onClick={() => navigate("/dashboard/transactions")}
                 className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all ${
-                  location.pathname === "/dashboard/transactions" ? "text-[#7C5CFF]" : "text-white/40"
+                  location.pathname === "/dashboard/transactions" ? "text-[var(--gold)]" : "text-[var(--ink-muted)]"
                 }`}
               >
                 <FileText className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Ledger</span>
+                <span className="text-[10px] font-medium font-inter">Ledger</span>
               </button>
 
               {/* Center FAB */}
               <button
                 onClick={() => navigate("/dashboard/add-transaction")}
-                className="w-14 h-14 -mt-6 rounded-2xl bg-gradient-to-br from-[#7C5CFF] to-[#4CC9F0] flex items-center justify-center shadow-lg shadow-[#7C5CFF]/50"
+                className="w-14 h-14 -mt-6 rounded-2xl bg-[var(--gold)] flex items-center justify-center shadow-lg shadow-[var(--gold)]/30"
               >
-                <Plus className="w-6 h-6 text-white" />
+                <Plus className="w-6 h-6 text-[#241B0A]" />
               </button>
 
               {/* Reports */}
               <button
                 onClick={() => navigate("/dashboard/reports")}
                 className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all ${
-                  location.pathname === "/dashboard/reports" ? "text-[#7C5CFF]" : "text-white/40"
+                  location.pathname === "/dashboard/reports" ? "text-[var(--gold)]" : "text-[var(--ink-muted)]"
                 }`}
               >
                 <BarChart3 className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Reports</span>
+                <span className="text-[10px] font-medium font-inter">Reports</span>
               </button>
 
               {/* More */}
               <button
                 onClick={() => setShowMore(true)}
-                className="flex flex-col items-center gap-1 py-2 px-4 rounded-xl text-white/40"
+                className="flex flex-col items-center gap-1 py-2 px-4 rounded-xl text-[var(--ink-muted)]"
               >
                 <MenuIcon className="w-5 h-5" />
-                <span className="text-[10px] font-medium">More</span>
+                <span className="text-[10px] font-medium font-inter">More</span>
               </button>
             </div>
           </div>

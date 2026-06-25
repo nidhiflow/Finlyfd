@@ -8,7 +8,9 @@ export interface User {
   email: string;
   name: string;
   phone?: string;
+  photo?: string;
   createdAt?: string;
+  subscription_tier?: "Free" | "Pro" | "Premium";
 }
 
 export interface AuthResponse {
@@ -145,9 +147,9 @@ async function apiCall<T>(
 
   const token = localStorage.getItem("authToken");
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...options.headers,
+    ...options.headers as Record<string, string>,
   };
 
   if (token && !endpoint.includes("/auth/signup") && !endpoint.includes("/auth/login") && !endpoint.includes("/auth/verify") && !endpoint.includes("/auth/forgot")) {
@@ -283,11 +285,15 @@ export const authAPI = {
   },
 
   // Update profile
-  updateProfile: async (data: Partial<User>) => {
-    return apiCall<User>("/api/auth/profile", {
+  updateProfile: async (data: { name: string; email?: string; phone?: string; photo?: string }) => {
+    const res = await apiCall<{ message: string; user: User }>("/api/auth/profile", {
       method: "PUT",
       body: JSON.stringify(data),
     });
+    if (res && res.user) {
+      localStorage.setItem("user", JSON.stringify(res.user));
+    }
+    return res;
   },
 
   // Update password
@@ -303,6 +309,18 @@ export const authAPI = {
     return apiCall<{ message: string }>("/api/auth/account", {
       method: "DELETE",
     });
+  },
+
+  // Upgrade subscription
+  upgradeSubscription: async (tier: "Pro" | "Premium") => {
+    const res = await apiCall<{ message: string; user: User }>("/api/auth/upgrade-subscription", {
+      method: "POST",
+      body: JSON.stringify({ tier }),
+    });
+    if (res && res.user) {
+      localStorage.setItem("user", JSON.stringify(res.user));
+    }
+    return res;
   },
 
   // Logout
@@ -413,11 +431,16 @@ export const statsAPI = {
 export const settingsAPI = {
   getAll: async () => apiCall<any>("/api/settings", { method: "GET" }),
   update: async (data: any) => apiCall<any>("/api/settings", { method: "POST", body: JSON.stringify(data) }),
+  restore: async (data: any) => apiCall<any>("/api/settings/restore", { method: "POST", body: JSON.stringify(data) }),
 };
 
 // ─── AI API ───────────────────────────────────────────────────────────────────
 export const aiAPI = {
   chat: async (prompt: string) => apiCall<any>("/api/ai/chat", { method: "POST", body: JSON.stringify({ message: prompt }) }),
+  scanReceipt: async (imageBase64: string) => apiCall<any>("/api/ai/scan-receipt", {
+    method: "POST",
+    body: JSON.stringify({ image: imageBase64 })
+  }),
 };
 
 // ─── BOOKMARKS API ────────────────────────────────────────────────────────────
@@ -425,6 +448,23 @@ export const bookmarksAPI = {
   getAll: async () => apiCall<any[]>("/api/bookmarks", { method: "GET" }),
   create: async (transactionId: string) => apiCall<any>("/api/bookmarks", { method: "POST", body: JSON.stringify({ transaction_id: transactionId }) }),
   delete: async (transactionId: string) => apiCall<{ message: string }>(`/api/bookmarks/${transactionId}`, { method: "DELETE" }),
+};
+
+// ─── ADMIN API ───────────────────────────────────────────────────────────────
+export const adminAPI = {
+  getStats: async () => apiCall<any>("/api/admin/stats", { method: "GET" }),
+  getAnalytics: async () => apiCall<any>("/api/admin/analytics", { method: "GET" }),
+  updateUserTier: async (userId: string, tier: string) => apiCall<any>(`/api/admin/users/${userId}/tier`, {
+    method: "PUT",
+    body: JSON.stringify({ tier })
+  }),
+  trackPage: async (page: string) => {
+    try {
+      await apiCall<any>("/api/admin/track", { method: "POST", body: JSON.stringify({ page }) });
+    } catch {
+      // Fire-and-forget — swallow errors silently
+    }
+  },
 };
 
 // Export the base URL for other uses
