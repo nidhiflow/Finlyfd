@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   ChevronDown, Pencil, Trash2, Plus, X, Check,
   Search, Star, Sparkles, Zap, Crown, TrendingUp,
+  Wallet, FolderOpen,
 } from "lucide-react";
 // ─── Single Source of Truth ────────────────────────────────────────────────────
 // Cat & Sub types and ALL category data now live in CategoryContext.
@@ -414,8 +415,8 @@ function CategoryModal({
             <div>
               <h2 className="text-ink font-bold" style={{ fontSize: 19 }}>{title}</h2>
               {isIncome && !isSubModal && (
-                <p style={{ fontSize: 12, color: "rgba(74,222,128,0.7)", marginTop: 2 }}>
-                  💰 Income Category
+                <p className="flex items-center gap-1" style={{ fontSize: 12, color: "rgba(74,222,128,0.7)", marginTop: 2 }}>
+                  <Wallet className="w-3 h-3" /> Income Category
                 </p>
               )}
               {isSubModal && parentCat && (
@@ -784,8 +785,11 @@ export function CategoriesScreen() {
           {(["expense","income"] as const).map(t => (
             <button key={t} onClick={() => setActiveType(t)}
               className="relative flex-1 py-3 rounded-xl flex items-center justify-center gap-2 z-10 transition-all">
+              {t === "expense"
+                ? <Wallet className="w-3.5 h-3.5" style={{ color: activeType === t ? "white" : "color-mix(in srgb, var(--ink) 35%, transparent)" }} />
+                : <TrendingUp className="w-3.5 h-3.5" style={{ color: activeType === t ? "white" : "color-mix(in srgb, var(--ink) 35%, transparent)" }} />}
               <span style={{ fontSize:13, fontWeight:700, color: activeType === t ? "white" : "color-mix(in srgb, var(--ink) 35%, transparent)" }}>
-                {t === "expense" ? "💸 Expense" : "💚 Income"}
+                {t === "expense" ? "Expense" : "Income"}
               </span>
               <span className="rounded-full px-1.5 py-0.5" style={{
                 fontSize:10, fontWeight:800,
@@ -842,8 +846,8 @@ export function CategoriesScreen() {
         <div className="mx-4 mb-3 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl"
           style={{ background:"rgba(34,197,94,0.07)", border:"1px dashed rgba(34,197,94,0.22)" }}>
           <Crown className="w-4 h-4 flex-shrink-0" style={{ color:"rgba(34,197,94,0.6)" }} />
-          <p style={{ fontSize:12, color:"color-mix(in srgb, var(--ink) 42%, transparent)", lineHeight:1.4 }}>
-            Tap <span style={{ color:"rgba(74,222,128,0.8)" }}>👑</span> on a category to mark it as your primary income source
+          <p className="flex items-center gap-1 flex-wrap" style={{ fontSize:12, color:"color-mix(in srgb, var(--ink) 42%, transparent)", lineHeight:1.4 }}>
+            Tap <Crown className="w-3 h-3 inline" style={{ color:"rgba(74,222,128,0.8)" }} /> on a category to mark it as your primary income source
           </p>
         </div>
       )}
@@ -852,9 +856,11 @@ export function CategoriesScreen() {
       <div className="px-4 pb-4 space-y-2.5">
         {visible.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
-            <div className="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl"
+            <div className="w-16 h-16 rounded-3xl flex items-center justify-center"
               style={{ background:"color-mix(in srgb, var(--ink) 5%, transparent)", border:"1px solid var(--divider)" }}>
-              {search ? "🔍" : isIncome ? "💰" : "🗂️"}
+              {search
+                ? <Search className="w-7 h-7 text-ink/30" />
+                : isIncome ? <Wallet className="w-7 h-7 text-ink/30" /> : <FolderOpen className="w-7 h-7 text-ink/30" />}
             </div>
             <p className="text-ink/38 text-center" style={{ fontSize:14 }}>
               {search ? `No results for "${search}"` : isIncome ? "No income categories yet" : "No categories yet"}
