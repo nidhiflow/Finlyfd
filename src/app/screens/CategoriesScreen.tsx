@@ -74,61 +74,6 @@ function UsageDots({ level, color }: { level: number; color: string }) {
   );
 }
 
-// ─── Income Summary Strip ───────────────────────────────────────────────────────
-function IncomeSummaryStrip({ cats, primaryIds }: { cats: Cat[]; primaryIds: Set<string> }) {
-  const primaryCats = cats.filter(c => primaryIds.has(c.id) && c.type === "income" && c.monthlyEst);
-  const total = primaryCats.reduce((sum, c) => {
-    const val = parseInt((c.monthlyEst ?? "0").replace(/[^0-9]/g, ""), 10);
-    return sum + val;
-  }, 0);
-  const formatted = total >= 1000
-    ? total >= 100000
-      ? `₹${parseFloat((total / 100000).toFixed(1))}L`
-      : `₹${parseFloat((total / 1000).toFixed(1))}K`
-    : `₹${total}`;
-
-  return (
-    <div className="mx-4 mb-3 rounded-2xl p-4 relative overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(212,162,76,0.06) 100%)",
-        border: "1px solid rgba(34,197,94,0.22)",
-      }}>
-      {/* Glow */}
-      <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%)" }} />
-
-      <div className="flex items-center justify-between relative z-10">
-        <div>
-          <div className="flex items-center gap-1.5 mb-1">
-            <TrendingUp className="w-3.5 h-3.5" style={{ color: "#22C55E" }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: "color-mix(in srgb, var(--ink) 45%, transparent)", letterSpacing: "0.5px" }}>
-              MONTHLY INCOME ESTIMATE
-            </span>
-          </div>
-          <p className="font-fraunces font-bold tabular-nums text-ink" style={{ fontSize: 22 }}>
-            {total > 0 ? formatted : "—"}
-            <span className="font-inter text-ink/35 font-normal" style={{ fontSize: 13 }}> / month</span>
-          </p>
-          <p style={{ fontSize: 11, color: "color-mix(in srgb, var(--ink) 38%, transparent)", marginTop: 2 }}>
-            from {primaryIds.size} primary {primaryIds.size === 1 ? "source" : "sources"}
-          </p>
-        </div>
-        <div className="flex flex-col items-end gap-1.5">
-          {primaryCats.slice(0, 3).map(c => (
-            <div key={c.id} className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl"
-              style={{ background: `${c.color}20`, border: `1px solid ${c.color}30` }}>
-              {c.icon ? <c.icon className="w-3.5 h-3.5" style={{ color: "color-mix(in srgb, var(--ink) 70%, transparent)" }} /> : <span style={{ fontSize: 12 }}>{c.emoji}</span>}
-              <span style={{ fontSize: 11, fontWeight: 600, color: c.color }}>{c.monthlyEst}</span>
-            </div>
-          ))}
-          {primaryCats.length === 0 && (
-            <p style={{ fontSize: 11, color: "var(--divider)" }}>Mark categories as primary</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── Category Card ──────────────────────────────────────────────────────────────
 function CategoryCard({
@@ -819,18 +764,7 @@ export function CategoriesScreen() {
         </button>
       </div>
 
-      {/* ── Income Summary Strip (income tab only) ── */}
-      <AnimatePresence>
-        {isIncome && (
-          <motion.div
-            key="income-summary"
-            initial={{ opacity:0, y:-8 }} animate={{ opacity:1, y:0 }}
-            exit={{ opacity:0, y:-8 }} transition={{ duration:0.25 }}
-          >
-            <IncomeSummaryStrip cats={cats} primaryIds={primaryIncome} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       {/* ── Pinned Strip (expense tab only) ── */}
       {!isIncome && (
