@@ -18,7 +18,7 @@ import {
   Landmark, Scale, Gift, Users, HandHeart,
   Clapperboard, Mic, Gamepad2, CreditCard, Gem,
   Wallet, Backpack, School, Briefcase, Megaphone, Factory,
-  PiggyBank, Siren, RefreshCw, RotateCcw, HandCoins, Store, User, LucideIcon
+  PiggyBank, Siren, RefreshCw, RotateCcw, HandCoins, Store, LucideIcon
 } from "lucide-react";
 
 export type IconType = React.ComponentType<any>;
@@ -239,11 +239,7 @@ export const INITIAL_CATEGORIES: Cat[] = [
   /* ════════════════ INCOME (7 categories) ════════════════ */
   {
     id:"i-salary", name:"Salary", emoji:"💼", icon:Briefcase, color:"#22C55E", type:"income", usage:5,
-    monthlyEst:"₹75,000",
-    subs:[
-      {id:"is1", name:"Husband Salary", emoji:"👨", icon:User},
-      {id:"is2", name:"Wife Salary",    emoji:"👩", icon:User},
-    ],
+    subs:[],
   },
   {
     id:"i-gifts", name:"Gifts & Rewards", emoji:"🎁", icon:Gift, color:"#FF6B9D", type:"income", usage:2,
@@ -271,15 +267,10 @@ export const INITIAL_CATEGORIES: Cat[] = [
   },
   {
     id:"i-biz", name:"Business Income", emoji:"🏢", icon:Building2, color:"#D4A24C", type:"income", usage:4,
-    monthlyEst:"₹45,000",
-    subs:[
-      {id:"ib1", name:"Sales Revenue",   emoji:"📢", icon:Megaphone},
-      {id:"ib2", name:"Client Payments", emoji:"💰", icon:HandCoins},
-    ],
+    subs:[],
   },
   {
     id:"i-rental", name:"Rental Income", emoji:"🏡", icon:Home, color:"#F7931A", type:"income", usage:3,
-    monthlyEst:"₹25,000",
     subs:[
       {id:"ire1", name:"House Rent", emoji:"🏢", icon:Building2},
       {id:"ire2", name:"Shop Rent",  emoji:"🏬", icon:Store},
@@ -287,7 +278,6 @@ export const INITIAL_CATEGORIES: Cat[] = [
   },
   {
     id:"i-interest", name:"Interest Income", emoji:"📈", icon:TrendingUp, color:"#2EC4B6", type:"income", usage:3,
-    monthlyEst:"₹8,500",
     subs:[
       {id:"ii1", name:"Bank Interest",       emoji:"🏦", icon:Landmark},
       {id:"ii2", name:"Investment Interest", emoji:"📊", icon:BarChart3},
