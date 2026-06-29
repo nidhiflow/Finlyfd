@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, ChevronLeft, ChevronRight, AlertCircle, Bot, X, Pencil, Trash2 } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, AlertCircle, AlertTriangle, XCircle, X, Pencil, Trash2, PieChart } from "lucide-react";
 import { budgetsAPI } from "../services/api";
 import { useCategoryContext } from "../context/CategoryContext";
 import { toast } from "sonner";
@@ -141,32 +141,6 @@ export function BudgetScreen() {
         </div>
       )}
 
-      {/* AI Budget Suggestions */}
-      <div className="bg-gradient-to-br from-[#D4A24C]/20 to-[#D4A24C]/20 border border-[#D4A24C]/30 rounded-2xl p-5">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D4A24C]/30 flex items-center justify-center">
-            <Bot className="w-5 h-5 text-[#D4A24C]" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-ink mb-2">AI Suggestions</h3>
-            <ul className="space-y-2 text-sm text-ink/60">
-              <li className="flex items-start gap-2">
-                <span className="text-[#D4A24C]">•</span>
-                <span>Based on last month, increase Transport budget by ₹1,000</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#D4A24C]">•</span>
-                <span>You're doing great with Bills! Consider allocating ₹900 to savings</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#D4A24C]">•</span>
-                <span>Shopping trend shows you can reduce budget to ₹4,500</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
       {/* Add Budget Button */}
       <button
         onClick={() => { setEditBudget(null); setShowModal(true); }}
@@ -181,7 +155,7 @@ export function BudgetScreen() {
         <h3 className="text-lg font-semibold text-ink mb-4">Category Budgets</h3>
         {budgets.length === 0 && !isLoading && (
           <div className="flex flex-col items-center py-8">
-            <p className="text-2xl mb-2">📊</p>
+            <PieChart className="w-7 h-7 text-ink/30 mb-2" />
             <p className="text-ink/50 text-sm">No budgets set for this month</p>
             <p className="text-ink/30 text-xs mt-1">Tap "Add Budget" to get started</p>
           </div>
@@ -242,8 +216,16 @@ export function BudgetScreen() {
                   <span className={isOverBudget ? "text-[#EF4444]" : isPressure ? "text-[#FFA500]" : "text-ink/50"}>
                     {percentSpent.toFixed(0)}% used
                   </span>
-                  {isPressure && !isOverBudget && <span className="text-[#FFA500]">⚠️ High usage</span>}
-                  {isOverBudget && <span className="text-[#EF4444]">❌ Over budget</span>}
+                  {isPressure && !isOverBudget && (
+                    <span className="flex items-center gap-1 text-[#FFA500]">
+                      <AlertTriangle className="w-3.5 h-3.5" /> High usage
+                    </span>
+                  )}
+                  {isOverBudget && (
+                    <span className="flex items-center gap-1 text-[#EF4444]">
+                      <XCircle className="w-3.5 h-3.5" /> Over budget
+                    </span>
+                  )}
                 </div>
               </div>
             );

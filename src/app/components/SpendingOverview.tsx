@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { PieChart as PieIcon, Utensils, Car, Lightbulb, Clapperboard } from "lucide-react";
+import { PieChart as PieIcon, Utensils, Car, Lightbulb, Clapperboard, Leaf } from "lucide-react";
 import { useCategoryContext } from "../context/CategoryContext";
 import { statsAPI } from "../services/api";
 
@@ -231,8 +231,8 @@ export function SpendingOverview({ month, startDate, endDate }: SpendingProps) {
             </>
           ) : (
             <>
-              <p style={{ fontSize: 14 }}>🍃</p>
-              <p className="text-ink/20 text-[8px] font-bold uppercase tracking-wider">0%</p>
+              <Leaf className="w-3.5 h-3.5 text-ink/20" />
+              <p className="text-ink/20 text-[8px] font-bold uppercase tracking-wider mt-0.5">0%</p>
             </>
           )}
         </div>
@@ -273,8 +273,9 @@ export function SpendingOverview({ month, startDate, endDate }: SpendingProps) {
       {/* Bottom helper text */}
       <div className="mt-4 pt-3 flex items-center justify-center gap-2"
         style={{ borderTop: "1px solid color-mix(in srgb, var(--ink) 6%, transparent)" }}>
+        <PieIcon className="w-3 h-3" style={{ color: hasData ? "color-mix(in srgb, var(--ink) 45%, transparent)" : "var(--divider)" }} />
         <span style={{ fontSize: 11, color: hasData ? "color-mix(in srgb, var(--ink) 45%, transparent)" : "var(--divider)" }}>
-          {hasData ? "📊 Based on your expense transactions" : "📊 Spending breakdown will appear after adding expenses"}
+          {hasData ? "Based on your expense transactions" : "Spending breakdown will appear after adding expenses"}
         </span>
       </div>
     </div>

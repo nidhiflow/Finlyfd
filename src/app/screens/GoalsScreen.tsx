@@ -714,9 +714,9 @@ export function GoalsScreen() {
       {/* Goals List */}
       {displayedGoals.length === 0 ? (
         <div className="flex flex-col items-center py-16">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-3xl"
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
             style={{ background: "color-mix(in srgb, var(--ink) 3%, transparent)", border: "1.5px dashed var(--divider)" }}>
-            🎯
+            <Target className="w-7 h-7 text-ink/30" />
           </div>
           <p className="text-ink/40 font-semibold text-sm">
             {tab === "active" ? "No active goals" : "No completed goals"}

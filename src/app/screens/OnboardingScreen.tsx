@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronRight, ArrowUpRight, ArrowDownRight, Pizza, Home, Plane, Clapperboard } from "lucide-react";
+import { ChevronRight, ArrowUpRight, ArrowDownRight, Pizza, Home, Plane, Clapperboard, TrendingDown, Lightbulb, Target } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════
 // SLIDE 1 ── Cash Flow Visualization
@@ -421,9 +421,9 @@ const FILL_PATH = "M 8,72 C 28,58 42,80 62,44 S 88,24 108,46 S 134,68 156,36 S 1
 const PATH_LEN = 360;
 
 const AI_INSIGHTS = [
-  { icon: "📉", text: "Spending down 12% vs last month", color: "#10B981", label: "Positive" },
-  { icon: "💡", text: "Save ₹245 more by reducing dining", color: "#D4A24C", label: "Tip" },
-  { icon: "🎯", text: "Vacation goal on track for July", color: "#D4A24C", label: "On track" },
+  { icon: TrendingDown, text: "Spending down 12% vs last month", color: "#10B981", label: "Positive" },
+  { icon: Lightbulb, text: "Save ₹245 more by reducing dining", color: "#D4A24C", label: "Tip" },
+  { icon: Target, text: "Vacation goal on track for July", color: "#D4A24C", label: "On track" },
 ];
 
 const WEEK_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -533,7 +533,7 @@ function AIInsightsAnim() {
             className="flex items-center gap-3 rounded-xl border border-ink/8 px-3.5 py-2.5"
             style={{ background: `linear-gradient(135deg, ${insight.color}10 0%, rgba(27,33,48,0.8) 100%)` }}
           >
-            <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0 }}>{insight.icon}</span>
+            <insight.icon className="w-[18px] h-[18px] flex-shrink-0" style={{ color: insight.color }} />
             <p className="text-ink/80 flex-1" style={{ fontSize: 12, lineHeight: 1.4 }}>{insight.text}</p>
             <span className="rounded-full px-2 py-0.5 flex-shrink-0"
               style={{ background: `${insight.color}20`, color: insight.color, fontSize: 9, fontWeight: 700 }}>
