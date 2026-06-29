@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { transactionsAPI, bookmarksAPI } from "../services/api";
+import { transactionsAPI } from "../services/api";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -23,7 +23,6 @@ interface Transaction {
   subcategory?: string;
   category_id?: string;
   subcategory_id?: string;
-  bookmarked: boolean;
   type: "expense" | "income" | "transfer" | "savings";
   recurring: boolean;
 }
@@ -320,7 +319,6 @@ export function TransactionsScreen() {
         subcategory: undefined,
         category_id: t.category_id,
         subcategory_id: t.subcategoryId || t.subcategory_id,
-        bookmarked: false,
         type: t.type,
         recurring: !!t.repeat_group_id,
         original: t

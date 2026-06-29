@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
-import { ArrowLeft, Search, Bell, Bookmark, Plus, Home, FileText, BarChart3, Menu as MenuIcon, X } from "lucide-react";
+import { ArrowLeft, Search, Bell, Plus, Home, FileText, BarChart3, Menu as MenuIcon, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { MoreSheet } from "../components/MoreSheet";
@@ -11,7 +11,6 @@ export function MainLayout() {
   const navigate = useNavigate();
   const [showMore, setShowMore] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showBookmarks, setShowBookmarks] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [notifRead, setNotifRead] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -111,13 +110,6 @@ export function MainLayout() {
                   <div className="absolute top-1 right-1 w-2 h-2 bg-[var(--coral)] rounded-full"></div>
                 )}
               </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setShowBookmarks(true)}
-                className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] flex items-center justify-center border border-[var(--divider)]"
-              >
-                <Bookmark className="w-4 h-4 text-[var(--ink-muted)]" />
-              </motion.button>
               {showAddButton && (
                 <motion.button
                   whileTap={{ scale: 0.9 }}
@@ -183,46 +175,6 @@ export function MainLayout() {
                   ))}
                   <div className="flex flex-col items-center py-6">
                     <p className="text-ink/30" style={{ fontSize: 13 }}>That's all for now</p>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Bookmarks Panel */}
-        <AnimatePresence>
-          {showBookmarks && (
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-end"
-              style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}
-              onClick={() => setShowBookmarks(false)}
-            >
-              <motion.div
-                initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
-                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                onClick={e => e.stopPropagation()}
-                className="w-full max-w-md mx-auto rounded-t-3xl"
-                style={{ background: "var(--bg-deep)", border: "1px solid var(--divider)", borderBottom: "none", maxHeight: "70vh" }}
-              >
-                <div className="flex justify-center pt-3 pb-1">
-                  <div className="w-9 h-1 rounded-full bg-ink/15" />
-                </div>
-                <div className="flex items-center justify-between px-5 py-3">
-                  <h2 className="text-ink font-bold" style={{ fontSize: 18 }}>Bookmarked</h2>
-                  <button onClick={() => setShowBookmarks(false)} className="w-8 h-8 rounded-lg flex items-center justify-center bg-ink/5">
-                    <X className="w-4 h-4 text-ink/50" />
-                  </button>
-                </div>
-                <div className="px-5 pb-8">
-                  <div className="flex flex-col items-center py-10">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
-                      style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)", border: "1.5px dashed var(--divider)" }}>
-                      <Bookmark className="w-6 h-6 text-ink/20" />
-                    </div>
-                    <p className="text-ink/40 font-semibold" style={{ fontSize: 14 }}>No bookmarks yet</p>
-                    <p className="text-ink/25 mt-1" style={{ fontSize: 12 }}>Star transactions to save them here</p>
                   </div>
                 </div>
               </motion.div>

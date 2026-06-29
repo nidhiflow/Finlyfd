@@ -443,13 +443,6 @@ export const aiAPI = {
   }),
 };
 
-// ─── BOOKMARKS API ────────────────────────────────────────────────────────────
-export const bookmarksAPI = {
-  getAll: async () => apiCall<any[]>("/api/bookmarks", { method: "GET" }),
-  create: async (transactionId: string) => apiCall<any>("/api/bookmarks", { method: "POST", body: JSON.stringify({ transaction_id: transactionId }) }),
-  delete: async (transactionId: string) => apiCall<{ message: string }>(`/api/bookmarks/${transactionId}`, { method: "DELETE" }),
-};
-
 // ─── ADMIN API ───────────────────────────────────────────────────────────────
 export const adminAPI = {
   getStats: async () => apiCall<any>("/api/admin/stats", { method: "GET" }),
