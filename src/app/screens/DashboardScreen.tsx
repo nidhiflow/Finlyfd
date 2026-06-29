@@ -149,16 +149,23 @@ export function DashboardScreen() {
     return `Good Night, ${name}`;
   };
 
+  const toISODate = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
   const loadDashboardData = async () => {
     setIsLoading(true);
     try {
       const monthStr = `${year}-${String(monthIdx + 1).padStart(2, "0")}`;
-      
+      const useCustomRange = dateMode === "custom" && customStart && customEnd;
+      const dateParams = useCustomRange
+        ? { startDate: toISODate(customStart!), endDate: toISODate(customEnd!) }
+        : { month: monthStr };
+
       const [summaryData, scoreData, accountsData, txData, recurringData] = await Promise.all([
-        statsAPI.getSummary(monthStr),
-        statsAPI.getFinlyScore(monthStr),
+        statsAPI.getSummary(dateParams),
+        statsAPI.getFinlyScore(dateParams),
         accountsAPI.getAll(),
-        transactionsAPI.getAll({ month: monthStr }),
+        transactionsAPI.getAll(dateParams),
         transactionsAPI.getRecurring()
       ]);
 
@@ -187,8 +194,12 @@ export function DashboardScreen() {
   };
 
   useEffect(() => {
-    loadDashboardData();
-  }, [monthIdx, year]);
+    if (dateMode === "month") loadDashboardData();
+  }, [monthIdx, year, dateMode]);
+
+  useEffect(() => {
+    if (dateMode === "custom" && customStart && customEnd) loadDashboardData();
+  }, [dateMode, customStart, customEnd]);
 
   const prevMonth = () => {
     if (monthIdx === 0) { setMonthIdx(11); setYear(y => y - 1); }
@@ -371,7 +382,11 @@ export function DashboardScreen() {
 
 
         {/* ── Spending Overview (pie chart) ── */}
-        <SpendingOverview month={`${year}-${String(monthIdx + 1).padStart(2, "0")}`} />
+        {dateMode === "custom" && customStart && customEnd ? (
+          <SpendingOverview startDate={toISODate(customStart)} endDate={toISODate(customEnd)} />
+        ) : (
+          <SpendingOverview month={`${year}-${String(monthIdx + 1).padStart(2, "0")}`} />
+        )}
 
         {/* ── Insights ── */}
         {(stats.income > 0 || stats.expense > 0) ? (
@@ -649,8 +664,6 @@ export function DashboardScreen() {
             onSelect={(s, e) => {
               setCustomStart(s);
               setCustomEnd(e);
-              // Reload data with custom date range
-              loadDashboardData();
             }}
             onClose={() => setShowDatePicker(false)}
           />

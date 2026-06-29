@@ -487,9 +487,9 @@ export function ReportsScreen() {
 
     setIsLoading(true);
     Promise.all([
-      statsAPI.getCategoryBreakdown(monthStr),
-      statsAPI.getSummary(monthStr),
-      statsAPI.getCategoryBreakdown(prevMonthStr),
+      statsAPI.getCategoryBreakdown({ month: monthStr }),
+      statsAPI.getSummary({ month: monthStr }),
+      statsAPI.getCategoryBreakdown({ month: prevMonthStr }),
     ]).then(([breakdown, summary, prevBreakdown]) => {
       // breakdown is array: [{category_id, category_name, icon, color, total, type}]
       const allCats = breakdown || [];

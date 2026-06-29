@@ -350,10 +350,12 @@ export const authAPI = {
 
 // ─── TRANSACTIONS API ─────────────────────────────────────────────────────────
 export const transactionsAPI = {
-  getAll: async (params?: { month?: string; categoryId?: string; isRecurring?: string }) => {
+  getAll: async (params?: { month?: string; startDate?: string; endDate?: string; categoryId?: string; isRecurring?: string }) => {
     let url = "/api/transactions";
     const query = new URLSearchParams();
     if (params?.month) query.append("month", params.month);
+    if (params?.startDate) query.append("startDate", params.startDate);
+    if (params?.endDate) query.append("endDate", params.endDate);
     if (params?.categoryId) query.append("category_id", params.categoryId);
     if (params?.isRecurring) query.append("is_recurring", params.isRecurring);
     if (query.toString()) url += `?${query.toString()}`;
@@ -409,22 +411,39 @@ export const savingsGoalsAPI = {
 };
 
 // ─── STATS API ────────────────────────────────────────────────────────────────
+export interface DateRangeParams { month?: string; startDate?: string; endDate?: string }
+
+function buildDateQuery(params?: DateRangeParams) {
+  const query = new URLSearchParams();
+  if (params?.startDate || params?.endDate) {
+    if (params.startDate) query.append("startDate", params.startDate);
+    if (params.endDate) query.append("endDate", params.endDate);
+  } else if (params?.month) {
+    query.append("month", params.month);
+  }
+  return query.toString();
+}
+
 export const statsAPI = {
-  getSummary: async (month?: string) => {
-    let url = "/api/stats/summary";
-    if (month) url += `?month=${month}`;
-    return apiCall<any>(url, { method: "GET" });
+  getSummary: async (params?: DateRangeParams) => {
+    const qs = buildDateQuery(params);
+    return apiCall<any>(`/api/stats/summary${qs ? `?${qs}` : ""}`, { method: "GET" });
   },
-  getFinlyScore: async (month?: string) => {
-    let url = "/api/stats/finly-score";
-    if (month) url += `?month=${month}`;
-    return apiCall<any>(url, { method: "GET" });
+  getFinlyScore: async (params?: DateRangeParams) => {
+    const qs = buildDateQuery(params);
+    return apiCall<any>(`/api/stats/finly-score${qs ? `?${qs}` : ""}`, { method: "GET" });
   },
   getNotifications: async () => {
     return apiCall<any[]>("/api/stats/notifications", { method: "GET" });
   },
-  getDailyExpenses: async (month: string) => apiCall<any[]>(`/api/stats/daily-expenses?month=${month}`, { method: "GET" }),
-  getCategoryBreakdown: async (month: string) => apiCall<any[]>(`/api/stats/category-breakdown?month=${month}`, { method: "GET" }),
+  getDailyExpenses: async (params: DateRangeParams) => {
+    const qs = buildDateQuery(params);
+    return apiCall<any[]>(`/api/stats/daily-expenses${qs ? `?${qs}` : ""}`, { method: "GET" });
+  },
+  getCategoryBreakdown: async (params: DateRangeParams) => {
+    const qs = buildDateQuery(params);
+    return apiCall<any[]>(`/api/stats/category-breakdown${qs ? `?${qs}` : ""}`, { method: "GET" });
+  },
 };
 
 // ─── SETTINGS API ─────────────────────────────────────────────────────────────

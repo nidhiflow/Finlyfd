@@ -5,6 +5,8 @@ import { statsAPI } from "../services/api";
 
 interface SpendingProps {
   month?: string; // YYYY-MM format
+  startDate?: string; // YYYY-MM-DD, used instead of month when set
+  endDate?: string; // YYYY-MM-DD
 }
 
 // ─── SVG Geometry constants for centered layout ─────────────────────────────────
@@ -52,14 +54,14 @@ const PLACEHOLDER_CATS = [
   { name: "Entertainment",   color: "#F72585", emoji: "🎬", icon: Clapperboard },
 ];
 
-export function SpendingOverview({ month }: SpendingProps) {
+export function SpendingOverview({ month, startDate, endDate }: SpendingProps) {
   const { getCatById } = useCategoryContext();
   const [categories, setCategories] = useState<any[]>([]);
   const [totalExpense, setTotalExpense] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    statsAPI.getCategoryBreakdown(month || "").then((data: any[]) => {
+    statsAPI.getCategoryBreakdown({ month, startDate, endDate }).then((data: any[]) => {
       const expenses = (data || []).filter((c: any) => c.type === 'expense');
       const total = expenses.reduce((s: number, c: any) => s + parseFloat(c.total || 0), 0);
       setTotalExpense(total);
@@ -76,7 +78,7 @@ export function SpendingOverview({ month }: SpendingProps) {
         percentage: total > 0 ? ((parseFloat(c.total || 0) / total) * 100) : 0,
       }}));
     }).catch(console.error);
-  }, [month]);
+  }, [month, startDate, endDate]);
 
   const hasData = categories.length > 0 && totalExpense > 0;
   
