@@ -12,7 +12,13 @@ const KEYS = {
   LAST_ACTIVITY: "finly_last_activity",
   QUICK_AUTH_ENABLED: "finly_quick_auth_enabled",
   SESSION_EMAIL: "finly_session_email",
+  MPIN_FAILED_ATTEMPTS: "finly_mpin_failed_attempts",
+  MPIN_LOCKOUT_UNTIL: "finly_mpin_lockout_until",
+  MPIN_LOCKOUT_COUNT: "finly_mpin_lockout_count",
 } as const;
+
+/** Consecutive failures allowed before the PIN entry locks out */
+const MAX_ATTEMPTS_BEFORE_LOCK = 3;
 
 /** 24 hours in milliseconds */
 const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
@@ -57,6 +63,46 @@ export const localAuthService = {
   clearMPIN(): void {
     localStorage.removeItem(KEYS.MPIN_HASH);
     localStorage.removeItem(KEYS.MPIN_LENGTH);
+    this.resetMPINAttempts();
+  },
+
+  // ─── MPIN lockout ───────────────────────────────────────────────────────
+
+  getMPINLockoutUntil(): number {
+    return parseInt(localStorage.getItem(KEYS.MPIN_LOCKOUT_UNTIL) ?? "0", 10);
+  },
+
+  isMPINLocked(): boolean {
+    return Date.now() < this.getMPINLockoutUntil();
+  },
+
+  getMPINLockoutSecondsRemaining(): number {
+    return Math.max(0, Math.ceil((this.getMPINLockoutUntil() - Date.now()) / 1000));
+  },
+
+  /** Record a failed PIN attempt. Locks out with exponential backoff every MAX_ATTEMPTS_BEFORE_LOCK failures. */
+  recordMPINFailure(): { locked: boolean; secondsRemaining: number; attemptsRemaining: number } {
+    const attempts = parseInt(localStorage.getItem(KEYS.MPIN_FAILED_ATTEMPTS) ?? "0", 10) + 1;
+    localStorage.setItem(KEYS.MPIN_FAILED_ATTEMPTS, String(attempts));
+
+    if (attempts % MAX_ATTEMPTS_BEFORE_LOCK === 0) {
+      const lockoutCount = parseInt(localStorage.getItem(KEYS.MPIN_LOCKOUT_COUNT) ?? "0", 10) + 1;
+      localStorage.setItem(KEYS.MPIN_LOCKOUT_COUNT, String(lockoutCount));
+      const seconds = Math.min(30 * Math.pow(2, lockoutCount - 1), 300); // 30s, 60s, 120s, ... capped at 5min
+      localStorage.setItem(KEYS.MPIN_LOCKOUT_UNTIL, String(Date.now() + seconds * 1000));
+      return { locked: true, secondsRemaining: seconds, attemptsRemaining: 0 };
+    }
+    return {
+      locked: false,
+      secondsRemaining: 0,
+      attemptsRemaining: MAX_ATTEMPTS_BEFORE_LOCK - (attempts % MAX_ATTEMPTS_BEFORE_LOCK),
+    };
+  },
+
+  resetMPINAttempts(): void {
+    localStorage.removeItem(KEYS.MPIN_FAILED_ATTEMPTS);
+    localStorage.removeItem(KEYS.MPIN_LOCKOUT_UNTIL);
+    localStorage.removeItem(KEYS.MPIN_LOCKOUT_COUNT);
   },
 
   // ─── Biometric ───────────────────────────────────────────────────────────

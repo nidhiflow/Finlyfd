@@ -17,7 +17,8 @@ type AuthState =
   | "scanning"
   | "biometric-success"
   | "mpin-success"
-  | "error";
+  | "error"
+  | "locked";
 
 function PinDots({
   length,
@@ -152,8 +153,8 @@ export function QuickLoginScreen() {
   const [authState, setAuthState] = useState<AuthState>("idle");
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
-  const [attempts, setAttempts] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [lockSecondsRemaining, setLockSecondsRemaining] = useState(0);
 
   const mpinLength = localAuthService.getMPINLength();
   const biometricEnabled = localAuthService.isBiometricEnabled();
@@ -167,9 +168,28 @@ export function QuickLoginScreen() {
       navigate("/login", { replace: true });
       return;
     }
+    if (localAuthService.isMPINLocked()) {
+      setLockSecondsRemaining(localAuthService.getMPINLockoutSecondsRemaining());
+      setAuthState("locked");
+      setError("Too many attempts. Try again shortly.");
+    }
     const t = setTimeout(() => setVisible(true), 50);
     return () => clearTimeout(t);
   }, [navigate]);
+
+  // Lockout countdown
+  useEffect(() => {
+    if (authState !== "locked") return;
+    const interval = setInterval(() => {
+      const remaining = localAuthService.getMPINLockoutSecondsRemaining();
+      setLockSecondsRemaining(remaining);
+      if (remaining <= 0) {
+        setAuthState("idle");
+        setError("");
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [authState]);
 
   const triggerShake = () => {
     setShake(true);
@@ -178,6 +198,7 @@ export function QuickLoginScreen() {
 
   const handleSuccess = useCallback(() => {
     localAuthService.updateLastActivity();
+    localAuthService.resetMPINAttempts();
     setAuthState("mpin-success");
     setTimeout(() => navigate("/dashboard"), 600);
   }, [navigate]);
@@ -205,28 +226,40 @@ export function QuickLoginScreen() {
           if (valid) {
             handleSuccess();
           } else {
-            const newAttempts = attempts + 1;
-            setAttempts(newAttempts);
-            setAuthState("error");
+            const result = localAuthService.recordMPINFailure();
             triggerShake();
-            setError(
-              newAttempts >= 3
-                ? "Too many attempts. Use password instead."
-                : "Incorrect PIN. Try again."
-            );
-            setTimeout(() => {
+            if (result.locked) {
+              setLockSecondsRemaining(result.secondsRemaining);
+              setAuthState("locked");
+              setError("Too many attempts. Try again shortly.");
               setPin("");
-              setAuthState("idle");
-            }, 900);
+            } else {
+              setAuthState("error");
+              setError(
+                `Incorrect PIN. ${result.attemptsRemaining} attempt${
+                  result.attemptsRemaining === 1 ? "" : "s"
+                } remaining.`
+              );
+              setTimeout(() => {
+                setPin("");
+                setAuthState("idle");
+              }, 900);
+            }
           }
         }, 80);
       }
     },
-    [pin, mpinLength, attempts, authState, handleSuccess]
+    [pin, mpinLength, authState, handleSuccess]
   );
 
   const handleDelete = useCallback(() => {
-    if (authState === "scanning" || authState === "mpin-success" || authState === "biometric-success") return;
+    if (
+      authState === "scanning" ||
+      authState === "mpin-success" ||
+      authState === "biometric-success" ||
+      authState === "locked"
+    )
+      return;
     setPin((p) => p.slice(0, -1));
     setError("");
     setAuthState("idle");
@@ -259,6 +292,10 @@ export function QuickLoginScreen() {
   const biometricSuccess = authState === "biometric-success";
   const pinSuccess = authState === "mpin-success";
   const hasError = authState === "error";
+  const locked = authState === "locked";
+
+  const formatLockTime = (s: number) =>
+    s >= 60 ? `${Math.ceil(s / 60)}m` : `${s}s`;
 
   const maskedEmail = sessionEmail
     ? sessionEmail.replace(/(.{2}).*(@.*)/, "$1•••$2")
@@ -326,23 +363,33 @@ export function QuickLoginScreen() {
       {/* ── PIN area ────────────────────────────────────── */}
       <div className="flex flex-col items-center px-6 flex-1">
         <p className="text-ink/50 text-sm mb-1">
-          Enter your {mpinLength}-digit PIN
+          {locked ? "PIN entry locked" : `Enter your ${mpinLength}-digit PIN`}
         </p>
 
         <PinDots
           length={mpinLength}
-          filled={scanning ? 0 : pin.length}
+          filled={scanning || locked ? 0 : pin.length}
           error={hasError}
           success={pinSuccess}
           shake={shake}
         />
 
         {/* Error / Success message */}
-        {error && !scanning && (
+        {locked ? (
           <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5 mb-3 w-full max-w-xs">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
-            <p className="text-red-400 text-sm">{error}</p>
+            <Lock className="w-4 h-4 text-red-400 flex-shrink-0" />
+            <p className="text-red-400 text-sm">
+              Too many attempts. Try again in {formatLockTime(lockSecondsRemaining)}.
+            </p>
           </div>
+        ) : (
+          error &&
+          !scanning && (
+            <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5 mb-3 w-full max-w-xs">
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )
         )}
 
         {scanning && (
@@ -365,12 +412,12 @@ export function QuickLoginScreen() {
         <Keypad
           onPress={handleDigit}
           onDelete={handleDelete}
-          disabled={scanning || pinSuccess || biometricSuccess}
+          disabled={scanning || pinSuccess || biometricSuccess || locked}
         />
       </div>
 
       {/* ── Biometric button ─────────────────────────────── */}
-      {biometricEnabled && (
+      {biometricEnabled && !locked && (
         <div className="flex flex-col items-center pb-5">
           <BiometricButton
             onPress={handleBiometric}
