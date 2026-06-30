@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
 import { authAPI } from "../../services/api";
 
 export function SignupScreen() {
@@ -19,6 +19,8 @@ export function SignupScreen() {
 
   const isValidEmail = (emailVal: string) => EMAIL_RE.test(emailVal.trim());
 
+  const isValidPhone = (phoneVal: string) => /^\d{10}$/.test(phoneVal.replace(/\D/g, ""));
+
   const handleSignup = async () => {
     setError("");
 
@@ -32,6 +34,10 @@ export function SignupScreen() {
     }
     if (!isValidEmail(email)) {
       setError("Please enter a valid email address.");
+      return;
+    }
+    if (phone.trim() && !isValidPhone(phone)) {
+      setError("Please enter a valid 10-digit phone number.");
       return;
     }
     if (password.length < 6) {
@@ -167,15 +173,24 @@ export function SignupScreen() {
             <div>
               <label className="text-sm text-ink/70 mb-2 block">Phone</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/40" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/40" />
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="123-456-7890"
-                  className="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-ink/10 rounded-xl text-ink placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+                  placeholder="9876543210"
+                  className={`w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border rounded-xl text-ink placeholder:text-ink/30 focus:outline-none transition-colors ${
+                    phone && !isValidPhone(phone)
+                      ? "border-red-500/50 focus:border-red-500"
+                      : "border-ink/10 focus:border-[#D4A24C]"
+                  }`}
                 />
               </div>
+              {phone && !isValidPhone(phone) && (
+                <p className="text-red-400 text-xs mt-1.5 pl-1">
+                  Enter a valid 10-digit phone number
+                </p>
+              )}
             </div>
 
             <div>
