@@ -7,13 +7,14 @@ import {
   Wallet, PieChart as PieIcon, Zap, BarChart2, HelpCircle,
   Lightbulb, Target, AlertTriangle, Rocket, Brain, Receipt,
   Landmark, ArrowDownCircle, ArrowUpCircle, RefreshCw,
+  CheckCircle2, Circle, X, ListChecks, PiggyBank,
 } from "lucide-react";
 import { BalanceCard } from "../components/BalanceCard";
 import { SpendingOverview } from "../components/SpendingOverview";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { useCategoryContext } from "../context/CategoryContext";
 
-import { authAPI, statsAPI, transactionsAPI, accountsAPI } from "../services/api";
+import { authAPI, statsAPI, transactionsAPI, accountsAPI, budgetsAPI, savingsGoalsAPI } from "../services/api";
 
 // ─── Zero State Data ────────────────────────────────────────────────────────────
 // Accounts are now strictly fetched from the user's connected DB accounts.
@@ -136,6 +137,13 @@ export function DashboardScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showScoreInfo, setShowScoreInfo] = useState(false);
 
+  const [gettingStarted, setGettingStarted] = useState({
+    hasTransaction: false, hasAccount: false, hasBudget: false, hasGoal: false,
+  });
+  const [gettingStartedDismissed, setGettingStartedDismissed] = useState(
+    () => localStorage.getItem("finly_getting_started_dismissed") === "true"
+  );
+
   const { getCatById } = useCategoryContext();
   const user = authAPI.getCurrentUser();
 
@@ -200,6 +208,42 @@ export function DashboardScreen() {
   useEffect(() => {
     if (dateMode === "custom" && customStart && customEnd) loadDashboardData();
   }, [dateMode, customStart, customEnd]);
+
+  // Getting Started checklist — checked once on mount, independent of the month/date filters above
+  useEffect(() => {
+    if (gettingStartedDismissed) return;
+    Promise.all([
+      transactionsAPI.getAll({ limit: 1 }),
+      accountsAPI.getAll(),
+      budgetsAPI.get(),
+      savingsGoalsAPI.getAll(),
+    ]).then(([tx, accounts, budgets, goals]) => {
+      setGettingStarted({
+        hasTransaction: (tx || []).length > 0,
+        hasAccount: (accounts || []).length > 0,
+        hasBudget: (budgets || []).length > 0,
+        hasGoal: (goals || []).length > 0,
+      });
+    }).catch(console.error);
+  }, [gettingStartedDismissed]);
+
+  const dismissGettingStarted = () => {
+    localStorage.setItem("finly_getting_started_dismissed", "true");
+    setGettingStartedDismissed(true);
+  };
+
+  const gettingStartedItems = [
+    { key: "hasAccount", label: "Add an account", icon: Landmark, path: "/dashboard/accounts" },
+    { key: "hasTransaction", label: "Log your first transaction", icon: Receipt, path: "/dashboard/add-transaction" },
+    { key: "hasBudget", label: "Set a category budget", icon: PieIcon, path: "/dashboard/budget" },
+    { key: "hasGoal", label: "Create a savings goal", icon: PiggyBank, path: "/dashboard/goals" },
+  ] as const;
+  const gettingStartedDoneCount = gettingStartedItems.filter(i => gettingStarted[i.key]).length;
+  const gettingStartedComplete = gettingStartedDoneCount === gettingStartedItems.length;
+
+  useEffect(() => {
+    if (gettingStartedComplete && !gettingStartedDismissed) dismissGettingStarted();
+  }, [gettingStartedComplete]);
 
   const prevMonth = () => {
     if (monthIdx === 0) { setMonthIdx(11); setYear(y => y - 1); }
@@ -297,6 +341,55 @@ export function DashboardScreen() {
             Accounts
           </button>
         </div>
+
+        {/* ── Getting Started checklist (first-time users) ── */}
+        <AnimatePresence>
+          {!gettingStartedDismissed && !gettingStartedComplete && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="rounded-[18px] p-5 relative overflow-hidden"
+              style={{ background: "var(--surface)", border: "1px solid var(--gold)" }}>
+              <div className="flex items-start justify-between mb-3.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "rgba(212,162,76,0.18)" }}>
+                    <ListChecks className="w-4 h-4 text-[#D4A24C]" />
+                  </div>
+                  <div>
+                    <p className="text-[14px] font-semibold text-[var(--ink)]">Getting Started</p>
+                    <p className="text-[11px] text-[var(--ink-muted)]">{gettingStartedDoneCount} of {gettingStartedItems.length} done</p>
+                  </div>
+                </div>
+                <button onClick={dismissGettingStarted} className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--ink-muted)]" style={{ background: "var(--surface-raised)" }}>
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="space-y-1">
+                {gettingStartedItems.map(item => {
+                  const done = gettingStarted[item.key];
+                  return (
+                    <button key={item.key}
+                      onClick={() => !done && navigate(item.path)}
+                      disabled={done}
+                      className="w-full flex items-center gap-3 py-2 text-left"
+                      style={{ opacity: done ? 0.5 : 1, cursor: done ? "default" : "pointer" }}>
+                      {done
+                        ? <CheckCircle2 className="w-[18px] h-[18px] text-[#6FBE9B] flex-shrink-0" />
+                        : <Circle className="w-[18px] h-[18px] text-[var(--ink-muted)] flex-shrink-0" />}
+                      <item.icon className="w-4 h-4 text-[var(--ink-muted)] flex-shrink-0" />
+                      <span className={`text-[13px] flex-1 ${done ? "line-through text-[var(--ink-muted)]" : "text-[var(--ink)]"}`}>
+                        {item.label}
+                      </span>
+                      {!done && <ChevronRight className="w-4 h-4 text-[var(--ink-muted)]" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── Date Selector ── */}
         <div className="flex items-center justify-between">

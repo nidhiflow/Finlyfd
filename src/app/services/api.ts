@@ -350,7 +350,7 @@ export const authAPI = {
 
 // ─── TRANSACTIONS API ─────────────────────────────────────────────────────────
 export const transactionsAPI = {
-  getAll: async (params?: { month?: string; startDate?: string; endDate?: string; categoryId?: string; isRecurring?: string }) => {
+  getAll: async (params?: { month?: string; startDate?: string; endDate?: string; categoryId?: string; isRecurring?: string; limit?: number }) => {
     let url = "/api/transactions";
     const query = new URLSearchParams();
     if (params?.month) query.append("month", params.month);
@@ -358,6 +358,7 @@ export const transactionsAPI = {
     if (params?.endDate) query.append("endDate", params.endDate);
     if (params?.categoryId) query.append("category_id", params.categoryId);
     if (params?.isRecurring) query.append("is_recurring", params.isRecurring);
+    if (params?.limit) query.append("limit", String(params.limit));
     if (query.toString()) url += `?${query.toString()}`;
     
     return apiCall<any[]>(url, { method: "GET" });
