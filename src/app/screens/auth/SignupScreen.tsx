@@ -15,26 +15,9 @@ export function SignupScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const ALLOWED_DOMAINS = [
-    // Gmail
-    "gmail.com",
-    // Outlook / Microsoft
-    "outlook.com", "hotmail.com", "live.com", "msn.com", "outlook.in",
-    // Yahoo
-    "yahoo.com", "yahoo.co.in", "yahoo.co.uk", "yahoo.in", "ymail.com",
-    // iCloud / Apple
-    "icloud.com", "me.com", "mac.com",
-    // ProtonMail
-    "protonmail.com", "proton.me",
-    // Other major providers
-    "zoho.com", "aol.com", "gmx.com", "gmx.net", "tutanota.com",
-    "rediffmail.com", "fastmail.com",
-  ];
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const isOfficialEmail = (emailVal: string) => {
-    const domain = emailVal.trim().split("@")[1]?.toLowerCase();
-    return domain ? ALLOWED_DOMAINS.includes(domain) : false;
-  };
+  const isValidEmail = (emailVal: string) => EMAIL_RE.test(emailVal.trim());
 
   const handleSignup = async () => {
     setError("");
@@ -47,10 +30,8 @@ export function SignupScreen() {
       setError("Please enter your email address.");
       return;
     }
-    if (!isOfficialEmail(email)) {
-      setError(
-        "Please use an official email provider — Gmail, Outlook, Yahoo, iCloud, or ProtonMail."
-      );
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
       return;
     }
     if (password.length < 6) {
@@ -168,17 +149,17 @@ export function SignupScreen() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@gmail.com"
+                  placeholder="you@example.com"
                   className={`w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border rounded-xl text-ink placeholder:text-ink/30 focus:outline-none transition-colors ${
-                    email && !isOfficialEmail(email)
+                    email && !isValidEmail(email)
                       ? "border-red-500/50 focus:border-red-500"
                       : "border-ink/10 focus:border-[#D4A24C]"
                   }`}
                 />
               </div>
-              {email && !isOfficialEmail(email) && (
+              {email && !isValidEmail(email) && (
                 <p className="text-red-400 text-xs mt-1.5 pl-1">
-                  Use Gmail, Outlook, Yahoo, iCloud, or ProtonMail
+                  Enter a valid email address
                 </p>
               )}
             </div>
