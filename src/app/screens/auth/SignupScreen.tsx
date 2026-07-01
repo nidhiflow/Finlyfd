@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { User, Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { authAPI } from "../../services/api";
+import { localAuthService } from "../../services/authLocal";
 
 export function SignupScreen() {
   const navigate = useNavigate();
@@ -14,6 +16,42 @@ export function SignupScreen() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const googleBtnRef = useRef<HTMLDivElement>(null);
+  const [googleBtnWidth, setGoogleBtnWidth] = useState(320);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (googleBtnRef.current) {
+        setGoogleBtnWidth(Math.min(400, googleBtnRef.current.offsetWidth));
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      setError("Google sign-in failed. Please try again.");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await authAPI.googleLogin({ credential: credentialResponse.credential });
+      if (response.token && response.user) {
+        localAuthService.saveSessionEmail(response.user.email);
+        localAuthService.updateLastActivity();
+        navigate("/quick-auth-setup");
+      }
+    } catch (err: any) {
+      setError(err.message || "Google sign-in failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -119,14 +157,6 @@ export function SignupScreen() {
       {!showOTP ? (
         <>
           <div className="space-y-4 flex-1">
-            {/* Demo info */}
-            <div className="bg-blue-500/10 border border-blue-500/25 rounded-xl p-4">
-              <p className="text-blue-400 text-sm font-medium mb-1">Demo Mode</p>
-              <p className="text-blue-400/70 text-xs">
-                Already have an account? Use demo@finly.app / demo123 to sign in
-              </p>
-            </div>
-
             {error && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
                 <p className="text-red-500 text-sm">{error}</p>
@@ -225,6 +255,27 @@ export function SignupScreen() {
             >
               {loading ? "Creating Account..." : "Create Account"}
             </button>
+
+            <div className="relative py-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-ink/10"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-4 bg-[var(--bg-deep)] text-sm text-ink/50">or</span>
+              </div>
+            </div>
+
+            <div ref={googleBtnRef} className="w-full flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError("Google sign-in failed. Please try again.")}
+                theme="filled_black"
+                shape="pill"
+                size="large"
+                text="continue_with"
+                width={googleBtnWidth}
+              />
+            </div>
 
             <p className="text-xs text-ink/40 text-center px-4">
               By signing up, you agree to our Terms of Service and Privacy Policy

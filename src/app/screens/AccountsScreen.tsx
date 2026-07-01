@@ -361,17 +361,24 @@ function AccountModal({ editAccount, onClose, onSave }: {
       ? form.paymentModes.filter(x => x !== m)
       : [...form.paymentModes, m]);
 
-  const validate = () => {
+  const validate = (): typeof errors => {
     const e: typeof errors = {};
     if (!form.name.trim()) e.name = "Account name is required";
     if (currType.hasBank && !form.bankName) e.bankName = "Please select a bank";
     if (form.trackBalance && form.openingBalance && isNaN(parseFloat(form.openingBalance)))
       e.openingBalance = "Enter a valid amount";
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return e;
   };
 
-  const handleSave = () => { if (validate()) onSave(form); };
+  const handleSave = () => {
+    const e = validate();
+    if (Object.keys(e).length === 0) {
+      onSave(form);
+    } else {
+      toast.error(Object.values(e)[0] || "Please fill in the required fields");
+    }
+  };
 
   const isEdit = !!editAccount;
 

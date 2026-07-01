@@ -4,7 +4,8 @@
  * Both CategoriesScreen and AddTransactionScreen read from and write to this
  * context, guaranteeing 100 % real-time synchronisation.
  */
-import { createContext, useContext, useState, useCallback, ReactNode, ReactElement } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode, ReactElement } from "react";
+import { authAPI } from "../services/api";
 import {
   UtensilsCrossed, Egg, Soup, Utensils, Coffee, CupSoda, Beer, Popcorn, Package,
   HeartPulse, Stethoscope, Pill, FlaskConical, Dumbbell, Volleyball, Zap as ZapIcon,
@@ -308,9 +309,63 @@ interface CategoryContextValue {
 // ─── Context ───────────────────────────────────────────────────────────────────
 const CategoryContext = createContext<CategoryContextValue | null>(null);
 
+// ─── Persistence ─────────────────────────────────────────────────────────────
+// Custom categories/subcategories previously lived only in this component's
+// in-memory state, so any full remount (page refresh, PWA relaunch, or the
+// account picker's old hard `window.location.href` navigation) silently reset
+// everything back to INITIAL_CATEGORIES. Persisting per-user to localStorage
+// keeps user edits alive across those remounts.
+const STORAGE_KEY_PREFIX = "finly_categories_";
+
+function storageKey(): string | null {
+  const userId = authAPI.getCurrentUser()?.id;
+  return userId ? `${STORAGE_KEY_PREFIX}${userId}` : null;
+}
+
+function loadPersistedCategories(): Cat[] {
+  const key = storageKey();
+  if (!key) return INITIAL_CATEGORIES;
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return INITIAL_CATEGORIES;
+    const parsed = JSON.parse(raw) as Cat[];
+    if (!Array.isArray(parsed) || parsed.length === 0) return INITIAL_CATEGORIES;
+    // JSON can't carry the Lucide icon component references, so re-attach them
+    // from INITIAL_CATEGORIES by id. Custom (user-created) entries never had
+    // one to begin with and simply fall back to their emoji, same as today.
+    return parsed.map(cat => {
+      const base = INITIAL_CATEGORIES.find(c => c.id === cat.id);
+      return {
+        ...cat,
+        icon: base?.icon,
+        subs: (cat.subs || []).map(sub => ({
+          ...sub,
+          icon: base?.subs.find(s => s.id === sub.id)?.icon,
+        })),
+      };
+    });
+  } catch {
+    return INITIAL_CATEGORIES;
+  }
+}
+
+function persistCategories(categories: Cat[]) {
+  const key = storageKey();
+  if (!key) return;
+  try {
+    localStorage.setItem(key, JSON.stringify(categories));
+  } catch {
+    // Storage full/unavailable — in-memory state still works for this session.
+  }
+}
+
 // ─── Provider ──────────────────────────────────────────────────────────────────
 export function CategoryProvider({ children }: { children: ReactNode }) {
-  const [categories, setCategories] = useState<Cat[]>(INITIAL_CATEGORIES);
+  const [categories, setCategories] = useState<Cat[]>(() => loadPersistedCategories());
+
+  useEffect(() => {
+    persistCategories(categories);
+  }, [categories]);
 
   // ── Category CRUD ─────────────────────────────────────────────────
   const addCategory = useCallback((cat: Omit<Cat, "id">) => {

@@ -386,9 +386,10 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
 }
 
 // ─── Account Sheet ─────────────────────────────────────────────────────────────
-function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
-  selected: string; onSelect: (a: Acc) => void; onClose: () => void; excludeId?: string; accounts: Acc[];
+function AccountSheet({ selected, onSelect, onClose, excludeId, accounts, loading }: {
+  selected: string; onSelect: (a: Acc) => void; onClose: () => void; excludeId?: string; accounts: Acc[]; loading?: boolean;
 }) {
+  const navigate = useNavigate();
   const list = (accounts || []).filter(a => a.id !== excludeId);
   return (
     <motion.div
@@ -407,11 +408,16 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts }: {
         </div>
         <p className="text-ink font-bold mb-4" style={{ fontSize: 17 }}>Select Account</p>
         <div className="space-y-2.5 pb-2">
-          {list.length === 0 && (
+          {loading && list.length === 0 && (
+            <div className="text-center py-6">
+              <p className="text-ink/40 text-sm">Loading your accounts…</p>
+            </div>
+          )}
+          {!loading && list.length === 0 && (
             <div className="text-center py-6">
               <p className="text-ink/40 text-sm mb-3">No accounts added yet</p>
               <motion.button whileTap={{ scale: 0.97 }}
-                onClick={() => { onClose(); window.location.href = '/dashboard/accounts'; }}
+                onClick={() => { onClose(); navigate('/dashboard/accounts'); }}
                 className="mx-auto flex items-center gap-2 px-5 py-3 rounded-2xl text-ink font-semibold text-sm"
                 style={{ background: "linear-gradient(135deg,#D4A24C,#D4A24C)", boxShadow: "0 4px 16px rgba(212,162,76,0.4)" }}>
                 <Plus className="w-4 h-4" />
@@ -757,7 +763,10 @@ export function AddTransactionScreen() {
       setACCOUNTS(mapped);
       if (mapped.length > 0 && !accId) setAccId(mapped[0].id);
       if (mapped.length > 1 && !toAccId) setToAccId(mapped[mapped.length - 1].id);
-    }).catch(console.error).finally(() => setLoadingAccounts(false));
+    }).catch((err) => {
+      console.error(err);
+      toast.error("Couldn't load your accounts. Pull down to retry or check your connection.");
+    }).finally(() => setLoadingAccounts(false));
   }, []);
 
   // ─── Load transaction in edit mode ──────────────────────────────────────────
@@ -1413,6 +1422,7 @@ export function AddTransactionScreen() {
         {showAccSheet && (
           <AccountSheet
             accounts={ACCOUNTS}
+            loading={loadingAccounts}
             selected={accId} onSelect={a => setAccId(a.id)}
             onClose={() => setShowAccSheet(false)}
             excludeId={txType === "transfer" ? toAccId : undefined} />
@@ -1422,6 +1432,7 @@ export function AddTransactionScreen() {
         {showToAcc && (
           <AccountSheet
             accounts={ACCOUNTS}
+            loading={loadingAccounts}
             selected={toAccId} onSelect={a => setToAccId(a.id)}
             onClose={() => setShowToAcc(false)}
             excludeId={accId} />
