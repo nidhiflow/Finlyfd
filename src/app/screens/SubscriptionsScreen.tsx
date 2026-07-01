@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { CheckCircle2, Crown, Shield, Star, Zap } from "lucide-react";
 import { toast } from "sonner";
+import { authAPI } from "../services/api";
+import { startRazorpayCheckout } from "../services/razorpay";
 
 const plans = [
   {
@@ -66,10 +68,46 @@ const plans = [
 
 export function SubscriptionsScreen() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [processingPlan, setProcessingPlan] = useState<string | null>(null);
 
-  const handleSubscribe = (planId: string) => {
-    if (planId === "basic") return;
-    toast.info(`Redirecting to payment gateway for ${planId} plan... (Coming Soon)`);
+  const handleSubscribe = async (planId: string) => {
+    if (planId === "basic" || processingPlan) return;
+
+    const plan = plans.find((p) => p.id === planId);
+    if (!plan) return;
+
+    const tier = planId === "pro" ? "Pro" : "Premium";
+    const baseAmount = parseInt(plan.price.replace("₹", ""), 10);
+    const amountInRupees = billingCycle === "yearly" ? Math.floor(baseAmount * 12 * 0.8) : baseAmount;
+    const user = authAPI.getCurrentUser();
+
+    setProcessingPlan(planId);
+    await startRazorpayCheckout({
+      plan: tier,
+      amountInRupees,
+      description: `Upgrade to Finly ${plan.name} (${billingCycle})`,
+      themeColor: plan.color,
+      prefill: {
+        name: user?.name || "Finly User",
+        email: user?.email || "",
+        contact: user?.phone || "",
+      },
+      onSuccess: (updatedUser) => {
+        toast.success(`Success! Welcome to Finly ${plan.name}!`);
+        if (updatedUser) {
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+        setTimeout(() => window.location.reload(), 1500);
+      },
+      onError: (message) => {
+        toast.error(message);
+        setProcessingPlan(null);
+      },
+      onDismiss: () => {
+        toast.info("Payment cancelled.");
+        setProcessingPlan(null);
+      },
+    });
   };
 
   return (
@@ -205,7 +243,8 @@ export function SubscriptionsScreen() {
 
               <button
                 onClick={() => handleSubscribe(plan.id)}
-                className={`w-full py-4 rounded-xl font-bold text-sm transition-all ${
+                disabled={processingPlan !== null}
+                className={`w-full py-4 rounded-xl font-bold text-sm transition-all disabled:opacity-50 ${
                   plan.buttonVariant === "solid"
                     ? plan.id === "premium"
                       ? "bg-gradient-to-r from-[#D4A24C] to-[#E2725B] text-white shadow-lg shadow-[#D4A24C]/20 hover:opacity-90"
@@ -213,7 +252,7 @@ export function SubscriptionsScreen() {
                     : "bg-[var(--bg-deep)] text-ink border border-[var(--divider)]"
                 }`}
               >
-                {plan.buttonText}
+                {processingPlan === plan.id ? "Processing..." : plan.buttonText}
               </button>
             </motion.div>
           );

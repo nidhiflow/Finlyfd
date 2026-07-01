@@ -480,5 +480,24 @@ export const adminAPI = {
   },
 };
 
+// ─── PAYMENTS API (Razorpay) ──────────────────────────────────────────────────
+export const paymentsAPI = {
+  createOrder: async (data: { amount: number; currency?: string; receipt?: string }) =>
+    apiCall<{ order_id: string; amount: number; currency: string; key_id: string }>(
+      "/api/payments/create-order",
+      { method: "POST", body: JSON.stringify(data) }
+    ),
+  verifyPayment: async (data: {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+    plan?: string;
+  }) =>
+    apiCall<{ success: boolean; message: string; user?: User }>(
+      "/api/payments/verify-payment",
+      { method: "POST", body: JSON.stringify(data) }
+    ),
+};
+
 // Export the base URL for other uses
 export { API_BASE_URL };

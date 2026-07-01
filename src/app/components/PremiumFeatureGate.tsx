@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Crown, Check, AlertCircle, Sparkles, Star, Shield, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI } from "../services/api";
+import { startRazorpayCheckout } from "../services/razorpay";
 
 interface PremiumFeatureGateProps {
   children: React.ReactNode;
@@ -42,18 +43,6 @@ export function PremiumFeatureGate({
   const requiredLevel = tierLevels[requiredTier.toLowerCase()] || 1;
   const isUnlocked = userLevel >= requiredLevel;
 
-  // Dynamically load Razorpay SDK
-  useEffect(() => {
-    if (isUnlocked) return;
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, [isUnlocked]);
-
   if (isUnlocked) {
     return <>{children}</>;
   }
@@ -78,63 +67,38 @@ export function PremiumFeatureGate({
 
   const handleRazorpayPayment = async () => {
     setIsProcessing(true);
-    try {
-      if (!(window as any).Razorpay) {
-        throw new Error("Razorpay payment SDK not loaded yet. Please try again in a few seconds.");
-      }
-
-      const options = {
-        key: "rzp_test_FinlyDevKey123", // Dummy Razorpay test key
-        amount: finalPrice * 100, // in paise
-        currency: "INR",
-        name: "Finly",
-        description: `Upgrade to ${selectedPlan} Subscription (${billingCycle})`,
-        image: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", // crown icon
-        handler: async function (response: any) {
-          toast.success("Payment verified successfully via Razorpay!");
-          try {
-            toast.loading("Upgrading your subscription tier...");
-            const res = await authAPI.upgradeSubscription(selectedPlan);
-            toast.dismiss();
-            if (res && res.user) {
-              toast.success(`Success! Welcome to Finly ${selectedPlan}!`);
-              setCurrentUser(res.user);
-              setStep("success");
-              if (onUnlock) onUnlock();
-              // Reload page to reflect subscription unlock everywhere after a brief pause
-              setTimeout(() => {
-                window.location.reload();
-              }, 1500);
-            } else {
-              toast.error("Failed to upgrade subscription tier locally.");
-            }
-          } catch (e: any) {
-            toast.dismiss();
-            toast.error(e?.message || "Failed to update subscription tier.");
-          }
-        },
-        prefill: {
-          name: currentUser?.name || "Finly User",
-          email: currentUser?.email || "user@example.com",
-          contact: currentUser?.phone || "",
-        },
-        theme: {
-          color: selectedPlan === "Premium" ? "#D4A24C" : "#6FBE9B",
-        },
-        modal: {
-          ondismiss: function () {
-            toast.info("Payment cancelled.");
-            setIsProcessing(false);
-          }
+    await startRazorpayCheckout({
+      plan: selectedPlan,
+      amountInRupees: finalPrice,
+      description: `Upgrade to ${selectedPlan} Subscription (${billingCycle})`,
+      themeColor: selectedPlan === "Premium" ? "#D4A24C" : "#6FBE9B",
+      prefill: {
+        name: currentUser?.name || "Finly User",
+        email: currentUser?.email || "user@example.com",
+        contact: currentUser?.phone || "",
+      },
+      onSuccess: (user) => {
+        toast.success(`Success! Welcome to Finly ${selectedPlan}!`);
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+          setCurrentUser(user);
         }
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-    } catch (e: any) {
-      toast.error(e?.message || "Razorpay setup failed");
-      setIsProcessing(false);
-    }
+        setStep("success");
+        if (onUnlock) onUnlock();
+        // Reload page to reflect subscription unlock everywhere after a brief pause
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      },
+      onError: (message) => {
+        toast.error(message);
+        setIsProcessing(false);
+      },
+      onDismiss: () => {
+        toast.info("Payment cancelled.");
+        setIsProcessing(false);
+      },
+    });
   };
 
   return (
