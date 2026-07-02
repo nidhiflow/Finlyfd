@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router";
-import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown, Camera } from "lucide-react";
+import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown, Camera, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI, transactionsAPI, accountsAPI, categoriesAPI, budgetsAPI, savingsGoalsAPI, settingsAPI } from "../services/api";
 
@@ -13,9 +13,14 @@ export function SettingsScreen() {
   });
   const [currency, setCurrency] = useState("INR");
   const [weekStart, setWeekStart] = useState("Sunday");
+  const [dashboardRefresh, setDashboardRefresh] = useState(() => {
+    const saved = localStorage.getItem("finly-dashboard-refresh");
+    return saved ? saved.charAt(0).toUpperCase() + saved.slice(1) : "Monthly";
+  });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [showWeekModal, setShowWeekModal] = useState(false);
+  const [showDashboardRefreshModal, setShowDashboardRefreshModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => authAPI.getCurrentUser());
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileName, setProfileName] = useState("");
@@ -324,6 +329,7 @@ export function SettingsScreen() {
         { icon: darkMode ? Moon : Sun, label: "Dark Mode", value: darkMode, isToggle: true, action: handleThemeToggle },
         { icon: DollarSign, label: "Currency", value: currency, action: () => setShowCurrencyModal(true) },
         { icon: CalendarIcon, label: "Week Starts On", value: weekStart, action: () => setShowWeekModal(true) },
+        { icon: RefreshCw, label: "Dashboard Refresh", value: dashboardRefresh, action: () => setShowDashboardRefreshModal(true) },
       ],
     },
     {
@@ -569,6 +575,46 @@ export function SettingsScreen() {
               ))}
             </div>
             <button onClick={() => setShowWeekModal(false)}
+              className="w-full mt-4 py-3 rounded-xl text-ink/50 font-medium"
+              style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Dashboard Refresh Modal */}
+      {showDashboardRefreshModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDashboardRefreshModal(false)} />
+          <div className="relative max-w-sm w-full bg-[var(--surface)] rounded-2xl p-6 border border-[var(--divider)]">
+            <h2 className="text-lg font-bold text-ink mb-1">Dashboard Refresh</h2>
+            <p className="text-ink/50 text-xs mb-4">Controls when the dashboard's default month view resets to today.</p>
+            <div className="space-y-2">
+              {[
+                { label: "Monthly", desc: "Always opens on the current month" },
+                { label: "Yearly", desc: "Resets to the current month once a year" },
+                { label: "Never", desc: "Always resumes the last month you viewed" },
+              ].map(opt => (
+                <button key={opt.label}
+                  onClick={() => {
+                    setDashboardRefresh(opt.label);
+                    localStorage.setItem("finly-dashboard-refresh", opt.label.toLowerCase());
+                    setShowDashboardRefreshModal(false);
+                    toast.success(`Dashboard refresh set to ${opt.label}`);
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-xl transition-colors hover:bg-ink/5"
+                  style={{
+                    background: dashboardRefresh === opt.label ? "rgba(212,162,76,0.15)" : "transparent",
+                    border: dashboardRefresh === opt.label ? "1px solid rgba(212,162,76,0.4)" : "1px solid transparent",
+                    color: "var(--ink)",
+                  }}>
+                  <p className="font-medium">{opt.label}</p>
+                  <p className="text-ink/40 text-xs mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+            <button onClick={() => setShowDashboardRefreshModal(false)}
               className="w-full mt-4 py-3 rounded-xl text-ink/50 font-medium"
               style={{ background: "color-mix(in srgb, var(--ink) 5%, transparent)" }}>
               Cancel

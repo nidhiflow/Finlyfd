@@ -24,6 +24,31 @@ const MONTHS = [
   "July","August","September","October","November","December",
 ];
 
+// ─── Dashboard Refresh Preference ──────────────────────────────────────────────
+// Controls when the dashboard's default month view resets to today. Set from
+// Settings > Preferences > Dashboard Refresh. Defaults to "monthly" (always
+// open on the current month, the original behavior).
+function getInitialPeriod() {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const mode = localStorage.getItem("finly-dashboard-refresh") || "monthly";
+
+  let saved: { month: number; year: number } | null = null;
+  try {
+    const raw = localStorage.getItem("finly_dashboard_last_view");
+    saved = raw ? JSON.parse(raw) : null;
+  } catch {
+    saved = null;
+  }
+
+  if (mode === "monthly" || !saved) return { month: currentMonth, year: currentYear };
+  if (mode === "yearly") {
+    return saved.year === currentYear ? saved : { month: currentMonth, year: currentYear };
+  }
+  return saved; // "never"
+}
+
 // ─── Empty State Reusable Component ────────────────────────────────────────────
 function EmptyState({
   icon: Icon, title, subtitle, ctaLabel, onCta, compact = false,
@@ -121,8 +146,9 @@ function SectionHeader({ title, actionLabel, onAction }: {
 export function DashboardScreen() {
   const navigate = useNavigate();
   const [dateMode, setDateMode]     = useState<"month" | "custom">("month");
-  const [monthIdx, setMonthIdx]     = useState(new Date().getMonth());
-  const [year, setYear]             = useState(new Date().getFullYear());
+  const [{ month: initialMonth, year: initialYear }] = useState(getInitialPeriod);
+  const [monthIdx, setMonthIdx]     = useState(initialMonth);
+  const [year, setYear]             = useState(initialYear);
   const [dismissedAlert, setAlert]  = useState(false);
   
   const [recurringList, setRecurringList] = useState<any[]>([]);
@@ -204,6 +230,10 @@ export function DashboardScreen() {
   useEffect(() => {
     if (dateMode === "month") loadDashboardData();
   }, [monthIdx, year, dateMode]);
+
+  useEffect(() => {
+    localStorage.setItem("finly_dashboard_last_view", JSON.stringify({ month: monthIdx, year }));
+  }, [monthIdx, year]);
 
   useEffect(() => {
     if (dateMode === "custom" && customStart && customEnd) loadDashboardData();
