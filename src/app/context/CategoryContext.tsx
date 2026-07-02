@@ -240,7 +240,13 @@ export const INITIAL_CATEGORIES: Cat[] = [
   /* ════════════════ INCOME (7 categories) ════════════════ */
   {
     id:"i-salary", name:"Salary", emoji:"💼", icon:Briefcase, color:"#22C55E", type:"income", usage:5,
-    subs:[],
+    subs:[
+      {id:"is1", name:"Monthly Salary", emoji:"💰", icon:Wallet},
+      {id:"is2", name:"Bonus",          emoji:"🎉", icon:Gift},
+      {id:"is3", name:"Overtime Pay",   emoji:"💵", icon:HandCoins},
+      {id:"is4", name:"Reimbursement",  emoji:"🧾", icon:Receipt},
+      {id:"is5", name:"Increment/Arrears", emoji:"📈", icon:TrendingUp},
+    ],
   },
   {
     id:"i-gifts", name:"Gifts & Rewards", emoji:"🎁", icon:Gift, color:"#FF6B9D", type:"income", usage:2,
@@ -268,7 +274,12 @@ export const INITIAL_CATEGORIES: Cat[] = [
   },
   {
     id:"i-biz", name:"Business Income", emoji:"🏢", icon:Building2, color:"#D4A24C", type:"income", usage:4,
-    subs:[],
+    subs:[
+      {id:"ib1", name:"Client Payment",   emoji:"🤝", icon:HandCoins},
+      {id:"ib2", name:"Product Sales",    emoji:"🛍️", icon:ShoppingBag},
+      {id:"ib3", name:"Service Revenue",  emoji:"💼", icon:Briefcase},
+      {id:"ib4", name:"Consulting Fees",  emoji:"📄", icon:FileText},
+    ],
   },
   {
     id:"i-rental", name:"Rental Income", emoji:"🏡", icon:Home, color:"#F7931A", type:"income", usage:3,

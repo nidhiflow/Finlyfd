@@ -1,7 +1,10 @@
 import { RouterProvider } from 'react-router';
 import { Toaster } from 'sonner';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { router } from './routes';
 import { useEffect } from 'react';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 export default function App() {
   useEffect(() => {
@@ -20,7 +23,7 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <RouterProvider router={router} />
       <Toaster
         position="top-center"
@@ -33,6 +36,6 @@ export default function App() {
           },
         }}
       />
-    </>
+    </GoogleOAuthProvider>
   );
 }

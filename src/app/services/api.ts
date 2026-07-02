@@ -152,7 +152,7 @@ async function apiCall<T>(
     ...options.headers as Record<string, string>,
   };
 
-  if (token && !endpoint.includes("/auth/signup") && !endpoint.includes("/auth/login") && !endpoint.includes("/auth/verify") && !endpoint.includes("/auth/forgot")) {
+  if (token && !endpoint.includes("/auth/signup") && !endpoint.includes("/auth/login") && !endpoint.includes("/auth/verify") && !endpoint.includes("/auth/forgot") && !endpoint.includes("/auth/google")) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
@@ -224,6 +224,21 @@ export const authAPI = {
 
     // If no OTP required, store token immediately
     if (response.token && response.user) {
+      localStorage.setItem("authToken", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+    }
+
+    return response;
+  },
+
+  // Sign in / sign up with a Google ID token (credential)
+  googleLogin: async (data: { credential: string }) => {
+    const response = await apiCall<AuthResponse>("/api/auth/google", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    if (response.token) {
       localStorage.setItem("authToken", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
     }
