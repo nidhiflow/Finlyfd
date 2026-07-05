@@ -3,7 +3,8 @@ import { motion } from "motion/react";
 import { useNavigate } from "react-router";
 import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown, Camera, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { authAPI, transactionsAPI, accountsAPI, categoriesAPI, budgetsAPI, savingsGoalsAPI, settingsAPI } from "../services/api";
+import { authAPI, transactionsAPI, accountsAPI, categoriesAPI, budgetsAPI, savingsGoalsAPI, settingsAPI, autoBackupAPI } from "../services/api";
+import { exportTransactionsPDF } from "../utils/pdf";
 
 export function SettingsScreen() {
   const navigate = useNavigate();
@@ -38,6 +39,56 @@ export function SettingsScreen() {
   const [backupFiles, setBackupFiles] = useState<any[]>([]);
   const [isBackingUp, setIsBackingUp] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
+
+  // Automatic (server-side, daily) Google Drive backup state
+  const [isAutoBackupConnected, setIsAutoBackupConnected] = useState(false);
+  const [isAutoBackupLoading, setIsAutoBackupLoading] = useState(false);
+
+  useEffect(() => {
+    autoBackupAPI.getStatus().then(res => setIsAutoBackupConnected(!!res?.connected)).catch(() => {});
+
+    // Handle the redirect back from Google's consent screen (?gdrive=connected|error)
+    const params = new URLSearchParams(window.location.search);
+    const gdrive = params.get("gdrive");
+    if (gdrive === "connected") {
+      toast.success("Automatic daily backup to Google Drive enabled!");
+      setIsAutoBackupConnected(true);
+    } else if (gdrive === "error") {
+      toast.error("Failed to connect Google Drive for automatic backup. Please try again.");
+    }
+    if (gdrive) {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  const handleConnectAutoBackup = () => {
+    window.location.href = autoBackupAPI.getConnectUrl();
+  };
+
+  const handleDisconnectAutoBackup = async () => {
+    try {
+      setIsAutoBackupLoading(true);
+      await autoBackupAPI.disconnect();
+      setIsAutoBackupConnected(false);
+      toast.success("Automatic daily backup disabled");
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to disconnect");
+    } finally {
+      setIsAutoBackupLoading(false);
+    }
+  };
+
+  const handleRunAutoBackupNow = async () => {
+    try {
+      setIsAutoBackupLoading(true);
+      await autoBackupAPI.runNow();
+      toast.success("Backup uploaded to Google Drive");
+    } catch (e: any) {
+      toast.error(e?.message || "Backup failed");
+    } finally {
+      setIsAutoBackupLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Inject Google Identity Services client script dynamically
@@ -152,6 +203,72 @@ export function SettingsScreen() {
       toast.error(e?.message || "Failed to complete backup");
     } finally {
       setIsBackingUp(false);
+    }
+  };
+
+  const handleLocalBackupDownload = async () => {
+    try {
+      toast.loading("Preparing backup file...");
+      const [transactions, accounts, categories, budgets, goals] = await Promise.all([
+        transactionsAPI.getAll({}),
+        accountsAPI.getAll(),
+        categoriesAPI.getAll(),
+        budgetsAPI.get(),
+        savingsGoalsAPI.getAll()
+      ]);
+      const backupData = {
+        version: "1.0.0",
+        timestamp: new Date().toISOString(),
+        transactions,
+        accounts,
+        categories,
+        budgets,
+        goals
+      };
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `finly-backup-${new Date().toISOString().split("T")[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.dismiss();
+      toast.success("Backup file downloaded — keep it safe for disaster recovery");
+    } catch (e: any) {
+      toast.dismiss();
+      toast.error(e?.message || "Failed to prepare backup file");
+    }
+  };
+
+  const handleLocalRestoreFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!window.confirm("Restoring this backup will replace ALL your current categories, accounts, transactions, budgets, and goals in this account. Do you want to proceed?")) {
+      return;
+    }
+
+    try {
+      setIsRestoring(true);
+      toast.loading("Reading backup file...");
+      const text = await file.text();
+      const backupData = JSON.parse(text);
+
+      toast.loading("Restoring financial data...");
+      const res = await settingsAPI.restore(backupData);
+      toast.dismiss();
+      if (res && res.message) {
+        toast.success("Data restored successfully!");
+        window.location.reload();
+      } else {
+        toast.error("Restore failed");
+      }
+    } catch (e: any) {
+      toast.dismiss();
+      toast.error(e?.message?.includes("JSON") ? "That file isn't a valid Finly backup" : (e?.message || "Failed to restore backup"));
+    } finally {
+      setIsRestoring(false);
     }
   };
 
@@ -272,20 +389,27 @@ export function SettingsScreen() {
   const handleExportCSV = async () => {
     try {
       toast.loading("Exporting data...");
-      const transactions = await transactionsAPI.getAll({});
+      const [transactions, accounts, categories] = await Promise.all([
+        transactionsAPI.getAll({}),
+        accountsAPI.getAll(),
+        categoriesAPI.getAll(),
+      ]);
       if (!transactions || transactions.length === 0) {
         toast.dismiss();
         toast.error("No transactions to export");
         return;
       }
+      const accountNameById = new Map((accounts || []).map((a: any) => [a.id, a.name]));
+      const categoryNameById = new Map((categories || []).map((c: any) => [c.id, c.name]));
       // Generate CSV
-      const headers = ["Date", "Type", "Amount", "Note", "Category"];
+      const headers = ["Date", "Type", "Amount", "Note", "Category", "Account"];
       const rows = transactions.map((t: any) => [
         t.date?.substring(0, 10) || "",
         t.type || "",
         t.amount || "0",
         `"${(t.note || t.description || "").replace(/"/g, '""')}"`,
-        t.category_id || "",
+        `"${(categoryNameById.get(t.category_id) || t.category_id || "").replace(/"/g, '""')}"`,
+        `"${(accountNameById.get(t.account_id) || "").replace(/"/g, '""')}"`,
       ]);
       const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
       const blob = new Blob([csv], { type: "text/csv" });
@@ -300,6 +424,30 @@ export function SettingsScreen() {
     } catch (e) {
       toast.dismiss();
       toast.error("Failed to export data");
+    }
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      toast.loading("Generating PDF...");
+      const [transactions, accounts, categories] = await Promise.all([
+        transactionsAPI.getAll({}),
+        accountsAPI.getAll(),
+        categoriesAPI.getAll(),
+      ]);
+      if (!transactions || transactions.length === 0) {
+        toast.dismiss();
+        toast.error("No transactions to export");
+        return;
+      }
+      const accountNameById = new Map((accounts || []).map((a: any) => [a.id, a.name]));
+      const categoryNameById = new Map((categories || []).map((c: any) => [c.id, c.name]));
+      exportTransactionsPDF(transactions, accountNameById, categoryNameById);
+      toast.dismiss();
+      toast.success("PDF exported successfully");
+    } catch (e) {
+      toast.dismiss();
+      toast.error("Failed to export PDF");
     }
   };
 
@@ -336,14 +484,31 @@ export function SettingsScreen() {
       title: "Data & Export",
       items: [
         { icon: Download, label: "Export CSV", value: null, action: handleExportCSV },
+        { icon: Download, label: "Export PDF", value: null, action: handleExportPDF },
       ],
     },
     {
       title: "Backup & Sync",
       items: [
         { icon: Cloud, label: "Google Drive Backup", value: isGDriveConnected ? "Connected" : "Not Connected", action: handleOpenGDriveModal },
-        { icon: Download, label: "Local Backup", value: null, action: handleExportCSV },
-        { icon: Download, label: "Restore from Backup", value: null, action: () => toast.info("Restore coming soon") },
+        {
+          icon: Cloud,
+          label: "Automatic Daily Backup",
+          value: isAutoBackupConnected ? "Connected" : "Not Connected",
+          action: () => {
+            if (isAutoBackupLoading) return;
+            if (isAutoBackupConnected) {
+              if (window.confirm("Disable automatic daily backup to Google Drive?")) handleDisconnectAutoBackup();
+            } else {
+              handleConnectAutoBackup();
+            }
+          },
+        },
+        ...(isAutoBackupConnected ? [
+          { icon: RefreshCw, label: "Run Backup Now", value: null, action: handleRunAutoBackupNow },
+        ] : []),
+        { icon: Download, label: "Local Backup", value: null, action: handleLocalBackupDownload },
+        { icon: Download, label: "Restore from Backup", value: null, action: () => document.getElementById("local-restore-upload")?.click() },
       ],
     },
     {
@@ -356,6 +521,16 @@ export function SettingsScreen() {
 
   return (
     <div className="px-5 py-6 space-y-6">
+      {/* Hidden input for local JSON backup restore (disaster recovery into a new account) */}
+      <input
+        id="local-restore-upload"
+        type="file"
+        accept="application/json,.json"
+        className="hidden"
+        onChange={handleLocalRestoreFile}
+        disabled={isRestoring}
+      />
+
       {/* Profile Card */}
       <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
         <div className="flex items-center gap-4">

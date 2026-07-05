@@ -495,6 +495,24 @@ export const adminAPI = {
   },
 };
 
+// ─── AUTOMATIC GOOGLE DRIVE BACKUP API ────────────────────────────────────────
+export const autoBackupAPI = {
+  getStatus: async () => apiCall<{ connected: boolean }>("/api/backup/google/status", { method: "GET" }),
+  disconnect: async () => apiCall<{ message: string }>("/api/backup/google/disconnect", { method: "POST" }),
+  runNow: async () => apiCall<{ message: string }>("/api/backup/google/run-now", { method: "POST" }),
+  // Not a fetch call — the browser is navigated here so the user can complete Google's consent screen.
+  getConnectUrl: () => `${API_BASE_URL}/api/backup/google/connect?token=${encodeURIComponent(localStorage.getItem("authToken") || "")}`,
+};
+
+// ─── COUPONS API ──────────────────────────────────────────────────────────────
+export const couponsAPI = {
+  redeem: async (code: string) =>
+    apiCall<{ message: string; user: User & { subscription_expires_at?: string } }>(
+      "/api/coupons/redeem",
+      { method: "POST", body: JSON.stringify({ code }) }
+    ),
+};
+
 // ─── PAYMENTS API (Razorpay) ──────────────────────────────────────────────────
 export const paymentsAPI = {
   createOrder: async (data: { amount: number; currency?: string; receipt?: string }) =>

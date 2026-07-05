@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { CheckCircle2, Crown, Shield, Star, Zap } from "lucide-react";
+import { CheckCircle2, Crown, Shield, Star, Tag, Zap } from "lucide-react";
 import { toast } from "sonner";
-import { authAPI } from "../services/api";
+import { authAPI, couponsAPI } from "../services/api";
 import { startRazorpayCheckout } from "../services/razorpay";
 
 const plans = [
@@ -69,6 +69,29 @@ const plans = [
 export function SubscriptionsScreen() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [isRedeeming, setIsRedeeming] = useState(false);
+
+  const handleRedeemCoupon = async () => {
+    if (!couponCode.trim()) {
+      toast.error("Enter a coupon code first");
+      return;
+    }
+    try {
+      setIsRedeeming(true);
+      const res = await couponsAPI.redeem(couponCode.trim());
+      if (res?.user) {
+        localStorage.setItem("user", JSON.stringify(res.user));
+      }
+      toast.success(res?.message || "Coupon applied!");
+      setCouponCode("");
+      setTimeout(() => window.location.reload(), 1200);
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to redeem coupon");
+    } finally {
+      setIsRedeeming(false);
+    }
+  };
 
   const handleSubscribe = async (planId: string) => {
     if (planId === "basic" || processingPlan) return;
@@ -141,6 +164,31 @@ export function SubscriptionsScreen() {
           Upgrade your Finly experience with powerful tools to accelerate your wealth.
         </motion.p>
       </div>
+
+      {/* Coupon Redemption */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--divider)] mb-8 flex items-center gap-3"
+      >
+        <Tag className="w-5 h-5 text-[#D4A24C] flex-shrink-0" />
+        <input
+          type="text"
+          value={couponCode}
+          onChange={e => setCouponCode(e.target.value)}
+          placeholder="Have a coupon code?"
+          className="flex-1 min-w-0 px-3 py-2 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-lg text-ink text-sm placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+          disabled={isRedeeming}
+        />
+        <button
+          onClick={handleRedeemCoupon}
+          disabled={isRedeeming || !couponCode.trim()}
+          className="px-4 py-2 bg-[#D4A24C] rounded-lg text-black text-sm font-semibold disabled:opacity-50 active:scale-95 transition-all flex-shrink-0"
+        >
+          {isRedeeming ? "Applying..." : "Redeem"}
+        </button>
+      </motion.div>
 
       {/* Billing Toggle */}
       <motion.div

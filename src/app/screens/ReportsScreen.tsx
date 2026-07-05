@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   ChevronLeft, ChevronRight, ChevronDown,
   Sparkles, TrendingUp, TrendingDown, ArrowLeft, BarChart2, X,
-  Calendar, CalendarDays, CalendarClock
+  Calendar, CalendarDays, CalendarClock, Download
 } from "lucide-react";
+import { toast } from "sonner";
 import { statsAPI } from "../services/api";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { useCategoryContext } from "../context/CategoryContext";
+import { exportReportPDF } from "../utils/pdf";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 type PeriodType = "daily" | "weekly" | "monthly" | "annual" | "custom";
@@ -577,6 +579,21 @@ export function ReportsScreen() {
   // Empty state (future: no data)
   const isEmpty = displayData.length === 0;
 
+  const handleExportPDF = () => {
+    try {
+      exportReportPDF({
+        periodLabel,
+        chartType,
+        totalIncome,
+        totalExpense,
+        categories: mainData.map(c => ({ name: c.name, amount: c.amount, percentage: c.percentage })),
+      });
+      toast.success("PDF exported successfully");
+    } catch (e) {
+      toast.error("Failed to export PDF");
+    }
+  };
+
   return (
     <>
     <div className="relative pb-32"
@@ -609,10 +626,20 @@ export function ReportsScreen() {
             <ChevronRight className="w-4 h-4 text-ink/55" />
           </motion.button>
         </div>
-        <PeriodDropdown period={period} onChange={p => {
-          setPeriod(p); setSelectedSeg(null); setDrillCat(null);
-          if (p === "custom") setShowDatePicker(true);
-        }} />
+        <div className="flex items-center gap-2">
+          <PeriodDropdown period={period} onChange={p => {
+            setPeriod(p); setSelectedSeg(null); setDrillCat(null);
+            if (p === "custom") setShowDatePicker(true);
+          }} />
+          {hasTransactions && (
+            <motion.button whileTap={{ scale: 0.88 }} onClick={handleExportPDF}
+              title="Download PDF report"
+              className="w-8 h-8 rounded-xl flex items-center justify-center"
+              style={{ background: "var(--divider)", border: "1px solid var(--divider)" }}>
+              <Download className="w-4 h-4 text-ink/55" />
+            </motion.button>
+          )}
+        </div>
       </div>
 
       {/* ── Income / Expense Toggle Tab Bar ── */}
