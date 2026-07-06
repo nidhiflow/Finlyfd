@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router";
-import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown, Camera, RefreshCw } from "lucide-react";
+import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown, Camera, RefreshCw, Tag } from "lucide-react";
 import { toast } from "sonner";
-import { authAPI, transactionsAPI, accountsAPI, categoriesAPI, budgetsAPI, savingsGoalsAPI, settingsAPI, autoBackupAPI } from "../services/api";
+import { authAPI, transactionsAPI, accountsAPI, categoriesAPI, budgetsAPI, savingsGoalsAPI, settingsAPI, autoBackupAPI, couponsAPI } from "../services/api";
 import { exportTransactionsPDF } from "../utils/pdf";
 
 export function SettingsScreen() {
@@ -29,6 +29,8 @@ export function SettingsScreen() {
   const [profilePhone, setProfilePhone] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [isRedeeming, setIsRedeeming] = useState(false);
 
   // Google Drive state variables
   const [isGDriveConnected, setIsGDriveConnected] = useState(() => {
@@ -380,6 +382,27 @@ export function SettingsScreen() {
     toast.success(darkMode ? "Light mode enabled" : "Dark mode enabled");
   };
 
+  const handleRedeemCoupon = async () => {
+    if (!couponCode.trim()) {
+      toast.error("Enter a coupon code first");
+      return;
+    }
+    try {
+      setIsRedeeming(true);
+      const res = await couponsAPI.redeem(couponCode.trim());
+      if (res?.user) {
+        localStorage.setItem("user", JSON.stringify(res.user));
+      }
+      toast.success(res?.message || "Coupon applied!");
+      setCouponCode("");
+      setTimeout(() => window.location.reload(), 1200);
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to redeem coupon");
+    } finally {
+      setIsRedeeming(false);
+    }
+  };
+
   const handleLogout = () => {
     authAPI.logout();
     navigate("/login");
@@ -546,6 +569,26 @@ export function SettingsScreen() {
             <p className="text-ink/80 text-sm">{currentUser?.email || "user@example.com"}</p>
           </div>
         </div>
+      </div>
+
+      {/* Coupon Redemption */}
+      <div className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--divider)] flex items-center gap-3">
+        <Tag className="w-5 h-5 text-[#D4A24C] flex-shrink-0" />
+        <input
+          type="text"
+          value={couponCode}
+          onChange={e => setCouponCode(e.target.value)}
+          placeholder="Have a coupon code?"
+          className="flex-1 min-w-0 px-3 py-2 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-lg text-ink text-sm placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+          disabled={isRedeeming}
+        />
+        <button
+          onClick={handleRedeemCoupon}
+          disabled={isRedeeming || !couponCode.trim()}
+          className="px-4 py-2 bg-[#D4A24C] rounded-lg text-black text-sm font-semibold disabled:opacity-50 active:scale-95 transition-all flex-shrink-0"
+        >
+          {isRedeeming ? "Applying..." : "Redeem"}
+        </button>
       </div>
 
       {/* Settings Sections */}
