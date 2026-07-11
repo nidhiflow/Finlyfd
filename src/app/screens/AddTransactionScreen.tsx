@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate, useParams } from "react-router";
-import { transactionsAPI, accountsAPI, aiAPI } from "../services/api";
+import { transactionsAPI, accountsAPI, aiAPI, authAPI } from "../services/api";
+import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
 import { toast } from "sonner";
 import {
   ArrowLeft, ScanLine, Camera, Image as ImageIcon,
@@ -751,6 +752,20 @@ export function AddTransactionScreen() {
   const [showRecurEndDate, setShowRecurEndDate] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [showRepeatSheet, setShowRepeatSheet] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [premiumFeature, setPremiumFeature] = useState({ name: "", benefits: [] as string[] });
+
+  const currentUser = authAPI.getCurrentUser();
+  const checkPremium = (featureName: string, benefits: string[]) => {
+    const userTier = (currentUser?.subscription_tier || "Free").toLowerCase();
+    const isPremiumUser = userTier === "premium";
+    if (!isPremiumUser) {
+      setPremiumFeature({ name: featureName, benefits });
+      setShowPremiumModal(true);
+      return false;
+    }
+    return true;
+  };
 
   // ─── Load accounts from API ─────────────────────────────────────────────────
   useEffect(() => {
@@ -918,10 +933,22 @@ export function AddTransactionScreen() {
   };
 
   const handleAIScan = () => {
+    if (!checkPremium("Scan Receipt", [
+      "Scan any invoice, bill, or receipt instantly",
+      "Auto-extract items, date, category and total amount",
+      "Support for images, PDFs, CSVs, and Excel sheets",
+      "Full digital archiving for tax deductions"
+    ])) return;
     document.getElementById("receipt-file-input")?.click();
   };
 
   const handleCameraScan = () => {
+    if (!checkPremium("Scan Receipt", [
+      "Scan any invoice, bill, or receipt instantly",
+      "Auto-extract items, date, category and total amount",
+      "Support for images, PDFs, CSVs, and Excel sheets",
+      "Full digital archiving for tax deductions"
+    ])) return;
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     if (isMobile) {
       document.getElementById("receipt-camera-input")?.click();
@@ -1329,14 +1356,22 @@ export function AddTransactionScreen() {
                 <Camera className="w-[15px] h-[15px]" />
              </motion.button>
              <motion.button whileTap={{ scale: 0.96 }}
-                onClick={() => document.getElementById("receipt-file-input")?.click()}
+                onClick={handleAIScan}
                 className="flex-1 bg-[var(--surface)] rounded-[14px] flex items-center justify-center text-[var(--ink-muted)]">
                 <ImageIcon className="w-[15px] h-[15px]" />
              </motion.button>
            </div>
            
            {/* Recurring Mini Toggle */}
-           <motion.button whileTap={{ scale: 0.96 }} onClick={() => setRecurring(!recurring)}
+           <motion.button whileTap={{ scale: 0.96 }} onClick={() => {
+               if (!checkPremium("Recurring Transactions", [
+                 "Automate your daily, weekly, or monthly expenses",
+                 "Auto-generate transaction logs on schedule",
+                 "Detailed recurring forecasts & calendars",
+                 "Manage active repeat schedules in one place"
+               ])) return;
+               setRecurring(!recurring);
+           }}
               className="px-4 bg-[var(--surface)] rounded-[14px] flex items-center justify-center transition-colors"
               style={{ color: recurring ? "var(--gold)" : "var(--ink-muted)", border: recurring ? "1px solid var(--gold)" : "1px solid transparent" }}>
               <Repeat className="w-[15px] h-[15px]" />
@@ -1476,6 +1511,35 @@ export function AddTransactionScreen() {
             }} 
             onClose={() => setShowCamera(false)} 
           />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showPremiumModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex flex-col justify-end bg-black/60 backdrop-blur-sm"
+          >
+            <div className="absolute top-4 left-4 z-30">
+              <button
+                onClick={() => setShowPremiumModal(false)}
+                className="w-10 h-10 rounded-full bg-[var(--surface)] border border-[var(--divider)] flex items-center justify-center text-ink hover:text-ink/80 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="w-full max-h-[90vh] overflow-y-auto rounded-t-3xl pb-8" style={{ background: 'var(--bg)' }}>
+              <PremiumFeatureGate
+                featureName={premiumFeature.name}
+                requiredTier="Premium"
+                benefits={premiumFeature.benefits}
+                onUnlock={() => setShowPremiumModal(false)}
+              >
+                <div />
+              </PremiumFeatureGate>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
       <input

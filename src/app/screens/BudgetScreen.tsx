@@ -4,6 +4,7 @@ import { Plus, ChevronLeft, ChevronRight, AlertCircle, AlertTriangle, XCircle, X
 import { budgetsAPI } from "../services/api";
 import { useCategoryContext } from "../context/CategoryContext";
 import { toast } from "sonner";
+import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
 
 interface BudgetItem {
   id: string;
@@ -99,195 +100,206 @@ export function BudgetScreen() {
   };
 
   return (
-    <div className="px-5 py-6 space-y-6">
-      {/* Month Selector */}
-      <div className="flex items-center justify-between">
-        <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
-          <ChevronLeft className="w-5 h-5 text-ink" />
-        </button>
-        <h2 className="text-xl font-semibold text-ink">{monthLabel}</h2>
-        <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
-          <ChevronRight className="w-5 h-5 text-ink" />
-        </button>
-      </div>
-
-      {/* Budget Summary */}
-      <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
-        <h3 className="text-ink/80 text-sm mb-2">Budget Remaining</h3>
-        <p className="font-fraunces tabular-nums text-4xl font-bold text-ink mb-4">₹{budgetLeft.toLocaleString()}</p>
-        <div className="bg-ink/10 backdrop-blur-sm rounded-full h-3 overflow-hidden mb-3">
-          <div className="h-full bg-white rounded-full transition-all" style={{ width: `${Math.min(percentUsed, 100)}%` }} />
+    <PremiumFeatureGate
+      featureName="Budget Optimizer"
+      requiredTier="Premium"
+      benefits={[
+        "Set custom monthly limits for all expense categories",
+        "Get instant spending speed warnings & alerts",
+        "Personalized budget suggestions based on spending history",
+        "Compare monthly budgets to build long-term savings"
+      ]}
+    >
+      <div className="px-5 py-6 space-y-6">
+        {/* Month Selector */}
+        <div className="flex items-center justify-between">
+          <button onClick={() => navigateMonth(-1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
+            <ChevronLeft className="w-5 h-5 text-ink" />
+          </button>
+          <h2 className="text-xl font-semibold text-ink">{monthLabel}</h2>
+          <button onClick={() => navigateMonth(1)} className="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center">
+            <ChevronRight className="w-5 h-5 text-ink" />
+          </button>
         </div>
-        <div className="flex items-center justify-between text-sm text-ink/80">
-          <span>₹{totalSpent.toLocaleString()} spent</span>
-          <span>₹{totalBudgeted.toLocaleString()} budgeted</span>
-        </div>
-      </div>
 
-      {/* Pressure Category Alert */}
-      {pressureCategory && pressureCategory.budgeted > 0 && (pressureCategory.spent / pressureCategory.budgeted) * 100 > 75 && (
-        <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-2xl p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-[#EF4444] flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-ink font-medium mb-1">Pressure Alert</p>
-              <p className="text-sm text-ink/60">
-                {pressureCategory.category} is at{" "}
-                {((pressureCategory.spent / pressureCategory.budgeted) * 100).toFixed(0)}%
-                (₹{pressureCategory.spent.toLocaleString()} of ₹{pressureCategory.budgeted.toLocaleString()})
-              </p>
+        {/* Budget Summary */}
+        <div className="bg-gradient-to-br from-[#D4A24C] to-[#D4A24C] rounded-2xl p-6">
+          <h3 className="text-ink/80 text-sm mb-2">Budget Remaining</h3>
+          <p className="font-fraunces tabular-nums text-4xl font-bold text-ink mb-4">₹{budgetLeft.toLocaleString()}</p>
+          <div className="bg-ink/10 backdrop-blur-sm rounded-full h-3 overflow-hidden mb-3">
+            <div className="h-full bg-white rounded-full transition-all" style={{ width: `${Math.min(percentUsed, 100)}%` }} />
+          </div>
+          <div className="flex items-center justify-between text-sm text-ink/80">
+            <span>₹{totalSpent.toLocaleString()} spent</span>
+            <span>₹{totalBudgeted.toLocaleString()} budgeted</span>
+          </div>
+        </div>
+
+        {/* Pressure Category Alert */}
+        {pressureCategory && pressureCategory.budgeted > 0 && (pressureCategory.spent / pressureCategory.budgeted) * 100 > 75 && (
+          <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-2xl p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-[#EF4444] flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-ink font-medium mb-1">Pressure Alert</p>
+                <p className="text-sm text-ink/60">
+                  {pressureCategory.category} is at{" "}
+                  {((pressureCategory.spent / pressureCategory.budgeted) * 100).toFixed(0)}%
+                  (₹{pressureCategory.spent.toLocaleString()} of ₹{pressureCategory.budgeted.toLocaleString()})
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Add Budget Button */}
-      <button
-        onClick={() => { setEditBudget(null); setShowModal(true); }}
-        className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-ink font-semibold shadow-lg shadow-[#D4A24C]/30"
-      >
-        <Plus className="w-5 h-5" />
-        <span>Add Budget</span>
-      </button>
+        {/* Add Budget Button */}
+        <button
+          onClick={() => { setEditBudget(null); setShowModal(true); }}
+          className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-[#D4A24C] to-[#D4A24C] rounded-xl text-ink font-semibold shadow-lg shadow-[#D4A24C]/30"
+        >
+          <Plus className="w-5 h-5" />
+          <span>Add Budget</span>
+        </button>
 
-      {/* Budget List */}
-      <div>
-        <h3 className="text-lg font-semibold text-ink mb-4">Category Budgets</h3>
-        {budgets.length === 0 && !isLoading && (
-          <div className="flex flex-col items-center py-8">
-            <PieChart className="w-7 h-7 text-ink/30 mb-2" />
-            <p className="text-ink/50 text-sm">No budgets set for this month</p>
-            <p className="text-ink/30 text-xs mt-1">Tap "Add Budget" to get started</p>
+        {/* Budget List */}
+        <div>
+          <h3 className="text-lg font-semibold text-ink mb-4">Category Budgets</h3>
+          {budgets.length === 0 && !isLoading && (
+            <div className="flex flex-col items-center py-8">
+              <PieChart className="w-7 h-7 text-ink/30 mb-2" />
+              <p className="text-ink/50 text-sm">No budgets set for this month</p>
+              <p className="text-ink/30 text-xs mt-1">Tap "Add Budget" to get started</p>
+            </div>
+          )}
+          <div className="space-y-4">
+            {budgets.map((budget) => {
+              const percentSpent = budget.budgeted > 0 ? (budget.spent / budget.budgeted) * 100 : 0;
+              const remaining = budget.budgeted - budget.spent;
+              const isOverBudget = percentSpent > 100;
+              const isPressure = percentSpent > 75;
+
+              return (
+                <div
+                  key={budget.id}
+                  className={`bg-[var(--surface)] rounded-2xl p-5 border ${
+                    isOverBudget ? "border-[#EF4444]/50" : isPressure ? "border-[#FFA500]/50" : "border-[var(--divider)]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${budget.color}15`, border: `1px solid ${budget.color}30` }}>
+                        {budget.icon ? <budget.icon className="w-5 h-5 text-ink/80" style={{ color: budget.color }} /> : <span className="text-xl">{budget.emoji}</span>}
+                      </div>
+                      <div>
+                        <h4 className="text-ink font-semibold">{budget.category}</h4>
+                        <p className="text-xs text-ink/50">
+                          {remaining >= 0 ? `₹${remaining.toLocaleString()} left` : `₹${Math.abs(remaining).toLocaleString()} over`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="text-right mr-2">
+                        <p className="font-fraunces tabular-nums text-ink font-semibold">₹{budget.spent.toLocaleString()}</p>
+                        <p className="font-fraunces tabular-nums text-xs text-ink/50">of ₹{budget.budgeted.toLocaleString()}</p>
+                      </div>
+                      <button onClick={() => { setEditBudget(budget); setShowModal(true); }}
+                        className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-ink/10 transition-colors">
+                        <Pencil className="w-3.5 h-3.5 text-ink/40" />
+                      </button>
+                      <button onClick={() => setShowDelete(budget)}
+                        className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-rose-500/10 transition-colors">
+                        <Trash2 className="w-3.5 h-3.5 text-rose-400/50" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-ink/10 rounded-full h-2.5 overflow-hidden mb-2">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(percentSpent, 100)}%`,
+                        backgroundColor: isOverBudget ? "#EF4444" : isPressure ? "#FFA500" : budget.color,
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs">
+                    <span className={isOverBudget ? "text-[#EF4444]" : isPressure ? "text-[#FFA500]" : "text-ink/50"}>
+                      {percentSpent.toFixed(0)}% used
+                    </span>
+                    {isPressure && !isOverBudget && (
+                      <span className="flex items-center gap-1 text-[#FFA500]">
+                        <AlertTriangle className="w-3.5 h-3.5" /> High usage
+                      </span>
+                    )}
+                    {isOverBudget && (
+                      <span className="flex items-center gap-1 text-[#EF4444]">
+                        <XCircle className="w-3.5 h-3.5" /> Over budget
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        )}
-        <div className="space-y-4">
-          {budgets.map((budget) => {
-            const percentSpent = budget.budgeted > 0 ? (budget.spent / budget.budgeted) * 100 : 0;
-            const remaining = budget.budgeted - budget.spent;
-            const isOverBudget = percentSpent > 100;
-            const isPressure = percentSpent > 75;
-
-            return (
-              <div
-                key={budget.id}
-                className={`bg-[var(--surface)] rounded-2xl p-5 border ${
-                  isOverBudget ? "border-[#EF4444]/50" : isPressure ? "border-[#FFA500]/50" : "border-[var(--divider)]"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${budget.color}15`, border: `1px solid ${budget.color}30` }}>
-                      {budget.icon ? <budget.icon className="w-5 h-5 text-ink/80" style={{ color: budget.color }} /> : <span className="text-xl">{budget.emoji}</span>}
-                    </div>
-                    <div>
-                      <h4 className="text-ink font-semibold">{budget.category}</h4>
-                      <p className="text-xs text-ink/50">
-                        {remaining >= 0 ? `₹${remaining.toLocaleString()} left` : `₹${Math.abs(remaining).toLocaleString()} over`}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-right mr-2">
-                      <p className="font-fraunces tabular-nums text-ink font-semibold">₹{budget.spent.toLocaleString()}</p>
-                      <p className="font-fraunces tabular-nums text-xs text-ink/50">of ₹{budget.budgeted.toLocaleString()}</p>
-                    </div>
-                    <button onClick={() => { setEditBudget(budget); setShowModal(true); }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-ink/10 transition-colors">
-                      <Pencil className="w-3.5 h-3.5 text-ink/40" />
-                    </button>
-                    <button onClick={() => setShowDelete(budget)}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-rose-500/10 transition-colors">
-                      <Trash2 className="w-3.5 h-3.5 text-rose-400/50" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-ink/10 rounded-full h-2.5 overflow-hidden mb-2">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{
-                      width: `${Math.min(percentSpent, 100)}%`,
-                      backgroundColor: isOverBudget ? "#EF4444" : isPressure ? "#FFA500" : budget.color,
-                    }}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between text-xs">
-                  <span className={isOverBudget ? "text-[#EF4444]" : isPressure ? "text-[#FFA500]" : "text-ink/50"}>
-                    {percentSpent.toFixed(0)}% used
-                  </span>
-                  {isPressure && !isOverBudget && (
-                    <span className="flex items-center gap-1 text-[#FFA500]">
-                      <AlertTriangle className="w-3.5 h-3.5" /> High usage
-                    </span>
-                  )}
-                  {isOverBudget && (
-                    <span className="flex items-center gap-1 text-[#EF4444]">
-                      <XCircle className="w-3.5 h-3.5" /> Over budget
-                    </span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
         </div>
-      </div>
 
-      {/* Add/Edit Budget Modal */}
-      <AnimatePresence>
-        {showModal && (
-          <BudgetModal
-            budget={editBudget}
-            month={monthStr}
-            categories={expenseCategories}
-            existingCategoryIds={budgets.map(b => b.category_id)}
-            onClose={() => { setShowModal(false); setEditBudget(null); }}
-            onSaved={() => { setShowModal(false); setEditBudget(null); loadBudgets(); }}
-          />
-        )}
-      </AnimatePresence>
+        {/* Add/Edit Budget Modal */}
+        <AnimatePresence>
+          {showModal && (
+            <BudgetModal
+              budget={editBudget}
+              month={monthStr}
+              categories={expenseCategories}
+              existingCategoryIds={budgets.map(b => b.category_id)}
+              onClose={() => { setShowModal(false); setEditBudget(null); }}
+              onSaved={() => { setShowModal(false); setEditBudget(null); loadBudgets(); }}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* Delete Confirmation */}
-      <AnimatePresence>
-        {showDelete && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center px-6"
-            style={{ background: "rgba(0,0,0,0.82)", backdropFilter: "blur(16px)" }}
-            onClick={() => setShowDelete(null)}
-          >
+        {/* Delete Confirmation */}
+        <AnimatePresence>
+          {showDelete && (
             <motion.div
-              initial={{ scale: 0.86, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.86, opacity: 0 }}
-              onClick={e => e.stopPropagation()}
-              className="w-full max-w-sm rounded-3xl p-6"
-              style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center px-6"
+              style={{ background: "rgba(0,0,0,0.82)", backdropFilter: "blur(16px)" }}
+              onClick={() => setShowDelete(null)}
             >
-              <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-                style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.25)" }}>
-                <Trash2 className="w-6 h-6 text-rose-400" />
-              </div>
-              <h3 className="text-ink font-bold text-center mb-2" style={{ fontSize: 17 }}>Delete Budget?</h3>
-              <p className="text-ink/42 text-center mb-6" style={{ fontSize: 13 }}>
-                Remove the budget for <span className="text-ink/68 font-medium">"{showDelete.category}"</span>?
-              </p>
-              <div className="flex gap-3">
-                <button onClick={() => setShowDelete(null)}
-                  className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
-                  style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)" }}>
-                  Cancel
-                </button>
-                <button onClick={handleDelete}
-                  className="flex-1 py-3.5 rounded-2xl font-bold text-ink"
-                  style={{ background: "linear-gradient(135deg,#F72585,#EF4444)", boxShadow: "0 6px 20px rgba(247,37,133,0.38)" }}>
-                  Delete
-                </button>
-              </div>
+              <motion.div
+                initial={{ scale: 0.86, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.86, opacity: 0 }}
+                onClick={e => e.stopPropagation()}
+                className="w-full max-w-sm rounded-3xl p-6"
+                style={{ background: "var(--surface)", border: "1px solid var(--divider)" }}
+              >
+                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+                  style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.25)" }}>
+                  <Trash2 className="w-6 h-6 text-rose-400" />
+                </div>
+                <h3 className="text-ink font-bold text-center mb-2" style={{ fontSize: 17 }}>Delete Budget?</h3>
+                <p className="text-ink/42 text-center mb-6" style={{ fontSize: 13 }}>
+                  Remove the budget for <span className="text-ink/68 font-medium">"{showDelete.category}"</span>?
+                </p>
+                <div className="flex gap-3">
+                  <button onClick={() => setShowDelete(null)}
+                    className="flex-1 py-3.5 rounded-2xl font-semibold text-ink/50"
+                    style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)", border: "1px solid var(--divider)" }}>
+                    Cancel
+                  </button>
+                  <button onClick={handleDelete}
+                    className="flex-1 py-3.5 rounded-2xl font-bold text-ink"
+                    style={{ background: "linear-gradient(135deg,#F72585,#EF4444)", boxShadow: "0 6px 20px rgba(247,37,133,0.38)" }}>
+                    Delete
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          )}
+        </AnimatePresence>
+      </div>
+    </PremiumFeatureGate>
   );
 }
 
