@@ -248,26 +248,30 @@ export function LoginScreen() {
               </button>
             )}
 
-            <div className="relative py-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-ink/10"></div>
-              </div>
-              <div className="relative flex justify-center">
-                <span className="px-4 bg-[var(--bg-deep)] text-sm text-ink/50">or</span>
-              </div>
-            </div>
+            {import.meta.env.VITE_GOOGLE_CLIENT_ID && (
+              <>
+                <div className="relative py-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-ink/10"></div>
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="px-4 bg-[var(--bg-deep)] text-sm text-ink/50">or</span>
+                  </div>
+                </div>
 
-            <div ref={googleBtnRef} className="w-full flex justify-center">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => setError("Google sign-in failed. Please try again.")}
-                theme="filled_black"
-                shape="pill"
-                size="large"
-                text="continue_with"
-                width={googleBtnWidth}
-              />
-            </div>
+                <div ref={googleBtnRef} className="w-full flex justify-center">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => setError("Google sign-in failed. Please try again.")}
+                    theme="filled_black"
+                    shape="pill"
+                    size="large"
+                    text="continue_with"
+                    width={googleBtnWidth}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           {/* Sign Up Link */}

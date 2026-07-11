@@ -921,6 +921,15 @@ export function AddTransactionScreen() {
     document.getElementById("receipt-file-input")?.click();
   };
 
+  const handleCameraScan = () => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      document.getElementById("receipt-camera-input")?.click();
+    } else {
+      setShowCamera(true);
+    }
+  };
+
   const processReceiptData = async (base64Data: string) => {
     setAiScan(true);
     try {
@@ -997,6 +1006,14 @@ export function AddTransactionScreen() {
   const handleFileSelection = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Check size limit: 15MB
+    const MAX_SIZE = 15 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      toast.error("File is too large. Please upload a file smaller than 15MB.");
+      e.target.value = "";
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = async () => {
@@ -1307,7 +1324,7 @@ export function AddTransactionScreen() {
            {/* Camera / Gallery mini buttons */}
            <div className="flex gap-2 flex-1">
              <motion.button whileTap={{ scale: 0.96 }}
-                onClick={() => setShowCamera(true)}
+                onClick={handleCameraScan}
                 className="flex-1 bg-[var(--surface)] rounded-[14px] flex items-center justify-center text-[var(--ink-muted)]">
                 <Camera className="w-[15px] h-[15px]" />
              </motion.button>
@@ -1464,7 +1481,15 @@ export function AddTransactionScreen() {
       <input
         type="file"
         id="receipt-file-input"
+        accept="image/*,application/pdf,.xlsx,.xls,.csv,text/csv,text/plain"
+        className="hidden"
+        onChange={handleFileSelection}
+      />
+      <input
+        type="file"
+        id="receipt-camera-input"
         accept="image/*"
+        capture="environment"
         className="hidden"
         onChange={handleFileSelection}
       />
