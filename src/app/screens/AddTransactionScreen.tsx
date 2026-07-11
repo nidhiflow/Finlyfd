@@ -758,7 +758,7 @@ export function AddTransactionScreen() {
   const currentUser = authAPI.getCurrentUser();
   const checkPremium = (featureName: string, benefits: string[]) => {
     const userTier = (currentUser?.subscription_tier || "Free").toLowerCase();
-    const isPremiumUser = userTier === "premium";
+    const isPremiumUser = userTier === "premium" || currentUser?.email?.toLowerCase() === "nidhiflow.in@gmail.com";
     if (!isPremiumUser) {
       setPremiumFeature({ name: featureName, benefits });
       setShowPremiumModal(true);

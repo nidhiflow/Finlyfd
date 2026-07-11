@@ -646,7 +646,7 @@ export function AccountsScreen() {
 
   const handleSyncBankClick = () => {
     const user = authAPI.getCurrentUser();
-    const isFree = !user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free";
+    const isFree = (!user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free") && user.email?.toLowerCase() !== "nidhiflow.in@gmail.com";
     if (isFree) {
       setShowUpgradeGate(true);
     } else {
