@@ -927,10 +927,10 @@ export function AccountsScreen() {
             <div className="relative max-w-sm w-full">
               <PremiumFeatureGate
                 featureName="Bank Syncing"
-                requiredTier="Pro"
+                requiredTier="Premium"
                 benefits={[
                   "Automatically pull live bank account statements",
-                  "Link up to 3 bank accounts on the Pro plan",
+                  "Link up to 3 bank accounts on the Premium plan",
                   "Secure banking standard 256-bit encryption",
                   "Eliminate manual data entry and errors"
                 ]}

@@ -873,7 +873,7 @@ export function CategoriesScreen() {
             <div className="relative max-w-sm w-full">
               <PremiumFeatureGate
                 featureName="Custom Categories"
-                requiredTier="Pro"
+                requiredTier="Premium"
                 benefits={[
                   "Create unlimited custom categories & subcategories",
                   "Choose from a rich palette of 20+ accent colors",

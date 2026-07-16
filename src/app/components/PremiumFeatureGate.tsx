@@ -9,7 +9,7 @@ interface PremiumFeatureGateProps {
   children: React.ReactNode;
   featureName: string;
   benefits: string[];
-  requiredTier?: "Pro" | "Premium";
+  requiredTier?: "Basic" | "Premium";
   onUnlock?: () => void;
 }
 
@@ -17,7 +17,7 @@ export function PremiumFeatureGate({
   children,
   featureName,
   benefits,
-  requiredTier = "Pro",
+  requiredTier = "Premium",
   onUnlock,
 }: PremiumFeatureGateProps) {
   const [currentUser, setCurrentUser] = useState(() => authAPI.getCurrentUser());
@@ -25,7 +25,7 @@ export function PremiumFeatureGate({
   
   // Billing cycle
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const [selectedPlan, setSelectedPlan] = useState<"Pro" | "Premium">(requiredTier);
+  const [selectedPlan, setSelectedPlan] = useState<"Basic" | "Premium">("Premium");
   const [couponCode, setCouponCode] = useState("");
   const [discountApplied, setDiscountApplied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -34,13 +34,13 @@ export function PremiumFeatureGate({
   const tierLevels: Record<string, number> = {
     "free": 0,
     "basic": 0,
-    "pro": 1,
+    "pro": 2,
     "premium": 2,
   };
 
   const userTier = (currentUser?.subscription_tier || "Free").toLowerCase();
   const userLevel = tierLevels[userTier] || 0;
-  const requiredLevel = tierLevels[requiredTier.toLowerCase()] || 1;
+  const requiredLevel = tierLevels[requiredTier.toLowerCase()] || 2;
   const isUnlocked = userLevel >= requiredLevel || currentUser?.email?.toLowerCase() === "nidhiflow.in@gmail.com";
 
   if (isUnlocked) {
@@ -49,8 +49,8 @@ export function PremiumFeatureGate({
 
   // Prices
   const basePrices = {
-    Pro: billingCycle === "monthly" ? 299 : 2280, // 299/mo or 2280/yr
-    Premium: billingCycle === "monthly" ? 999 : 7680, // 999/mo or 7680/yr
+    Basic: 0,
+    Premium: billingCycle === "monthly" ? 99 : 999, // 99/mo or 999/yr
   };
 
   const currentPrice = basePrices[selectedPlan];
@@ -220,33 +220,23 @@ export function PremiumFeatureGate({
 
               {/* Plans selector list */}
               <div className="space-y-2.5 mb-4">
-                {/* Pro Tier Option */}
-                <button
-                  onClick={() => setSelectedPlan("Pro")}
-                  className={`w-full text-left p-3.5 rounded-2xl border transition-all flex justify-between items-center ${
-                    selectedPlan === "Pro"
-                      ? "border-[#6FBE9B] bg-[#6FBE9B]/5"
-                      : "border-[var(--divider)] hover:border-ink/20"
-                  }`}
+                {/* Basic Tier Option */}
+                <div
+                  className="w-full text-left p-3.5 rounded-2xl border border-[var(--divider)] opacity-60 flex justify-between items-center bg-[var(--surface-raised)]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[#6FBE9B]/10 flex items-center justify-center">
-                      <Star className={`w-4 h-4 ${selectedPlan === "Pro" ? "text-[#6FBE9B]" : "text-ink/40"}`} />
+                    <div className="w-8 h-8 rounded-lg bg-ink/5 flex items-center justify-center">
+                      <Star className="w-4 h-4 text-ink/40" />
                     </div>
                     <div>
-                      <div className="font-bold text-xs text-ink">Finly Pro</div>
-                      <div className="text-[10px] text-ink/50">Advanced tracking & categories</div>
+                      <div className="font-bold text-xs text-ink">Finly Basic</div>
+                      <div className="text-[10px] text-ink/50">Current Plan</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold text-xs text-ink">
-                      {billingCycle === "monthly" ? "₹299" : "₹2,280"}
-                    </div>
-                    <div className="text-[9px] text-ink/40">
-                      {billingCycle === "monthly" ? "/month" : "/year"}
-                    </div>
+                    <div className="font-bold text-xs text-ink">Free</div>
                   </div>
-                </button>
+                </div>
 
                 {/* Premium Tier Option */}
                 <button
@@ -268,7 +258,7 @@ export function PremiumFeatureGate({
                   </div>
                   <div className="text-right">
                     <div className="font-bold text-xs text-ink">
-                      {billingCycle === "monthly" ? "₹999" : "₹7,680"}
+                      {billingCycle === "monthly" ? "₹99" : "₹999"}
                     </div>
                     <div className="text-[9px] text-ink/40">
                       {billingCycle === "monthly" ? "/month" : "/year"}
