@@ -6,7 +6,7 @@ import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
 import {
   Plus, X, Check, Search, ChevronRight, Eye, EyeOff,
   Pencil, Trash2, Star, Crown, SlidersHorizontal, TrendingUp, TrendingDown,
-  Landmark, Briefcase, CreditCard, HandCoins, LineChart, Banknote, Wallet,
+  Landmark, Briefcase, CreditCard, HandCoins, LineChart, Banknote, Wallet, Percent,
   Smartphone, Globe, FileText, Zap, LayoutGrid, Sparkles,
   type LucideIcon,
 } from "lucide-react";
@@ -14,7 +14,7 @@ import {
 type IconType = LucideIcon;
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
-type AccountType = "savings" | "current" | "credit" | "liability" | "investment" | "salary" | "cash";
+type AccountType = "savings" | "current" | "credit" | "liability" | "investment" | "salary" | "cash" | "loan";
 type PaymentMode = "upi" | "netbanking" | "cheque" | "cash";
 
 interface Account {
@@ -52,6 +52,7 @@ const ACCOUNT_TYPES: { id: AccountType; label: string; icon: IconType; color: st
   { id: "investment", label: "Investment Account", icon: LineChart, color: "#2EC4B6", hasBank: true },
   { id: "salary", label: "Salary Account", icon: Banknote, color: "#22C55E", hasBank: true },
   { id: "cash", label: "Cash Wallet", icon: Wallet, color: "#FFB703", hasBank: false },
+  { id: "loan", label: "Loan Account", icon: Percent, color: "#845EC2", hasBank: true },
 ];
 
 const PAYMENT_MODES = [
