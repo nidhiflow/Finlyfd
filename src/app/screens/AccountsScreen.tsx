@@ -785,15 +785,6 @@ export function AccountsScreen() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handleSyncBankClick}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all"
-            style={{
-              background: "linear-gradient(135deg, rgba(212,162,76,0.18) 0%, rgba(212,162,76,0.06) 100%)",
-              border: "1px solid rgba(212,162,76,0.3)",
-            }}>
-            <Zap className="w-3.5 h-3.5 text-[#D4A24C]" />
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#D4A24C" }}>Sync Bank</span>
-          </button>
           <button onClick={() => { setShowSearch(v => !v); if (showSearch) setSearch(""); }}
             className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
             style={{

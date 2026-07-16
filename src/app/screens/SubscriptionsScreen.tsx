@@ -4,14 +4,11 @@ import { CheckCircle2, Crown, Shield, Star, Tag, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI, couponsAPI } from "../services/api";
 import { startRazorpayCheckout } from "../services/razorpay";
-
 const plans = [
   {
     id: "basic",
-    name: "Basic",
+    name: "Finly Basic",
     icon: Shield,
-    price: "Free",
-    period: "forever",
     description: "Perfect for getting started with personal finance.",
     features: [
       "Track up to 2 accounts",
@@ -19,50 +16,25 @@ const plans = [
       "Monthly reports",
       "Manual transaction entry",
     ],
-    notIncluded: ["Bank syncing", "AI Insights", "Custom categories"],
+    notIncluded: ["AI Insights", "Custom categories", "Recurring Transactions"],
     color: "var(--ink-muted)",
-    buttonText: "Current Plan",
-    buttonVariant: "outline",
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    icon: Star,
-    price: "₹299",
-    period: "/month",
-    description: "Advanced tools for serious wealth builders.",
-    features: [
-      "Unlimited accounts",
-      "Advanced budgeting tools",
-      "Custom categories & tags",
-      "Bank syncing (up to 3 banks)",
-      "Basic AI Insights",
-    ],
-    notIncluded: ["Priority Support", "Unlimited AI interactions"],
-    color: "#6FBE9B", // Mint
-    buttonText: "Upgrade to Pro",
-    buttonVariant: "solid",
-    popular: true,
   },
   {
     id: "premium",
-    name: "Premium",
+    name: "Finly Premium",
     icon: Crown,
-    price: "₹999",
-    period: "/month",
     description: "The ultimate financial operating system.",
     features: [
-      "Everything in Pro",
-      "Unlimited bank syncing",
+      "Everything in Basic",
+      "Unlimited accounts & categories",
+      "Recurring Transactions",
       "Advanced AI Agent & Insights",
       "Priority 24/7 Support",
       "Early access to new features",
-      "Family sharing (up to 4 members)",
     ],
     notIncluded: [],
     color: "#D4A24C", // Gold
-    buttonText: "Upgrade to Premium",
-    buttonVariant: "solid",
+    popular: true,
   },
 ];
 
@@ -99,9 +71,8 @@ export function SubscriptionsScreen() {
     const plan = plans.find((p) => p.id === planId);
     if (!plan) return;
 
-    const tier = planId === "pro" ? "Pro" : "Premium";
-    const baseAmount = parseInt(plan.price.replace("₹", ""), 10);
-    const amountInRupees = billingCycle === "yearly" ? Math.floor(baseAmount * 12 * 0.8) : baseAmount;
+    const tier = "Premium";
+    const amountInRupees = billingCycle === "yearly" ? 999 : 99;
     const user = authAPI.getCurrentUser();
 
     setProcessingPlan(planId);
@@ -229,6 +200,34 @@ export function SubscriptionsScreen() {
         {plans.map((plan, index) => {
           const Icon = plan.icon;
           const isPopular = plan.popular;
+          const user = authAPI.getCurrentUser();
+          const userTier = (user?.subscription_tier || "Free").toLowerCase();
+          const isAdmin = user?.email?.toLowerCase() === "nidhiflow.in@gmail.com";
+          
+          let buttonText = "";
+          let buttonVariant = "solid";
+          let isCurrentPlan = false;
+
+          if (plan.id === "basic") {
+            if (userTier === "free" || userTier === "basic") {
+              buttonText = "Current Plan";
+              buttonVariant = "outline";
+              isCurrentPlan = true;
+            } else {
+              buttonText = "Basic Plan";
+              buttonVariant = "outline";
+              isCurrentPlan = true;
+            }
+          } else if (plan.id === "premium") {
+            if (userTier === "premium" || userTier === "pro" || isAdmin) {
+              buttonText = "Current Plan (Premium)";
+              buttonVariant = "outline";
+              isCurrentPlan = true;
+            } else {
+              buttonText = "Upgrade to Premium";
+              buttonVariant = "solid";
+            }
+          }
           
           return (
             <motion.div
@@ -237,12 +236,12 @@ export function SubscriptionsScreen() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + index * 0.1 }}
               className={`relative bg-[var(--surface)] rounded-3xl p-6 border ${
-                isPopular ? "border-[#6FBE9B]/50 shadow-lg shadow-[#6FBE9B]/5" : "border-[var(--divider)]"
+                isPopular ? "border-[#D4A24C]/50 shadow-lg shadow-[#D4A24C]/5" : "border-[var(--divider)]"
               }`}
             >
               {isPopular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-[#6FBE9B] to-[#5aa886] rounded-full">
-                  <span className="text-xs font-bold text-[var(--bg-deep)]">MOST POPULAR</span>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-[#D4A24C] to-[#E2725B] rounded-full">
+                  <span className="text-xs font-bold text-white">RECOMMENDED</span>
                 </div>
               )}
 
@@ -262,14 +261,18 @@ export function SubscriptionsScreen() {
               <div className="mb-6">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold text-ink">
-                    {plan.price !== "Free" 
-                      ? billingCycle === "yearly" 
-                        ? `₹${Math.floor(parseInt(plan.price.replace("₹", "")) * 12 * 0.8)}` 
-                        : plan.price 
+                    {plan.id === "premium"
+                      ? billingCycle === "yearly"
+                        ? "₹999"
+                        : "₹99"
                       : "Free"}
                   </span>
                   <span className="text-ink/50 text-sm">
-                    {plan.price !== "Free" && billingCycle === "yearly" ? "/year" : plan.period}
+                    {plan.id === "premium"
+                      ? billingCycle === "yearly"
+                        ? "/year"
+                        : "/month"
+                      : "forever"}
                   </span>
                 </div>
               </div>
@@ -291,16 +294,14 @@ export function SubscriptionsScreen() {
 
               <button
                 onClick={() => handleSubscribe(plan.id)}
-                disabled={processingPlan !== null}
-                className={`w-full py-4 rounded-xl font-bold text-sm transition-all disabled:opacity-50 ${
-                  plan.buttonVariant === "solid"
-                    ? plan.id === "premium"
-                      ? "bg-gradient-to-r from-[#D4A24C] to-[#E2725B] text-white shadow-lg shadow-[#D4A24C]/20 hover:opacity-90"
-                      : "bg-[#6FBE9B] text-[var(--bg-deep)] hover:bg-[#5aa886]"
-                    : "bg-[var(--bg-deep)] text-ink border border-[var(--divider)]"
+                disabled={processingPlan !== null || isCurrentPlan}
+                className={`w-full py-4 rounded-xl font-bold text-sm transition-all disabled:opacity-60 ${
+                  buttonVariant === "solid"
+                    ? "bg-gradient-to-r from-[#D4A24C] to-[#E2725B] text-white shadow-lg shadow-[#D4A24C]/20 hover:opacity-90 active:scale-98"
+                    : "bg-[var(--bg-deep)] text-ink border border-[var(--divider)] cursor-default"
                 }`}
               >
-                {processingPlan === plan.id ? "Processing..." : plan.buttonText}
+                {processingPlan === plan.id ? "Processing..." : buttonText}
               </button>
             </motion.div>
           );
