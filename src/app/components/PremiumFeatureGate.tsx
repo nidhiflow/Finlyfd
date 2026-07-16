@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Crown, Check, AlertCircle, Sparkles, Star, Shield, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { authAPI } from "../services/api";
+import { authAPI, couponsAPI } from "../services/api";
 import { startRazorpayCheckout } from "../services/razorpay";
 
 interface PremiumFeatureGateProps {
@@ -56,13 +56,38 @@ export function PremiumFeatureGate({
   const currentPrice = basePrices[selectedPlan];
   const finalPrice = discountApplied ? Math.floor(currentPrice * 0.5) : currentPrice;
 
-  const handleApplyCoupon = () => {
-    if (couponCode.toUpperCase() === "FINLY50") {
+  const handleApplyCoupon = async () => {
+    const code = couponCode.toUpperCase().trim();
+    if (code === "FINLY50") {
       setDiscountApplied(true);
       toast.success("Coupon code 'FINLY50' applied successfully! 50% discount applied.");
-    } else {
-      toast.error("Invalid coupon code");
+      return;
     }
+
+    if (code === "PG1011" || code === "MUKUNFREE") {
+      setIsProcessing(true);
+      try {
+        const res = await couponsAPI.redeem(code);
+        toast.success(res.message || `Coupon ${code} applied successfully!`);
+        if (res.user) {
+          localStorage.setItem("user", JSON.stringify(res.user));
+          setCurrentUser(res.user);
+        }
+        setStep("success");
+        if (onUnlock) onUnlock();
+        // Reload page to reflect subscription unlock everywhere after a brief pause
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } catch (err: any) {
+        toast.error(err?.message || "Failed to apply coupon");
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
+
+    toast.error("Invalid coupon code");
   };
 
   const handleRazorpayPayment = async () => {
