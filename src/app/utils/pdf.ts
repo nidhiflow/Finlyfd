@@ -28,12 +28,12 @@ export function exportTransactionsPDF(
   const doc = newDoc("Transactions", `Generated ${new Date().toLocaleDateString()} · ${transactions.length} transactions`);
 
   const rows = transactions.map((t) => [
-    t.date?.substring(0, 10) || "",
-    (t.type || "").charAt(0).toUpperCase() + (t.type || "").slice(1),
-    categoryNameById.get(t.category_id) || t.category_id || "—",
-    accountNameById.get(t.account_id) || "—",
-    t.note || t.description || "",
-    (t.type === "income" ? "+" : t.type === "expense" ? "-" : "") + parseFloat(t.amount || 0).toFixed(2),
+    String(t.date || "").substring(0, 10),
+    String(t.type || "").charAt(0).toUpperCase() + String(t.type || "").slice(1),
+    String(categoryNameById.get(t.category_id) || t.category_id || "—"),
+    String(accountNameById.get(t.account_id) || "—"),
+    String(t.note || t.description || ""),
+    (t.type === "income" ? "+" : t.type === "expense" ? "-" : "") + (isNaN(parseFloat(t.amount)) ? "0.00" : parseFloat(t.amount).toFixed(2)),
   ]);
 
   autoTable(doc, {

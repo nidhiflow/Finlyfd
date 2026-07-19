@@ -417,22 +417,34 @@ export function SettingsScreen() {
         accountsAPI.getAll(),
         categoriesAPI.getAll(),
       ]);
-      if (!transactions || transactions.length === 0) {
+
+      if (!Array.isArray(transactions)) {
+        throw new Error("Transactions is not an array");
+      }
+      if (!Array.isArray(accounts)) {
+        throw new Error("Accounts is not an array");
+      }
+      if (!Array.isArray(categories)) {
+        throw new Error("Categories is not an array");
+      }
+
+      if (transactions.length === 0) {
         toast.dismiss();
         toast.error("No transactions to export");
         return;
       }
+
       const accountNameById = new Map((accounts || []).map((a: any) => [a.id, a.name]));
       const categoryNameById = new Map((categories || []).map((c: any) => [c.id, c.name]));
       // Generate CSV
       const headers = ["Date", "Type", "Amount", "Note", "Category", "Account"];
       const rows = transactions.map((t: any) => [
-        t.date?.substring(0, 10) || "",
-        t.type || "",
-        t.amount || "0",
-        `"${(t.note || t.description || "").replace(/"/g, '""')}"`,
-        `"${(categoryNameById.get(t.category_id) || t.category_id || "").replace(/"/g, '""')}"`,
-        `"${(accountNameById.get(t.account_id) || "").replace(/"/g, '""')}"`,
+        String(t.date || "").substring(0, 10),
+        String(t.type || ""),
+        String(t.amount || "0"),
+        `"${String(t.note || t.description || "").replace(/"/g, '""')}"`,
+        `"${String(categoryNameById.get(t.category_id) || t.category_id || "").replace(/"/g, '""')}"`,
+        `"${String(accountNameById.get(t.account_id) || "").replace(/"/g, '""')}"`,
       ]);
       const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
       const blob = new Blob([csv], { type: "text/csv" });
@@ -445,6 +457,7 @@ export function SettingsScreen() {
       toast.dismiss();
       toast.success("Data exported successfully");
     } catch (e) {
+      console.error("CSV Export error:", e);
       toast.dismiss();
       toast.error("Failed to export data");
     }
@@ -458,7 +471,18 @@ export function SettingsScreen() {
         accountsAPI.getAll(),
         categoriesAPI.getAll(),
       ]);
-      if (!transactions || transactions.length === 0) {
+
+      if (!Array.isArray(transactions)) {
+        throw new Error("Transactions is not an array");
+      }
+      if (!Array.isArray(accounts)) {
+        throw new Error("Accounts is not an array");
+      }
+      if (!Array.isArray(categories)) {
+        throw new Error("Categories is not an array");
+      }
+
+      if (transactions.length === 0) {
         toast.dismiss();
         toast.error("No transactions to export");
         return;
@@ -469,6 +493,7 @@ export function SettingsScreen() {
       toast.dismiss();
       toast.success("PDF exported successfully");
     } catch (e) {
+      console.error("PDF Export error:", e);
       toast.dismiss();
       toast.error("Failed to export PDF");
     }
