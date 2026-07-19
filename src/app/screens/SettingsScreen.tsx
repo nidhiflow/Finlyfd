@@ -37,7 +37,7 @@ export function SettingsScreen() {
     return !!localStorage.getItem("google_access_token");
   });
   const [showGDriveModal, setShowGDriveModal] = useState(false);
-  const [gdriveClientId, setGdriveClientId] = useState(() => localStorage.getItem("finly-google-client-id") || "");
+  const [gdriveClientId, setGdriveClientId] = useState(() => localStorage.getItem("finly-google-client-id") || import.meta.env.VITE_GOOGLE_CLIENT_ID || "");
   const [backupFiles, setBackupFiles] = useState<any[]>([]);
   const [isBackingUp, setIsBackingUp] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
