@@ -538,7 +538,6 @@ export function SettingsScreen() {
     {
       title: "Backup & Sync",
       items: [
-        { icon: Cloud, label: "Google Drive Backup", value: isGDriveConnected ? "Connected" : "Not Connected", action: handleOpenGDriveModal },
         {
           icon: Cloud,
           label: "Automatic Daily Backup",
