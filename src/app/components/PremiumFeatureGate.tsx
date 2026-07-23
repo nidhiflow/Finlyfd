@@ -4,6 +4,7 @@ import { Crown, Check, AlertCircle, Sparkles, Star, Shield, ArrowLeft } from "lu
 import { toast } from "sonner";
 import { authAPI, couponsAPI } from "../services/api";
 import { startRazorpayCheckout } from "../services/razorpay";
+import { CouponSuccessModal } from "./CouponSuccessModal";
 
 interface PremiumFeatureGateProps {
   children: React.ReactNode;
@@ -29,6 +30,11 @@ export function PremiumFeatureGate({
   const [couponCode, setCouponCode] = useState("");
   const [discountApplied, setDiscountApplied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Coupon Success Modal state
+  const [showCouponModal, setShowCouponModal] = useState(false);
+  const [redeemedCode, setRedeemedCode] = useState("PG1011");
+  const [expiresAt, setExpiresAt] = useState<string | undefined>();
 
   // Check if current user is unlocked
   const tierLevels: Record<string, number> = {
@@ -58,36 +64,37 @@ export function PremiumFeatureGate({
 
   const handleApplyCoupon = async () => {
     const code = couponCode.toUpperCase().trim();
+    if (!code) {
+      toast.error("Please enter a coupon code");
+      return;
+    }
     if (code === "FINLY50") {
       setDiscountApplied(true);
       toast.success("Coupon code 'FINLY50' applied successfully! 50% discount applied.");
       return;
     }
 
-    if (code === "PG1011" || code === "MUKUNFREE") {
-      setIsProcessing(true);
-      try {
-        const res = await couponsAPI.redeem(code);
-        toast.success(res.message || `Coupon ${code} applied successfully!`);
-        if (res.user) {
-          localStorage.setItem("user", JSON.stringify(res.user));
-          setCurrentUser(res.user);
-        }
-        setStep("success");
-        if (onUnlock) onUnlock();
-        // Reload page to reflect subscription unlock everywhere after a brief pause
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      } catch (err: any) {
-        toast.error(err?.message || "Failed to apply coupon");
-      } finally {
-        setIsProcessing(false);
+    setIsProcessing(true);
+    try {
+      const res = await couponsAPI.redeem(code);
+      if (res.user) {
+        localStorage.setItem("user", JSON.stringify(res.user));
+        setCurrentUser(res.user);
+        setExpiresAt(res.user.subscription_expires_at);
       }
-      return;
+      setRedeemedCode(code);
+      setShowCouponModal(true);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to apply coupon");
+    } finally {
+      setIsProcessing(false);
     }
+  };
 
-    toast.error("Invalid coupon code");
+  const handleCouponModalClose = () => {
+    setShowCouponModal(false);
+    if (onUnlock) onUnlock();
+    window.location.reload();
   };
 
   const handleRazorpayPayment = async () => {
@@ -380,6 +387,13 @@ export function PremiumFeatureGate({
           )}
         </AnimatePresence>
       </div>
+
+      <CouponSuccessModal
+        isOpen={showCouponModal}
+        couponCode={redeemedCode}
+        expiresAt={expiresAt}
+        onClose={handleCouponModalClose}
+      />
     </div>
   );
 }

@@ -4,6 +4,8 @@ import { CheckCircle2, Crown, Shield, Star, Tag, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI, couponsAPI } from "../services/api";
 import { startRazorpayCheckout } from "../services/razorpay";
+import { CouponSuccessModal } from "../components/CouponSuccessModal";
+
 const plans = [
   {
     id: "basic",
@@ -44,20 +46,27 @@ export function SubscriptionsScreen() {
   const [couponCode, setCouponCode] = useState("");
   const [isRedeeming, setIsRedeeming] = useState(false);
 
+  // Coupon modal state
+  const [showCouponModal, setShowCouponModal] = useState(false);
+  const [redeemedCode, setRedeemedCode] = useState("PG1011");
+  const [expiresAt, setExpiresAt] = useState<string | undefined>();
+
   const handleRedeemCoupon = async () => {
     if (!couponCode.trim()) {
       toast.error("Enter a coupon code first");
       return;
     }
+    const code = couponCode.trim().toUpperCase();
     try {
       setIsRedeeming(true);
-      const res = await couponsAPI.redeem(couponCode.trim());
+      const res = await couponsAPI.redeem(code);
       if (res?.user) {
         localStorage.setItem("user", JSON.stringify(res.user));
+        setExpiresAt(res.user.subscription_expires_at);
       }
-      toast.success(res?.message || "Coupon applied!");
+      setRedeemedCode(code);
       setCouponCode("");
-      setTimeout(() => window.location.reload(), 1200);
+      setShowCouponModal(true);
     } catch (e: any) {
       toast.error(e?.message || "Failed to redeem coupon");
     } finally {
@@ -307,6 +316,16 @@ export function SubscriptionsScreen() {
           );
         })}
       </div>
+
+      <CouponSuccessModal
+        isOpen={showCouponModal}
+        couponCode={redeemedCode}
+        expiresAt={expiresAt}
+        onClose={() => {
+          setShowCouponModal(false);
+          window.location.reload();
+        }}
+      />
     </div>
   );
 }

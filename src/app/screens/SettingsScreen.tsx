@@ -5,6 +5,7 @@ import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield
 import { toast } from "sonner";
 import { authAPI, transactionsAPI, accountsAPI, categoriesAPI, budgetsAPI, savingsGoalsAPI, settingsAPI, autoBackupAPI, couponsAPI } from "../services/api";
 import { exportTransactionsPDF } from "../utils/pdf";
+import { CouponSuccessModal } from "../components/CouponSuccessModal";
 
 export function SettingsScreen() {
   const navigate = useNavigate();
@@ -31,6 +32,9 @@ export function SettingsScreen() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [isRedeeming, setIsRedeeming] = useState(false);
+  const [showCouponModal, setShowCouponModal] = useState(false);
+  const [redeemedCode, setRedeemedCode] = useState("PG1011");
+  const [expiresAt, setExpiresAt] = useState<string | undefined>();
 
   // Google Drive state variables
   const [isGDriveConnected, setIsGDriveConnected] = useState(() => {
@@ -387,15 +391,18 @@ export function SettingsScreen() {
       toast.error("Enter a coupon code first");
       return;
     }
+    const code = couponCode.trim().toUpperCase();
     try {
       setIsRedeeming(true);
-      const res = await couponsAPI.redeem(couponCode.trim());
+      const res = await couponsAPI.redeem(code);
       if (res?.user) {
         localStorage.setItem("user", JSON.stringify(res.user));
+        setCurrentUser(res.user);
+        setExpiresAt(res.user.subscription_expires_at);
       }
-      toast.success(res?.message || "Coupon applied!");
+      setRedeemedCode(code);
       setCouponCode("");
-      setTimeout(() => window.location.reload(), 1200);
+      setShowCouponModal(true);
     } catch (e: any) {
       toast.error(e?.message || "Failed to redeem coupon");
     } finally {
@@ -1060,6 +1067,16 @@ export function SettingsScreen() {
           </div>
         </div>
       )}
+
+      <CouponSuccessModal
+        isOpen={showCouponModal}
+        couponCode={redeemedCode}
+        expiresAt={expiresAt}
+        onClose={() => {
+          setShowCouponModal(false);
+          window.location.reload();
+        }}
+      />
     </div>
   );
 }
