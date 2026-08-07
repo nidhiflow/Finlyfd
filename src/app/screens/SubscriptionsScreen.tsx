@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { CheckCircle2, Crown, Shield, Star, Tag, Zap } from "lucide-react";
+import { CheckCircle2, Crown, QrCode, Shield, Star, Tag, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI, couponsAPI } from "../services/api";
 import { startRazorpayCheckout } from "../services/razorpay";
 import { CouponSuccessModal } from "../components/CouponSuccessModal";
+import { QRPaymentModal } from "../components/QRPaymentModal";
 
 const plans = [
   {
@@ -51,6 +52,9 @@ export function SubscriptionsScreen() {
   const [redeemedCode, setRedeemedCode] = useState("PG1011");
   const [expiresAt, setExpiresAt] = useState<string | undefined>();
 
+  // QR checkout — alternative to the Razorpay popup, for users who'd rather scan with a UPI app
+  const [showQrModal, setShowQrModal] = useState(false);
+
   const handleRedeemCoupon = async () => {
     if (!couponCode.trim()) {
       toast.error("Enter a coupon code first");
@@ -81,13 +85,12 @@ export function SubscriptionsScreen() {
     if (!plan) return;
 
     const tier = "Premium";
-    const amountInRupees = billingCycle === "yearly" ? 999 : 99;
     const user = authAPI.getCurrentUser();
 
     setProcessingPlan(planId);
     await startRazorpayCheckout({
       plan: tier,
-      amountInRupees,
+      billingCycle,
       description: `Upgrade to Finly ${plan.name} (${billingCycle})`,
       themeColor: plan.color,
       prefill: {
@@ -312,6 +315,17 @@ export function SubscriptionsScreen() {
               >
                 {processingPlan === plan.id ? "Processing..." : buttonText}
               </button>
+
+              {plan.id === "premium" && !isCurrentPlan && (
+                <button
+                  onClick={() => setShowQrModal(true)}
+                  disabled={processingPlan !== null}
+                  className="w-full mt-2 py-2.5 rounded-xl text-xs font-semibold text-ink/60 hover:text-ink flex items-center justify-center gap-1.5 transition-all disabled:opacity-60"
+                >
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>Prefer to scan a UPI QR instead?</span>
+                </button>
+              )}
             </motion.div>
           );
         })}
@@ -324,6 +338,16 @@ export function SubscriptionsScreen() {
         onClose={() => {
           setShowCouponModal(false);
           window.location.reload();
+        }}
+      />
+
+      <QRPaymentModal
+        isOpen={showQrModal}
+        plan="Premium"
+        billingCycle={billingCycle}
+        onClose={() => setShowQrModal(false)}
+        onSuccess={() => {
+          setTimeout(() => window.location.reload(), 1500);
         }}
       />
     </div>

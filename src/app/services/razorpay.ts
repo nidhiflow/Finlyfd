@@ -2,7 +2,7 @@ import { paymentsAPI, User } from "./api";
 
 interface StartCheckoutParams {
   plan: "Pro" | "Premium";
-  amountInRupees: number;
+  billingCycle: "monthly" | "yearly";
   description: string;
   themeColor?: string;
   prefill: { name?: string; email?: string; contact?: string };
@@ -20,8 +20,8 @@ export async function startRazorpayCheckout(params: StartCheckoutParams) {
   let order;
   try {
     order = await paymentsAPI.createOrder({
-      amount: Math.round(params.amountInRupees * 100),
-      currency: "INR",
+      plan: params.plan,
+      billingCycle: params.billingCycle,
       receipt: `sub_${params.plan.toLowerCase()}_${Date.now()}`,
     });
   } catch (e: any) {
@@ -43,7 +43,6 @@ export async function startRazorpayCheckout(params: StartCheckoutParams) {
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_signature: response.razorpay_signature,
-          plan: params.plan,
         });
         if (result.success) {
           params.onSuccess(result.user);

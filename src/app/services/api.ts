@@ -515,7 +515,8 @@ export const couponsAPI = {
 
 // ─── PAYMENTS API (Razorpay) ──────────────────────────────────────────────────
 export const paymentsAPI = {
-  createOrder: async (data: { amount: number; currency?: string; receipt?: string }) =>
+  // amount is derived server-side from { plan, billingCycle } — never sent from the client.
+  createOrder: async (data: { plan: "Pro" | "Premium"; billingCycle?: "monthly" | "yearly"; receipt?: string }) =>
     apiCall<{ order_id: string; amount: number; currency: string; key_id: string }>(
       "/api/payments/create-order",
       { method: "POST", body: JSON.stringify(data) }
@@ -524,11 +525,20 @@ export const paymentsAPI = {
     razorpay_order_id: string;
     razorpay_payment_id: string;
     razorpay_signature: string;
-    plan?: string;
   }) =>
     apiCall<{ success: boolean; message: string; user?: User }>(
       "/api/payments/verify-payment",
       { method: "POST", body: JSON.stringify(data) }
+    ),
+  createQr: async (data: { plan: "Pro" | "Premium"; billingCycle?: "monthly" | "yearly" }) =>
+    apiCall<{ qr_code_id: string; image_url: string; amount: number; currency: string; close_by: number }>(
+      "/api/payments/create-qr",
+      { method: "POST", body: JSON.stringify(data) }
+    ),
+  getQrStatus: async (qrCodeId: string) =>
+    apiCall<{ status: "pending" | "paid" | "expired" }>(
+      `/api/payments/qr-status/${qrCodeId}`,
+      { method: "GET" }
     ),
 };
 
