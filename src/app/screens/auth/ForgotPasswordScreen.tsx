@@ -22,8 +22,9 @@ export function ForgotPasswordScreen() {
     setLoading(true);
     setError("");
     try {
-      await authAPI.forgotPassword({ email });
-      setStep("otp");
+      const response = await authAPI.forgotPassword({ email });
+      // OTP disabled on the backend → no code was emailed, go straight to the new password.
+      setStep(response.otpDisabled ? "password" : "otp");
     } catch (err: any) {
       setError(err.message || "Failed to send reset code");
     } finally {
@@ -62,7 +63,8 @@ export function ForgotPasswordScreen() {
     setError("");
     try {
       const code = otp.join("");
-      await authAPI.resetPassword({ email, code, newPassword });
+      // `code` is empty when OTP is disabled — the backend ignores it in that mode.
+      await authAPI.resetPassword({ email, code: code || undefined, newPassword });
       navigate("/login");
     } catch (err: any) {
       setError(err.message || "Failed to reset password");

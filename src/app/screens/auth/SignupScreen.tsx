@@ -86,7 +86,16 @@ export function SignupScreen() {
     setLoading(true);
     
     try {
-      await authAPI.signup({ email, password, name, phone });
+      const response = await authAPI.signup({ email, password, name, phone });
+
+      // OTP disabled on the backend → account created and signed in already.
+      if (response.token && response.user) {
+        localAuthService.saveSessionEmail(response.user.email);
+        localAuthService.updateLastActivity();
+        navigate("/quick-auth-setup");
+        return;
+      }
+
       setShowOTP(true);
     } catch (err: any) {
       setError(err.message || "Signup failed. Please try again.");

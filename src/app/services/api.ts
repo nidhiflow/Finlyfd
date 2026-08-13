@@ -24,6 +24,15 @@ export interface LoginResponse {
   requireOTP?: boolean;
 }
 
+// When the backend runs with DISABLE_OTP=true it skips the emailed code and returns a
+// session straight from /signup, and `otpDisabled: true` from the password-reset steps.
+export interface SignupResponse {
+  message?: string;
+  token?: string;
+  user?: User;
+  otpDisabled?: boolean;
+}
+
 // Mock user database for demo purposes
 const MOCK_USERS = [
   {
@@ -189,10 +198,18 @@ async function apiCall<T>(
 export const authAPI = {
   // Sign up - Step 1
   signup: async (data: { email: string; password: string; name: string; phone?: string }) => {
-    return apiCall<{ message: string }>("/api/auth/signup", {
+    const response = await apiCall<SignupResponse>("/api/auth/signup", {
       method: "POST",
       body: JSON.stringify(data),
     });
+
+    // OTP disabled → the account already exists and we were handed a session.
+    if (response.token && response.user) {
+      localStorage.setItem("authToken", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+    }
+
+    return response;
   },
 
   // Verify OTP after signup - Step 2
@@ -266,7 +283,7 @@ export const authAPI = {
 
   // Forgot password - Step 1
   forgotPassword: async (data: { email: string }) => {
-    return apiCall<{ message: string }>("/api/auth/forgot-password", {
+    return apiCall<{ message: string; otpDisabled?: boolean }>("/api/auth/forgot-password", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -285,7 +302,7 @@ export const authAPI = {
   },
 
   // Reset password - Step 3
-  resetPassword: async (data: { email: string; code: string; newPassword: string }) => {
+  resetPassword: async (data: { email: string; code?: string; newPassword: string }) => {
     return apiCall<{ message: string }>("/api/auth/reset-password", {
       method: "POST",
       body: JSON.stringify(data),

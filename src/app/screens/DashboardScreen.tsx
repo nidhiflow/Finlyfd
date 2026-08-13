@@ -251,7 +251,7 @@ export function DashboardScreen() {
       setGettingStarted({
         hasTransaction: (tx || []).length > 0,
         hasAccount: (accounts || []).length > 0,
-        hasBudget: (budgets || []).length > 0,
+        hasBudget: (budgets?.categories || []).length > 0,
         hasGoal: (goals || []).length > 0,
       });
     }).catch(console.error);
