@@ -2,36 +2,10 @@ import { createBrowserRouter } from "react-router";
 import { MainLayout } from "./layouts/MainLayout";
 import { AuthLayout } from "./layouts/AuthLayout";
 
-// Root redirect (smart entry point)
+// Root redirect (smart entry point) — kept as a static import since it's the
+// very first thing every cold visit hits; everything past it loads on demand
+// per route, so the initial bundle only ships what the current screen needs.
 import { RootRedirect } from "./screens/RootRedirect";
-
-// Onboarding
-import { OnboardingScreen } from "./screens/OnboardingScreen";
-
-// Auth screens
-import { LoginScreen } from "./screens/auth/LoginScreen";
-import { SignupScreen } from "./screens/auth/SignupScreen";
-import { ForgotPasswordScreen } from "./screens/auth/ForgotPasswordScreen";
-import { QuickAuthSetupScreen } from "./screens/auth/QuickAuthSetupScreen";
-import { QuickLoginScreen } from "./screens/auth/QuickLoginScreen";
-
-// Main screens
-import { DashboardScreen } from "./screens/DashboardScreen";
-
-import { TimeMachineScreen } from "./screens/TimeMachineScreen";
-import { TransactionsScreen } from "./screens/TransactionsScreen";
-import { AddTransactionScreen } from "./screens/AddTransactionScreen";
-import { RecurringTransactionsScreen } from "./screens/RecurringTransactionsScreen";
-import { ReportsScreen } from "./screens/ReportsScreen";
-import { CategoriesScreen } from "./screens/CategoriesScreen";
-import { AccountsScreen } from "./screens/AccountsScreen";
-import { CalendarScreen } from "./screens/CalendarScreen";
-import { BudgetScreen } from "./screens/BudgetScreen";
-import { GoalsScreen } from "./screens/GoalsScreen";
-import { AIAgentScreen } from "./screens/AIAgentScreen";
-import { SettingsScreen } from "./screens/SettingsScreen";
-import { SubscriptionsScreen } from "./screens/SubscriptionsScreen";
-import { AdminScreen } from "./screens/AdminScreen";
 
 export const router = createBrowserRouter([
   // ── Root: evaluates state and redirects to the right screen ──
@@ -43,34 +17,34 @@ export const router = createBrowserRouter([
   // ── Onboarding (4-slide intro for first-time users) ──
   {
     path: "/onboarding",
-    Component: OnboardingScreen,
+    lazy: () => import("./screens/OnboardingScreen").then((m) => ({ Component: m.OnboardingScreen })),
   },
 
   // ── Auth ──
   {
     path: "/login",
     Component: AuthLayout,
-    children: [{ index: true, Component: LoginScreen }],
+    children: [{ index: true, lazy: () => import("./screens/auth/LoginScreen").then((m) => ({ Component: m.LoginScreen })) }],
   },
   {
     path: "/signup",
     Component: AuthLayout,
-    children: [{ index: true, Component: SignupScreen }],
+    children: [{ index: true, lazy: () => import("./screens/auth/SignupScreen").then((m) => ({ Component: m.SignupScreen })) }],
   },
   {
     path: "/forgot-password",
     Component: AuthLayout,
-    children: [{ index: true, Component: ForgotPasswordScreen }],
+    children: [{ index: true, lazy: () => import("./screens/auth/ForgotPasswordScreen").then((m) => ({ Component: m.ForgotPasswordScreen })) }],
   },
   {
     path: "/quick-auth-setup",
     Component: AuthLayout,
-    children: [{ index: true, Component: QuickAuthSetupScreen }],
+    children: [{ index: true, lazy: () => import("./screens/auth/QuickAuthSetupScreen").then((m) => ({ Component: m.QuickAuthSetupScreen })) }],
   },
   {
     path: "/quick-login",
     Component: AuthLayout,
-    children: [{ index: true, Component: QuickLoginScreen }],
+    children: [{ index: true, lazy: () => import("./screens/auth/QuickLoginScreen").then((m) => ({ Component: m.QuickLoginScreen })) }],
   },
 
   // ── Main app ──
@@ -78,23 +52,23 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     Component: MainLayout,
     children: [
-      { index: true, Component: DashboardScreen },
+      { index: true, lazy: () => import("./screens/DashboardScreen").then((m) => ({ Component: m.DashboardScreen })) },
 
-      { path: "time-machine", Component: TimeMachineScreen },
-      { path: "transactions", Component: TransactionsScreen },
-      { path: "add-transaction", Component: AddTransactionScreen },
-      { path: "edit-transaction/:id", Component: AddTransactionScreen },
-      { path: "recurring", Component: RecurringTransactionsScreen },
-      { path: "reports", Component: ReportsScreen },
-      { path: "categories", Component: CategoriesScreen },
-      { path: "accounts", Component: AccountsScreen },
-      { path: "calendar", Component: CalendarScreen },
-      { path: "budget", Component: BudgetScreen },
-      { path: "goals", Component: GoalsScreen },
-      { path: "ai-agent", Component: AIAgentScreen },
-      { path: "settings", Component: SettingsScreen },
-      { path: "subscriptions", Component: SubscriptionsScreen },
-      { path: "admin", Component: AdminScreen },
+      { path: "time-machine", lazy: () => import("./screens/TimeMachineScreen").then((m) => ({ Component: m.TimeMachineScreen })) },
+      { path: "transactions", lazy: () => import("./screens/TransactionsScreen").then((m) => ({ Component: m.TransactionsScreen })) },
+      { path: "add-transaction", lazy: () => import("./screens/AddTransactionScreen").then((m) => ({ Component: m.AddTransactionScreen })) },
+      { path: "edit-transaction/:id", lazy: () => import("./screens/AddTransactionScreen").then((m) => ({ Component: m.AddTransactionScreen })) },
+      { path: "recurring", lazy: () => import("./screens/RecurringTransactionsScreen").then((m) => ({ Component: m.RecurringTransactionsScreen })) },
+      { path: "reports", lazy: () => import("./screens/ReportsScreen").then((m) => ({ Component: m.ReportsScreen })) },
+      { path: "categories", lazy: () => import("./screens/CategoriesScreen").then((m) => ({ Component: m.CategoriesScreen })) },
+      { path: "accounts", lazy: () => import("./screens/AccountsScreen").then((m) => ({ Component: m.AccountsScreen })) },
+      { path: "calendar", lazy: () => import("./screens/CalendarScreen").then((m) => ({ Component: m.CalendarScreen })) },
+      { path: "budget", lazy: () => import("./screens/BudgetScreen").then((m) => ({ Component: m.BudgetScreen })) },
+      { path: "goals", lazy: () => import("./screens/GoalsScreen").then((m) => ({ Component: m.GoalsScreen })) },
+      { path: "ai-agent", lazy: () => import("./screens/AIAgentScreen").then((m) => ({ Component: m.AIAgentScreen })) },
+      { path: "settings", lazy: () => import("./screens/SettingsScreen").then((m) => ({ Component: m.SettingsScreen })) },
+      { path: "subscriptions", lazy: () => import("./screens/SubscriptionsScreen").then((m) => ({ Component: m.SubscriptionsScreen })) },
+      { path: "admin", lazy: () => import("./screens/AdminScreen").then((m) => ({ Component: m.AdminScreen })) },
     ],
   },
 
