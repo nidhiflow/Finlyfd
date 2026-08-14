@@ -8,6 +8,7 @@ import {
   Lightbulb, Target, AlertTriangle, Rocket, Brain, Receipt,
   Landmark, ArrowDownCircle, ArrowUpCircle, RefreshCw,
   CheckCircle2, Circle, X, ListChecks, PiggyBank,
+  type LucideIcon,
 } from "lucide-react";
 import { BalanceCard } from "../components/BalanceCard";
 import { SpendingOverview } from "../components/SpendingOverview";
@@ -53,7 +54,7 @@ function getInitialPeriod() {
 function EmptyState({
   icon: Icon, title, subtitle, ctaLabel, onCta, compact = false,
 }: {
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  icon: LucideIcon;
   title: string; subtitle?: string;
   ctaLabel?: string; onCta?: () => void; compact?: boolean;
 }) {

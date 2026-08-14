@@ -10,7 +10,7 @@ interface PremiumFeatureGateProps {
   children: React.ReactNode;
   featureName: string;
   benefits: string[];
-  requiredTier?: "Basic" | "Premium";
+  requiredTier?: "Pro" | "Premium";
   onUnlock?: () => void;
 }
 
@@ -26,7 +26,7 @@ export function PremiumFeatureGate({
   
   // Billing cycle
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const [selectedPlan, setSelectedPlan] = useState<"Basic" | "Premium">("Premium");
+  const [selectedPlan, setSelectedPlan] = useState<"Pro" | "Premium">("Premium");
   const [couponCode, setCouponCode] = useState("");
   const [discountApplied, setDiscountApplied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -55,7 +55,7 @@ export function PremiumFeatureGate({
 
   // Prices
   const basePrices = {
-    Basic: 0,
+    Pro: 0,
     Premium: billingCycle === "monthly" ? 99 : 999, // 99/mo or 999/yr
   };
 
@@ -101,7 +101,7 @@ export function PremiumFeatureGate({
     setIsProcessing(true);
     await startRazorpayCheckout({
       plan: selectedPlan,
-      amountInRupees: finalPrice,
+      billingCycle,
       description: `Upgrade to ${selectedPlan} Subscription (${billingCycle})`,
       themeColor: selectedPlan === "Premium" ? "#D4A24C" : "#6FBE9B",
       prefill: {

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Star, Trash2, Plus, FileText, ChevronLeft, ChevronRight, ChevronDown,
   ShoppingBag, Edit3, Search, SlidersHorizontal, Inbox,
+  type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useCategoryContext } from "../context/CategoryContext";
@@ -12,7 +13,7 @@ import { useCategoryContext } from "../context/CategoryContext";
 // ─── Types ──────────────────────────────────────────────────────────────────────
 interface Transaction {
   id: number;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }>;
+  icon: LucideIcon;
   name: string;
   note: string;
   account: string;
