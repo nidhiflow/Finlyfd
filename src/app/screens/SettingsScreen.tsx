@@ -683,17 +683,21 @@ export function SettingsScreen() {
       ))}
 
       {/* Privacy Notice */}
-      <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[var(--divider)]">
-        <div className="flex items-start gap-3 mb-3">
+      <button
+        onClick={() => navigate("/privacy")}
+        className="w-full text-left bg-[var(--surface)] rounded-2xl p-5 border border-[var(--divider)]"
+      >
+        <div className="flex items-start gap-3">
           <Shield className="w-5 h-5 text-[#D4A24C] flex-shrink-0 mt-0.5" />
-          <div>
+          <div className="flex-1">
             <h3 className="text-ink font-semibold mb-2">Privacy & AI</h3>
             <p className="text-sm text-ink/60 leading-relaxed">
-              Your financial data is encrypted end-to-end and stored securely. AI features process data locally when possible. We never share your data with third parties.
+              Your data is encrypted in transit and never sold. AI features (chat, insights, receipt scanning) send only the data needed to a third-party AI provider. See our full privacy policy for exactly what's collected and shared.
             </p>
           </div>
+          <ChevronRight className="w-4 h-4 text-ink/40 flex-shrink-0 mt-1" />
         </div>
-      </div>
+      </button>
 
       {/* Export Options */}
       <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[var(--divider)]">

@@ -20,6 +20,13 @@ export const router = createBrowserRouter([
     lazy: () => import("./screens/OnboardingScreen").then((m) => ({ Component: m.OnboardingScreen })),
   },
 
+  // ── Privacy Policy (public, no auth required — linked from Settings and
+  // from the Play Store listing) ──
+  {
+    path: "/privacy",
+    lazy: () => import("./screens/PrivacyPolicyScreen").then((m) => ({ Component: m.PrivacyPolicyScreen })),
+  },
+
   // ── Auth ──
   {
     path: "/login",
