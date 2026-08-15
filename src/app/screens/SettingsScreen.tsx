@@ -699,6 +699,12 @@ export function SettingsScreen() {
         </div>
       </button>
 
+      <div className="flex items-center justify-center gap-3 text-xs text-ink/40">
+        <button onClick={() => navigate("/privacy")} className="hover:text-ink/70 transition-colors">Privacy Policy</button>
+        <span>&middot;</span>
+        <button onClick={() => navigate("/terms")} className="hover:text-ink/70 transition-colors">Terms of Service</button>
+      </div>
+
       {/* Export Options */}
       <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[var(--divider)]">
         <h3 className="text-ink font-semibold mb-3">Export Data</h3>

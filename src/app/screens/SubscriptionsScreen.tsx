@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { CheckCircle2, Crown, QrCode, Shield, Star, Tag, Zap } from "lucide-react";
 import { toast } from "sonner";
@@ -42,6 +43,7 @@ const plans = [
 ];
 
 export function SubscriptionsScreen() {
+  const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
   const [couponCode, setCouponCode] = useState("");
@@ -330,6 +332,13 @@ export function SubscriptionsScreen() {
           );
         })}
       </div>
+
+      <p className="text-center text-xs text-ink/40 mt-4">
+        By upgrading, you agree to our{" "}
+        <button onClick={() => navigate("/terms")} className="underline hover:text-ink/70">Terms of Service</button>
+        {" "}and{" "}
+        <button onClick={() => navigate("/privacy")} className="underline hover:text-ink/70">Privacy Policy</button>.
+      </p>
 
       <CouponSuccessModal
         isOpen={showCouponModal}
