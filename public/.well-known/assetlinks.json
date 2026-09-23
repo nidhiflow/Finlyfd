@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "in.nidhiflow.finly",
+      "sha256_cert_fingerprints": [
+        "40:BA:D7:03:72:50:6E:63:BD:87:55:C9:73:E9:31:2F:85:10:F7:4B:14:7D:DA:B6:1C:02:8E:38:B8:69:95:0A"
+      ]
+    }
+  }
+]
