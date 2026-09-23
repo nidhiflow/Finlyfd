@@ -11,6 +11,7 @@ export interface User {
   photo?: string;
   createdAt?: string;
   subscription_tier?: "Free" | "Pro" | "Premium";
+  isAdmin?: boolean;
 }
 
 export interface AuthResponse {

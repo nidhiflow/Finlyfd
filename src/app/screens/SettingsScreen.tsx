@@ -521,7 +521,7 @@ export function SettingsScreen() {
       items: [
         { icon: User, label: "Edit Profile", value: currentUser?.name || "User", action: handleOpenProfileModal },
         { icon: Crown, label: "Upgrade Plan", value: null, action: () => navigate("/dashboard/subscriptions") },
-        ...(currentUser?.email === "admin_finly" ? [
+        ...(currentUser?.isAdmin ? [
           { icon: Shield, label: "Admin Dashboard", value: null, action: () => navigate("/dashboard/admin") }
         ] : []),
       ],

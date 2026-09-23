@@ -15,6 +15,7 @@ interface UserRow {
   name: string;
   email: string;
   subscription_tier: "Free" | "Pro" | "Premium";
+  is_admin?: boolean;
   created_at: string;
   last_seen?: string;
 }
@@ -774,7 +775,7 @@ export function AdminScreen() {
                           )}
                         </div>
 
-                        {user.email !== "admin_finly" && (
+                        {!user.is_admin && (
                           <div className="pt-2 border-t border-[var(--divider)]">
                             <p className="text-[10px] font-medium text-ink/40 mb-2">Change Tier:</p>
                             <div className="grid grid-cols-3 gap-2">

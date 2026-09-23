@@ -41,11 +41,11 @@ export function LoginScreen() {
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
-  const proceedAfterAuth = (userEmail: string) => {
+  const proceedAfterAuth = (userEmail: string, isAdmin?: boolean) => {
     localAuthService.saveSessionEmail(userEmail);
     localAuthService.updateLastActivity();
 
-    if (userEmail === "admin_finly") {
+    if (isAdmin) {
       navigate("/dashboard/admin");
       return;
     }
@@ -69,7 +69,7 @@ export function LoginScreen() {
     try {
       const response = await authAPI.googleLogin({ credential: credentialResponse.credential });
       if (response.token && response.user) {
-        proceedAfterAuth(response.user.email);
+        proceedAfterAuth(response.user.email, response.user.isAdmin);
       }
     } catch (err: any) {
       setError(err.message || "Google sign-in failed. Please try again.");
@@ -89,7 +89,7 @@ export function LoginScreen() {
         // Backend requires OTP
         setShowOTP(true);
       } else if (response.token && response.user) {
-        proceedAfterAuth(email);
+        proceedAfterAuth(email, response.user.isAdmin);
       }
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
