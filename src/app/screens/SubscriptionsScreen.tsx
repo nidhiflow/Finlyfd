@@ -5,6 +5,7 @@ import { CheckCircle2, Crown, QrCode, Shield, Star, Tag, Zap } from "lucide-reac
 import { toast } from "sonner";
 import { authAPI, couponsAPI } from "../services/api";
 import { startRazorpayCheckout } from "../services/razorpay";
+import { PAYMENTS_ENABLED } from "../services/features";
 import { CouponSuccessModal } from "../components/CouponSuccessModal";
 import { QRPaymentModal } from "../components/QRPaymentModal";
 
@@ -81,7 +82,7 @@ export function SubscriptionsScreen() {
   };
 
   const handleSubscribe = async (planId: string) => {
-    if (planId === "basic" || processingPlan) return;
+    if (planId === "basic" || processingPlan || !PAYMENTS_ENABLED) return;
 
     const plan = plans.find((p) => p.id === planId);
     if (!plan) return;
@@ -150,30 +151,46 @@ export function SubscriptionsScreen() {
         </motion.p>
       </div>
 
-      {/* Coupon Redemption */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
-        className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--divider)] mb-8 flex items-center gap-3"
-      >
-        <Tag className="w-5 h-5 text-[#D4A24C] flex-shrink-0" />
-        <input
-          type="text"
-          value={couponCode}
-          onChange={e => setCouponCode(e.target.value)}
-          placeholder="Have a coupon code?"
-          className="flex-1 min-w-0 px-3 py-2 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-lg text-ink text-sm placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
-          disabled={isRedeeming}
-        />
-        <button
-          onClick={handleRedeemCoupon}
-          disabled={isRedeeming || !couponCode.trim()}
-          className="px-4 py-2 bg-[#D4A24C] rounded-lg text-black text-sm font-semibold disabled:opacity-50 active:scale-95 transition-all flex-shrink-0"
+      {/* Coupon Redemption — only relevant once real payments are back on */}
+      {PAYMENTS_ENABLED && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--divider)] mb-8 flex items-center gap-3"
         >
-          {isRedeeming ? "Applying..." : "Redeem"}
-        </button>
-      </motion.div>
+          <Tag className="w-5 h-5 text-[#D4A24C] flex-shrink-0" />
+          <input
+            type="text"
+            value={couponCode}
+            onChange={e => setCouponCode(e.target.value)}
+            placeholder="Have a coupon code?"
+            className="flex-1 min-w-0 px-3 py-2 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-lg text-ink text-sm placeholder:text-ink/30 focus:border-[#D4A24C] focus:outline-none"
+            disabled={isRedeeming}
+          />
+          <button
+            onClick={handleRedeemCoupon}
+            disabled={isRedeeming || !couponCode.trim()}
+            className="px-4 py-2 bg-[#D4A24C] rounded-lg text-black text-sm font-semibold disabled:opacity-50 active:scale-95 transition-all flex-shrink-0"
+          >
+            {isRedeeming ? "Applying..." : "Redeem"}
+          </button>
+        </motion.div>
+      )}
+
+      {!PAYMENTS_ENABLED && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="bg-[#6FBE9B]/10 rounded-2xl p-4 border border-[#6FBE9B]/30 mb-8 flex items-center gap-3"
+        >
+          <Zap className="w-5 h-5 text-[#6FBE9B] flex-shrink-0" />
+          <p className="text-sm text-ink/80">
+            All Pro features are <span className="font-semibold text-[#6FBE9B]">free for now</span> — no payment needed.
+          </p>
+        </motion.div>
+      )}
 
       {/* Billing Toggle */}
       <motion.div
@@ -233,7 +250,11 @@ export function SubscriptionsScreen() {
               isCurrentPlan = true;
             }
           } else if (plan.id === "premium") {
-            if (userTier === "premium" || userTier === "pro" || isAdmin) {
+            if (!PAYMENTS_ENABLED) {
+              buttonText = "Included — Free for now";
+              buttonVariant = "outline";
+              isCurrentPlan = true;
+            } else if (userTier === "premium" || userTier === "pro" || isAdmin) {
               buttonText = "Current Plan (Premium)";
               buttonVariant = "outline";
               isCurrentPlan = true;
@@ -318,7 +339,7 @@ export function SubscriptionsScreen() {
                 {processingPlan === plan.id ? "Processing..." : buttonText}
               </button>
 
-              {plan.id === "premium" && !isCurrentPlan && (
+              {PAYMENTS_ENABLED && plan.id === "premium" && !isCurrentPlan && (
                 <button
                   onClick={() => setShowQrModal(true)}
                   disabled={processingPlan !== null}

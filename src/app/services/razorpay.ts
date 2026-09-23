@@ -1,4 +1,5 @@
 import { paymentsAPI, User } from "./api";
+import { PAYMENTS_ENABLED } from "./features";
 
 interface StartCheckoutParams {
   plan: "Pro" | "Premium";
@@ -12,6 +13,10 @@ interface StartCheckoutParams {
 }
 
 export async function startRazorpayCheckout(params: StartCheckoutParams) {
+  if (!PAYMENTS_ENABLED) {
+    params.onError("Payments are temporarily disabled. All Pro features are free for now.");
+    return;
+  }
   if (!(window as any).Razorpay) {
     params.onError("Razorpay payment SDK not loaded yet. Please try again in a few seconds.");
     return;

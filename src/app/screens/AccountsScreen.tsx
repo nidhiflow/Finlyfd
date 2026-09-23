@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { accountsAPI, authAPI } from "../services/api";
+import { PAYMENTS_ENABLED } from "../services/features";
 import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
 import {
   Plus, X, Check, Search, ChevronRight, Eye, EyeOff,
@@ -647,7 +648,7 @@ export function AccountsScreen() {
 
   const handleSyncBankClick = () => {
     const user = authAPI.getCurrentUser();
-    const isFree = (!user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free") && user?.email?.toLowerCase() !== "nidhiflow.in@gmail.com";
+    const isFree = PAYMENTS_ENABLED && (!user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free") && user?.email?.toLowerCase() !== "nidhiflow.in@gmail.com";
     if (isFree) {
       setShowUpgradeGate(true);
     } else {

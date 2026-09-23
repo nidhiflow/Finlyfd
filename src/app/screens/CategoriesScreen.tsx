@@ -11,6 +11,7 @@ import {
 // AddTransactionScreen (and every other consumer) stays perfectly in sync.
 import { useCategoryContext, Cat, Sub } from "../context/CategoryContext";
 import { authAPI } from "../services/api";
+import { PAYMENTS_ENABLED } from "../services/features";
 import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
 
 // ─── Types local to this screen ───────────────────────────────────────────────
@@ -596,7 +597,7 @@ export function CategoriesScreen() {
 
   const handleAddCategoryClick = () => {
     const user = authAPI.getCurrentUser();
-    const isFree = (!user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free") && user?.email?.toLowerCase() !== "nidhiflow.in@gmail.com";
+    const isFree = PAYMENTS_ENABLED && (!user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free") && user?.email?.toLowerCase() !== "nidhiflow.in@gmail.com";
     if (isFree) {
       setShowUpgradeGate(true);
     } else {
@@ -606,7 +607,7 @@ export function CategoriesScreen() {
 
   const handleAddSubcategoryClick = (parentId: string) => {
     const user = authAPI.getCurrentUser();
-    const isFree = (!user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free") && user?.email?.toLowerCase() !== "nidhiflow.in@gmail.com";
+    const isFree = PAYMENTS_ENABLED && (!user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free") && user?.email?.toLowerCase() !== "nidhiflow.in@gmail.com";
     if (isFree) {
       setShowUpgradeGate(true);
     } else {

@@ -4,6 +4,7 @@ import { Crown, Check, AlertCircle, Sparkles, Star, Shield, ArrowLeft } from "lu
 import { toast } from "sonner";
 import { authAPI, couponsAPI } from "../services/api";
 import { startRazorpayCheckout } from "../services/razorpay";
+import { PAYMENTS_ENABLED } from "../services/features";
 import { CouponSuccessModal } from "./CouponSuccessModal";
 
 interface PremiumFeatureGateProps {
@@ -49,7 +50,9 @@ export function PremiumFeatureGate({
   const requiredLevel = tierLevels[requiredTier.toLowerCase()] || 2;
   const isUnlocked = userLevel >= requiredLevel || currentUser?.email?.toLowerCase() === "nidhiflow.in@gmail.com";
 
-  if (isUnlocked) {
+  // Payments are temporarily disabled (no live Razorpay keys yet) — unlock every
+  // premium feature for everyone rather than showing a paywall no one can pay through.
+  if (!PAYMENTS_ENABLED || isUnlocked) {
     return <>{children}</>;
   }
 

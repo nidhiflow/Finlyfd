@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate, useParams } from "react-router";
 import { transactionsAPI, accountsAPI, aiAPI, authAPI } from "../services/api";
+import { PAYMENTS_ENABLED } from "../services/features";
 import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
 import { toast } from "sonner";
 import {
@@ -758,7 +759,7 @@ export function AddTransactionScreen() {
   const currentUser = authAPI.getCurrentUser();
   const checkPremium = (featureName: string, benefits: string[]) => {
     const userTier = (currentUser?.subscription_tier || "Free").toLowerCase();
-    const isPremiumUser = userTier === "premium" || currentUser?.email?.toLowerCase() === "nidhiflow.in@gmail.com";
+    const isPremiumUser = !PAYMENTS_ENABLED || userTier === "premium" || currentUser?.email?.toLowerCase() === "nidhiflow.in@gmail.com";
     if (!isPremiumUser) {
       setPremiumFeature({ name: featureName, benefits });
       setShowPremiumModal(true);
