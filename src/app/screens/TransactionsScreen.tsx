@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, type ReactNode } from "react";
 import { transactionsAPI } from "../services/api";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Star, Trash2, Plus, FileText, ChevronLeft, ChevronRight, ChevronDown,
-  ShoppingBag, Edit3, Search, SlidersHorizontal, Inbox,
+  ShoppingBag, Edit3, Search, SlidersHorizontal, Inbox, Check,
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ interface Transaction {
   name: string;
   note: string;
   account: string;
+  accountNames: string[];
   amount: number;
   date: string;
   dateLabel: string;
@@ -29,6 +30,42 @@ interface Transaction {
 }
 
 type PeriodTab = "Daily" | "Calendar" | "Monthly" | "Total" | "Note";
+
+// ─── Filters ────────────────────────────────────────────────────────────────────
+type TxTypeFilter = "all" | Transaction["type"];
+
+interface TxFilters {
+  type: TxTypeFilter;
+  account: string;   // "all" or an account name
+  category: string;  // "all" or a category key (see categoryKey)
+  recurringOnly: boolean;
+}
+
+const DEFAULT_FILTERS: TxFilters = { type: "all", account: "all", category: "all", recurringOnly: false };
+
+const TYPE_FILTER_OPTIONS: { id: TxTypeFilter; label: string; color: string }[] = [
+  { id: "all", label: "All", color: "var(--gold)" },
+  { id: "expense", label: "Expense", color: "var(--expense)" },
+  { id: "income", label: "Income", color: "var(--income)" },
+  { id: "savings", label: "Savings", color: "var(--savings)" },
+  { id: "transfer", label: "Transfer", color: "var(--ink-muted)" },
+];
+
+function categoryKey(tx: Transaction) {
+  return tx.category_id || tx.category;
+}
+
+function countActiveFilters(f: TxFilters) {
+  return (f.type !== "all" ? 1 : 0) + (f.account !== "all" ? 1 : 0) + (f.category !== "all" ? 1 : 0) + (f.recurringOnly ? 1 : 0);
+}
+
+function matchesFilters(tx: Transaction, f: TxFilters) {
+  if (f.type !== "all" && tx.type !== f.type) return false;
+  if (f.account !== "all" && !tx.accountNames.includes(f.account)) return false;
+  if (f.category !== "all" && categoryKey(tx) !== f.category) return false;
+  if (f.recurringOnly && !tx.recurring) return false;
+  return true;
+}
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -251,6 +288,98 @@ function ActionSheet({ transaction, onDelete, onEdit, onClose }: {
   );
 }
 
+// ─── Filter Sheet ───────────────────────────────────────────────────────────────
+function FilterChip({ label, selected, color = "var(--gold)", onClick }: {
+  label: string; selected: boolean; color?: string; onClick: () => void;
+}) {
+  return (
+    <motion.button whileTap={{ scale: 0.95 }} onClick={onClick}
+      className="px-3.5 py-2 rounded-full text-[13px] font-semibold transition-colors max-w-full truncate"
+      style={selected
+        ? { background: "var(--surface-raised)", border: `1px solid ${color}`, color }
+        : { background: "var(--surface-raised)", border: "1px solid var(--divider)", color: "var(--ink-muted)" }}>
+      {label}
+    </motion.button>
+  );
+}
+
+function FilterSection({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="mb-5">
+      <p className="text-[11px] font-bold uppercase tracking-wider mb-2.5" style={{ color: "var(--ink-faint)" }}>{title}</p>
+      <div className="flex flex-wrap gap-2">{children}</div>
+    </div>
+  );
+}
+
+function FilterSheet({ filters, onChange, accounts, categories, resultCount, onClose }: {
+  filters: TxFilters;
+  onChange: (f: TxFilters) => void;
+  accounts: string[];
+  categories: { key: string; label: string }[];
+  resultCount: number;
+  onClose: () => void;
+}) {
+  const activeCount = countActiveFilters(filters);
+  const set = (patch: Partial<TxFilters>) => onChange({ ...filters, ...patch });
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }} onClick={onClose}>
+      <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }} onClick={e => e.stopPropagation()}
+        className="w-full max-w-md mx-auto rounded-t-[18px] border-t border-[var(--divider)] p-5 max-h-[85vh] overflow-y-auto"
+        style={{ background: "var(--surface)", paddingBottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}>
+        <div className="flex justify-center mb-4"><div className="w-8 h-1 rounded-full bg-[var(--divider)]" /></div>
+
+        <div className="flex items-center justify-between mb-5">
+          <p className="font-bold text-[17px]" style={{ color: "var(--ink)" }}>Filter Transactions</p>
+          <button onClick={() => onChange(DEFAULT_FILTERS)} disabled={activeCount === 0}
+            className="text-[13px] font-semibold transition-opacity disabled:opacity-30"
+            style={{ color: "var(--gold)" }}>
+            Reset
+          </button>
+        </div>
+
+        <FilterSection title="Type">
+          {TYPE_FILTER_OPTIONS.map(o => (
+            <FilterChip key={o.id} label={o.label} color={o.color} selected={filters.type === o.id} onClick={() => set({ type: o.id })} />
+          ))}
+        </FilterSection>
+
+        {accounts.length > 0 && (
+          <FilterSection title="Account">
+            <FilterChip label="All" selected={filters.account === "all"} onClick={() => set({ account: "all" })} />
+            {accounts.map(a => (
+              <FilterChip key={a} label={a} selected={filters.account === a} onClick={() => set({ account: a })} />
+            ))}
+          </FilterSection>
+        )}
+
+        {categories.length > 0 && (
+          <FilterSection title="Category">
+            <FilterChip label="All" selected={filters.category === "all"} onClick={() => set({ category: "all" })} />
+            {categories.map(c => (
+              <FilterChip key={c.key} label={c.label} selected={filters.category === c.key} onClick={() => set({ category: c.key })} />
+            ))}
+          </FilterSection>
+        )}
+
+        <FilterSection title="Other">
+          <FilterChip label="Recurring only" selected={filters.recurringOnly} onClick={() => set({ recurringOnly: !filters.recurringOnly })} />
+        </FilterSection>
+
+        <motion.button whileTap={{ scale: 0.97 }} onClick={onClose}
+          className="w-full py-3.5 rounded-[14px] text-sm font-bold flex items-center justify-center gap-2"
+          style={{ background: "var(--gold)", color: "#241B0A" }}>
+          <Check className="w-4 h-4" strokeWidth={2} />
+          Show {resultCount} transaction{resultCount === 1 ? "" : "s"}
+        </motion.button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 // ─── Delete Modal ───────────────────────────────────────────────────────────────
 function DeleteModal({ transaction, onConfirm, onClose }: {
   transaction: Transaction; onConfirm: () => void; onClose: () => void;
@@ -298,6 +427,8 @@ export function TransactionsScreen() {
   const [deleteTx, setDeleteTx] = useState<Transaction | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
+  const [filters, setFilters] = useState<TxFilters>(DEFAULT_FILTERS);
 
   // Load transactions from real API
   const loadTransactions = async () => {
@@ -313,6 +444,7 @@ export function TransactionsScreen() {
         account: t.type === "transfer"
           ? `${t.account_name || "Account"} ➔ ${t.to_account_name || "Account"}`
           : (t.account_name || "Account"),
+        accountNames: [t.account_name, t.to_account_name].filter(Boolean),
         amount: parseFloat(t.amount),
         date: t.date?.split("T")[0] || "",
         dateLabel: new Date(t.date).toLocaleDateString(),
@@ -352,19 +484,44 @@ export function TransactionsScreen() {
     return `${MONTHS[currentMonth]} ${currentYear}`;
   }, [period, currentMonth, currentYear]);
 
+  // ─── Filter sheet data ─────────────────────────────────────────
+  // Options come from every loaded transaction, so a chip never disappears
+  // just because the current period has no matching rows.
+  const accountOptions = useMemo(() => {
+    const names = new Set<string>();
+    transactions.forEach(t => t.accountNames.forEach(n => names.add(n)));
+    return Array.from(names).sort((a, b) => a.localeCompare(b));
+  }, [transactions]);
+
+  const categoryOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    transactions.forEach(t => {
+      const key = categoryKey(t);
+      if (!map.has(key)) map.set(key, (t.category_id ? getCatById(t.category_id)?.name : undefined) || t.category);
+    });
+    return Array.from(map, ([key, label]) => ({ key, label })).sort((a, b) => a.label.localeCompare(b.label));
+  }, [transactions, getCatById]);
+
+  const activeFilterCount = countActiveFilters(filters);
+
+  const visibleTxs = useMemo(
+    () => (activeFilterCount === 0 ? transactions : transactions.filter(t => matchesFilters(t, filters))),
+    [transactions, filters, activeFilterCount],
+  );
+
   // ─── Filter transactions by current period ─────────────────────
   const filtered = useMemo(() => {
     if (period === "Total") {
-      return transactions;
+      return visibleTxs;
     }
     if (period === "Monthly") {
-      return transactions.filter(t => {
+      return visibleTxs.filter(t => {
         if (!t.date) return false;
         return new Date(t.date).getFullYear() === currentYear;
       });
     }
     // Daily, Calendar, Note: filter by current month/year
-    return transactions.filter(t => {
+    return visibleTxs.filter(t => {
       if (!t.date) return false;
       const d = new Date(t.date);
       const inMonth = d.getMonth() === currentMonth && d.getFullYear() === currentYear;
@@ -373,7 +530,7 @@ export function TransactionsScreen() {
       }
       return inMonth;
     });
-  }, [transactions, period, currentMonth, currentYear]);
+  }, [visibleTxs, period, currentMonth, currentYear]);
 
   const summary = useMemo(() => calcSummary(filtered), [filtered]);
 
@@ -421,8 +578,8 @@ export function TransactionsScreen() {
 
   const getTransactionsForDay = useCallback((day: number) => {
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return transactions.filter(t => t.date === dateStr);
-  }, [transactions, currentMonth, currentYear]);
+    return visibleTxs.filter(t => t.date === dateStr);
+  }, [visibleTxs, currentMonth, currentYear]);
 
   const dayStats = useMemo(() => {
     return Array.from({ length: daysInMonth }, (_, i) => {
@@ -477,20 +634,30 @@ export function TransactionsScreen() {
             <motion.button whileTap={{ scale: 0.85 }} className="transition-colors">
               <Search className="w-[18px] h-[18px]" strokeWidth={1.75} />
             </motion.button>
-            <motion.button whileTap={{ scale: 0.85 }} className="transition-colors">
+            <motion.button whileTap={{ scale: 0.85 }} onClick={() => setShowFilter(true)}
+              aria-label="Filter transactions"
+              className="relative transition-colors"
+              style={activeFilterCount > 0 ? { color: "var(--gold)" } : undefined}>
               <SlidersHorizontal className="w-[18px] h-[18px]" strokeWidth={1.75} />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-[3px] rounded-full text-[9px] font-bold leading-[14px] text-center"
+                  style={{ background: "var(--gold)", color: "#241B0A" }}>
+                  {activeFilterCount}
+                </span>
+              )}
             </motion.button>
           </div>
         </div>
 
-        {/* Period Tabs */}
-        <div className="flex px-4 pb-2.5 gap-1 border-b border-[var(--divider)]">
+        {/* Period Tabs — labels are spaced evenly edge-to-edge (equal gaps between
+            words, not equal-width cells) so "Calendar"/"Monthly" don't crowd each other */}
+        <div className="flex items-stretch justify-between px-4">
           {(["Daily", "Calendar", "Monthly", "Total", "Note"] as PeriodTab[]).map(tab => {
             const isSel = period === tab;
             return (
               <motion.button key={tab} whileTap={{ scale: 0.93 }}
                 onClick={() => handlePeriodChange(tab)}
-                className="flex-1 py-1.5 text-[13px] font-semibold transition-all relative text-center"
+                className="px-1 py-2.5 text-[13px] font-semibold transition-colors relative whitespace-nowrap"
                 style={{
                   color: isSel ? "var(--ink)" : "var(--ink-faint)",
                 }}>
@@ -544,8 +711,22 @@ export function TransactionsScreen() {
               style={{ background: "var(--surface-raised)", border: "1.5px dashed var(--divider)" }}>
               <FileText className="w-7 h-7" strokeWidth={1.75} style={{ color: "var(--ink-faint)" }} />
             </div>
-            <p className="font-semibold text-sm" style={{ color: "var(--ink-muted)" }}>No transactions</p>
-            <p className="mt-1 text-xs" style={{ color: "var(--ink-faint)" }}>Tap + to add your first transaction</p>
+            {activeFilterCount > 0 ? (
+              <>
+                <p className="font-semibold text-sm" style={{ color: "var(--ink-muted)" }}>No matching transactions</p>
+                <p className="mt-1 text-xs" style={{ color: "var(--ink-faint)" }}>Try a different period or adjust your filters</p>
+                <motion.button whileTap={{ scale: 0.95 }} onClick={() => setFilters(DEFAULT_FILTERS)}
+                  className="mt-4 px-4 py-2 rounded-full text-[13px] font-semibold"
+                  style={{ background: "var(--surface-raised)", border: "1px solid var(--gold)", color: "var(--gold)" }}>
+                  Clear filters
+                </motion.button>
+              </>
+            ) : (
+              <>
+                <p className="font-semibold text-sm" style={{ color: "var(--ink-muted)" }}>No transactions</p>
+                <p className="mt-1 text-xs" style={{ color: "var(--ink-faint)" }}>Tap + to add your first transaction</p>
+              </>
+            )}
           </div>
         ) : period === "Daily" || period === "Note" ? (
           /* ── Daily / Note View ──────────────────────────── */
@@ -745,6 +926,11 @@ export function TransactionsScreen() {
 
       {/* ─── Modals ─────────────────────────────────────────────────── */}
       <AnimatePresence>
+        {showFilter && (
+          <FilterSheet key="filter" filters={filters} onChange={setFilters}
+            accounts={accountOptions} categories={categoryOptions}
+            resultCount={filtered.length} onClose={() => setShowFilter(false)} />
+        )}
         {actionTx && !deleteTx && (
           <ActionSheet transaction={actionTx}
             onDelete={() => setDeleteTx(actionTx)}
