@@ -42,6 +42,9 @@ jobs:
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           set +o pipefail
+          # Gradle refuses to run if the runner's SDK env vars disagree with our SDK folder.
+          unset ANDROID_SDK_ROOT
+          export ANDROID_HOME=$HOME/android-sdk
           npx -y @bubblewrap/cli update --skipVersionUpgrade < /dev/null || true
           ls -la
           yes | npx -y @bubblewrap/cli build --skipPwaValidation 2>&1 | tee build.log || true
