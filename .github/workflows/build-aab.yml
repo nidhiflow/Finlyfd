@@ -20,9 +20,15 @@ jobs:
 
       - name: Configure Bubblewrap
         run: |
+          # Bubblewrap only accepts an SDK folder that has a tools/ or bin/ dir, so build one.
+          SDK=$HOME/android-sdk
+          mkdir -p $SDK/cmdline-tools $SDK/tools
+          cp -r $ANDROID_HOME/cmdline-tools/latest $SDK/cmdline-tools/latest
+          SM=$SDK/cmdline-tools/latest/bin/sdkmanager
+          yes | $SM --sdk_root=$SDK --licenses > /dev/null || true
+          $SM --sdk_root=$SDK "build-tools;36.1.0" "platforms;android-36" "platform-tools"
           mkdir -p ~/.bubblewrap
-          # No androidSdkPath: Bubblewrap downloads its own SDK (it rejects the runner preinstalled one).
-          echo "{\"jdkPath\":\"$JAVA_HOME\"}" > ~/.bubblewrap/config.json
+          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$SDK\"}" > ~/.bubblewrap/config.json
           cat ~/.bubblewrap/config.json
 
       - name: Restore signing keystore
