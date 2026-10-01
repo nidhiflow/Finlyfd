@@ -34,3 +34,4 @@ lerna-debug.log*
 
 # Figma specific (auto-generated)
 __figma__entrypoint__.ts
+*.keystore

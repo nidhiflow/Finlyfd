@@ -1,0 +1,43 @@
+name: Build Android AAB
+
+# Manual run only: Actions tab -> "Build Android AAB" -> Run workflow.
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure Bubblewrap
+        run: |
+          mkdir -p ~/.bubblewrap
+          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
+
+      - name: Restore signing keystore
+        working-directory: twa
+        run: echo "${{ secrets.KEYSTORE_B64 }}" | base64 -d > finly-upload.keystore
+
+      - name: Build
+        working-directory: twa
+        env:
+          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          set +o pipefail
+          yes | npx -y @bubblewrap/cli build --skipPwaValidation
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: finly-aab
+          path: twa/app-release-bundle.aab

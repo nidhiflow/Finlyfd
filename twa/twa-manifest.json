@@ -1,0 +1,25 @@
+{
+  "packageId": "in.nidhiflow.finly",
+  "host": "nidhiflow.in",
+  "name": "Finly — Smart Expense Management",
+  "launcherName": "Finly",
+  "display": "standalone",
+  "orientation": "portrait",
+  "themeColor": "#0B0F1A",
+  "navigationColor": "#0B0F1A",
+  "backgroundColor": "#0B0F1A",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://nidhiflow.in/icon-512.png",
+  "maskableIconUrl": "https://nidhiflow.in/icon-512.png",
+  "appVersion": "1.0.0",
+  "appVersionCode": 1,
+  "signingKey": {
+    "path": "./finly-upload.keystore",
+    "alias": "finly"
+  },
+  "fallbackType": "customtabs",
+  "webManifestUrl": "https://nidhiflow.in/manifest.webmanifest",
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://nidhiflow.in/"
+}
