@@ -44,7 +44,12 @@ jobs:
           set +o pipefail
           npx -y @bubblewrap/cli update --skipVersionUpgrade < /dev/null || true
           ls -la
-          yes | npx -y @bubblewrap/cli build --skipPwaValidation || test -f app-release-bundle.aab
+          yes | npx -y @bubblewrap/cli build --skipPwaValidation 2>&1 | tee build.log || true
+          if [ ! -f app-release-bundle.aab ]; then
+            MSG=$(grep -v '^[[:space:]]*at ' build.log | grep -A14 -E 'cli ERROR|What went wrong' | head -40 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=Build failed::$MSG"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
