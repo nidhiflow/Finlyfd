@@ -41,8 +41,9 @@ jobs:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
-          echo "--- debug"; cat ~/.bubblewrap/config.json; echo; ls -la $HOME/android-sdk; ls -la $HOME/android-sdk/tools; echo "HOME=$HOME"; env | grep -iE "android|bubblewrap" | sed "s/PASSWORD=.*/PASSWORD=***/"
           set +o pipefail
+          npx -y @bubblewrap/cli update --skipVersionUpgrade < /dev/null || true
+          ls -la
           yes | npx -y @bubblewrap/cli build --skipPwaValidation || test -f app-release-bundle.aab
 
       - uses: actions/upload-artifact@v4
