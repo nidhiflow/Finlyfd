@@ -21,5 +21,14 @@
   "fallbackType": "customtabs",
   "webManifestUrl": "https://nidhiflow.in/manifest.webmanifest",
   "isMetaQuest": false,
-  "fullScopeUrl": "https://nidhiflow.in/"
+  "fullScopeUrl": "https://nidhiflow.in/",
+  "splashScreenFadeOutDuration": 300,
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "minSdkVersion": 21,
+  "generatorApp": "bubblewrap-cli",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  }
 }
