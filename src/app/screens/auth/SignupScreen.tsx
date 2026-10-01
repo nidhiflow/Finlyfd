@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { User, Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { authAPI } from "../../services/api";
 import { localAuthService } from "../../services/authLocal";
+import { LegalLinks } from "../../components/LegalLinks";
 
 export function SignupScreen() {
   const navigate = useNavigate();
@@ -291,7 +292,10 @@ export function SignupScreen() {
             )}
 
             <p className="text-xs text-ink/40 text-center px-4">
-              By signing up, you agree to our Terms of Service and Privacy Policy
+              By signing up, you agree to our{" "}
+              <Link to="/terms" className="underline hover:text-ink/70">Terms of Service</Link>
+              {" "}and{" "}
+              <Link to="/privacy" className="underline hover:text-ink/70">Privacy Policy</Link>
             </p>
           </div>
 
@@ -304,6 +308,7 @@ export function SignupScreen() {
               Sign In
             </button>
           </div>
+          <LegalLinks className="pb-6" />
         </>
       ) : (
         <>

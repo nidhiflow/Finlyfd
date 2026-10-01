@@ -4,6 +4,7 @@ import { Mail, Lock, Eye, EyeOff, ShieldAlert } from "lucide-react";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { authAPI } from "../../services/api";
 import { localAuthService } from "../../services/authLocal";
+import { LegalLinks } from "../../components/LegalLinks";
 
 export function LoginScreen() {
   const navigate = useNavigate();
@@ -284,6 +285,7 @@ export function LoginScreen() {
               Sign Up
             </button>
           </div>
+          <LegalLinks className="pb-6" />
         </>
       ) : (
         <>

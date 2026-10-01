@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, ArrowUpRight, ArrowDownRight, Pizza, Home, Plane, Clapperboard, TrendingDown, Lightbulb, Target } from "lucide-react";
+import { LegalLinks } from "../components/LegalLinks";
 
 // ═══════════════════════════════════════════════════════════════════
 // SLIDE 1 ── Cash Flow Visualization
@@ -828,6 +829,8 @@ export function OnboardingScreen() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <LegalLinks className="mt-5" />
         </div>
       </div>
 

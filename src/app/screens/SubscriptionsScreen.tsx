@@ -193,7 +193,7 @@ export function SubscriptionsScreen() {
       )}
 
       {/* Billing Toggle */}
-      <motion.div
+      {PAYMENTS_ENABLED && <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3 }}
@@ -224,7 +224,7 @@ export function SubscriptionsScreen() {
             </span>
           </button>
         </div>
-      </motion.div>
+      </motion.div>}
 
       {/* Pricing Cards */}
       <div className="space-y-6">
@@ -239,7 +239,11 @@ export function SubscriptionsScreen() {
           let buttonVariant = "solid";
           let isCurrentPlan = false;
 
-          if (plan.id === "basic") {
+          if (!PAYMENTS_ENABLED) {
+            buttonText = plan.id === "premium" ? "Active — Free for now" : "Included";
+            buttonVariant = "outline";
+            isCurrentPlan = true;
+          } else if (plan.id === "basic") {
             if (userTier === "free" || userTier === "basic") {
               buttonText = "Current Plan";
               buttonVariant = "outline";
@@ -250,11 +254,7 @@ export function SubscriptionsScreen() {
               isCurrentPlan = true;
             }
           } else if (plan.id === "premium") {
-            if (!PAYMENTS_ENABLED) {
-              buttonText = "Included — Free for now";
-              buttonVariant = "outline";
-              isCurrentPlan = true;
-            } else if (userTier === "premium" || userTier === "pro" || isAdmin) {
+            if (userTier === "premium" || userTier === "pro" || isAdmin) {
               buttonText = "Current Plan (Premium)";
               buttonVariant = "outline";
               isCurrentPlan = true;
@@ -296,18 +296,18 @@ export function SubscriptionsScreen() {
               <div className="mb-6">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold text-ink">
-                    {plan.id === "premium"
+                    {plan.id === "premium" && PAYMENTS_ENABLED
                       ? billingCycle === "yearly"
                         ? "₹999"
                         : "₹99"
                       : "Free"}
                   </span>
                   <span className="text-ink/50 text-sm">
-                    {plan.id === "premium"
+                    {plan.id === "premium" && PAYMENTS_ENABLED
                       ? billingCycle === "yearly"
                         ? "/year"
                         : "/month"
-                      : "forever"}
+                      : PAYMENTS_ENABLED ? "forever" : plan.id === "premium" ? "for now" : "forever"}
                   </span>
                 </div>
               </div>
@@ -355,7 +355,7 @@ export function SubscriptionsScreen() {
       </div>
 
       <p className="text-center text-xs text-ink/40 mt-4">
-        By upgrading, you agree to our{" "}
+        {PAYMENTS_ENABLED ? "By upgrading, you agree" : "By using Finly, you agree"} to our{" "}
         <button onClick={() => navigate("/terms")} className="underline hover:text-ink/70">Terms of Service</button>
         {" "}and{" "}
         <button onClick={() => navigate("/privacy")} className="underline hover:text-ink/70">Privacy Policy</button>.

@@ -20,8 +20,8 @@ export const router = createBrowserRouter([
     lazy: () => import("./screens/OnboardingScreen").then((m) => ({ Component: m.OnboardingScreen })),
   },
 
-  // ── Privacy Policy & Terms of Service (public, no auth required — linked
-  // from Settings, checkout, and the Play Store listing) ──
+  // ── Privacy Policy, Terms of Service & Account Deletion (public, no auth required —
+  // linked from the auth screens, Settings, checkout, and the Play Store listing) ──
   {
     path: "/privacy",
     lazy: () => import("./screens/PrivacyPolicyScreen").then((m) => ({ Component: m.PrivacyPolicyScreen })),
@@ -29,6 +29,10 @@ export const router = createBrowserRouter([
   {
     path: "/terms",
     lazy: () => import("./screens/TermsOfServiceScreen").then((m) => ({ Component: m.TermsOfServiceScreen })),
+  },
+  {
+    path: "/account-deletion",
+    lazy: () => import("./screens/AccountDeletionScreen").then((m) => ({ Component: m.AccountDeletionScreen })),
   },
 
   // ── Auth ──

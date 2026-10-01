@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { PAYMENTS_ENABLED } from "../services/features";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router";
 import { User, Moon, Sun, DollarSign, Calendar as CalendarIcon, Download, Shield, Cloud, Key, LogOut, Trash2, ChevronRight, Crown, Camera, RefreshCw, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI, transactionsAPI, accountsAPI, categoriesAPI, budgetsAPI, savingsGoalsAPI, settingsAPI, autoBackupAPI, couponsAPI } from "../services/api";
+import { localAuthService } from "../services/authLocal";
 import { exportTransactionsPDF } from "../utils/pdf";
 import { CouponSuccessModal } from "../components/CouponSuccessModal";
+import { LegalLinks } from "../components/LegalLinks";
 
 export function SettingsScreen() {
   const navigate = useNavigate();
@@ -20,6 +23,7 @@ export function SettingsScreen() {
     return saved ? saved.charAt(0).toUpperCase() + saved.slice(1) : "Monthly";
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [showWeekModal, setShowWeekModal] = useState(false);
   const [showDashboardRefreshModal, setShowDashboardRefreshModal] = useState(false);
@@ -416,6 +420,30 @@ export function SettingsScreen() {
     toast.success("Logged out successfully");
   };
 
+  const handleDeleteAccount = async () => {
+    if (isDeletingAccount) return;
+    setIsDeletingAccount(true);
+    try {
+      // Only treat the account as deleted once the server confirms it — apiCall throws on any non-2xx.
+      await authAPI.deleteAccount();
+    } catch (e: any) {
+      toast.error(e?.message || "Couldn't delete your account. Please try again.");
+      setIsDeletingAccount(false);
+      return;
+    }
+
+    // The account is gone server-side; clear everything this device kept for it.
+    authAPI.logout();
+    localAuthService.clearAll();
+    ["google_access_token", "finly-google-client-id", "gdrive_mode", "gdrive_user"].forEach((k) =>
+      localStorage.removeItem(k)
+    );
+    setShowDeleteModal(false);
+    setIsDeletingAccount(false);
+    navigate("/login");
+    toast.success("Account deleted");
+  };
+
   const handleExportCSV = async () => {
     try {
       toast.loading("Exporting data...");
@@ -520,7 +548,7 @@ export function SettingsScreen() {
       title: "Profile",
       items: [
         { icon: User, label: "Edit Profile", value: currentUser?.name || "User", action: handleOpenProfileModal },
-        { icon: Crown, label: "Upgrade Plan", value: null, action: () => navigate("/dashboard/subscriptions") },
+        { icon: Crown, label: PAYMENTS_ENABLED ? "Upgrade Plan" : "Your Plan", value: PAYMENTS_ENABLED ? null : "Premium (Free)", action: () => navigate("/dashboard/subscriptions") },
         ...(currentUser?.isAdmin ? [
           { icon: Shield, label: "Admin Dashboard", value: null, action: () => navigate("/dashboard/admin") }
         ] : []),
@@ -699,11 +727,7 @@ export function SettingsScreen() {
         </div>
       </button>
 
-      <div className="flex items-center justify-center gap-3 text-xs text-ink/40">
-        <button onClick={() => navigate("/privacy")} className="hover:text-ink/70 transition-colors">Privacy Policy</button>
-        <span>&middot;</span>
-        <button onClick={() => navigate("/terms")} className="hover:text-ink/70 transition-colors">Terms of Service</button>
-      </div>
+      <LegalLinks />
 
       {/* Export Options */}
       <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[var(--divider)]">
@@ -751,7 +775,7 @@ export function SettingsScreen() {
       {/* Delete Account Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { if (!isDeletingAccount) setShowDeleteModal(false); }} />
           <div className="relative max-w-sm w-full bg-[var(--surface)] rounded-2xl p-6 border border-[#EF4444]/30">
             <div className="w-12 h-12 rounded-full bg-[#EF4444]/20 flex items-center justify-center mx-auto mb-4">
               <Trash2 className="w-6 h-6 text-[#EF4444]" />
@@ -763,20 +787,17 @@ export function SettingsScreen() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink font-medium"
+                disabled={isDeletingAccount}
+                className="flex-1 py-3 bg-[var(--bg-deep)] border border-[var(--divider)] rounded-xl text-ink font-medium disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  authAPI.deleteAccount?.();
-                  authAPI.logout();
-                  navigate("/login");
-                  toast.success("Account deleted");
-                }}
-                className="flex-1 py-3 bg-[#EF4444] rounded-xl text-white font-semibold"
+                onClick={handleDeleteAccount}
+                disabled={isDeletingAccount}
+                className="flex-1 py-3 bg-[#EF4444] rounded-xl text-white font-semibold disabled:opacity-60"
               >
-                Delete
+                {isDeletingAccount ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>
