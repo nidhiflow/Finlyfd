@@ -5,7 +5,10 @@
       "namespace": "android_app",
       "package_name": "in.nidhiflow.finly",
       "sha256_cert_fingerprints": [
-        "40:BA:D7:03:72:50:6E:63:BD:87:55:C9:73:E9:31:2F:85:10:F7:4B:14:7D:DA:B6:1C:02:8E:38:B8:69:95:0A"
+        "40:BA:D7:03:72:50:6E:63:BD:87:55:C9:73:E9:31:2F:85:10:F7:4B:14:7D:DA:B6:1C:02:8E:38:B8:69:95:0A",
+        "55:6C:1B:EE:C1:3C:A5:FB:9A:17:C2:C4:DA:2B:50:AE:66:92:5E:50:8C:17:55:C1:62:42:13:43:C9:A9:21:41",
+        "8D:8E:E5:29:90:6D:98:05:F6:73:FA:BE:01:FE:AC:A4:4A:0B:A1:7E:C7:D7:81:CC:EF:0F:CD:97:9A:6B:FC:E1",
+        "DC:FA:D7:FA:FC:CD:3F:24:05:C8:64:CF:E0:92:37:FE:62:4E:4D:7C:EF:B7:98:99:3E:D5:80:9D:B3:87:28:FF"
       ]
     }
   }
