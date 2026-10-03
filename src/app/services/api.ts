@@ -172,6 +172,14 @@ export function warmUpBackend(): void {
   fetch(`${API_BASE_URL}/api/health`).catch(() => {});
 }
 
+// Exact messages the backend uses when the bearer token is rejected (middleware/auth.js,
+// routes/accounts.js). Matched by text so unrelated 403s (e.g. admin-only) don't log users out.
+const SESSION_INVALID_MESSAGES = [
+  "Invalid or expired token",
+  "Access token missing",
+  "Your session is no longer valid",
+];
+
 // Helper function to make API calls
 async function apiCall<T>(
   endpoint: string,
@@ -210,7 +218,23 @@ async function apiCall<T>(
     } catch (e) {
       console.error("Failed to parse error response");
     }
-    throw new Error(errorMessage);
+    // A stale/invalid token makes every screen look empty and every save fail with a
+    // vague error. Clear it and send the user to log in again instead.
+    if (
+      token &&
+      (response.status === 401 || response.status === 403) &&
+      SESSION_INVALID_MESSAGES.some((m) => errorMessage.startsWith(m))
+    ) {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      if (!window.location.pathname.startsWith("/login")) {
+        window.location.assign("/login");
+      }
+      throw new Error("Your session expired. Please log in again.");
+    }
+    const err = new Error(errorMessage) as Error & { status?: number };
+    err.status = response.status;
+    throw err;
   }
 
   // Check if there's actually JSON content to parse

@@ -722,7 +722,7 @@ export function AccountsScreen() {
         !msg || msg === "Failed to fetch"
           ? "Couldn't reach the server. Check your connection and try again."
           : msg.startsWith("API Error")
-            ? "Failed to save account"
+            ? `Failed to save account (${msg.replace("API Error: ", "error ")})`
             : msg
       );
     }
