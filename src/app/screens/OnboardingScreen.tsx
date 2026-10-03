@@ -576,7 +576,7 @@ const SLIDES = [
     Animation: CashFlowAnim,
     title: "Know Your\nCash Flow",
     description:
-      "See exactly where every dollar comes from and where it goes — income, savings, and expenses in one beautiful view.",
+      "See exactly where every rupee comes from and where it goes — income, savings, and expenses in one beautiful view.",
     accent: "#10B981",
     gradFrom: "#10B981",
     gradTo: "#4ADE80",
