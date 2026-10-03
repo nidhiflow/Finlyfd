@@ -717,7 +717,14 @@ export function AccountsScreen() {
       fetchAccounts();
     } catch (err) {
       console.error(err);
-      toast.error("Failed to save account");
+      const msg = err instanceof Error ? err.message : "";
+      toast.error(
+        !msg || msg === "Failed to fetch"
+          ? "Couldn't reach the server. Check your connection and try again."
+          : msg.startsWith("API Error")
+            ? "Failed to save account"
+            : msg
+      );
     }
     setModal(null); setEditTarget(null);
   };
