@@ -3,6 +3,7 @@ import { Send, Image, Mic, Trash2, Bot, User, TrendingUp, PiggyBank, AlertCircle
 import { aiAPI } from "../services/api";
 import { toast } from "sonner";
 import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
+import { ChatText } from "../components/ChatText";
 
 interface Message {
   id: number;
@@ -187,9 +188,9 @@ export function AIAgentScreen() {
                 <div className={`px-4 py-3 rounded-2xl max-w-[85%] ${
                   msg.type === "ai" ? "bg-[var(--surface)] border border-[var(--divider)]" : "bg-gradient-to-r from-[#D4A24C] to-[#D4A24C]"
                 }`}>
-                  <p className="text-sm text-ink whitespace-pre-line">
-                    {msg.content === "Thinking..." ? <span className="animate-pulse">Thinking...</span> : msg.content}
-                  </p>
+                  <div className="text-sm text-ink">
+                    {msg.content === "Thinking..." ? <span className="animate-pulse">Thinking...</span> : <ChatText text={msg.content} />}
+                  </div>
                 </div>
                 {msg.timestamp && <p className="text-xs text-ink/40 mt-1 px-1">{msg.timestamp}</p>}
               </div>
