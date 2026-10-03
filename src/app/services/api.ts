@@ -145,6 +145,33 @@ async function mockApiCall<T>(
   return {} as T;
 }
 
+// The free Render backend sleeps when idle and takes up to ~60s to wake. While it
+// wakes, requests either fail at the network level or come back 502/503/504.
+// Only GETs are retried (safe to repeat); writes are never replayed.
+const COLD_START_RETRY_DELAYS_MS = [3000, 6000, 12000, 20000];
+const COLD_START_STATUSES = [502, 503, 504];
+
+async function fetchWithColdStartRetry(url: string, init: RequestInit): Promise<Response> {
+  const isGet = !init.method || init.method.toUpperCase() === "GET";
+  for (let attempt = 0; ; attempt++) {
+    const canRetry = isGet && attempt < COLD_START_RETRY_DELAYS_MS.length;
+    try {
+      const response = await fetch(url, init);
+      if (!canRetry || !COLD_START_STATUSES.includes(response.status)) return response;
+    } catch (err) {
+      if (!canRetry) throw err;
+    }
+    await new Promise((resolve) => setTimeout(resolve, COLD_START_RETRY_DELAYS_MS[attempt]));
+  }
+}
+
+// Fire-and-forget ping on app start so a sleeping backend begins waking before the
+// user's first real request (login, data load).
+export function warmUpBackend(): void {
+  if (USE_MOCK_API) return;
+  fetch(`${API_BASE_URL}/api/health`).catch(() => {});
+}
+
 // Helper function to make API calls
 async function apiCall<T>(
   endpoint: string,
@@ -168,7 +195,7 @@ async function apiCall<T>(
 
   console.log(`API Call: ${endpoint}`, JSON.parse(options.body as string || "{}"));
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetchWithColdStartRetry(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
   });
