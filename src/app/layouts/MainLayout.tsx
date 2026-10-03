@@ -74,9 +74,9 @@ export function MainLayout() {
   const showAddButton = ["/dashboard", "/dashboard/transactions"].includes(location.pathname);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-deep)] pb-20">
+    <div className="min-h-[100dvh] bg-[var(--bg-deep)] pb-20">
       <CategoryProvider>
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md md:max-w-2xl mx-auto">
         {/* Top Bar */}
         <div className="sticky top-0 z-40 bg-[var(--bg-deep)]/95 backdrop-blur-xl border-b border-[var(--divider)]">
           <div className="flex items-center justify-between px-4 py-3">
@@ -184,7 +184,7 @@ export function MainLayout() {
 
         {/* Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 bg-[var(--surface)] border-t border-[var(--divider)] backdrop-blur-xl z-40">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md md:max-w-2xl mx-auto">
             <div className="flex items-center justify-around px-2 py-2 relative">
               {/* Home */}
               <button

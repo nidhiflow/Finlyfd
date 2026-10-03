@@ -677,11 +677,11 @@ export function OnboardingScreen() {
 
   return (
     <div
-      className="min-h-screen bg-[var(--bg-deep)] flex flex-col overflow-hidden"
+      className="min-h-[100dvh] bg-[var(--bg-deep)] flex flex-col overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="max-w-md mx-auto w-full flex flex-col min-h-screen relative">
+      <div className="max-w-md md:max-w-xl mx-auto w-full flex flex-col min-h-[100dvh] relative">
 
         {/* ── Ambient background that shifts per slide ── */}
         <div
@@ -710,7 +710,7 @@ export function OnboardingScreen() {
         </div>
 
         {/* ── Animation Canvas ── */}
-        <div className="relative flex-shrink-0 overflow-hidden z-10" style={{ height: 290 }}>
+        <div className="relative flex-shrink-0 overflow-hidden z-10" style={{ height: "clamp(290px, 36dvh, 460px)" }}>
           <AnimatePresence custom={direction} mode="wait">
             <motion.div
               key={current}
@@ -727,7 +727,7 @@ export function OnboardingScreen() {
         </div>
 
         {/* ── Text Content ── */}
-        <div className="flex-1 px-6 relative z-10 flex flex-col justify-start pt-5">
+        <div className="flex-1 px-6 relative z-10 flex flex-col justify-start md:justify-center pt-5">
           <AnimatePresence mode="wait">
             <motion.div
               key={`text-${current}`}
@@ -758,7 +758,7 @@ export function OnboardingScreen() {
         </div>
 
         {/* ── Bottom: Dots + CTA ── */}
-        <div className="px-6 pb-10 flex-shrink-0 relative z-10">
+        <div className="px-6 pb-[max(2.5rem,env(safe-area-inset-bottom))] flex-shrink-0 relative z-10">
 
           {/* Dots */}
           <div className="flex items-center gap-2 mb-6">
