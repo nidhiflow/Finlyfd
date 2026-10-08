@@ -4,11 +4,12 @@ import { useNavigate, useParams } from "react-router";
 import { transactionsAPI, accountsAPI, aiAPI, authAPI } from "../services/api";
 import { PAYMENTS_ENABLED } from "../services/features";
 import { PremiumFeatureGate } from "../components/PremiumFeatureGate";
+import { QuickCategorySheet } from "../components/QuickCategorySheet";
 import { toast } from "sonner";
 import {
   ArrowLeft, ScanLine, Camera, Image as ImageIcon,
   Repeat, ChevronDown, ChevronLeft, ChevronRight,
-  Plus, Pencil, Trash2, Check, X, Bell,
+  Plus, Pencil, Trash2, Check, X, Bell, Star,
   Calculator, Calendar, Zap, Sparkles, Clock,
   ArrowDownCircle, ArrowUpCircle, RefreshCw, CalendarClock, Hourglass,
 } from "lucide-react";
@@ -747,6 +748,7 @@ export function AddTransactionScreen() {
   // Modal states
   const [showCalc, setShowCalc] = useState(false);
   const [showSubSheet, setShowSubSheet] = useState(false);
+  const [showNewCatSheet, setShowNewCatSheet] = useState(false);
   const [showAccSheet, setShowAccSheet] = useState(false);
   const [showToAcc, setShowToAcc] = useState(false);
   const [showDate, setShowDate] = useState(false);
@@ -819,8 +821,28 @@ export function AddTransactionScreen() {
   }, [id]);
 
   // ─── Derive live category list from context ─────────────────────────────────
-  const { getCatsByType } = useCategoryContext();
-  const cats = getCatsByType(txType === "income" ? "income" : "expense");
+  const { getCatsByType, addCategory, pinnedIds, togglePin } = useCategoryContext();
+  // Pinned categories first; Array.sort is stable so the rest keep their order.
+  const cats = [...getCatsByType(txType === "income" ? "income" : "expense")]
+    .sort((a, b) => Number(pinnedIds.includes(b.id)) - Number(pinnedIds.includes(a.id)));
+
+  const handleNewCategoryClick = () => {
+    const user = authAPI.getCurrentUser();
+    const isFree = PAYMENTS_ENABLED && (!user || !user.subscription_tier || user.subscription_tier.toLowerCase() === "free") && user?.email?.toLowerCase() !== "nidhiflow.in@gmail.com";
+    if (isFree) {
+      toast.error("Custom categories are a Premium feature");
+      return;
+    }
+    setShowNewCatSheet(true);
+  };
+
+  const handleCreateCategory = (name: string, emoji: string, color: string) => {
+    const type = txType === "income" ? "income" : "expense";
+    const newId = addCategory({ name, emoji, color, type, subs: [], usage: 1, isCustom: true });
+    setCatId(newId); setSubId(null); setErrors(e => ({ ...e, cat: undefined! }));
+    setShowNewCatSheet(false);
+    toast.success(`Category "${name}" created`);
+  };
   const selectedCat = cats.find(c => c.id === catId);
   const selectedSub = selectedCat?.subs.find(s => s.id === subId);
   const selectedAcc = ACCOUNTS.find(a => a.id === accId) || ACCOUNTS[0] || { id: '', name: loadingAccounts ? 'Loading...' : 'Select Account', emoji: '🏦', type: '', color: '#4895EF', balance: 0 };
@@ -1192,8 +1214,10 @@ export function AddTransactionScreen() {
               <style dangerouslySetInnerHTML={{__html: `::-webkit-scrollbar { display: none; }`}} />
               {cats.map(c => {
                 const isSel = catId === c.id;
+                const isPinned = pinnedIds.includes(c.id);
                 return (
-                  <motion.button key={c.id}
+                  <div key={c.id} className="relative flex-shrink-0">
+                  <motion.button
                     whileTap={{ scale: 0.92 }}
                     onClick={() => {
                       if (catId === c.id) { setShowSubSheet(true); return; }
@@ -1228,8 +1252,26 @@ export function AddTransactionScreen() {
                       {c.name}
                     </span>
                   </motion.button>
+                  <button
+                    onClick={() => togglePin(c.id)}
+                    aria-label={isPinned ? `Unpin ${c.name}` : `Pin ${c.name}`}
+                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                    style={{ background: "var(--surface-raised)", border: "1px solid var(--divider)" }}>
+                    <Star className={`w-3 h-3 ${isPinned ? "text-[#FFB703] fill-[#FFB703]" : "text-[var(--ink-muted)]"}`} />
+                  </button>
+                  </div>
                 );
               })}
+              <button
+                onClick={handleNewCategoryClick}
+                aria-label="Create a new category"
+                className="rounded-[14px] p-2.5 flex flex-col items-center gap-2 flex-shrink-0 w-[72px]"
+                style={{ background: "transparent", border: `1.5px dashed ${typeAccent}88` }}>
+                <div className="w-[32px] h-[32px] rounded-full flex items-center justify-center" style={{ background: `${typeAccent}22`, color: typeAccent }}>
+                  <Plus className="w-4 h-4" />
+                </div>
+                <span style={{ fontSize: 9.5, fontWeight: 700, color: typeAccent, height: "22px", display: "flex", alignItems: "center" }}>New</span>
+              </button>
             </div>
 
             {/* Selected subcategory display */}
@@ -1452,6 +1494,16 @@ export function AddTransactionScreen() {
             }}
             onClose={() => setShowRepeatSheet(false)}
           />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showNewCatSheet && (
+          <QuickCategorySheet
+            key="newcat"
+            type={txType === "income" ? "income" : "expense"}
+            accent={typeAccent}
+            onClose={() => setShowNewCatSheet(false)}
+            onCreate={handleCreateCategory} />
         )}
       </AnimatePresence>
       <AnimatePresence>

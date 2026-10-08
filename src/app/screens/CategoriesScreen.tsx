@@ -146,7 +146,7 @@ function CategoryCard({
           }}>
           {cat.icon ? <cat.icon className="w-6 h-6" style={{ color: "color-mix(in srgb, var(--ink) 85%, transparent)" }} /> : <span>{cat.emoji}</span>}
           {/* Pin badge for expense, Crown badge for income */}
-          {!isIncome && isPinned && (
+          {isPinned && !(isIncome && isPrimary) && (
             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FFB703] flex items-center justify-center"
               style={{ boxShadow: "0 2px 6px rgba(255,183,3,0.6)" }}>
               <Star className="w-2.5 h-2.5 text-ink fill-white" />
@@ -185,14 +185,14 @@ function CategoryCard({
         </div>
 
         <div className="flex items-center gap-0">
-          {/* Expense: Star (pin) | Income: Crown (primary) */}
-          {!isIncome ? (
-            <motion.button whileTap={{ scale: 0.8 }}
-              onClick={e => { e.stopPropagation(); onPin(); }}
-              className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-ink/6">
-              <Star className={`w-3.5 h-3.5 transition-colors ${isPinned ? "text-[#FFB703] fill-[#FFB703]" : "text-ink/28"}`} />
-            </motion.button>
-          ) : (
+          {/* Star (pin) for every category; income also gets the Crown (primary source) */}
+          <motion.button whileTap={{ scale: 0.8 }}
+            aria-label={isPinned ? "Unpin category" : "Pin category"}
+            onClick={e => { e.stopPropagation(); onPin(); }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-ink/6">
+            <Star className={`w-3.5 h-3.5 transition-colors ${isPinned ? "text-[#FFB703] fill-[#FFB703]" : "text-ink/28"}`} />
+          </motion.button>
+          {isIncome && (
             <motion.button whileTap={{ scale: 0.8 }}
               onClick={e => { e.stopPropagation(); onTogglePrimary(); }}
               className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-ink/6"
@@ -582,11 +582,13 @@ export function CategoriesScreen() {
     categories: cats,
     addCategory, updateCategory, deleteCategory,
     addSubcategory, updateSubcategory, deleteSubcategory,
+    pinnedIds, togglePin,
   } = useCategoryContext();
+  // Pins live in the context (persisted per user) so Add Transaction can order by them too.
+  const pinned = new Set(pinnedIds);
 
   const [activeType, setActiveType] = useState<"expense" | "income">("expense");
   const [expanded, setExpanded]     = useState<Set<string>>(new Set());
-  const [pinned, setPinned]         = useState<Set<string>>(new Set(["food","transport","bills"]));
   const [primaryIncome, setPrimary] = useState<Set<string>>(new Set());
   const [search, setSearch]         = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -617,7 +619,6 @@ export function CategoriesScreen() {
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
   const toggle = (id: string) => setExpanded(e => { const n = new Set(e); n.has(id) ? n.delete(id) : n.add(id); return n; });
-  const togglePin = (id: string) => setPinned(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const togglePrimary = (id: string) => setPrimary(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
   const closeModal = () => setModal(null);
@@ -643,7 +644,6 @@ export function CategoriesScreen() {
     if (delTarget.kind === "cat") {
       deleteCategory(delTarget.id);
       setExpanded(e => { const n = new Set(e); n.delete(delTarget.id); return n; });
-      setPinned(p =>  { const n = new Set(p); n.delete(delTarget.id); return n; });
       setPrimary(p => { const n = new Set(p); n.delete(delTarget.id); return n; });
     } else {
       deleteSubcategory(delTarget.parentId, delTarget.id);
@@ -658,11 +658,9 @@ export function CategoriesScreen() {
     c.type === activeType &&
     (!q || c.name.toLowerCase().includes(q) || c.subs.some(s => s.name.toLowerCase().includes(q)))
   ).sort((a, b) => {
-    const aTop = isIncome ? primaryIncome.has(a.id) : pinned.has(a.id);
-    const bTop = isIncome ? primaryIncome.has(b.id) : pinned.has(b.id);
-    if (aTop && !bTop) return -1;
-    if (!aTop && bTop) return 1;
-    return 0;
+    // Primary income first, then pinned, then everything else (sort is stable).
+    const rank = (c: Cat) => (isIncome && primaryIncome.has(c.id) ? 2 : 0) + (pinned.has(c.id) ? 1 : 0);
+    return rank(b) - rank(a);
   });
   const expCount = cats.filter(c => c.type === "expense").length;
   const incCount = cats.filter(c => c.type === "income").length;

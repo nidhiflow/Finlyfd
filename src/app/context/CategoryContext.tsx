@@ -4,8 +4,8 @@
  * Both CategoriesScreen and AddTransactionScreen read from and write to this
  * context, guaranteeing 100 % real-time synchronisation.
  */
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode, ReactElement } from "react";
-import { authAPI } from "../services/api";
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode, ReactElement } from "react";
+import { authAPI, settingsAPI } from "../services/api";
 import {
   UtensilsCrossed, Egg, Soup, Utensils, Coffee, CupSoda, Beer, Popcorn, Package,
   HeartPulse, Stethoscope, Pill, FlaskConical, Dumbbell, Volleyball, Zap as ZapIcon,
@@ -302,7 +302,7 @@ interface CategoryContextValue {
   categories: Cat[];
 
   // Category CRUD
-  addCategory:    (cat: Omit<Cat, "id">) => void;
+  addCategory:    (cat: Omit<Cat, "id">) => string;
   updateCategory: (id: string, updates: Partial<Cat>) => void;
   deleteCategory: (id: string) => void;
 
@@ -310,6 +310,10 @@ interface CategoryContextValue {
   addSubcategory:    (parentId: string, sub: Omit<Sub, "id">) => void;
   updateSubcategory: (parentId: string, subId: string, updates: Partial<Sub>) => void;
   deleteSubcategory: (parentId: string, subId: string) => void;
+
+  // Pinned categories (shown first in the Add Transaction picker, starred in Categories)
+  pinnedIds: string[];
+  togglePin: (id: string) => void;
 
   // Helpers
   getCatsByType:  (type: "expense" | "income") => Cat[];
@@ -341,23 +345,78 @@ function loadPersistedCategories(): Cat[] {
     if (!raw) return INITIAL_CATEGORIES;
     const parsed = JSON.parse(raw) as Cat[];
     if (!Array.isArray(parsed) || parsed.length === 0) return INITIAL_CATEGORIES;
-    // JSON can't carry the Lucide icon component references, so re-attach them
-    // from INITIAL_CATEGORIES by id. Custom (user-created) entries never had
-    // one to begin with and simply fall back to their emoji, same as today.
-    return parsed.map(cat => {
-      const base = INITIAL_CATEGORIES.find(c => c.id === cat.id);
-      return {
-        ...cat,
-        icon: base?.icon,
-        subs: (cat.subs || []).map(sub => ({
-          ...sub,
-          icon: base?.subs.find(s => s.id === sub.id)?.icon,
-        })),
-      };
-    });
+    return attachIcons(parsed);
   } catch {
     return INITIAL_CATEGORIES;
   }
+}
+
+// JSON can't carry the Lucide icon component references, so re-attach them
+// from INITIAL_CATEGORIES by id. Custom (user-created) entries never had
+// one to begin with and simply fall back to their emoji, same as today.
+function attachIcons(parsed: Cat[]): Cat[] {
+  return parsed.map(cat => {
+    const base = INITIAL_CATEGORIES.find(c => c.id === cat.id);
+    return {
+      ...cat,
+      icon: base?.icon,
+      subs: (cat.subs || []).map(sub => ({
+        ...sub,
+        icon: base?.subs.find(s => s.id === sub.id)?.icon,
+      })),
+    };
+  });
+}
+
+function stripIcons(cats: Cat[]) {
+  return cats.map(({ icon: _icon, subs, ...cat }) => ({
+    ...cat,
+    subs: subs.map(({ icon: _subIcon, ...sub }) => sub),
+  }));
+}
+
+// ─── Server sync ─────────────────────────────────────────────────────────────
+// localStorage alone is wiped by "clear site data" and never reaches a second device,
+// so the user's category edits and pins are also saved to the backend's existing
+// key/value `settings` table. localStorage stays as the instant, offline-capable cache.
+// Conflicts are last-write-wins, decided by `updatedAt` (ms since epoch).
+const SERVER_KEY = "category_prefs_v1";
+const UPDATED_KEY_PREFIX = "finly_category_prefs_updated_";
+
+interface RemotePrefs { updatedAt: number; categories: Cat[]; pinned: string[] }
+
+function readUpdatedAt(): number {
+  const userId = authAPI.getCurrentUser()?.id;
+  if (!userId) return 0;
+  try {
+    return Number(localStorage.getItem(`${UPDATED_KEY_PREFIX}${userId}`)) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function writeUpdatedAt(value: number) {
+  const userId = authAPI.getCurrentUser()?.id;
+  if (!userId) return;
+  try {
+    localStorage.setItem(`${UPDATED_KEY_PREFIX}${userId}`, String(value));
+  } catch {
+    // Unavailable storage only costs us the "which copy is newer" hint.
+  }
+}
+
+function parseRemote(all: unknown): RemotePrefs | null {
+  const raw = (all as Record<string, unknown> | null)?.[SERVER_KEY] as Partial<RemotePrefs> | undefined;
+  if (!raw || typeof raw !== "object" || !Array.isArray(raw.categories) || raw.categories.length === 0) return null;
+  const valid = raw.categories.every(
+    c => c && typeof c.id === "string" && typeof c.name === "string" && (c.type === "expense" || c.type === "income") && Array.isArray(c.subs),
+  );
+  if (!valid) return null;
+  return {
+    updatedAt: Number(raw.updatedAt) || 0,
+    categories: raw.categories as Cat[],
+    pinned: Array.isArray(raw.pinned) ? raw.pinned.filter((v): v is string => typeof v === "string") : DEFAULT_PINNED,
+  };
 }
 
 function persistCategories(categories: Cat[]) {
@@ -370,27 +429,156 @@ function persistCategories(categories: Cat[]) {
   }
 }
 
+// Pins are stored separately so they survive remounts the same way. A user who has
+// never pinned anything starts with the three most common expense categories.
+const PIN_KEY_PREFIX = "finly_pinned_categories_";
+const DEFAULT_PINNED = ["food", "transport", "bills"];
+
+function loadPinned(): string[] {
+  const userId = authAPI.getCurrentUser()?.id;
+  if (!userId) return DEFAULT_PINNED;
+  try {
+    const raw = localStorage.getItem(`${PIN_KEY_PREFIX}${userId}`);
+    if (!raw) return DEFAULT_PINNED;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === "string") : DEFAULT_PINNED;
+  } catch {
+    return DEFAULT_PINNED;
+  }
+}
+
+function persistPinned(ids: string[]) {
+  const userId = authAPI.getCurrentUser()?.id;
+  if (!userId) return;
+  try {
+    localStorage.setItem(`${PIN_KEY_PREFIX}${userId}`, JSON.stringify(ids));
+  } catch {
+    // Storage full/unavailable — in-memory state still works for this session.
+  }
+}
+
 // ─── Provider ──────────────────────────────────────────────────────────────────
 export function CategoryProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Cat[]>(() => loadPersistedCategories());
+  const [pinnedIds, setPinnedIds] = useState<string[]>(() => loadPinned());
+
+  // ── Server sync ───────────────────────────────────────────────────
+  const hydrated = useRef(false);   // true once local and server copies have been reconciled
+  const hydrating = useRef(false);
+  const dirtyAt = useRef(readUpdatedAt()); // when this device's copy was last edited by the user
+  const latest = useRef({ categories, pinnedIds });
+  latest.current = { categories, pinnedIds };
+  const [version, setVersion] = useState(0); // bumped on every user edit to trigger a push
+
+  const touch = useCallback(() => {
+    dirtyAt.current = Date.now();
+    writeUpdatedAt(dirtyAt.current);
+    setVersion(v => v + 1);
+  }, []);
+
+  const push = useCallback(async () => {
+    try {
+      await settingsAPI.update({
+        [SERVER_KEY]: {
+          updatedAt: dirtyAt.current,
+          categories: stripIcons(latest.current.categories),
+          pinned: latest.current.pinnedIds,
+        },
+      });
+    } catch {
+      // Offline / server asleep: local copy is newer, so the next load or edit pushes it.
+    }
+  }, []);
+
+  const hydrate = useCallback(async () => {
+    if (hydrated.current || hydrating.current) return;
+    hydrating.current = true;
+    try {
+      const remote = parseRemote(await settingsAPI.getAll());
+      const localAt = dirtyAt.current;
+      if (!remote) {
+        // First sync for this account: upload whatever this device has (migrates existing users).
+        dirtyAt.current = localAt || Date.now();
+        writeUpdatedAt(dirtyAt.current);
+        hydrated.current = true;
+        await push();
+      } else if (localAt === 0) {
+        // This device never edited anything itself: adopt the server copy, but keep any custom
+        // categories that only exist locally (made before sync existed) rather than losing them.
+        const remoteIds = new Set(remote.categories.map(c => c.id));
+        const localOnly = latest.current.categories.filter(c => c.isCustom && !remoteIds.has(c.id));
+        setCategories(attachIcons([...remote.categories, ...stripIcons(localOnly) as Cat[]]));
+        setPinnedIds(remote.pinned);
+        dirtyAt.current = remote.updatedAt;
+        writeUpdatedAt(remote.updatedAt);
+        hydrated.current = true;
+        if (localOnly.length > 0) touch();
+      } else if (remote.updatedAt > localAt) {
+        setCategories(attachIcons(remote.categories));
+        setPinnedIds(remote.pinned);
+        dirtyAt.current = remote.updatedAt;
+        writeUpdatedAt(remote.updatedAt);
+        hydrated.current = true;
+      } else {
+        hydrated.current = true;
+        if (localAt > remote.updatedAt) await push();
+      }
+    } catch {
+      // Offline or API not reachable yet: keep using the local copy; retried on focus/online.
+    } finally {
+      hydrating.current = false;
+    }
+  }, [push, touch]);
+
+  useEffect(() => {
+    hydrate();
+    const retry = () => { if (document.visibilityState !== "hidden") hydrate(); };
+    window.addEventListener("online", retry);
+    document.addEventListener("visibilitychange", retry);
+    return () => {
+      window.removeEventListener("online", retry);
+      document.removeEventListener("visibilitychange", retry);
+    };
+  }, [hydrate]);
+
+  // Debounced upload after each user edit (never on the initial load or a server adoption).
+  useEffect(() => {
+    if (version === 0) return;
+    const timer = setTimeout(() => { if (hydrated.current) push(); }, 800);
+    return () => clearTimeout(timer);
+  }, [version, push]);
 
   useEffect(() => {
     persistCategories(categories);
   }, [categories]);
 
+  useEffect(() => {
+    persistPinned(pinnedIds);
+  }, [pinnedIds]);
+
+  const togglePin = useCallback((id: string) => {
+    setPinnedIds(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]);
+    touch();
+  }, [touch]);
+
   // ── Category CRUD ─────────────────────────────────────────────────
   const addCategory = useCallback((cat: Omit<Cat, "id">) => {
     const id = `cat-${Date.now()}`;
     setCategories(prev => [...prev, { ...cat, id, isCustom: true }]);
-  }, []);
+    touch();
+    return id;
+  }, [touch]);
 
   const updateCategory = useCallback((id: string, updates: Partial<Cat>) => {
     setCategories(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
-  }, []);
+    touch();
+  }, [touch]);
 
   const deleteCategory = useCallback((id: string) => {
     setCategories(prev => prev.filter(c => c.id !== id));
-  }, []);
+    setPinnedIds(prev => prev.filter(p => p !== id));
+    touch();
+  }, [touch]);
 
   // ── Subcategory CRUD ──────────────────────────────────────────────
   const addSubcategory = useCallback((parentId: string, sub: Omit<Sub, "id">) => {
@@ -398,7 +586,8 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
     setCategories(prev => prev.map(c =>
       c.id === parentId ? { ...c, subs: [...c.subs, { ...sub, id }] } : c,
     ));
-  }, []);
+    touch();
+  }, [touch]);
 
   const updateSubcategory = useCallback((parentId: string, subId: string, updates: Partial<Sub>) => {
     setCategories(prev => prev.map(c =>
@@ -406,13 +595,15 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
         ? { ...c, subs: c.subs.map(s => s.id === subId ? { ...s, ...updates } : s) }
         : c,
     ));
-  }, []);
+    touch();
+  }, [touch]);
 
   const deleteSubcategory = useCallback((parentId: string, subId: string) => {
     setCategories(prev => prev.map(c =>
       c.id === parentId ? { ...c, subs: c.subs.filter(s => s.id !== subId) } : c,
     ));
-  }, []);
+    touch();
+  }, [touch]);
 
   // ── Helpers ───────────────────────────────────────────────────────
   const getCatsByType  = useCallback((type: "expense" | "income") =>
@@ -429,6 +620,7 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
       categories,
       addCategory, updateCategory, deleteCategory,
       addSubcategory, updateSubcategory, deleteSubcategory,
+      pinnedIds, togglePin,
       getCatsByType, getCatById, getSubById,
     }}>
       {children}
