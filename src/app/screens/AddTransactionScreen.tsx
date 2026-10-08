@@ -931,7 +931,7 @@ export function AddTransactionScreen() {
         account_id: accId,
         to_account_id: txType === "transfer" ? toAccId : null,
         title: recurring ? title : null,
-        date: date.toISOString(),
+        date: (isNaN(date.getTime()) ? new Date() : date).toISOString(),
         note,
         is_recurring: recurring,
         repeat_frequency: recurring ? recurFreq : null,
@@ -951,7 +951,7 @@ export function AddTransactionScreen() {
       setSaved(true);
     } catch (error) {
       console.error("Failed to save transaction:", error);
-      toast.error("Failed to save transaction");
+      toast.error((error as any)?.message || "Failed to save transaction");
     }
   };
 
@@ -984,14 +984,21 @@ export function AddTransactionScreen() {
     setAiScan(true);
     try {
       const result = await aiAPI.scanReceipt(base64Data);
-      if (result.amount) setAmount(String(result.amount));
-      if (result.note) setNote(result.note);
-      if (result.date) setDate(new Date(result.date));
-
-      const targetType = result.type || txType;
-      if (result.type && (result.type === "expense" || result.type === "income" || result.type === "transfer")) {
-        setTxType(result.type);
+      if (result.amount) {
+        const cleaned = parseFloat(String(result.amount).replace(/[^0-9.]/g, ""));
+        if (cleaned > 0) setAmount(String(cleaned));
       }
+      if (result.note) setNote(result.note);
+      if (result.date) {
+        // An unparseable AI date would make date.toISOString() throw on save.
+        const d = new Date(result.date);
+        if (!isNaN(d.getTime())) setDate(d);
+      }
+
+      // Receipts are never transfers; applying one would demand a destination account.
+      const scannedType = String(result.type || "").toLowerCase();
+      const targetType: TxType = scannedType === "income" || scannedType === "expense" ? scannedType : (txType === "income" ? "income" : "expense");
+      if (targetType !== txType) setTxType(targetType);
 
       const categorySuggestion = result.category_suggestion || (result.entries && result.entries[0]?.category_suggestion);
       {
