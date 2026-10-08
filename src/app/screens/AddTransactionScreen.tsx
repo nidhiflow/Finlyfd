@@ -1212,6 +1212,16 @@ export function AddTransactionScreen() {
             {/* Horizontal Scroll Categories */}
             <div className="flex overflow-x-auto gap-2 px-4 pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               <style dangerouslySetInnerHTML={{__html: `::-webkit-scrollbar { display: none; }`}} />
+              <button
+                onClick={handleNewCategoryClick}
+                aria-label="Create a new category"
+                className="rounded-[14px] p-2.5 flex flex-col items-center gap-2 flex-shrink-0 w-[72px]"
+                style={{ background: "transparent", border: `1.5px dashed ${typeAccent}88` }}>
+                <div className="w-[32px] h-[32px] rounded-full flex items-center justify-center" style={{ background: `${typeAccent}22`, color: typeAccent }}>
+                  <Plus className="w-4 h-4" />
+                </div>
+                <span style={{ fontSize: 9.5, fontWeight: 700, color: typeAccent, height: "22px", display: "flex", alignItems: "center" }}>New</span>
+              </button>
               {cats.map(c => {
                 const isSel = catId === c.id;
                 const isPinned = pinnedIds.includes(c.id);
@@ -1262,16 +1272,6 @@ export function AddTransactionScreen() {
                   </div>
                 );
               })}
-              <button
-                onClick={handleNewCategoryClick}
-                aria-label="Create a new category"
-                className="rounded-[14px] p-2.5 flex flex-col items-center gap-2 flex-shrink-0 w-[72px]"
-                style={{ background: "transparent", border: `1.5px dashed ${typeAccent}88` }}>
-                <div className="w-[32px] h-[32px] rounded-full flex items-center justify-center" style={{ background: `${typeAccent}22`, color: typeAccent }}>
-                  <Plus className="w-4 h-4" />
-                </div>
-                <span style={{ fontSize: 9.5, fontWeight: 700, color: typeAccent, height: "22px", display: "flex", alignItems: "center" }}>New</span>
-              </button>
             </div>
 
             {/* Selected subcategory display */}
