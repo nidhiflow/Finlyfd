@@ -12,13 +12,34 @@ interface StartCheckoutParams {
   onDismiss?: () => void;
 }
 
+const CHECKOUT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
+let sdkPromise: Promise<void> | null = null;
+
+// Loaded on demand (not in index.html) so every page view does not pull a third-party
+// payment script, which is wasted work while payments are off and before the user pays.
+function loadRazorpaySdk(): Promise<void> {
+  if ((window as any).Razorpay) return Promise.resolve();
+  if (!sdkPromise) {
+    sdkPromise = new Promise<void>((resolve, reject) => {
+      const el = document.createElement("script");
+      el.src = CHECKOUT_SRC;
+      el.onload = () => resolve();
+      el.onerror = () => { sdkPromise = null; el.remove(); reject(new Error("Razorpay SDK failed to load")); };
+      document.head.appendChild(el);
+    });
+  }
+  return sdkPromise;
+}
+
 export async function startRazorpayCheckout(params: StartCheckoutParams) {
   if (!PAYMENTS_ENABLED) {
     params.onError("Payments are temporarily disabled. All Pro features are free for now.");
     return;
   }
-  if (!(window as any).Razorpay) {
-    params.onError("Razorpay payment SDK not loaded yet. Please try again in a few seconds.");
+  try {
+    await loadRazorpaySdk();
+  } catch {
+    params.onError("Could not load the payment window. Check your connection and try again.");
     return;
   }
 
