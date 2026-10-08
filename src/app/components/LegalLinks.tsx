@@ -16,6 +16,14 @@ export function LegalLinks({ className = "" }: { className?: string }) {
       <span aria-hidden="true">&middot;</span>
       <Link to="/terms" className={link}>Terms of Service</Link>
       <span aria-hidden="true">&middot;</span>
+      <Link to="/refund-policy" className={link}>Refunds</Link>
+      <span aria-hidden="true">&middot;</span>
+      <Link to="/pricing" className={link}>Pricing</Link>
+      <span aria-hidden="true">&middot;</span>
+      <Link to="/about" className={link}>About</Link>
+      <span aria-hidden="true">&middot;</span>
+      <Link to="/contact" className={link}>Contact</Link>
+      <span aria-hidden="true">&middot;</span>
       <Link to="/account-deletion" className={link}>Delete account</Link>
     </nav>
   );

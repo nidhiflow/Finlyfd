@@ -35,6 +35,24 @@ export const router = createBrowserRouter([
     lazy: () => import("./screens/AccountDeletionScreen").then((m) => ({ Component: m.AccountDeletionScreen })),
   },
 
+  // ── Public business-info pages (Razorpay's website review requires these) ──
+  {
+    path: "/refund-policy",
+    lazy: () => import("./screens/RefundPolicyScreen").then((m) => ({ Component: m.RefundPolicyScreen })),
+  },
+  {
+    path: "/pricing",
+    lazy: () => import("./screens/PricingScreen").then((m) => ({ Component: m.PricingScreen })),
+  },
+  {
+    path: "/about",
+    lazy: () => import("./screens/AboutScreen").then((m) => ({ Component: m.AboutScreen })),
+  },
+  {
+    path: "/contact",
+    lazy: () => import("./screens/ContactScreen").then((m) => ({ Component: m.ContactScreen })),
+  },
+
   // ── Auth ──
   {
     path: "/login",

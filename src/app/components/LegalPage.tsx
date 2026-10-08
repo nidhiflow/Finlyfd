@@ -4,6 +4,10 @@ import { ChevronLeft } from "lucide-react";
 import { LegalLinks } from "./LegalLinks";
 
 export const CONTACT_EMAIL = "nidhiflow.in@gmail.com";
+// Shown on the Contact page only when filled in. Razorpay's website review expects a
+// phone number and business address; add the real ones here.
+export const CONTACT_PHONE = "";
+export const CONTACT_ADDRESS = "";
 
 export function LegalSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
