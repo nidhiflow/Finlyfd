@@ -506,10 +506,10 @@ export function ReportsScreen() {
         const catObj = categories.find(cat => cat.id === (c.category_id || c.id));
         return {
           id: c.category_id || c.id,
-          name: c.category_name || c.name || 'Unknown',
-          emoji: c.icon || '📦',
+          name: catObj?.name || c.category_name || c.name || 'Unknown',
+          emoji: catObj?.emoji || c.icon || '📦',
           icon: catObj?.icon,
-          color: c.color || '#D4A24C',
+          color: catObj?.color || c.color || '#D4A24C',
           amount: parseFloat(c.total || 0),
           percentage: total > 0 ? (parseFloat(c.total || 0) / total) * 100 : 0,
           trend: 0,

@@ -70,15 +70,16 @@ export function SpendingOverview({ month, startDate, endDate }: SpendingProps) {
         const IconComponent = catData?.icon || PieIcon;
         return {
         id: c.category_id || c.category_name || 'Unknown',
-        name: c.category_name || c.name || 'Unknown',
+        // Custom categories only exist in the app's own list, so the server can't name them.
+        name: catData?.name || c.category_name || c.name || 'Unknown',
         value: parseFloat(c.total || 0),
-        color: c.color || '#D4A24C',
-        emoji: c.icon || '📦',
+        color: catData?.color || c.color || '#D4A24C',
+        emoji: catData?.emoji || c.icon || '📦',
         icon: IconComponent,
         percentage: total > 0 ? ((parseFloat(c.total || 0) / total) * 100) : 0,
       }}));
     }).catch(console.error);
-  }, [month, startDate, endDate]);
+  }, [month, startDate, endDate, getCatById]);
 
   const hasData = categories.length > 0 && totalExpense > 0;
   

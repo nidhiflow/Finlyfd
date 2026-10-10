@@ -436,10 +436,12 @@ export function TransactionsScreen() {
     try {
       const txData = await transactionsAPI.getAll();
       
-      const mapped = txData.map((t: any) => ({
+      const mapped = txData.map((t: any) => {
+        const localCatName = t.category_id ? getCatById(t.category_id)?.name : undefined;
+        return {
         id: t.id,
         icon: ShoppingBag,
-        name: t.note || t.category_name || "Transaction",
+        name: t.note || localCatName || t.category_name || "Transaction",
         note: t.note || "",
         account: t.type === "transfer"
           ? `${t.account_name || "Account"} ➔ ${t.to_account_name || "Account"}`
@@ -448,14 +450,14 @@ export function TransactionsScreen() {
         amount: parseFloat(t.amount),
         date: t.date?.split("T")[0] || "",
         dateLabel: new Date(t.date).toLocaleDateString(),
-        category: t.category_name || "Uncategorized",
+        category: localCatName || t.category_name || "Uncategorized",
         subcategory: undefined,
         category_id: t.category_id,
         subcategory_id: t.subcategoryId || t.subcategory_id,
         type: t.type,
         recurring: !!t.repeat_group_id,
         original: t
-      }));
+      };});
       setTransactions(mapped);
     } catch (err) {
       console.error(err);
