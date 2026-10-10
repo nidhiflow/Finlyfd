@@ -19,7 +19,7 @@ import {
 // Any changes made in CategoriesScreen are reflected here immediately.
 import { useCategoryContext, Cat, Sub } from "../context/CategoryContext";
 
-import { Briefcase, CreditCard, HandCoins, LineChart, Landmark } from "lucide-react";
+import { Briefcase, CreditCard, HandCoins, LineChart, Landmark, Wallet, Smartphone, Banknote } from "lucide-react";
 // ─── Local types ───────────────────────────────────────────────────────────────
 // Cat and Sub are imported from context; Acc is local to this screen.
 interface Acc { id: string; name: string; emoji: string; icon?: string; type: string; color: string; balance: number; }
@@ -29,6 +29,9 @@ const getAccountIcon = (type: string) => {
     case "credit": return CreditCard;
     case "liability": return HandCoins;
     case "investment": return LineChart;
+    case "cash": return Wallet;
+    case "wallet": return Smartphone;
+    case "salary": return Banknote;
     case "savings":
     default: return Landmark;
   }
@@ -389,11 +392,35 @@ function SubcategorySheet({ cat, selectedSubId, onSelect, onClose }: {
 }
 
 // ─── Account Sheet ─────────────────────────────────────────────────────────────
-function AccountSheet({ selected, onSelect, onClose, excludeId, accounts, loading }: {
+const QUICK_ACCOUNTS = [
+  { type: "cash", name: "Cash in Hand", label: "Cash in Hand", color: "#FFB703", Icon: Wallet },
+  { type: "wallet", name: "UPI / Wallet", label: "UPI / Wallet", color: "#2EC4B6", Icon: Smartphone },
+];
+
+function AccountSheet({ selected, onSelect, onClose, excludeId, accounts, loading, onCreated }: {
   selected: string; onSelect: (a: Acc) => void; onClose: () => void; excludeId?: string; accounts: Acc[]; loading?: boolean;
+  onCreated?: (a: Acc) => void;
 }) {
   const navigate = useNavigate();
   const list = (accounts || []).filter(a => a.id !== excludeId);
+  const [creating, setCreating] = useState(false);
+  const missingQuick = QUICK_ACCOUNTS.filter(q => !(accounts || []).some(a => a.type?.toLowerCase() === q.type));
+
+  const quickCreate = async (q: typeof QUICK_ACCOUNTS[number]) => {
+    if (creating) return;
+    setCreating(true);
+    try {
+      const res: any = await accountsAPI.create({ name: q.name, type: q.type, balance: 0, color: q.color, icon: "🏦", parent_id: undefined });
+      const acc: Acc = { id: res.id, name: res.name || q.name, emoji: "🏦", type: res.type || q.type, color: res.color || q.color, balance: parseFloat(res.balance || 0) };
+      onCreated?.(acc);
+      onSelect(acc);
+      onClose();
+    } catch (err: any) {
+      toast.error(err?.message || "Couldn't create account");
+    } finally {
+      setCreating(false);
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -426,6 +453,19 @@ function AccountSheet({ selected, onSelect, onClose, excludeId, accounts, loadin
                 <Plus className="w-4 h-4" />
                 Add Bank / Account
               </motion.button>
+            </div>
+          )}
+          {!loading && missingQuick.length > 0 && (
+            <div className="flex gap-2 pb-1">
+              {missingQuick.map(q => (
+                <motion.button key={q.type} whileTap={{ scale: 0.97 }} disabled={creating}
+                  onClick={() => quickCreate(q)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-2xl text-ink font-semibold"
+                  style={{ fontSize: 12.5, background: `${q.color}18`, border: `1.5px dashed ${q.color}88` }}>
+                  <q.Icon className="w-4 h-4" style={{ color: q.color }} />
+                  + {q.label}
+                </motion.button>
+              ))}
             </div>
           )}
           {list.map(acc => {
@@ -1535,6 +1575,7 @@ export function AddTransactionScreen() {
           <AccountSheet
             accounts={ACCOUNTS}
             loading={loadingAccounts}
+            onCreated={a => setACCOUNTS(prev => [...prev, a])}
             selected={accId} onSelect={a => setAccId(a.id)}
             onClose={() => setShowAccSheet(false)}
             excludeId={txType === "transfer" ? toAccId : undefined} />
@@ -1545,6 +1586,7 @@ export function AddTransactionScreen() {
           <AccountSheet
             accounts={ACCOUNTS}
             loading={loadingAccounts}
+            onCreated={a => setACCOUNTS(prev => [...prev, a])}
             selected={toAccId} onSelect={a => setToAccId(a.id)}
             onClose={() => setShowToAcc(false)}
             excludeId={accId} />

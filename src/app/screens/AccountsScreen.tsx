@@ -15,7 +15,7 @@ import {
 type IconType = LucideIcon;
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
-type AccountType = "savings" | "current" | "credit" | "liability" | "investment" | "salary" | "cash" | "loan";
+type AccountType = "savings" | "current" | "credit" | "liability" | "investment" | "salary" | "cash" | "wallet" | "loan" | "other";
 type PaymentMode = "upi" | "netbanking" | "cheque" | "cash";
 
 interface Account {
@@ -52,7 +52,9 @@ const ACCOUNT_TYPES: { id: AccountType; label: string; icon: IconType; color: st
   { id: "liability", label: "Liability Account", icon: HandCoins, color: "#EF4444", hasBank: true },
   { id: "investment", label: "Investment Account", icon: LineChart, color: "#2EC4B6", hasBank: true },
   { id: "salary", label: "Salary Account", icon: Banknote, color: "#22C55E", hasBank: true },
-  { id: "cash", label: "Cash Wallet", icon: Wallet, color: "#FFB703", hasBank: false },
+  { id: "cash", label: "Cash in Hand", icon: Wallet, color: "#FFB703", hasBank: false },
+  { id: "wallet", label: "UPI / Digital Wallet", icon: Smartphone, color: "#2EC4B6", hasBank: false },
+  { id: "other", label: "Other", icon: LayoutGrid, color: "#8E9AAF", hasBank: false },
   { id: "loan", label: "Loan Account", icon: Percent, color: "#845EC2", hasBank: true },
 ];
 
