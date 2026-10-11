@@ -3,7 +3,7 @@ import { transactionsAPI } from "../services/api";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Star, Trash2, Plus, FileText, ChevronLeft, ChevronRight, ChevronDown,
+  Trash2, Plus, FileText, ChevronLeft, ChevronRight, ChevronDown,
   ShoppingBag, Edit3, Search, SlidersHorizontal, Inbox, Check,
   type LucideIcon,
 } from "lucide-react";
@@ -630,9 +630,6 @@ export function TransactionsScreen() {
 
           {/* Right section: Action Icons */}
           <div className="flex items-center gap-4" style={{ color: "var(--ink-muted)" }}>
-            <motion.button whileTap={{ scale: 0.85 }} className="transition-colors">
-              <Star className="w-[18px] h-[18px]" strokeWidth={1.75} />
-            </motion.button>
             <motion.button whileTap={{ scale: 0.85 }} className="transition-colors">
               <Search className="w-[18px] h-[18px]" strokeWidth={1.75} />
             </motion.button>
