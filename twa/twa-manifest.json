@@ -25,7 +25,7 @@
   "splashScreenFadeOutDuration": 300,
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
-  "minSdkVersion": 21,
+  "minSdkVersion": 24,
   "generatorApp": "bubblewrap-cli",
   "features": {},
   "alphaDependencies": {
