@@ -4,7 +4,7 @@
   "name": "Finly — Smart Expense Management",
   "launcherName": "Finly",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "default",
   "themeColor": "#0B0F1A",
   "navigationColor": "#0B0F1A",
   "backgroundColor": "#0B0F1A",
@@ -12,8 +12,8 @@
   "startUrl": "/",
   "iconUrl": "https://nidhiflow.in/icon-512.png",
   "maskableIconUrl": "https://nidhiflow.in/icon-512.png",
-  "appVersion": "1.0.1",
-  "appVersionCode": 2,
+  "appVersion": "1.0.2",
+  "appVersionCode": 3,
   "signingKey": {
     "path": "./finly-upload.keystore",
     "alias": "finly"

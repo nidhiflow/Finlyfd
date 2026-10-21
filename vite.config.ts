@@ -18,7 +18,7 @@ export default defineConfig({
         theme_color: '#0B0F1A',
         background_color: '#0B0F1A',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'any',
         scope: '/',
         start_url: '/',
         categories: ['finance', 'productivity'],
